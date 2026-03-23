@@ -54,7 +54,7 @@ const TRANSLATIONS = {
       items: [
         { label: 'Payload', v1: '5 kg', v2: '10 kg' },
         { label: 'Repeatability', v1: '±0.02 mm', v2: '±0.01 mm' },
-        { label: 'Degrees of Freedom', v1: '6 Axis', v2: '7 Axis' },
+        { label: 'DOF', v1: '6 Axis', v2: '7 Axis' },
         { label: 'Protection', v1: 'IP67', v2: 'IP68' },
         { label: 'Chip', v1: 'R3 Core', v2: 'R3 Ultra' },
       ],
@@ -72,11 +72,8 @@ export default function ArmAppleFinalCorrection() {
 
   const t = TRANSLATIONS[lang] || TRANSLATIONS.zh;
 
-  const isSubNavVisible = scrollVal > 2400;
-  const isDeepSection = scrollVal > 3400;
-
-  const triggerInquiryDrawer = (e: React.MouseEvent) => {
-    e.stopPropagation(); 
+  const triggerInquiry = (e: React.MouseEvent) => {
+    e.stopPropagation();
     window.dispatchEvent(new Event('apple-inquiry-open'));
   };
 
@@ -89,7 +86,7 @@ export default function ArmAppleFinalCorrection() {
     const handleScroll = () => setScrollVal(window.scrollY);
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('langChange', sync);
-    document.body.style.backgroundColor = '#f5f5f7';
+    document.body.style.backgroundColor = '#000';
     setTimeout(() => setHeroReady(true), 300);
     setTimeout(() => setTextReady(true), 1200);
     return () => {
@@ -99,68 +96,49 @@ export default function ArmAppleFinalCorrection() {
   }, []);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
+    const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) entry.target.classList.add('reveal');
           else entry.target.classList.remove('reveal');
         });
-      },
-      { threshold: 0.1 }
-    );
-    // 🍎 确保包含所有需要动画的类
+      }, { threshold: 0.1 });
     document.querySelectorAll('.anim-title, .card, .narrative, .spec-grid').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [lang, heroReady]);
 
-  const factor = Math.min(scrollVal / 300, 1);
+  const factorSub = Math.min(scrollVal / 300, 1);
+  const isSubNavVisible = scrollVal > 2400;
+  const isDeepSection = scrollVal > 3400;
 
   return (
     <div className="apple-ax1-wrapper" key={lang}>
-      <nav
-        className="fixed-sub-nav"
-        style={{
-          height: `${52 - factor * 4}px`,
-          backgroundColor: `rgba(245, 245, 247, ${0.72 + factor * 0.18})`,
-          backdropFilter: `blur(${20 + factor * 20}px) saturate(180%)`,
-          WebkitBackdropFilter: `blur(${20 + factor * 20}px) saturate(180%)`,
-          borderBottom: `1px solid rgba(0,0,0,${0.03 + factor * 0.05})`,
+      <nav className="fixed-sub-nav" style={{
+          height: `${52 - factorSub * 4}px`,
+          backgroundColor: `rgba(0,0,0, ${0.75 + factorSub * 0.15})`,
+          backdropFilter: `blur(20px) saturate(180%)`,
+          WebkitBackdropFilter: `blur(20px) saturate(180%)`,
+          borderBottom: `1px solid rgba(255,255,255,0.1)`,
           transform: isSubNavVisible ? 'translateY(0)' : 'translateY(-100%)',
           opacity: isSubNavVisible ? 1 : 0,
           transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, height 0.3s ease',
-        }}
-      >
+        }}>
         <div className="nav-content-limiter">
-          <span className="p-name" style={{ fontSize: `${21 - factor * 3}px` }}>
-            {t.hero.h}
-          </span>
+          <span className="p-name" style={{ fontSize: `${21 - factorSub * 3}px` }}>{t.hero.h}</span>
           <div className="p-actions">
-            <button
-              className="p-inquiry"
-              onClick={triggerInquiryDrawer}
-              style={{
-                padding: `${4}px ${16 - factor * 6}px`,
+            <button className="p-inquiry" onClick={triggerInquiry} style={{
+                padding: `${4}px ${16 - factorSub * 6}px`,
                 backgroundColor: isDeepSection ? '#fff' : '#0071e3',
                 color: isDeepSection ? '#000' : '#fff',
-                fontSize: `${12 - factor * 1}px`,
+                fontSize: `${12 - factorSub * 1}px`,
                 borderRadius: '20px',
-                transform: `scale(${1 - factor * 0.05})`,
-                transition: 'background-color 0.6s ease, color 0.6s ease, padding 0.3s ease, transform 0.2s',
-              }}
-            >
-              {t.inquiry}
-            </button>
+              }}>{t.inquiry}</button>
           </div>
         </div>
       </nav>
 
-      <div className="nav-spacer" />
-
-      {/* 1屏: Hero - 呼吸感回归 */}
+      {/* 1屏: Hero */}
       <section className="h-sec">
-        <div className={`h-img ${heroReady ? 'reveal' : ''}`}>
-          <span className="h-icon">🦾</span>
-        </div>
+        <div className={`h-img ${heroReady ? 'reveal' : ''}`}><span className="h-icon">🦾</span></div>
         <div className={`h-text ${textReady ? 'reveal' : ''}`}>
           <h1 className="h-giant">{t.hero.h}</h1>
           <p className="h-sub">{t.hero.p}</p>
@@ -169,24 +147,20 @@ export default function ArmAppleFinalCorrection() {
 
       {/* 2屏: Highlights */}
       <section className="scroll-wall">
-        <div className="limit-w">
-          <h2 className="sec-t anim-title">{t.h.title}</h2>
-        </div>
-        <div className="wall-scroller scroll-snap-x" ref={scrollRefH}
-          onScroll={() => {
+        <div className="limit-w"><h2 className="apple-huge-title anim-title">{t.h.title}</h2></div>
+        <div className="wall-scroller scroll-snap-x-mandatory" ref={scrollRefH} onScroll={() => {
             if (scrollRefH.current) {
               const { scrollLeft, scrollWidth, clientWidth } = scrollRefH.current;
               setProgH((scrollLeft / (scrollWidth - clientWidth)) * 100);
             }
-          }}
-        >
+          }}>
           <div className="wall-track">
             <div className="snap-padding-edge" />
             {t.h.cards.map((item, i) => (
-              <div key={i} className="card snap-center-card w-giant">
-                <div className={`card-info-floating ${item.pos}`}>
-                  <h3 className="floating-text">{item.t}</h3>
-                  <p className="floating-text delay">{item.d}</p>
+              <div key={i} className="card snap-center-card w-giant closer-look-style">
+                <div className={`card-info-floating ${item.pos} anim-card-breathe-heavy`}>
+                  <h3 className="f-white">{item.t}</h3>
+                  <p className="f-grey">{item.d}</p>
                 </div>
                 <div className="card-bg-icon-box">{item.v}</div>
               </div>
@@ -194,81 +168,66 @@ export default function ArmAppleFinalCorrection() {
             <div className="snap-padding-edge" />
           </div>
         </div>
-        <div className="bar-track">
-          <div className="bar-fill" style={{ left: `${progH}%` }}></div>
-        </div>
+        <div className="bar-track-dark"><div className="bar-fill-white" style={{ left: `${progH}%` }}></div></div>
       </section>
 
       {/* 3屏: Closer Look */}
-      <section className="scroll-wall">
-        <div className="limit-w">
-          <h2 className="sec-t anim-title">{t.c.title}</h2>
-        </div>
-        <div className="wall-scroller scroll-snap-x">
+      <section className="scroll-wall deeper-dark">
+        <div className="limit-w"><h2 className="apple-huge-title anim-title">{t.c.title}</h2></div>
+        <div className="wall-scroller scroll-snap-x-mandatory">
           <div className="wall-track">
             <div className="snap-padding-edge" />
-            <div className="card snap-center-card w-l img-placeholder-1"></div>
-            <div className="card snap-center-card w-s img-placeholder-2"></div>
-            <div className="card snap-center-card w-s img-placeholder-3"></div>
-            <div className="card snap-center-card w-l img-placeholder-4"></div>
-            <div className="card snap-center-card w-s img-placeholder-5"></div>
+            <div className="card snap-center-card w-l closer-look-style img-placeholder-1" />
+            <div className="card snap-center-card w-s closer-look-style img-placeholder-2" />
+            <div className="card snap-center-card w-s closer-look-style img-placeholder-3" />
             <div className="snap-padding-edge" />
           </div>
         </div>
       </section>
 
-      {/* 4屏: 叙事黑 */}
-      <section className="narrative is-dark-pop">
+      {/* 4/5屏: 叙事屏 */}
+      <section className="narrative is-black">
         <div className="n-bg-dark">🚀</div>
         <div className="n-content anim-group">
-          <h2 className="n-w">{t.n1.h}</h2>
-          <h2 className="n-g">{t.n1.p}</h2>
-          <p className="n-s-white">{t.n1.sub}</p>
+          <h2 className="n-white-huge">{t.n1.h}</h2>
+          <h2 className="n-grey-huge">{t.n1.p}</h2>
+          <p className="n-desc-white">{t.n1.sub}</p>
         </div>
       </section>
-
-      {/* 5屏: 叙事白 */}
-      <section className="narrative is-laboratory-white">
+      <section className="narrative is-deep-grey">
         <div className="n-bg-light">🎯</div>
         <div className="n-content anim-group">
-          <h2 className="n-b">{t.n2.h}</h2>
-          <h2 className="n-g">{t.n2.p}</h2>
-          <p className="n-s-dark">{t.n2.sub}</p>
+          <h2 className="n-white-huge">{t.n2.h}</h2>
+          <h2 className="n-grey-huge">{t.n2.p}</h2>
+          <p className="n-desc-white">{t.n2.sub}</p>
         </div>
       </section>
 
-      {/* 🍎 修复后的第 6 屏：添加 spec-grid 类名触发动画 🍎 */}
-      <section className="spec-section is-laboratory-white">
+      {/* 6屏: 对比大卡片 */}
+      <section className="spec-section">
         <div className="limit-w">
-          <h2 className="sec-t anim-title">{t.specs.title}</h2>
-          
-          <div className="spec-grid"> {/* 🍎 关键类名补全 */}
-            <div className="spec-comparison-card">
+          <h2 className="apple-huge-title anim-title">{t.specs.title}</h2>
+          <div className="spec-grid">
+            <div className="spec-comparison-card-float closer-look-style">
               <div className="spec-card-header">
-                <div className="model-column">
-                  <div className="model-image-box">
-                    <span className="model-visual">🦾</span>
-                  </div>
-                  <h3 className="model-title">AX-1 Pro</h3>
-                  <button className="model-buy-btn" onClick={triggerInquiryDrawer}>{t.inquiry}</button>
+                <div className="model-col">
+                  <div className="model-visual">🦾</div>
+                  <h3>AX-1 Pro</h3>
+                  <button className="model-buy-pill" onClick={triggerInquiry}>{t.specs.buy}</button>
                 </div>
-                
-                <div className="model-column">
-                  <div className="model-image-box">
-                    <span className="model-visual">🏗️</span>
-                  </div>
-                  <h3 className="model-title">AX-1 Ultra</h3>
-                  <button className="model-buy-btn" onClick={triggerInquiryDrawer}>{t.inquiry}</button>
+                <div className="model-col">
+                  <div className="model-visual">🏗️</div>
+                  <h3>AX-1 Ultra</h3>
+                  <button className="model-buy-pill" onClick={triggerInquiry}>{t.specs.buy}</button>
                 </div>
               </div>
-
               <div className="spec-card-body">
                 {t.specs.items.map((row, idx) => (
                   <div key={idx} className="spec-row-item">
                     <div className="spec-row-label">{row.label}</div>
                     <div className="spec-row-values">
-                      <div className="spec-v-item"><b>{row.v1}</b></div>
-                      <div className="spec-v-item"><b>{row.v2}</b></div>
+                      <div className="val-box">{row.v1}</div>
+                      <div className="val-box">{row.v2}</div>
                     </div>
                   </div>
                 ))}
@@ -278,97 +237,80 @@ export default function ArmAppleFinalCorrection() {
         </div>
       </section>
 
-      <style jsx>{`
-        .apple-ax1-wrapper { background: #f5f5f7; color: #1d1d1f; font-family: -apple-system, sans-serif; overflow-x: hidden; width: 100%; position: relative; }
-        .limit-w { max-width: 1024px; margin: 0 auto; padding: 0 22px; }
+      <style jsx global>{`
+        body { margin: 0; font-family: -apple-system, sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+        .limit-w { max-width: 1024px; margin: 0 auto; padding: 0 32px; }
         .fixed-sub-nav { position: fixed; top: 44px; left: 0; width: 100%; z-index: 1000; display: flex; align-items: center; }
-        .nav-content-limiter { width: 100%; max-width: 980px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; height: 100%; }
-        .p-name { font-weight: 600; color: #1d1d1f; transition: all 0.3s; }
-        .p-inquiry { border: none; cursor: pointer; }
-        .nav-spacer { height: 52px; }
-
-        /* 🍎 Hero 呼吸感精调 🍎 */
-        .h-sec { height: 100vh; background: #f5f5f7; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
-        .h-img { 
+        .nav-content-limiter { width: 100%; max-width: 980px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* 🍎 字体大小终极修正 🍎 */
+        .apple-huge-title { 
+          font-size: 80px; /* 👈 直接锁定巨大字号 */
+          font-weight: 700; 
+          margin-bottom: 60px; 
           opacity: 0; 
-          transform: scale(1.15); 
-          transition: opacity 2.5s cubic-bezier(0.4, 0, 0.2, 1), transform 3s cubic-bezier(0.15, 0, 0.15, 1); 
+          transform: translateY(30px); 
+          transition: 1s cubic-bezier(0.15, 0, 0.15, 1);
+          letter-spacing: -0.02em;
         }
+        .apple-huge-title.reveal { opacity: 1; transform: translateY(0); }
+
+        .n-white-huge { font-size: 110px; font-weight: 700; margin: 0; line-height: 1; }
+        .n-grey-huge { font-size: 110px; font-weight: 700; color: #86868b; margin: 0; line-height: 1; }
+
+        .closer-look-style {
+          background: rgba(22, 22, 23, 0.6) !important;
+          backdrop-filter: blur(40px) saturate(210%) brightness(85%);
+          WebkitBackdropFilter: blur(40px) saturate(210%) brightness(85%);
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 44px;
+        }
+
+        .h-sec { height: 100vh; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .h-img { opacity: 0; transform: scale(1.1); transition: 2.5s; }
         .h-img.reveal { opacity: 1; transform: scale(1); }
-        .h-icon { font-size: 180px; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.05)); }
-        .h-text { opacity: 0; transform: translateY(30px); transition: 1.5s ease 1s; margin-top: 40px; text-align: center; }
+        .h-icon { font-size: 180px; }
+        .h-text { opacity: 0; transform: translateY(30px); transition: 1.5s 1s; text-align: center; margin-top: 40px; }
         .h-text.reveal { opacity: 1; transform: translateY(0); }
-        .h-giant { font-size: clamp(60px, 10vw, 100px); font-weight: 700; margin: 0; letter-spacing: -0.02em; }
-        .h-sub { font-size: clamp(24px, 3.5vw, 32px); color: #86868b; margin-top: 10px; }
+        .h-giant { font-size: clamp(60px, 10vw, 100px); font-weight: 700; margin: 0; }
+        .h-sub { font-size: 32px; color: #86868b; }
 
-        .scroll-wall { padding: 120px 0; background: #f5f5f7; }
-        .sec-t { font-size: clamp(40px, 8vw, 90px); font-weight: 700; margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.15, 0, 0.15, 1); }
-        .sec-t.reveal { opacity: 1; transform: translateY(0); }
-        
-        .wall-scroller { width: 100%; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-        .scroll-snap-x { scroll-snap-type: x mandatory; }
+        @keyframes breatheHeavy { 0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.9; } 50% { transform: translate(12px, -8px) scale(1.05); opacity: 1; } }
+        .anim-card-breathe-heavy { animation: breatheHeavy 6s ease-in-out infinite; }
+
+        .wall-scroller { width: 100%; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x mandatory; }
         .wall-scroller::-webkit-scrollbar { display: none; }
-        .wall-track { display: flex; gap: 30px; padding-bottom: 60px; }
-        .snap-padding-edge { flex: 0 0 calc(50vw - 45vw - 15px); }
-
-        .card { border-radius: 40px; position: relative; overflow: hidden; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.04); }
-        .snap-center-card { scroll-snap-align: center; }
-        .w-giant { flex: 0 0 90vw; max-width: 1060px; height: 85vh; }
-        .w-l { flex: 0 0 78vw; max-width: 800px; height: 550px; }
-        .w-s { flex: 0 0 44vw; max-width: 460px; height: 550px; }
-
-        .card-info-floating { position: absolute; z-index: 2; padding: 80px; width: 100%; opacity: 0; transform: translateY(30px); transition: 1.2s; }
-        .card.reveal .card-info-floating { opacity: 1; transform: translateY(0); }
-        .floating-text { font-size: clamp(28px, 4vw, 56px); font-weight: 700; }
-        .floating-text.delay { font-size: 24px; color: #86868b; margin-top: 20px; }
-        .card-bg-icon-box { position: absolute; font-size: 350px; opacity: 0.05; right: -30px; bottom: -30px; pointer-events: none; }
-
-        .narrative { position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .is-dark-pop { background: #000; color: #fff; }
-        .is-laboratory-white { background: #f5f5f7; color: #1d1d1f; }
-        .n-bg-dark { font-size: 600px; position: absolute; opacity: 0.15; z-index: 1; color: #fff; }
-        .n-w { font-size: clamp(40px, 9vw, 110px); font-weight: 700; line-height: 1; }
-        .n-s-white { font-size: clamp(18px, 2.2vw, 28px); margin-top: 40px; color: #d2d2d7; max-width: 750px; line-height: 1.5; }
-        .n-bg-light { font-size: 600px; position: absolute; opacity: 0.05; z-index: 1; color: #000; }
-        .n-b { font-size: clamp(40px, 9vw, 110px); font-weight: 700; line-height: 1; }
-        .n-g { font-size: clamp(40px, 9vw, 110px); font-weight: 700; color: #86868b; line-height: 1; }
-        .n-s-dark { font-size: clamp(18px, 2.2vw, 28px); margin-top: 40px; color: #424245; max-width: 750px; line-height: 1.5; }
-        .n-content { position: relative; z-index: 2; text-align: center; }
-
-        /* 🍎 参数对比大卡片 🍎 */
-        .spec-section { padding: 150px 0; background: #f5f5f7; }
+        .wall-track { display: flex; gap: 40px; padding: 40px 0; width: max-content; }
+        .snap-padding-edge { flex: 0 0 5vw; }
+        .card { scroll-snap-align: center; flex: 0 0 92vw; height: 88vh; position: relative; overflow: hidden; }
         
-        /* 强制显现动画 */
-        .spec-grid { opacity: 0; transform: translateY(40px); transition: 1.5s cubic-bezier(0.15, 0, 0.15, 1); }
+        .card-info-floating { position: absolute; z-index: 2; padding: 60px; width: 100%; }
+        .f-white { font-size: 56px; font-weight: 700; }
+        .f-grey { font-size: 24px; color: #86868b; margin-top: 15px; }
+        .card-bg-icon-box { position: absolute; bottom: -30px; right: -30px; font-size: 400px; opacity: 0.04; pointer-events: none; }
+
+        .narrative { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; }
+        .n-desc-white { font-size: 24px; color: #86868b; margin-top: 40px; max-width: 750px; }
+
+        .spec-section { padding: 150px 0; background: #000; }
+        .spec-grid { opacity: 0; transform: translateY(40px); transition: 1.5s; }
         .spec-grid.reveal { opacity: 1; transform: translateY(0); }
-
-        .spec-comparison-card { 
-          background: #fff; 
-          border-radius: 36px; 
-          box-shadow: 0 20px 80px rgba(0,0,0,0.06); 
-          padding: 80px; 
-          margin-top: 40px;
-        }
-        .spec-card-header { display: flex; border-bottom: 1px solid #d2d2d7; padding-bottom: 60px; margin-bottom: 40px; }
-        .model-column { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; }
-        .model-image-box { height: 180px; display: flex; align-items: center; justify-content: center; }
-        .model-visual { font-size: 120px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.05)); }
-        .model-title { font-size: 28px; font-weight: 700; color: #1d1d1f; margin: 0; }
-        .model-buy-btn { background: #0071e3; color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
-
-        .spec-row-item { display: flex; flex-direction: column; align-items: center; padding: 35px 0; border-bottom: 1px solid #e5e5e5; }
-        .spec-row-item:last-child { border-bottom: none; }
-        .spec-row-label { font-size: 14px; color: #86868b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 25px; }
-        .spec-row-values { width: 100%; display: flex; }
-        .spec-v-item { flex: 1; text-align: center; font-size: 22px; color: #1d1d1f; font-weight: 600; }
+        .spec-comparison-card-float { padding: 80px; max-width: 900px; margin: 0 auto; }
+        .spec-card-header { display: flex; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 60px; margin-bottom: 40px; }
+        .model-col { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .model-visual { font-size: 110px; }
+        .model-buy-pill { background: #0071e3; color: #fff; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; cursor: pointer; }
+        .spec-row-item { display: flex; flex-direction: column; align-items: center; padding: 40px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .spec-row-values { width: 100%; display: flex; justify-content: center; }
+        .val-box { flex: 1; text-align: center; font-size: 24px; font-weight: 700; color: rgba(255,255,255,0.9); }
 
         @media (max-width: 734px) {
-          .h-giant { font-size: 52px; }
-          .spec-comparison-card { padding: 40px 20px; border-radius: 24px; }
-          .model-image-box { height: 120px; }
-          .model-visual { font-size: 80px; }
-          .spec-v-item { font-size: 16px; }
-          .snap-padding-edge { flex: 0 0 5vw; }
+          .apple-huge-title { font-size: 42px; }
+          .n-white-huge, .n-grey-huge { font-size: 50px; }
+          .f-white { font-size: 32px; }
+          .model-visual { font-size: 70px; }
+          .val-box { font-size: 18px; }
+          .card { height: 75vh; }
         }
       `}</style>
     </div>

@@ -363,99 +363,38 @@ export default function RootLayout({
             </div>
           </div>
 
-          {/* 🍎 极致优化：苹果级毛玻璃咨询抽屉 🍎 */}
+          {/* 🍎 极致优化：咨询抽屉 🍎 */}
           <div
             className={`exclusive-final-drawer ${isInquiryOpen ? 'open' : ''}`}
             style={{
-              position: 'fixed',
-              top: 0,
-              right: 0,
-              width: '100%',
-              maxWidth: '480px',
-              height: '100%',
-              /* 🍎 核心优化：极低透明度 + 极高饱和度 🍎 */
+              position: 'fixed', top: 0, right: 0, width: '100%', maxWidth: '480px', height: '100%',
               backgroundColor: 'rgba(28, 28, 30, 0.45)', 
               backdropFilter: 'blur(50px) saturate(210%) brightness(80%)',
               WebkitBackdropFilter: 'blur(50px) saturate(210%) brightness(80%)',
-              zIndex: 1000000,
-              transform: isInquiryOpen ? 'translateX(0)' : 'translateX(100%)',
-              transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-              borderLeft: '1px solid rgba(255,255,255,0.1)',
-              color: '#fff',
-              display: 'flex',
-              flexDirection: 'column',
-              boxShadow: '-20px 0 60px rgba(0,0,0,0.3)',
+              zIndex: 1000000, transform: isInquiryOpen ? 'translateX(0)' : 'translateX(100%)',
+              transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s 0.6s',
+              visibility: isInquiryOpen ? 'visible' : 'hidden', // 👈 彻底修复残留阴影灰雾
+              borderLeft: '1px solid rgba(255,255,255,0.1)', color: '#fff',
+              display: 'flex', flexDirection: 'column', boxShadow: '-20px 0 60px rgba(0,0,0,0.3)',
             }}
           >
             <button
               onClick={() => setIsInquiryOpen(false)}
               style={{
-                position: 'absolute',
-                top: '30px',
-                left: '30px',
-                background: 'rgba(255,255,255,0.15)',
-                border: 'none',
-                color: '#fff',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                cursor: 'pointer',
-                fontSize: '14px',
-                zIndex: 10
+                position: 'absolute', top: '30px', left: '30px', background: 'rgba(255,255,255,0.15)',
+                border: 'none', color: '#fff', width: '32px', height: '32px', borderRadius: '50%',
+                cursor: 'pointer', fontSize: '14px', zIndex: 10
               }}
             >✕</button>
-            
             <div className="drawer-scroll-container" style={{ flex: 1, overflowY: 'auto', padding: '100px 40px 40px', boxSizing: 'border-box' }}>
-              <h2 style={{ fontSize: '42px', fontWeight: 700, margin: '0 0 12px 0', letterSpacing: '-1.5px' }}>
-                {lang === 'zh' ? '开启咨询' : 'Get Quote'}
-              </h2>
-              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '17px', lineHeight: 1.4, marginBottom: '40px' }}>
-                {lang === 'zh' ? '留下您的联系方式，我们将提供正式报价。' : 'Leave contact for official quote.'}
-              </p>
-
-              <form
-                onSubmit={handleInquirySubmit}
-                style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', boxSizing: 'border-box' }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label htmlFor="client-name-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
-                    {lang === 'zh' ? '您的姓名' : 'Full Name'}
-                  </label>
-                  <input name="Name" id="client-name-final" placeholder={lang === 'zh' ? '您的姓名' : 'Full Name'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required />
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label htmlFor="client-email-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
-                    {lang === 'zh' ? '企业邮箱' : 'Business Email'}
-                  </label>
-                  <input name="Email" id="client-email-final" type="email" placeholder={lang === 'zh' ? '企业邮箱' : 'Business Email'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required />
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label htmlFor="client-industry-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
-                    {lang === 'zh' ? '所属行业' : 'Industry'}
-                  </label>
-                  <div style={{ position: 'relative' }}>
-                    <select name="Industry" id="client-industry-final" required style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', appearance: 'none', cursor: 'pointer' }}>
-                      <option value="" disabled selected>{lang === 'zh' ? '所属行业' : 'Industry'}</option>
-                      {industries.map((item) => (<option key={item} value={item} style={{ background: '#1c1c1e' }}>{item}</option>))}
-                    </select>
-                    <span style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none', fontSize: '12px' }}>▼</span>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label htmlFor="client-body-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
-                    {lang === 'zh' ? '项目简述' : 'Message'}
-                  </label>
-                  <textarea name="Body" id="client-body-final" placeholder={lang === 'zh' ? '项目简述...' : 'Message...'} rows={6} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', resize: 'none' }} required />
-                </div>
-
-                <div style={{ paddingBottom: '60px' }}>
-                  <button type="submit" style={{ background: '#0071e3', color: '#fff', border: 'none', borderRadius: '16px', padding: '20px', width: '100%', fontSize: '18px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,113,227,0.3)' }}>
-                    {lang === 'zh' ? '生成咨询邮件' : 'Generate Email'}
-                  </button>
-                </div>
+              <h2 style={{ fontSize: '42px', fontWeight: 700, margin: '0 0 12px 0', letterSpacing: '-1.5px' }}>{lang === 'zh' ? '开启咨询' : 'Get Quote'}</h2>
+              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '17px', lineHeight: 1.4, marginBottom: '40px' }}>{lang === 'zh' ? '留下您的联系方式，我们将提供正式报价。' : 'Leave contact for official quote.'}</p>
+              <form onSubmit={handleInquirySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', boxSizing: 'border-box' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-name-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '您的姓名' : 'Full Name'}</label><input name="Name" id="client-name-final" placeholder={lang === 'zh' ? '您的姓名' : 'Full Name'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-email-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '企业邮箱' : 'Business Email'}</label><input name="Email" id="client-email-final" type="email" placeholder={lang === 'zh' ? '企业邮箱' : 'Business Email'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-industry-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '所属行业' : 'Industry'}</label><div style={{ position: 'relative' }}><select name="Industry" id="client-industry-final" required style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', appearance: 'none', cursor: 'pointer' }}><option value="" disabled selected>{lang === 'zh' ? '所属行业' : 'Industry'}</option>{industries.map((item) => (<option key={item} value={item} style={{ background: '#1c1c1e' }}>{item}</option>))}</select><span style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none', fontSize: '12px' }}>▼</span></div></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-body-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '项目简述' : 'Message'}</label><textarea name="Body" id="client-body-final" placeholder={lang === 'zh' ? '项目简述...' : 'Message...'} rows={6} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', resize: 'none' }} required /></div>
+                <div style={{ paddingBottom: '60px' }}><button type="submit" style={{ background: '#0071e3', color: '#fff', border: 'none', borderRadius: '16px', padding: '20px', width: '100%', fontSize: '18px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,113,227,0.3)' }}>{lang === 'zh' ? '生成咨询邮件' : 'Generate Email'}</button></div>
               </form>
             </div>
           </div>
@@ -468,7 +407,6 @@ export default function RootLayout({
           .apple-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); background: rgba(251,251,253,0.8); backdrop-filter: saturate(180%) blur(20px); z-index: var(--z-nav); border-bottom: 1px solid rgba(0,0,0,0.05); transition: background 0.3s; }
           .apple-nav.is-dark { background: rgba(22, 22, 23, 0.8); color: #f5f5f7; }
           .apple-nav.search-mode { background: #fff !important; }
-          .apple-nav.is-dark.search-mode { background: #161617 !important; }
           .logo-box { cursor: pointer; display: flex; align-items: center; z-index: var(--z-ui); }
           .logo-stroke-fix { stroke: #fff; }
           .is-dark .logo-stroke-fix { stroke: #161617; }
@@ -526,12 +464,16 @@ export default function RootLayout({
             .footer-grid { flex-direction: column; gap: 0; }
             .f-col { border-bottom: 1px solid #d2d2d7; width: 100%; box-sizing: border-box; }
             .apple-footer-wrapper.is-dark .f-col { border-bottom-color: #333; }
-            .f-col h4 { padding: 12px 0; margin: 0; cursor: pointer; display: flex; justify-content: space-between; font-weight: 400; }
-            .f-chevron-apple { display: block; width: 8px; height: 8px; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0.6; }
+            .f-col h4 { padding: 12px 0; margin: 0; cursor: pointer; display: flex; justify-content: space-between; font-weight: 400; align-items: center; }
+            .f-chevron-apple { display: block; width: 8px; height: 8px; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); transition: 0.2s; opacity: 0.6; }
             .f-col.is-open .f-chevron-apple { transform: rotate(-135deg); }
-            .f-list { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.2s ease-out, opacity 0.1s; padding-bottom: 0; }
-            .f-col.is-open .f-list { max-height: 400px; opacity: 1; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s; padding-bottom: 15px; }
+            .f-list { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s; padding-bottom: 0; }
+            .f-col.is-open .f-list { max-height: 400px; opacity: 1; padding-bottom: 15px; }
             
+            /* 🍎 悬浮菜单子项优化 🍎 */
+            .m-sub-i { padding: 16px 0; font-size: 19px; font-weight: 500; opacity: 0.85; cursor: pointer; }
+            .m-subs { padding-top: 10px; padding-left: 10px; }
+
             /* 🍎 移动端表单垂直排列锁定 🍎 */
             .drawer-form { display: flex !important; flex-direction: column !important; }
             .exclusive-final-drawer { max-width: 100% !important; }
