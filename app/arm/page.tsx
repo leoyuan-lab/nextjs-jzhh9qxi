@@ -21,7 +21,7 @@ const TRANSLATIONS = {
     n2: { h: '±0.02 mm', p: '细致入微', sub: '微米级精度，让操作游刃有余。' },
     specs: {
       title: '哪款机械臂适合你？',
-      buy: '咨询购买',
+      buy: '咨询',
       items: [
         { label: '有效负载', v1: '5 kg', v2: '10 kg' },
         { label: '重复精度', v1: '±0.02 mm', v2: '±0.01 mm' },
@@ -102,7 +102,7 @@ export default function ArmAppleFinalCorrection() {
           else entry.target.classList.remove('reveal');
         });
       }, { threshold: 0.1 });
-    document.querySelectorAll('.anim-title, .card, .narrative, .spec-grid').forEach((el) => observer.observe(el));
+    document.querySelectorAll('.apple-huge-title, .card, .narrative, .spec-grid').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [lang, heroReady]);
 
@@ -138,7 +138,7 @@ export default function ArmAppleFinalCorrection() {
 
       {/* 1屏: Hero */}
       <section className="h-sec">
-        <div className={`h-img ${heroReady ? 'reveal' : ''}`}><span className="h-icon">🦾</span></div>
+        <div className={`h-img ${heroReady ? 'reveal' : ''}`}><span className="h-icon anim-icon-breathe">🦾</span></div>
         <div className={`h-text ${textReady ? 'reveal' : ''}`}>
           <h1 className="h-giant">{t.hero.h}</h1>
           <p className="h-sub">{t.hero.p}</p>
@@ -147,7 +147,7 @@ export default function ArmAppleFinalCorrection() {
 
       {/* 2屏: Highlights */}
       <section className="scroll-wall">
-        <div className="limit-w"><h2 className="apple-huge-title anim-title">{t.h.title}</h2></div>
+        <div className="limit-w"><h2 className="apple-huge-title">{t.h.title}</h2></div>
         <div className="wall-scroller scroll-snap-x-mandatory" ref={scrollRefH} onScroll={() => {
             if (scrollRefH.current) {
               const { scrollLeft, scrollWidth, clientWidth } = scrollRefH.current;
@@ -173,7 +173,7 @@ export default function ArmAppleFinalCorrection() {
 
       {/* 3屏: Closer Look */}
       <section className="scroll-wall deeper-dark">
-        <div className="limit-w"><h2 className="apple-huge-title anim-title">{t.c.title}</h2></div>
+        <div className="limit-w"><h2 className="apple-huge-title">{t.c.title}</h2></div>
         <div className="wall-scroller scroll-snap-x-mandatory">
           <div className="wall-track">
             <div className="snap-padding-edge" />
@@ -185,17 +185,19 @@ export default function ArmAppleFinalCorrection() {
         </div>
       </section>
 
-      {/* 4/5屏: 叙事屏 */}
+      {/* 4屏: 叙事黑 - 图形修正 */}
       <section className="narrative is-black">
-        <div className="n-bg-dark">🚀</div>
+        <div className="n-bg-visual anim-icon-breathe">🚀</div>
         <div className="n-content anim-group">
           <h2 className="n-white-huge">{t.n1.h}</h2>
           <h2 className="n-grey-huge">{t.n1.p}</h2>
           <p className="n-desc-white">{t.n1.sub}</p>
         </div>
       </section>
-      <section className="narrative is-deep-grey">
-        <div className="n-bg-light">🎯</div>
+
+      {/* 5屏: 叙事深灰 - 图形修正 */}
+      <section className="narrative is-deeper-grey">
+        <div className="n-bg-visual anim-icon-breathe-delay">🎯</div>
         <div className="n-content anim-group">
           <h2 className="n-white-huge">{t.n2.h}</h2>
           <h2 className="n-grey-huge">{t.n2.p}</h2>
@@ -203,20 +205,20 @@ export default function ArmAppleFinalCorrection() {
         </div>
       </section>
 
-      {/* 6屏: 对比大卡片 */}
+      {/* 6屏: 对比卡片 - 标题归位 */}
       <section className="spec-section">
         <div className="limit-w">
-          <h2 className="apple-huge-title anim-title">{t.specs.title}</h2>
+          <h2 className="apple-huge-title">{t.specs.title}</h2>
           <div className="spec-grid">
             <div className="spec-comparison-card-float closer-look-style">
               <div className="spec-card-header">
                 <div className="model-col">
-                  <div className="model-visual">🦾</div>
+                  <div className="model-visual anim-icon-breathe">🦾</div>
                   <h3>AX-1 Pro</h3>
                   <button className="model-buy-pill" onClick={triggerInquiry}>{t.specs.buy}</button>
                 </div>
                 <div className="model-col">
-                  <div className="model-visual">🏗️</div>
+                  <div className="model-visual anim-icon-breathe-delay">🏗️</div>
                   <h3>AX-1 Ultra</h3>
                   <button className="model-buy-pill" onClick={triggerInquiry}>{t.specs.buy}</button>
                 </div>
@@ -239,15 +241,17 @@ export default function ArmAppleFinalCorrection() {
 
       <style jsx global>{`
         body { margin: 0; font-family: -apple-system, sans-serif; background: #000; color: #fff; overflow-x: hidden; }
-        .limit-w { max-width: 1024px; margin: 0 auto; padding: 0 32px; }
-        .fixed-sub-nav { position: fixed; top: 44px; left: 0; width: 100%; z-index: 1000; display: flex; align-items: center; }
+        .limit-w { max-width: 1024px; margin: 0 auto; padding: 0 32px; position: relative; }
         .nav-content-limiter { width: 100%; max-width: 980px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .fixed-sub-nav { position: fixed; top: 44px; left: 0; width: 100%; z-index: 1000; display: flex; align-items: center; }
         
-        /* 🍎 字体大小终极修正 🍎 */
+        /* 🍎 标题位置与字体终极修正 🍎 */
         .apple-huge-title { 
-          font-size: 80px; /* 👈 直接锁定巨大字号 */
+          font-size: 80px; 
           font-weight: 700; 
+          margin-top: 0;
           margin-bottom: 60px; 
+          text-align: left;
           opacity: 0; 
           transform: translateY(30px); 
           transition: 1s cubic-bezier(0.15, 0, 0.15, 1);
@@ -258,6 +262,12 @@ export default function ArmAppleFinalCorrection() {
         .n-white-huge { font-size: 110px; font-weight: 700; margin: 0; line-height: 1; }
         .n-grey-huge { font-size: 110px; font-weight: 700; color: #86868b; margin: 0; line-height: 1; }
 
+        /* 🍎 图形动画修正 🍎 */
+        @keyframes breatheIcon { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+        .anim-icon-breathe { animation: breatheIcon 4s ease-in-out infinite; display: inline-block; }
+        .anim-icon-breathe-delay { animation: breatheIcon 4s ease-in-out infinite 2s; display: inline-block; }
+        .n-bg-visual { font-size: 280px; position: absolute; opacity: 0.15; z-index: 1; }
+
         .closer-look-style {
           background: rgba(22, 22, 23, 0.6) !important;
           backdrop-filter: blur(40px) saturate(210%) brightness(85%);
@@ -266,50 +276,61 @@ export default function ArmAppleFinalCorrection() {
           border-radius: 44px;
         }
 
-        .h-sec { height: 100vh; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .h-sec { height: 100vh; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
         .h-img { opacity: 0; transform: scale(1.1); transition: 2.5s; }
         .h-img.reveal { opacity: 1; transform: scale(1); }
         .h-icon { font-size: 180px; }
-        .h-text { opacity: 0; transform: translateY(30px); transition: 1.5s 1s; text-align: center; margin-top: 40px; }
+        .h-text { opacity: 0; transform: translateY(30px); transition: 1.5s 1s; text-align: center; margin-top: 40px; z-index: 2; }
         .h-text.reveal { opacity: 1; transform: translateY(0); }
         .h-giant { font-size: clamp(60px, 10vw, 100px); font-weight: 700; margin: 0; }
         .h-sub { font-size: 32px; color: #86868b; }
 
-        @keyframes breatheHeavy { 0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.9; } 50% { transform: translate(12px, -8px) scale(1.05); opacity: 1; } }
-        .anim-card-breathe-heavy { animation: breatheHeavy 6s ease-in-out infinite; }
-
+        /* 磁吸墙 */
+        .scroll-wall { padding: 120px 0; }
+        .deeper-dark { background: #080808; }
         .wall-scroller { width: 100%; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x mandatory; }
         .wall-scroller::-webkit-scrollbar { display: none; }
         .wall-track { display: flex; gap: 40px; padding: 40px 0; width: max-content; }
         .snap-padding-edge { flex: 0 0 5vw; }
         .card { scroll-snap-align: center; flex: 0 0 92vw; height: 88vh; position: relative; overflow: hidden; }
+        .card.w-l { flex: 0 0 78vw; height: 550px; } .card.w-s { flex: 0 0 44vw; height: 550px; }
         
+        @keyframes breatheHeavy { 0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.9; } 50% { transform: translate(12px, -8px) scale(1.05); opacity: 1; } }
+        .anim-card-breathe-heavy { animation: breatheHeavy 6s ease-in-out infinite; }
         .card-info-floating { position: absolute; z-index: 2; padding: 60px; width: 100%; }
         .f-white { font-size: 56px; font-weight: 700; }
         .f-grey { font-size: 24px; color: #86868b; margin-top: 15px; }
         .card-bg-icon-box { position: absolute; bottom: -30px; right: -30px; font-size: 400px; opacity: 0.04; pointer-events: none; }
 
+        /* 叙事屏修正 */
         .narrative { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; }
-        .n-desc-white { font-size: 24px; color: #86868b; margin-top: 40px; max-width: 750px; }
+        .is-black { background: #000; }
+        .is-deeper-grey { background: #0a0a0a; }
+        .n-desc-white { font-size: 24px; color: #86868b; margin-top: 40px; max-width: 750px; z-index: 2; }
+        .n-content { position: relative; z-index: 2; }
 
+        /* 6屏 */
         .spec-section { padding: 150px 0; background: #000; }
         .spec-grid { opacity: 0; transform: translateY(40px); transition: 1.5s; }
         .spec-grid.reveal { opacity: 1; transform: translateY(0); }
         .spec-comparison-card-float { padding: 80px; max-width: 900px; margin: 0 auto; }
-        .spec-card-header { display: flex; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 60px; margin-bottom: 40px; }
+        .spec-card-header { display: flex; justify-content: center; gap: 100px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 60px; margin-bottom: 40px; align-items: flex-end; }
         .model-col { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; }
         .model-visual { font-size: 110px; }
-        .model-buy-pill { background: #0071e3; color: #fff; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; cursor: pointer; }
+        .model-buy-pill { background: #0071e3; color: #fff; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+
         .spec-row-item { display: flex; flex-direction: column; align-items: center; padding: 40px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .spec-row-label { font-size: 14px; color: #86868b; text-transform: uppercase; font-weight: 600; margin-bottom: 25px; letter-spacing: 0.1em; }
+        .val-box { flex: 1; text-align: center; font-size: 24px; font-weight: 700; color: #fff; }
         .spec-row-values { width: 100%; display: flex; justify-content: center; }
-        .val-box { flex: 1; text-align: center; font-size: 24px; font-weight: 700; color: rgba(255,255,255,0.9); }
+
+        .bar-track-dark { width: 220px; height: 3px; background: #333; margin: 20px auto; border-radius: 10px; position: relative; }
+        .bar-fill-white { position: absolute; width: 80px; height: 100%; background: #fff; border-radius: 10px; }
 
         @media (max-width: 734px) {
-          .apple-huge-title { font-size: 42px; }
+          .apple-huge-title { font-size: 42px; text-align: left; }
           .n-white-huge, .n-grey-huge { font-size: 50px; }
-          .f-white { font-size: 32px; }
-          .model-visual { font-size: 70px; }
-          .val-box { font-size: 18px; }
+          .n-bg-visual { font-size: 150px; }
           .card { height: 75vh; }
         }
       `}</style>
