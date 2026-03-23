@@ -90,11 +90,8 @@ export default function ArmAppleFinalCorrection() {
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('langChange', sync);
     document.body.style.backgroundColor = '#f5f5f7';
-    
-    // 🍎 呼吸感回归：稍微拉长延迟，让动画更丝滑
     setTimeout(() => setHeroReady(true), 300);
     setTimeout(() => setTextReady(true), 1200);
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('langChange', sync);
@@ -111,6 +108,7 @@ export default function ArmAppleFinalCorrection() {
       },
       { threshold: 0.1 }
     );
+    // 🍎 确保包含所有需要动画的类
     document.querySelectorAll('.anim-title, .card, .narrative, .spec-grid').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [lang, heroReady]);
@@ -158,7 +156,7 @@ export default function ArmAppleFinalCorrection() {
 
       <div className="nav-spacer" />
 
-      {/* 🍎 1屏: Hero - 呼吸感动画回归 🍎 */}
+      {/* 1屏: Hero - 呼吸感回归 */}
       <section className="h-sec">
         <div className={`h-img ${heroReady ? 'reveal' : ''}`}>
           <span className="h-icon">🦾</span>
@@ -239,52 +237,49 @@ export default function ArmAppleFinalCorrection() {
         </div>
       </section>
 
-      {/* 🍎 6屏: 参数对比 - 修正乱码与手机端布局 🍎 */}
+      {/* 🍎 修复后的第 6 屏：添加 spec-grid 类名触发动画 🍎 */}
       <section className="spec-section is-laboratory-white">
         <div className="limit-w">
           <h2 className="sec-t anim-title">{t.specs.title}</h2>
-          <div className="spec-grid">
-            <div className="spec-header">
-              <div className="spec-label-empty"></div>
-              <div className="spec-model-info">
-                <span className="spec-icon">🦾</span>
-                <h3 className="spec-model-name">AX-1 Pro</h3>
+          
+          <div className="spec-grid"> {/* 🍎 关键类名补全 */}
+            <div className="spec-comparison-card">
+              <div className="spec-card-header">
+                <div className="model-column">
+                  <div className="model-image-box">
+                    <span className="model-visual">🦾</span>
+                  </div>
+                  <h3 className="model-title">AX-1 Pro</h3>
+                  <button className="model-buy-btn" onClick={triggerInquiryDrawer}>{t.inquiry}</button>
+                </div>
+                
+                <div className="model-column">
+                  <div className="model-image-box">
+                    <span className="model-visual">🏗️</span>
+                  </div>
+                  <h3 className="model-title">AX-1 Ultra</h3>
+                  <button className="model-buy-btn" onClick={triggerInquiryDrawer}>{t.inquiry}</button>
+                </div>
               </div>
-              <div className="spec-model-info">
-                <span className="spec-icon">🏗️</span>
-                <h3 className="spec-model-name">AX-1 Ultra</h3>
-              </div>
-            </div>
-            <div className="spec-body">
-              {t.specs.items.map((row, idx) => (
-                <div key={idx} className="spec-row">
-                  <div className="spec-label">{row.label}</div>
-                  <div className="spec-values">
-                    <div className="spec-val-item">
-                      <span className="mobile-model-tag">Pro</span>
-                      <b>{row.v1}</b>
-                    </div>
-                    <div className="spec-val-item">
-                      <span className="mobile-model-tag">Ultra</span>
-                      <b>{row.v2}</b>
+
+              <div className="spec-card-body">
+                {t.specs.items.map((row, idx) => (
+                  <div key={idx} className="spec-row-item">
+                    <div className="spec-row-label">{row.label}</div>
+                    <div className="spec-row-values">
+                      <div className="spec-v-item"><b>{row.v1}</b></div>
+                      <div className="spec-v-item"><b>{row.v2}</b></div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       <style jsx>{`
-        .apple-ax1-wrapper { 
-          background: #f5f5f7; 
-          color: #1d1d1f; 
-          font-family: -apple-system, sans-serif; 
-          overflow-x: hidden;
-          width: 100%;
-        }
-
+        .apple-ax1-wrapper { background: #f5f5f7; color: #1d1d1f; font-family: -apple-system, sans-serif; overflow-x: hidden; width: 100%; position: relative; }
         .limit-w { max-width: 1024px; margin: 0 auto; padding: 0 22px; }
         .fixed-sub-nav { position: fixed; top: 44px; left: 0; width: 100%; z-index: 1000; display: flex; align-items: center; }
         .nav-content-limiter { width: 100%; max-width: 980px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; height: 100%; }
@@ -292,17 +287,16 @@ export default function ArmAppleFinalCorrection() {
         .p-inquiry { border: none; cursor: pointer; }
         .nav-spacer { height: 52px; }
 
-        /* 🍎 Hero 呼吸感核心 CSS 🍎 */
+        /* 🍎 Hero 呼吸感精调 🍎 */
         .h-sec { height: 100vh; background: #f5f5f7; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .h-img { 
           opacity: 0; 
-          transform: scale(1.1); /* 初始略大 */
-          transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1), transform 2.5s cubic-bezier(0.15, 0, 0.15, 1); 
+          transform: scale(1.15); 
+          transition: opacity 2.5s cubic-bezier(0.4, 0, 0.2, 1), transform 3s cubic-bezier(0.15, 0, 0.15, 1); 
         }
-        .h-img.reveal { opacity: 1; transform: scale(1); } /* 缩回原位 */
+        .h-img.reveal { opacity: 1; transform: scale(1); }
         .h-icon { font-size: 180px; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.05)); }
-        
-        .h-text { opacity: 0; transform: translateY(30px); transition: 1.5s ease 0.8s; margin-top: 40px; text-align: center; }
+        .h-text { opacity: 0; transform: translateY(30px); transition: 1.5s ease 1s; margin-top: 40px; text-align: center; }
         .h-text.reveal { opacity: 1; transform: translateY(0); }
         .h-giant { font-size: clamp(60px, 10vw, 100px); font-weight: 700; margin: 0; letter-spacing: -0.02em; }
         .h-sub { font-size: clamp(24px, 3.5vw, 32px); color: #86868b; margin-top: 10px; }
@@ -310,21 +304,14 @@ export default function ArmAppleFinalCorrection() {
         .scroll-wall { padding: 120px 0; background: #f5f5f7; }
         .sec-t { font-size: clamp(40px, 8vw, 90px); font-weight: 700; margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.15, 0, 0.15, 1); }
         .sec-t.reveal { opacity: 1; transform: translateY(0); }
-
+        
         .wall-scroller { width: 100%; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
         .scroll-snap-x { scroll-snap-type: x mandatory; }
         .wall-scroller::-webkit-scrollbar { display: none; }
         .wall-track { display: flex; gap: 30px; padding-bottom: 60px; }
-        
         .snap-padding-edge { flex: 0 0 calc(50vw - 45vw - 15px); }
 
-        .card { 
-          border-radius: 40px; 
-          position: relative; 
-          overflow: hidden; 
-          background: #fff; 
-          box-shadow: 0 10px 40px rgba(0,0,0,0.04); 
-        }
+        .card { border-radius: 40px; position: relative; overflow: hidden; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.04); }
         .snap-center-card { scroll-snap-align: center; }
         .w-giant { flex: 0 0 90vw; max-width: 1060px; height: 85vh; }
         .w-l { flex: 0 0 78vw; max-width: 800px; height: 550px; }
@@ -336,67 +323,52 @@ export default function ArmAppleFinalCorrection() {
         .floating-text.delay { font-size: 24px; color: #86868b; margin-top: 20px; }
         .card-bg-icon-box { position: absolute; font-size: 350px; opacity: 0.05; right: -30px; bottom: -30px; pointer-events: none; }
 
-        .img-placeholder-1 { background: #eaebed; } .img-placeholder-2 { background: #e2e3e5; }
-
         .narrative { position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; }
         .is-dark-pop { background: #000; color: #fff; }
+        .is-laboratory-white { background: #f5f5f7; color: #1d1d1f; }
         .n-bg-dark { font-size: 600px; position: absolute; opacity: 0.15; z-index: 1; color: #fff; }
         .n-w { font-size: clamp(40px, 9vw, 110px); font-weight: 700; line-height: 1; }
         .n-s-white { font-size: clamp(18px, 2.2vw, 28px); margin-top: 40px; color: #d2d2d7; max-width: 750px; line-height: 1.5; }
-
-        .is-laboratory-white { background: #f5f5f7; color: #1d1d1f; }
         .n-bg-light { font-size: 600px; position: absolute; opacity: 0.05; z-index: 1; color: #000; }
         .n-b { font-size: clamp(40px, 9vw, 110px); font-weight: 700; line-height: 1; }
         .n-g { font-size: clamp(40px, 9vw, 110px); font-weight: 700; color: #86868b; line-height: 1; }
         .n-s-dark { font-size: clamp(18px, 2.2vw, 28px); margin-top: 40px; color: #424245; max-width: 750px; line-height: 1.5; }
-
         .n-content { position: relative; z-index: 2; text-align: center; }
 
-        /* 🍎 参数对比布局修正 🍎 */
+        /* 🍎 参数对比大卡片 🍎 */
         .spec-section { padding: 150px 0; background: #f5f5f7; }
-        .spec-grid { border-top: 1px solid #d2d2d7; opacity: 0; transform: translateY(40px); transition: 1.5s ease; }
-        .spec-grid.reveal { opacity: 1; transform: translateY(0); }
-        .spec-header { display: flex; padding: 60px 0; border-bottom: 1px solid #d2d2d7; }
-        .spec-label-empty { flex: 1; }
-        .spec-model-info { flex: 1; text-align: center; }
-        .spec-icon { font-size: 48px; display: block; }
-        .spec-model-name { font-size: 24px; font-weight: 600; color: #1d1d1f; margin-top: 15px; }
         
-        .spec-row { border-bottom: 1px solid #e5e5e5; display: flex; align-items: center; padding: 40px 0; }
-        .spec-label { flex: 1; color: #86868b; font-size: 14px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
-        .spec-values { flex: 2; display: flex; }
-        .spec-val-item { flex: 1; text-align: center; font-size: 21px; color: #1d1d1f; }
-        .mobile-model-tag { display: none; } /* PC 端隐藏手机标签 */
+        /* 强制显现动画 */
+        .spec-grid { opacity: 0; transform: translateY(40px); transition: 1.5s cubic-bezier(0.15, 0, 0.15, 1); }
+        .spec-grid.reveal { opacity: 1; transform: translateY(0); }
 
-        .bar-track { width: 180px; height: 2px; background: #e5e5e5; margin: 0 auto; position: relative; }
-        .bar-fill { position: absolute; width: 60px; height: 100%; background: #0071e3; }
+        .spec-comparison-card { 
+          background: #fff; 
+          border-radius: 36px; 
+          box-shadow: 0 20px 80px rgba(0,0,0,0.06); 
+          padding: 80px; 
+          margin-top: 40px;
+        }
+        .spec-card-header { display: flex; border-bottom: 1px solid #d2d2d7; padding-bottom: 60px; margin-bottom: 40px; }
+        .model-column { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .model-image-box { height: 180px; display: flex; align-items: center; justify-content: center; }
+        .model-visual { font-size: 120px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.05)); }
+        .model-title { font-size: 28px; font-weight: 700; color: #1d1d1f; margin: 0; }
+        .model-buy-btn { background: #0071e3; color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+        .spec-row-item { display: flex; flex-direction: column; align-items: center; padding: 35px 0; border-bottom: 1px solid #e5e5e5; }
+        .spec-row-item:last-child { border-bottom: none; }
+        .spec-row-label { font-size: 14px; color: #86868b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 25px; }
+        .spec-row-values { width: 100%; display: flex; }
+        .spec-v-item { flex: 1; text-align: center; font-size: 22px; color: #1d1d1f; font-weight: 600; }
 
         @media (max-width: 734px) {
-          .nav-content-limiter { padding: 0 20px; }
           .h-giant { font-size: 52px; }
-          .card-info-floating { padding: 40px; }
+          .spec-comparison-card { padding: 40px 20px; border-radius: 24px; }
+          .model-image-box { height: 120px; }
+          .model-visual { font-size: 80px; }
+          .spec-v-item { font-size: 16px; }
           .snap-padding-edge { flex: 0 0 5vw; }
-          
-          /* 🍎 移动端参数表深度适配 🍎 */
-          .spec-header { display: none; } /* 手机端隐藏表头 */
-          .spec-row { flex-direction: column; align-items: flex-start; gap: 20px; padding: 30px 0; }
-          .spec-label { color: #0071e3; font-size: 12px; }
-          .spec-values { width: 100%; gap: 10px; }
-          .spec-val-item { 
-            background: #fff; 
-            padding: 15px; 
-            border-radius: 12px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 5px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-          }
-          .mobile-model-tag { 
-            display: block; 
-            font-size: 10px; 
-            color: #86868b; 
-            text-transform: uppercase; 
-          }
         }
       `}</style>
     </div>
