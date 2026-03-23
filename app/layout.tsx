@@ -163,57 +163,36 @@ export default function RootLayout({
   const [showSearch, setShowSearch] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [mobileExpandedApp, setMobileExpandedApp] = useState<string | null>(
-    null
-  );
-  const [footerExpandedSection, setFooterExpandedSection] = useState<
-    string | null
-  >(null);
-
-  // --- 🍎 2. 抽屉状态 ---
+  const [mobileExpandedApp, setMobileExpandedApp] = useState<string | null>(null);
+  const [footerExpandedSection, setFooterExpandedSection] = useState<string | null>(null);
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
 
   const config = useMemo(() => GLOBAL_CONFIG[lang], [lang]);
 
-  // 🍎 3. 精装修提交逻辑：包含行业字段 🍎
   const handleInquirySubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get('Name');
     const email = formData.get('Email');
-    const industry = formData.get('Industry'); // 👈 获取行业
+    const industry = formData.get('Industry');
     const msg = formData.get('Body');
-
-    const subject = encodeURIComponent(
-      `AX-1 Inquiry from ${name} (${industry})`
-    );
-    const body = encodeURIComponent(
-      `Name: ${name}\r\nEmail: ${email}\r\nIndustry: ${industry}\r\n\r\nMessage:\r\n${msg}`
-    );
-
-    window.location.href = `mailto:info@yourdomain.com?subject=${subject}&body=${body}`;
+    const subject = encodeURIComponent(`AX-1 Inquiry from ${name} (${industry})`);
+    const body = encodeURIComponent(`Name: ${name}\r\nEmail: ${email}\r\nIndustry: ${industry}\r\n\r\nMessage:\r\n${msg}`);
+    window.location.href = `mailto:info@roooll.com?subject=${subject}&body=${body}`;
   };
 
   useEffect(() => {
     const handleInquirySignal = () => setIsInquiryOpen(true);
     window.addEventListener('apple-inquiry-open', handleInquirySignal);
-
-    const savedLang =
-      (localStorage.getItem('user-lang') as 'zh' | 'en') || 'zh';
+    const savedLang = (localStorage.getItem('user-lang') as 'zh' | 'en') || 'zh';
     setLang(savedLang);
     setIsReady(true);
-
     const checkTheme = () => {
       const bgColor = window.getComputedStyle(document.body).backgroundColor;
-      setIsDark(
-        bgColor === 'rgb(0, 0, 0)' ||
-          bgColor === '#000' ||
-          bgColor === 'rgb(22, 22, 23)'
-      );
+      setIsDark(bgColor === 'rgb(0, 0, 0)' || bgColor === '#000' || bgColor === 'rgb(22, 22, 23)');
     };
     checkTheme();
     const themeTimer = setInterval(checkTheme, 500);
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setShowSearch(false);
@@ -222,11 +201,8 @@ export default function RootLayout({
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-
-    const handleLangChange = () =>
-      setLang((localStorage.getItem('user-lang') as 'zh' | 'en') || 'zh');
+    const handleLangChange = () => setLang((localStorage.getItem('user-lang') as 'zh' | 'en') || 'zh');
     window.addEventListener('langChange', handleLangChange);
-
     return () => {
       window.removeEventListener('langChange', handleLangChange);
       window.removeEventListener('keydown', handleKeyDown);
@@ -239,23 +215,15 @@ export default function RootLayout({
     const rawIndex: { name: string; url: string }[] = [];
     config.nav.forEach((item) => {
       rawIndex.push({ name: String(item.label), url: item.url });
-      item.links.forEach((link) =>
-        rawIndex.push({ name: `${item.label} - ${link}`, url: item.url })
-      );
+      item.links.forEach((link) => rawIndex.push({ name: `${item.label} - ${link}`, url: item.url }));
     });
-    return {
-      index: rawIndex,
-      quickLinks: config.nav.slice(0, 3).map((i) => i.label),
-      labels: config.search,
-    };
+    return { index: rawIndex, quickLinks: config.nav.slice(0, 3).map((i) => i.label), labels: config.search };
   }, [config]);
 
   const filteredResults = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     if (!query) return [];
-    return searchConfig.index
-      .filter((item) => item.name.toLowerCase().includes(query))
-      .slice(0, 6);
+    return searchConfig.index.filter((item) => item.name.toLowerCase().includes(query)).slice(0, 6);
   }, [searchQuery, searchConfig]);
 
   const toggleLang = () => {
@@ -265,140 +233,45 @@ export default function RootLayout({
     setIsMobileMenuOpen(false);
   };
 
-  const industries =
-    lang === 'zh'
-      ? [
-          '医疗/生物',
-          '汽车制造',
-          '精密电子',
-          '科研教育',
-          '物流仓储',
-          '餐饮/零售',
-          '其他',
-        ]
-      : [
-          'Medical & Bio',
-          'Automotive',
-          'Electronics',
-          'Education',
-          'Logistics',
-          'Retail',
-          'Others',
-        ];
+  const industries = lang === 'zh' ? ['医疗/生物', '汽车制造', '精密电子', '科研教育', '物流仓储', '餐饮/零售', '其他'] : ['Medical & Bio', 'Automotive', 'Electronics', 'Education', 'Logistics', 'Retail', 'Others'];
 
   return (
     <html lang={lang}>
-      <body
-        style={{
-          opacity: isReady ? 1 : 0,
-          transition: 'opacity 0.3s ease',
-          margin: 0,
-          backgroundColor: isDark ? '#000' : '#fff',
-          overflowX: 'hidden',
-        }}
-      >
-        <InquiryContext.Provider
-          value={{
-            isOpen: isInquiryOpen,
-            open: () => setIsInquiryOpen(true),
-            close: () => setIsInquiryOpen(false),
-          }}
-        >
+      <body style={{ opacity: isReady ? 1 : 0, transition: 'opacity 0.3s ease', margin: 0, backgroundColor: isDark ? '#000' : '#fff', overflowX: 'hidden' }}>
+        <InquiryContext.Provider value={{ isOpen: isInquiryOpen, open: () => setIsInquiryOpen(true), close: () => setIsInquiryOpen(false) }}>
+          
           {(activeMenu || isMobileMenuOpen || showSearch || isInquiryOpen) && (
-            <div
-              className="nav-mask-master"
-              onClick={() => {
-                setActiveMenu(null);
-                setIsMobileMenuOpen(false);
-                setShowSearch(false);
-                setIsInquiryOpen(false);
-                setSearchQuery('');
-              }}
-            />
+            <div className="nav-mask-master" onClick={() => { setActiveMenu(null); setIsMobileMenuOpen(false); setShowSearch(false); setIsInquiryOpen(false); setSearchQuery(''); }} />
           )}
 
-          <nav
-            className={`apple-nav ${isDark ? 'is-dark' : ''} ${
-              showSearch ? 'search-mode' : ''
-            }`}
-          >
+          <nav className={`apple-nav ${isDark ? 'is-dark' : ''} ${showSearch ? 'search-mode' : ''}`}>
             <div className="nav-container">
-              <div
-                className="logo-box"
-                onClick={() => (window.location.href = '/')}
-              >
+              <div className="logo-box" onClick={() => (window.location.href = '/')}>
                 <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
                   <circle cx="50" cy="50" r="28" fill="currentColor" />
-                  <path
-                    d="M15 55 C 10 45, 90 25, 85 45 C 82 52, 60 62, 50 62 C 40 62, 18 60, 15 55 Z"
-                    stroke="currentColor"
-                    strokeWidth="6"
-                    fill="none"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    d="M30 42 C 40 35, 60 30, 75 35"
-                    stroke="white"
-                    className="logo-stroke-fix"
-                    strokeWidth="8"
-                    fill="none"
-                  />
+                  <path d="M15 55 C 10 45, 90 25, 85 45 C 82 52, 60 62, 50 62 C 40 62, 18 60, 15 55 Z" stroke="currentColor" strokeWidth="6" fill="none" strokeLinecap="round" />
+                  <path d="M30 42 C 40 35, 60 30, 75 35" stroke="white" className="logo-stroke-fix" strokeWidth="8" fill="none" />
                 </svg>
               </div>
               <div className="desktop-links-group">
                 {config.nav.map((item) => (
-                  <span
-                    key={item.label}
-                    onMouseEnter={() => {
-                      setActiveMenu(item.label);
-                      setShowSearch(false);
-                    }}
-                    onClick={() => (window.location.href = item.url)}
-                  >
+                  <span key={item.label} onMouseEnter={() => { setActiveMenu(item.label); setShowSearch(false); }} onClick={() => (window.location.href = item.url)}>
                     {item.label}
                   </span>
                 ))}
-                <span
-                  className="pc-search-trigger"
-                  onClick={() => setShowSearch(true)}
-                >
-                  <svg width="15" height="15" viewBox="0 0 18 18">
-                    <path
-                      fill="currentColor"
-                      d="M17.766 16.66l-4.55-4.55C14.113 10.993 14.75 9.57 14.75 8 14.75 4.27 11.73 1.25 8 1.25S1.25 4.27 1.25 8 4.27 14.75 8 14.75c1.57 0 2.993-.637 4.11-1.534l4.55 4.55a.749.749 0 0 0 1.06 0 .75.75 0 0 0 0-1.06zM2.75 8c0-2.895 2.355-5.25 5.25-5.25 2.895 0 5.25 2.355 5.25 5.25s-2.355 5.25-5.25 5.25A5.256 5.256 0 0 1 2.75 8z"
-                    ></path>
-                  </svg>
+                <span className="pc-search-trigger" onClick={() => setShowSearch(true)}>
+                  <svg width="15" height="15" viewBox="0 0 18 18"><path fill="currentColor" d="M17.766 16.66l-4.55-4.55C14.113 10.993 14.75 9.57 14.75 8 14.75 4.27 11.73 1.25 8 1.25S1.25 4.27 1.25 8 4.27 14.75 8 14.75c1.57 0 2.993-.637 4.11-1.534l4.55 4.55a.749.749 0 0 0 1.06 0 .75.75 0 0 0 0-1.06zM2.75 8c0-2.895 2.355-5.25 5.25-5.25 2.895 0 5.25 2.355 5.25 5.25s-2.355 5.25-5.25 5.25A5.256 5.256 0 0 1 2.75 8z"></path></svg>
                 </span>
               </div>
               <div className="action-area">
-                <button className="lang-pc-switch" onClick={toggleLang}>
-                  {config.ui.langBtn}
-                </button>
+                <button className="lang-pc-switch" onClick={toggleLang}>{config.ui.langBtn}</button>
                 <div className="mobile-utility">
-                  <span
-                    onClick={() => {
-                      setShowSearch(true);
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <svg width="15" height="15" viewBox="0 0 18 18">
-                      <path
-                        fill="currentColor"
-                        d="M17.766 16.66l-4.55-4.55C14.113 10.993 14.75 9.57 14.75 8 14.75 4.27 11.73 1.25 8 1.25S1.25 4.27 1.25 8 4.27 14.75 8 14.75c1.57 0 2.993-.637 4.11-1.534l4.55 4.55a.749.749 0 0 0 1.06 0 .75.75 0 0 0 0-1.06zM2.75 8c0-2.895 2.355-5.25 5.25-5.25 2.895 0 5.25 2.355 5.25 5.25s-2.355 5.25-5.25 5.25A5.256 5.256 0 0 1 2.75 8z"
-                      ></path>
-                    </svg>
+                  <span onClick={() => { setShowSearch(true); setIsMobileMenuOpen(false); }}>
+                    <svg width="15" height="15" viewBox="0 0 18 18"><path fill="currentColor" d="M17.766 16.66l-4.55-4.55C14.113 10.993 14.75 9.57 14.75 8 14.75 4.27 11.73 1.25 8 1.25S1.25 4.27 1.25 8 4.27 14.75 8 14.75c1.57 0 2.993-.637 4.11-1.534l4.55 4.55a.749.749 0 0 0 1.06 0 .75.75 0 0 0 0-1.06zM2.75 8c0-2.895 2.355-5.25 5.25-5.25 2.895 0 5.25 2.355 5.25 5.25s-2.355 5.25-5.25 5.25A5.256 5.256 0 0 1 2.75 8z"></path></svg>
                   </span>
-                  <span className="lang-cap-pill" onClick={toggleLang}>
-                    {config.ui.mobileLang}
-                  </span>
+                  <span className="lang-cap-pill" onClick={toggleLang}>{config.ui.mobileLang}</span>
                 </div>
-                <div
-                  className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`}
-                  onClick={() => {
-                    setIsMobileMenuOpen(!isMobileMenuOpen);
-                    setShowSearch(false);
-                  }}
-                >
+                <div className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`} onClick={() => { setIsMobileMenuOpen(!isMobileMenuOpen); setShowSearch(false); }}>
                   <div className="line"></div>
                   <div className="line"></div>
                 </div>
@@ -406,137 +279,54 @@ export default function RootLayout({
             </div>
 
             {activeMenu && (
-              <div
-                className={`mega-menu-hard-layer ${isDark ? 'is-dark' : ''}`}
-                onMouseLeave={() => setActiveMenu(null)}
-              >
+              <div className={`mega-menu-hard-layer ${isDark ? 'is-dark' : ''}`} onMouseLeave={() => setActiveMenu(null)}>
                 <div className="nav-container menu-inner">
                   <div className="menu-col">
                     <h4 className="menu-label">{config.ui.explore}</h4>
                     <ul>
-                      {config.nav
-                        .find((i) => i.label === activeMenu)
-                        ?.links.map((link) => (
-                          <li
-                            key={link}
-                            onClick={() => {
-                              window.location.href = config.nav.find(
-                                (i) => i.label === activeMenu
-                              )!.url;
-                              setActiveMenu(null);
-                            }}
-                          >
-                            {link}
-                          </li>
+                      {config.nav.find((i) => i.label === activeMenu)?.links.map((link) => (
+                          <li key={link} onClick={() => { window.location.href = config.nav.find((i) => i.label === activeMenu)!.url; setActiveMenu(null); }}>{link}</li>
                         ))}
                     </ul>
                   </div>
                 </div>
               </div>
             )}
-            <div
-              className={`search-panel-layer ${showSearch ? 'active' : ''} ${
-                isDark ? 'is-dark' : ''
-              }`}
-            >
+            <div className={`search-panel-layer ${showSearch ? 'active' : ''} ${isDark ? 'is-dark' : ''}`}>
               <div className="nav-container search-inner">
                 <div className="search-bar">
                   <span>🔍</span>
-                  <input
-                    type="text"
-                    placeholder={config.search.placeholder}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    autoFocus={showSearch}
-                  />
-                  <span
-                    className="close-x"
-                    onClick={() => {
-                      setShowSearch(false);
-                      setSearchQuery('');
-                    }}
-                  >
-                    ✕
-                  </span>
+                  <input type="text" placeholder={config.search.placeholder} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} autoFocus={showSearch} />
+                  <span className="close-x" onClick={() => { setShowSearch(false); setSearchQuery(''); }}>✕</span>
                 </div>
                 <div className="search-results-box">
                   {searchQuery ? (
                     <div className="live-results">
-                      {filteredResults.length > 0 ? (
-                        filteredResults.map((res) => (
-                          <div
-                            key={res.name}
-                            className="s-item"
-                            onClick={() => {
-                              window.location.href = res.url;
-                              setShowSearch(false);
-                              setSearchQuery('');
-                            }}
-                          >
-                            {res.name}
-                          </div>
-                        ))
-                      ) : (
-                        <p className="s-no-results">{config.search.noResult}</p>
-                      )}
+                      {filteredResults.length > 0 ? filteredResults.map((res) => (
+                          <div key={res.name} className="s-item" onClick={() => { window.location.href = res.url; setShowSearch(false); setSearchQuery(''); }}>{res.name}</div>
+                        )) : <p className="s-no-results">{config.search.noResult}</p>}
                     </div>
                   ) : (
                     <div className="quick-links">
                       <p className="s-section-title">{config.search.title}</p>
-                      {searchConfig.quickLinks.map((link) => (
-                        <div
-                          key={link}
-                          className="s-item"
-                          onClick={() => setSearchQuery(link)}
-                        >
-                          {link}
-                        </div>
-                      ))}
+                      {searchConfig.quickLinks.map((link) => (<div key={link} className="s-item" onClick={() => setSearchQuery(link)}>{link}</div>))}
                     </div>
                   )}
                 </div>
               </div>
             </div>
             {isMobileMenuOpen && (
-              <div
-                className={`mobile-overlay-fixed visible ${
-                  isDark ? 'is-dark' : ''
-                }`}
-              >
+              <div className={`mobile-overlay-fixed visible ${isDark ? 'is-dark' : ''}`}>
                 <div className="nav-container mobile-col">
                   {config.nav.map((item) => (
-                    <div
-                      key={item.label}
-                      className={`m-sec ${
-                        mobileExpandedApp === item.label ? 'open' : ''
-                      }`}
-                    >
-                      <div
-                        className="m-row"
-                        onClick={() =>
-                          setMobileExpandedApp(
-                            mobileExpandedApp === item.label ? null : item.label
-                          )
-                        }
-                      >
+                    <div key={item.label} className={`m-sec ${mobileExpandedApp === item.label ? 'open' : ''}`}>
+                      <div className="m-row" onClick={() => setMobileExpandedApp(mobileExpandedApp === item.label ? null : item.label)}>
                         <span>{item.label}</span>
-                        <span className="m-plus">
-                          {mobileExpandedApp === item.label ? '−' : '+'}
-                        </span>
+                        <span className="m-plus">{mobileExpandedApp === item.label ? '−' : '+'}</span>
                       </div>
                       <div className="m-subs">
-                        {mobileExpandedApp === item.label &&
-                          item.links.map((sub) => (
-                            <div
-                              key={sub}
-                              className="m-sub-i"
-                              onClick={() => {
-                                window.location.href = item.url;
-                                setIsMobileMenuOpen(false);
-                              }}
-                            >
-                              {sub}
-                            </div>
+                        {mobileExpandedApp === item.label && item.links.map((sub) => (
+                            <div key={sub} className="m-sub-i" onClick={() => { window.location.href = item.url; setIsMobileMenuOpen(false); }}>{sub}</div>
                           ))}
                       </div>
                     </div>
@@ -546,14 +336,7 @@ export default function RootLayout({
             )}
           </nav>
 
-          <main
-            style={{
-              position: 'relative',
-              zIndex: 1,
-              paddingTop: '44px',
-              minHeight: '80vh',
-            }}
-          >
+          <main style={{ position: 'relative', zIndex: 1, paddingTop: '44px', minHeight: '80vh' }}>
             {children}
           </main>
 
@@ -562,59 +345,27 @@ export default function RootLayout({
               <section className="footnotes">
                 <ol className="fn-list">
                   {config.footnotes.map((note, index) => (
-                    <li key={index} className="fn-item">
-                      <span>
-                        {index + 1}. <b>{note.q}: </b>
-                        {note.a}
-                      </span>
-                    </li>
+                    <li key={index} className="fn-item"><span>{index + 1}. <b>{note.q}: </b>{note.a}</span></li>
                   ))}
                 </ol>
               </section>
               <footer className="footer-nav">
                 <div className="footer-grid">
                   {config.nav.map((section) => (
-                    <div
-                      key={section.label}
-                      className={`f-col ${
-                        footerExpandedSection === section.label ? 'is-open' : ''
-                      }`}
-                    >
-                      <h4
-                        onClick={() =>
-                          setFooterExpandedSection(
-                            footerExpandedSection === section.label
-                              ? null
-                              : section.label
-                          )
-                        }
-                      >
-                        {section.label}
-                        <span className="f-chevron-apple"></span>
-                      </h4>
-                      <div className="f-list">
-                        {section.links.map((link) => (
-                          <span
-                            key={link}
-                            onClick={() => (window.location.href = section.url)}
-                          >
-                            {link}
-                          </span>
-                        ))}
-                      </div>
+                    <div key={section.label} className={`f-col ${footerExpandedSection === section.label ? 'is-open' : ''}`}>
+                      <h4 onClick={() => setFooterExpandedSection(footerExpandedSection === section.label ? null : section.label)}>{section.label}<span className="f-chevron-apple"></span></h4>
+                      <div className="f-list">{section.links.map((link) => (<span key={link} onClick={() => (window.location.href = section.url)}>{link}</span>))}</div>
                     </div>
                   ))}
                 </div>
-                <div className="f-bottom">
-                  <div className="copyright-line">{config.ui.copyright}</div>
-                </div>
+                <div className="f-bottom"><div className="copyright-line">{config.ui.copyright}</div></div>
               </footer>
             </div>
           </div>
 
-          {/* 🍎 4. 重点：精装修版侧滑抽屉 (行内样式绝对隔离) 🍎 */}
+          {/* 🍎 极致优化：苹果级毛玻璃咨询抽屉 🍎 */}
           <div
-            className="exclusive-final-drawer"
+            className={`exclusive-final-drawer ${isInquiryOpen ? 'open' : ''}`}
             style={{
               position: 'fixed',
               top: 0,
@@ -622,17 +373,18 @@ export default function RootLayout({
               width: '100%',
               maxWidth: '480px',
               height: '100%',
-              backgroundColor: 'rgba(28, 28, 30, 0.85)',
-              backdropFilter: 'blur(50px) saturate(190%)',
+              /* 🍎 核心优化：极低透明度 + 极高饱和度 🍎 */
+              backgroundColor: 'rgba(28, 28, 30, 0.45)', 
+              backdropFilter: 'blur(50px) saturate(210%) brightness(80%)',
+              WebkitBackdropFilter: 'blur(50px) saturate(210%) brightness(80%)',
               zIndex: 1000000,
               transform: isInquiryOpen ? 'translateX(0)' : 'translateX(100%)',
               transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
               borderLeft: '1px solid rgba(255,255,255,0.1)',
               color: '#fff',
-              padding: '80px 40px',
-              boxSizing: 'border-box',
               display: 'flex',
               flexDirection: 'column',
+              boxShadow: '-20px 0 60px rgba(0,0,0,0.3)',
             }}
           >
             <button
@@ -641,7 +393,7 @@ export default function RootLayout({
                 position: 'absolute',
                 top: '30px',
                 left: '30px',
-                background: 'rgba(255,255,255,0.1)',
+                background: 'rgba(255,255,255,0.15)',
                 border: 'none',
                 color: '#fff',
                 width: '32px',
@@ -649,155 +401,61 @@ export default function RootLayout({
                 borderRadius: '50%',
                 cursor: 'pointer',
                 fontSize: '14px',
+                zIndex: 10
               }}
-            >
-              {' '}
-              ✕{' '}
-            </button>
-            <div style={{ marginTop: '20px' }}>
-              <h2
-                style={{
-                  fontSize: '42px',
-                  fontWeight: 700,
-                  margin: '0 0 12px 0',
-                  letterSpacing: '-1.5px',
-                }}
-              >
+            >✕</button>
+            
+            <div className="drawer-scroll-container" style={{ flex: 1, overflowY: 'auto', padding: '100px 40px 40px', boxSizing: 'border-box' }}>
+              <h2 style={{ fontSize: '42px', fontWeight: 700, margin: '0 0 12px 0', letterSpacing: '-1.5px' }}>
                 {lang === 'zh' ? '开启咨询' : 'Get Quote'}
               </h2>
-              <p
-                style={{
-                  color: '#86868b',
-                  fontSize: '17px',
-                  lineHeight: 1.4,
-                  marginBottom: '40px',
-                }}
-              >
-                {lang === 'zh'
-                  ? '留下您的联系方式，我们将提供正式报价。'
-                  : 'Leave contact for official quote.'}
+              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '17px', lineHeight: 1.4, marginBottom: '40px' }}>
+                {lang === 'zh' ? '留下您的联系方式，我们将提供正式报价。' : 'Leave contact for official quote.'}
               </p>
 
               <form
                 onSubmit={handleInquirySubmit}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '20px',
-                }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', boxSizing: 'border-box' }}
               >
-                <input
-                  name="Name"
-                  placeholder={lang === 'zh' ? '您的姓名' : 'Full Name'}
-                  style={{
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '14px',
-                    padding: '18px',
-                    color: '#fff',
-                    fontSize: '16px',
-                    outline: 'none',
-                  }}
-                  required
-                />
-                <input
-                  name="Email"
-                  type="email"
-                  placeholder={lang === 'zh' ? '企业邮箱' : 'Business Email'}
-                  style={{
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '14px',
-                    padding: '18px',
-                    color: '#fff',
-                    fontSize: '16px',
-                    outline: 'none',
-                  }}
-                  required
-                />
-
-                {/* 🍎 新增：行业下拉菜单 🍎 */}
-                <div style={{ position: 'relative' }}>
-                  <select
-                    name="Industry"
-                    required
-                    style={{
-                      width: '100%',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '14px',
-                      padding: '18px',
-                      color: '#fff',
-                      fontSize: '16px',
-                      outline: 'none',
-                      appearance: 'none',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <option
-                      value=""
-                      disabled
-                      selected
-                      style={{ background: '#1c1c1e' }}
-                    >
-                      {lang === 'zh' ? '所属行业' : 'Industry'}
-                    </option>
-                    {industries.map((item) => (
-                      <option
-                        key={item}
-                        value={item}
-                        style={{ background: '#1c1c1e' }}
-                      >
-                        {item}
-                      </option>
-                    ))}
-                  </select>
-                  <span
-                    style={{
-                      position: 'absolute',
-                      right: '20px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      color: '#86868b',
-                      pointerEvents: 'none',
-                      fontSize: '12px',
-                    }}
-                  >
-                    ▼
-                  </span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label htmlFor="client-name-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
+                    {lang === 'zh' ? '您的姓名' : 'Full Name'}
+                  </label>
+                  <input name="Name" id="client-name-final" placeholder={lang === 'zh' ? '您的姓名' : 'Full Name'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required />
                 </div>
 
-                <textarea
-                  name="Body"
-                  placeholder={lang === 'zh' ? '项目简述...' : 'Message...'}
-                  rows={8}
-                  style={{
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '14px',
-                    padding: '18px',
-                    color: '#fff',
-                    fontSize: '16px',
-                    outline: 'none',
-                    resize: 'none',
-                  }}
-                  required
-                />
-                <button
-                  type="submit"
-                  style={{
-                    background: '#0071e3',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '14px',
-                    padding: '20px',
-                    fontSize: '18px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {lang === 'zh' ? '生成咨询邮件' : 'Generate Email'}
-                </button>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label htmlFor="client-email-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
+                    {lang === 'zh' ? '企业邮箱' : 'Business Email'}
+                  </label>
+                  <input name="Email" id="client-email-final" type="email" placeholder={lang === 'zh' ? '企业邮箱' : 'Business Email'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label htmlFor="client-industry-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
+                    {lang === 'zh' ? '所属行业' : 'Industry'}
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <select name="Industry" id="client-industry-final" required style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', appearance: 'none', cursor: 'pointer' }}>
+                      <option value="" disabled selected>{lang === 'zh' ? '所属行业' : 'Industry'}</option>
+                      {industries.map((item) => (<option key={item} value={item} style={{ background: '#1c1c1e' }}>{item}</option>))}
+                    </select>
+                    <span style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none', fontSize: '12px' }}>▼</span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label htmlFor="client-body-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
+                    {lang === 'zh' ? '项目简述' : 'Message'}
+                  </label>
+                  <textarea name="Body" id="client-body-final" placeholder={lang === 'zh' ? '项目简述...' : 'Message...'} rows={6} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', resize: 'none' }} required />
+                </div>
+
+                <div style={{ paddingBottom: '60px' }}>
+                  <button type="submit" style={{ background: '#0071e3', color: '#fff', border: 'none', borderRadius: '16px', padding: '20px', width: '100%', fontSize: '18px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,113,227,0.3)' }}>
+                    {lang === 'zh' ? '生成咨询邮件' : 'Generate Email'}
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -851,7 +509,7 @@ export default function RootLayout({
           .f-list span:hover { text-decoration: underline; }
           .f-bottom { border-top: 1px solid #d2d2d7; padding-top: 20px; margin-top: 20px; font-size: 11px; }
           .apple-footer-wrapper.is-dark .f-bottom { border-top-color: #333; }
-          .nav-mask-master { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.4); z-index: 9997; }
+          .nav-mask-master { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 9997; backdrop-filter: blur(4px); }
           @media (max-width: 734px) {
             .desktop-links-group, .lang-pc-switch { display: none !important; }
             .mobile-utility { display: flex; }
@@ -873,6 +531,10 @@ export default function RootLayout({
             .f-col.is-open .f-chevron-apple { transform: rotate(-135deg); }
             .f-list { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.2s ease-out, opacity 0.1s; padding-bottom: 0; }
             .f-col.is-open .f-list { max-height: 400px; opacity: 1; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s; padding-bottom: 15px; }
+            
+            /* 🍎 移动端表单垂直排列锁定 🍎 */
+            .drawer-form { display: flex !important; flex-direction: column !important; }
+            .exclusive-final-drawer { max-width: 100% !important; }
           }
         `}</style>
       </body>
