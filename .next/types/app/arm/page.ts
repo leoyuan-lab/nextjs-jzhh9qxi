@@ -1,4 +1,4 @@
-// File: /home/leoyuan-lab/nextjs-jzhh9qxi/app/arm/page.tsx
+// File: /Users/yuanli/Desktop/nextjs-jzhh9qxi/app/arm/page.tsx
 import * as entry from '../../../../app/arm/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
