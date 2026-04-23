@@ -67,6 +67,8 @@ export default function ArmAppleAdaptiveFinal() {
   const [heroReady, setHeroReady] = useState(false);
   const [textReady, setTextReady] = useState(false);
   const [scrollVal, setScrollVal] = useState(0);
+  const [heroExitDistance, setHeroExitDistance] = useState(360);
+  const [subNavTrigger, setSubNavTrigger] = useState(760);
   const [progH, setProgH] = useState(0);
   const scrollRefH = useRef<HTMLDivElement>(null);
 
@@ -89,9 +91,17 @@ export default function ArmAppleAdaptiveFinal() {
     document.body.style.backgroundColor = '#000';
     setTimeout(() => setHeroReady(true), 300);
     setTimeout(() => setTextReady(true), 1200);
+    const syncThresholds = () => {
+      const vh = window.innerHeight || 900;
+      setHeroExitDistance(Math.max(220, Math.round(vh * 0.52)));
+      setSubNavTrigger(Math.max(420, Math.round(vh * 0.96)));
+    };
+    syncThresholds();
+    window.addEventListener('resize', syncThresholds);
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('langChange', sync);
+      window.removeEventListener('resize', syncThresholds);
     };
   }, []);
 
@@ -107,8 +117,23 @@ export default function ArmAppleAdaptiveFinal() {
   }, [lang, heroReady]);
 
   const factorSub = Math.min(scrollVal / 300, 1);
-  const isSubNavVisible = scrollVal > 2400;
+  const mainNavProgress = Math.min(scrollVal / heroExitDistance, 1);
+  const isSubNavVisible = scrollVal > subNavTrigger;
   const isDeepSection = scrollVal > 3400;
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('apple-subnav-visibility', { detail: { visible: isSubNavVisible } }));
+    return () => {
+      window.dispatchEvent(new CustomEvent('apple-subnav-visibility', { detail: { visible: false } }));
+    };
+  }, [isSubNavVisible]);
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('apple-main-nav-progress', { detail: { progress: mainNavProgress } }));
+    return () => {
+      window.dispatchEvent(new CustomEvent('apple-main-nav-progress', { detail: { progress: 0 } }));
+    };
+  }, [mainNavProgress]);
 
   return (
     <div className="apple-ax1-wrapper" key={lang}>
@@ -118,9 +143,10 @@ export default function ArmAppleAdaptiveFinal() {
           backdropFilter: `blur(20px) saturate(180%)`,
           WebkitBackdropFilter: `blur(20px) saturate(180%)`,
           borderBottom: `1px solid rgba(255,255,255,0.1)`,
-          transform: isSubNavVisible ? 'translateY(0)' : 'translateY(-100%)',
+          transform: isSubNavVisible ? 'translate3d(0, 0, 0)' : 'translate3d(0, calc(-100% - 44px), 0)',
           opacity: isSubNavVisible ? 1 : 0,
-          transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, height 0.3s ease',
+          pointerEvents: isSubNavVisible ? 'auto' : 'none',
+          transition: 'transform 0.52s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease, height 0.3s ease',
         }}>
         <div className="nav-content-limiter">
           <span className="p-name" style={{ fontSize: `${21 - factorSub * 3}px` }}>{t.hero.h}</span>
@@ -131,6 +157,11 @@ export default function ArmAppleAdaptiveFinal() {
                 color: isDeepSection ? '#000' : '#fff',
                 fontSize: `${12 - factorSub * 1}px`,
                 borderRadius: '20px',
+                border: 'none',
+                outline: 'none',
+                boxShadow: 'none',
+                WebkitAppearance: 'none',
+                appearance: 'none',
               }}>{t.inquiry}</button>
           </div>
         </div>
@@ -247,7 +278,12 @@ export default function ArmAppleAdaptiveFinal() {
         /* 🍎 标题容器与位置对齐 🍎 */
         .title-container { width: 100%; max-width: 1024px; margin: 0 auto; padding: 0 32px; box-sizing: border-box; }
         .nav-content-limiter { width: 100%; max-width: 980px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
-        .fixed-sub-nav { position: fixed; top: 44px; left: 0; width: 100%; z-index: 1000; display: flex; align-items: center; }
+        .fixed-sub-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; display: flex; align-items: center; will-change: transform, opacity; backface-visibility: hidden; }
+        .p-inquiry:focus,
+        .p-inquiry:focus-visible {
+          outline: none;
+          box-shadow: none;
+        }
         
         .apple-huge-title { 
           font-size: clamp(48px, 8vw, 80px); /* 👈 等比缩放 */

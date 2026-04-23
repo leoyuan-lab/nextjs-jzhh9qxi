@@ -6,6 +6,14 @@ import React, {
   createContext,
   useContext,
 } from 'react';
+import { usePathname } from 'next/navigation';
+
+function parseColorToRgba(color: string): [number, number, number, number] | null {
+  const nums = color.match(/[\d.]+/g);
+  if (!nums || nums.length < 3) return null;
+  const [r, g, b, a] = nums.map(Number);
+  return [r, g, b, Number.isFinite(a) ? a : 1];
+}
 
 // --- 🍎 1. 标准 Context 接口 ---
 const InquiryContext = createContext({
@@ -156,6 +164,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isHome = pathname === '/';
   const [lang, setLang] = useState<'zh' | 'en'>('zh');
   const [isReady, setIsReady] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -166,6 +176,11 @@ export default function RootLayout({
   const [mobileExpandedApp, setMobileExpandedApp] = useState<string | null>(null);
   const [footerExpandedSection, setFooterExpandedSection] = useState<string | null>(null);
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+  const [isChildSubNavVisible, setIsChildSubNavVisible] = useState(false);
+  const [mainNavScrollProgress, setMainNavScrollProgress] = useState(0);
+  const [navToneOverride, setNavToneOverride] = useState<'dark' | 'light' | null>(null);
+  const [sampledNavDark, setSampledNavDark] = useState<boolean | null>(null);
+  const [homeAtTop, setHomeAtTop] = useState(true);
 
   const config = useMemo(() => GLOBAL_CONFIG[lang], [lang]);
 
@@ -202,14 +217,105 @@ export default function RootLayout({
     };
     window.addEventListener('keydown', handleKeyDown);
     const handleLangChange = () => setLang((localStorage.getItem('user-lang') as 'zh' | 'en') || 'zh');
+    const handleSubNavVisibility = (event: Event) => {
+      const customEvent = event as CustomEvent<{ visible?: boolean }>;
+      setIsChildSubNavVisible(Boolean(customEvent.detail?.visible));
+    };
+    const handleNavTone = (event: Event) => {
+      const customEvent = event as CustomEvent<{ tone?: 'dark' | 'light' | null }>;
+      const tone = customEvent.detail?.tone;
+      if (tone === 'dark' || tone === 'light') setNavToneOverride(tone);
+      else setNavToneOverride(null);
+    };
+    const handleMainNavProgress = (event: Event) => {
+      const customEvent = event as CustomEvent<{ progress?: number }>;
+      const raw = customEvent.detail?.progress ?? 0;
+      const clamped = Math.max(0, Math.min(1, raw));
+      setMainNavScrollProgress(clamped);
+    };
     window.addEventListener('langChange', handleLangChange);
+    window.addEventListener('apple-subnav-visibility', handleSubNavVisibility as EventListener);
+    window.addEventListener('apple-nav-tone', handleNavTone as EventListener);
+    window.addEventListener('apple-main-nav-progress', handleMainNavProgress as EventListener);
     return () => {
       window.removeEventListener('langChange', handleLangChange);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('apple-inquiry-open', handleInquirySignal);
+      window.removeEventListener('apple-subnav-visibility', handleSubNavVisibility as EventListener);
+      window.removeEventListener('apple-nav-tone', handleNavTone as EventListener);
+      window.removeEventListener('apple-main-nav-progress', handleMainNavProgress as EventListener);
       clearInterval(themeTimer);
     };
   }, []);
+
+  useEffect(() => {
+    if (pathname === '/') {
+      setIsChildSubNavVisible(false);
+      setMainNavScrollProgress(0);
+    }
+
+  }, [pathname]);
+  useEffect(() => {
+    if (pathname !== '/') return;
+  
+    const onScroll = () => setHomeAtTop(window.scrollY < 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (pathname !== '/') {
+      setSampledNavDark(null);
+      return;
+    }
+    let rafId = 0;
+    const detectTone = () => {
+      const sampleY = 88;
+      const sampleX = Math.floor(window.innerWidth / 2);
+      const target = document.elementFromPoint(sampleX, sampleY) as HTMLElement | null;
+
+      let node: HTMLElement | null = target;
+      let bgColor = 'rgb(255, 255, 255)';
+      while (node && node !== document.body) {
+        const candidate = window.getComputedStyle(node).backgroundColor;
+        const parsed = parseColorToRgba(candidate);
+        if (parsed && parsed[3] > 0.03) {
+          bgColor = candidate;
+          break;
+        }
+        node = node.parentElement;
+      }
+      if (!node) bgColor = window.getComputedStyle(document.body).backgroundColor || bgColor;
+
+      const rgba = parseColorToRgba(bgColor);
+      if (!rgba) return;
+      const [r, g, b] = rgba;
+      const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+      const next = luma < 150;
+      setSampledNavDark((prev) => (prev === next ? prev : next));
+    };
+
+    const scheduleDetect = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(detectTone);
+    };
+
+    scheduleDetect();
+    window.addEventListener('scroll', scheduleDetect, { passive: true });
+    window.addEventListener('resize', scheduleDetect);
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', scheduleDetect);
+      window.removeEventListener('resize', scheduleDetect);
+    };
+  }, [pathname]);
+
+  const navIsDark = pathname === '/'
+    ? (sampledNavDark ?? isDark)
+    : (navToneOverride ? navToneOverride === 'dark' : isDark);
+  const subPageNavProgress = pathname === '/' ? 0 : Math.max(mainNavScrollProgress, isChildSubNavVisible ? 1 : 0);
 
   const searchConfig = useMemo(() => {
     const rawIndex: { name: string; url: string }[] = [];
@@ -244,7 +350,15 @@ export default function RootLayout({
             <div className="nav-mask-master" onClick={() => { setActiveMenu(null); setIsMobileMenuOpen(false); setShowSearch(false); setIsInquiryOpen(false); setSearchQuery(''); }} />
           )}
 
-          <nav className={`apple-nav ${isDark ? 'is-dark' : ''} ${showSearch ? 'search-mode' : ''}`}>
+          <nav
+            className={`apple-nav ${navIsDark ? 'is-dark' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homeAtTop ? 'home-clear' : ''}`}
+            style={pathname === '/' ? undefined : {
+              transform: `translate3d(0, -${(subPageNavProgress * 104).toFixed(2)}%, 0)`,
+              opacity: Math.max(0, 1 - subPageNavProgress),
+              pointerEvents: subPageNavProgress > 0.98 ? 'none' : 'auto',
+              transition: 'background 0.3s',
+            }}
+          >
             <div className="nav-container">
               <div className="logo-box" onClick={() => (window.location.href = '/')}>
                 <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
@@ -279,7 +393,7 @@ export default function RootLayout({
             </div>
 
             {activeMenu && (
-              <div className={`mega-menu-hard-layer ${isDark ? 'is-dark' : ''}`} onMouseLeave={() => setActiveMenu(null)}>
+              <div className={`mega-menu-hard-layer ${navIsDark ? 'is-dark' : ''}`} onMouseLeave={() => setActiveMenu(null)}>
                 <div className="nav-container menu-inner">
                   <div className="menu-col">
                     <h4 className="menu-label">{config.ui.explore}</h4>
@@ -292,12 +406,12 @@ export default function RootLayout({
                 </div>
               </div>
             )}
-            <div className={`search-panel-layer ${showSearch ? 'active' : ''} ${isDark ? 'is-dark' : ''}`}>
+            <div className={`search-panel-layer ${showSearch ? 'active' : ''} ${navIsDark ? 'is-dark' : ''}`}>
               <div className="nav-container search-inner">
                 <div className="search-bar">
-                  <span>🔍</span>
+                  <span className="search-leading-icon">🔍</span>
                   <input type="text" placeholder={config.search.placeholder} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} autoFocus={showSearch} />
-                  <span className="close-x" onClick={() => { setShowSearch(false); setSearchQuery(''); }}>✕</span>
+                  <button className="close-x" onClick={() => { setShowSearch(false); setSearchQuery(''); }} aria-label="Close search">✕</button>
                 </div>
                 <div className="search-results-box">
                   {searchQuery ? (
@@ -316,7 +430,7 @@ export default function RootLayout({
               </div>
             </div>
             {isMobileMenuOpen && (
-              <div className={`mobile-overlay-fixed visible ${isDark ? 'is-dark' : ''}`}>
+              <div className={`mobile-overlay-fixed visible ${navIsDark ? 'is-dark' : ''}`}>
                 <div className="nav-container mobile-col">
                   {config.nav.map((item) => (
                     <div key={item.label} className={`m-sec ${mobileExpandedApp === item.label ? 'open' : ''}`}>
@@ -336,7 +450,14 @@ export default function RootLayout({
             )}
           </nav>
 
-          <main style={{ position: 'relative', zIndex: 1, paddingTop: '44px', minHeight: '80vh' }}>
+          <main
+  style={{
+    position: 'relative',
+    zIndex: 1,
+    paddingTop: isHome ? '0px' : '44px',
+    minHeight: '80vh',
+  }}
+>
             {children}
           </main>
 
@@ -371,11 +492,14 @@ export default function RootLayout({
               backgroundColor: 'rgba(28, 28, 30, 0.45)', 
               backdropFilter: 'blur(50px) saturate(210%) brightness(80%)',
               WebkitBackdropFilter: 'blur(50px) saturate(210%) brightness(80%)',
-              zIndex: 1000000, transform: isInquiryOpen ? 'translateX(0)' : 'translateX(100%)',
-              transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s 0.6s',
-              visibility: isInquiryOpen ? 'visible' : 'hidden', // 👈 彻底修复残留阴影灰雾
+              zIndex: 1000000,
+              transform: isInquiryOpen ? 'translate3d(0, 0, 0)' : 'translate3d(104%, 0, 0)',
+              opacity: isInquiryOpen ? 1 : 0,
+              transition: `transform 0.72s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.38s ease, visibility 0s linear ${isInquiryOpen ? '0s' : '0.72s'}`,
+              visibility: isInquiryOpen ? 'visible' : 'hidden',
+              pointerEvents: isInquiryOpen ? 'auto' : 'none',
               borderLeft: '1px solid rgba(255,255,255,0.1)', color: '#fff',
-              display: 'flex', flexDirection: 'column', boxShadow: '-20px 0 60px rgba(0,0,0,0.3)',
+              display: 'flex', flexDirection: 'column', boxShadow: '-24px 0 80px rgba(0,0,0,0.34)',
             }}
           >
             <button
@@ -383,10 +507,21 @@ export default function RootLayout({
               style={{
                 position: 'absolute', top: '30px', left: '30px', background: 'rgba(255,255,255,0.15)',
                 border: 'none', color: '#fff', width: '32px', height: '32px', borderRadius: '50%',
-                cursor: 'pointer', fontSize: '14px', zIndex: 10
+                cursor: 'pointer', fontSize: '14px', zIndex: 10,
+                opacity: isInquiryOpen ? 1 : 0,
+                transform: isInquiryOpen ? 'translate3d(0,0,0)' : 'translate3d(10px,0,0)',
+                transition: 'opacity 0.26s ease 0.12s, transform 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.12s',
               }}
             >✕</button>
-            <div className="drawer-scroll-container" style={{ flex: 1, overflowY: 'auto', padding: '100px 40px 40px', boxSizing: 'border-box' }}>
+            <div className="drawer-scroll-container" style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: '100px 40px 40px',
+              boxSizing: 'border-box',
+              opacity: isInquiryOpen ? 1 : 0,
+              transform: isInquiryOpen ? 'translate3d(0,0,0)' : 'translate3d(24px,0,0)',
+              transition: 'opacity 0.32s ease 0.14s, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1) 0.14s',
+            }}>
               <h2 style={{ fontSize: '42px', fontWeight: 700, margin: '0 0 12px 0', letterSpacing: '-1.5px' }}>{lang === 'zh' ? '开启咨询' : 'Get Quote'}</h2>
               <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '17px', lineHeight: 1.4, marginBottom: '40px' }}>{lang === 'zh' ? '留下您的联系方式，我们将提供正式报价。' : 'Leave contact for official quote.'}</p>
               <form onSubmit={handleInquirySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', boxSizing: 'border-box' }}>
@@ -404,18 +539,42 @@ export default function RootLayout({
           :root { --nav-h: 44px; --apple-w: 1024px; --z-nav: 9999; --z-ui: 10001; --bg-grey: #f5f5f7; }
           body { font-family: -apple-system, sans-serif; margin: 0; overflow-x: hidden; }
           .nav-container { width: 100%; max-width: var(--apple-w); margin: 0 auto; padding: 0 22px; display: flex; justify-content: space-between; align-items: center; height: 100%; box-sizing: border-box; }
-          .apple-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); background: rgba(251,251,253,0.8); backdrop-filter: saturate(180%) blur(20px); z-index: var(--z-nav); border-bottom: 1px solid rgba(0,0,0,0.05); transition: background 0.3s; }
-          .apple-nav.is-dark { background: rgba(22, 22, 23, 0.8); color: #f5f5f7; }
+          .apple-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); background: rgba(251,251,253,0.2); backdrop-filter: saturate(135%) blur(8px); z-index: var(--z-nav); border-bottom: 1px solid rgba(0,0,0,0.012); transition: background 0.3s, transform 0.58s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, border-color 0.25s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
+          .apple-nav.slide-up { transform: translateY(-104%); opacity: 0; pointer-events: none; }
+          .apple-nav.is-dark { background: rgba(22, 22, 23, 0.16); color: #f5f5f7; border-bottom-color: rgba(255,255,255,0.02); }
+          .apple-nav.home-clear {
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
           .apple-nav.search-mode { background: #fff !important; }
-          .logo-box { cursor: pointer; display: flex; align-items: center; z-index: var(--z-ui); }
+          .logo-box { cursor: pointer; display: flex; align-items: center; z-index: var(--z-ui); flex: 0 0 164px; justify-content: flex-start; }
           .logo-stroke-fix { stroke: #fff; }
           .is-dark .logo-stroke-fix { stroke: #161617; }
-          .desktop-links-group { display: flex !important; flex: 1; justify-content: center; gap: 35px; font-size: 12px; align-items: center; z-index: var(--z-ui); }
-          .desktop-links-group span { cursor: pointer; opacity: 0.8; transition: 0.2s; white-space: nowrap; }
-          .pc-search-trigger { cursor: pointer; opacity: 0.7; padding: 5px; display: flex; align-items: center; }
-          .action-area { display: flex; align-items: center; gap: 20px; z-index: var(--z-ui); }
-          .lang-pc-switch { display: block; background: none; border: 1px solid #d2d2d7; color: inherit; padding: 2px 10px; border-radius: 12px; font-size: 11px; cursor: pointer; }
-          .is-dark .lang-pc-switch { border-color: #424245; }
+          .desktop-links-group { display: flex !important; flex: 1; justify-content: center; gap: 32px; font-size: 12px; align-items: center; z-index: var(--z-ui); min-width: 0; }
+          .desktop-links-group span { cursor: pointer; opacity: 0.68; transition: opacity 0.2s ease; white-space: nowrap; }
+          .desktop-links-group span:hover { opacity: 0.92; }
+          .pc-search-trigger { cursor: pointer; opacity: 0.62; padding: 5px; display: flex; align-items: center; transition: opacity 0.2s ease; }
+          .pc-search-trigger:hover { opacity: 0.9; }
+          .action-area { display: flex; align-items: center; gap: 20px; z-index: var(--z-ui); flex: 0 0 164px; justify-content: flex-end; }
+          .lang-pc-switch {
+            display: block;
+            background: transparent;
+            border: none;
+            color: inherit;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            opacity: 0.86;
+            transition: background 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+          }
+          .lang-pc-switch:hover { background: rgba(0,0,0,0.08); opacity: 1; }
+          .lang-pc-switch:focus-visible { outline: none; background: rgba(0,0,0,0.12); opacity: 1; }
+          .is-dark .lang-pc-switch:hover { background: rgba(255,255,255,0.14); }
+          .is-dark .lang-pc-switch:focus-visible { background: rgba(255,255,255,0.18); }
           .mobile-utility { display: none; align-items: center; gap: 15px; }
           .mega-menu-hard-layer { position: absolute; top: var(--nav-h); left: 0; width: 100%; background: #fbfbfd; height: 320px; border-bottom: 1px solid #d2d2d7; z-index: 9998; animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
           .mega-menu-hard-layer.is-dark { background: #161617; border-bottom-color: #424245; color: #f5f5f7; }
@@ -423,14 +582,26 @@ export default function RootLayout({
           .menu-inner { align-items: flex-start !important; padding-top: 40px !important; }
           .menu-label { font-size: 12px; color: #6e6e73; margin-bottom: 15px; }
           .menu-col li { font-size: 24px; font-weight: 600; margin-bottom: 8px; cursor: pointer; list-style: none; }
-          .search-panel-layer { position: absolute; top: 0; left: 0; width: 100%; height: 0; background: #fff; overflow: hidden; transition: 0.4s; z-index: 10000; visibility: hidden; }
-          .search-panel-layer.is-dark { background: #161617 !important; color: #f5f5f7; }
-          .search-panel-layer.active { height: 450px; border-bottom: 1px solid #d2d2d7; visibility: visible; }
-          .search-inner { padding-top: 60px !important; flex-direction: column !important; align-items: flex-start !important; }
-          .search-bar { display: flex; align-items: center; gap: 15px; width: 100%; border-bottom: 1px solid #d2d2d7; padding-bottom: 8px; }
-          .search-bar input { flex: 1; border: none; outline: none; background: transparent; font-size: 24px; font-weight: 600; color: currentColor; }
-          .search-results-box { margin-top: 30px; width: 100%; }
-          .s-item { padding: 10px 0; font-size: 14px; cursor: pointer; color: #06c; }
+          .search-panel-layer { position: absolute; top: 0; left: 0; width: 100%; height: 0; background: rgba(251,251,253,0.96); backdrop-filter: saturate(180%) blur(26px); -webkit-backdrop-filter: saturate(180%) blur(26px); overflow: hidden; transition: height 0.36s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.24s ease; z-index: 10000; visibility: hidden; opacity: 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+          .search-panel-layer.is-dark { background: rgba(22,22,23,0.92) !important; color: #f5f5f7; border-bottom-color: rgba(255,255,255,0.1); }
+          .search-panel-layer.active { height: 460px; visibility: visible; opacity: 1; }
+          .search-inner { padding-top: 54px !important; padding-bottom: 34px !important; flex-direction: column !important; align-items: flex-start !important; }
+          .search-bar { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 0 14px; box-sizing: border-box; background: rgba(255,255,255,0.72); box-shadow: 0 8px 30px rgba(0,0,0,0.06); overflow: hidden; }
+          .search-panel-layer.is-dark .search-bar { background: rgba(45,45,48,0.75); border-color: rgba(255,255,255,0.12); box-shadow: none; }
+          .search-leading-icon { font-size: 15px; opacity: 0.6; }
+          .search-bar input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: currentColor; }
+          .search-bar input::placeholder { color: rgba(110,110,115,0.85); }
+          .search-panel-layer.is-dark .search-bar input::placeholder { color: rgba(174,174,178,0.85); }
+          .close-x { border: none; background: rgba(0,0,0,0.08); color: inherit; width: 28px; min-width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0; font-size: 14px; line-height: 1; opacity: 0.8; flex-shrink: 0; }
+          .search-panel-layer.is-dark .close-x { background: rgba(255,255,255,0.14); }
+          .search-results-box { margin-top: 24px; width: 100%; padding-bottom: 10px; }
+          .s-section-title { margin: 0 0 10px 2px; font-size: 12px; letter-spacing: 0.02em; text-transform: uppercase; color: #6e6e73; font-weight: 600; }
+          .search-panel-layer.is-dark .s-section-title { color: #a1a1a6; }
+          .s-item { padding: 11px 12px; font-size: 15px; cursor: pointer; color: #1d1d1f; border-radius: 10px; transition: background 0.18s ease, transform 0.18s ease; }
+          .s-item:hover { background: rgba(0,0,0,0.04); transform: translateX(2px); }
+          .search-panel-layer.is-dark .s-item { color: #f5f5f7; }
+          .search-panel-layer.is-dark .s-item:hover { background: rgba(255,255,255,0.08); }
+          .s-no-results { margin: 4px 0 0 2px; font-size: 14px; color: #8e8e93; }
           .apple-footer-wrapper { background: var(--bg-grey); color: #6e6e73; padding: 40px 0; transition: background 0.3s; border-top: 1px solid #d2d2d7; }
           .apple-footer-wrapper.is-dark { background: #000; border-top-color: #333; color: #86868b; }
           .footer-content-stack { flex-direction: column !important; align-items: stretch !important; height: auto !important; }
@@ -449,17 +620,34 @@ export default function RootLayout({
           .apple-footer-wrapper.is-dark .f-bottom { border-top-color: #333; }
           .nav-mask-master { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 9997; backdrop-filter: blur(4px); }
           @media (max-width: 734px) {
+            .search-panel-layer.active { height: 390px; }
+            .search-inner { padding-top: 52px !important; padding-bottom: 24px !important; }
+            .search-bar { min-height: 48px; border-radius: 12px; padding: 0 10px; gap: 8px; }
+            .search-bar input { font-size: 21px; }
+            .close-x { width: 26px; min-width: 26px; height: 26px; }
             .desktop-links-group, .lang-pc-switch { display: none !important; }
-            .mobile-utility { display: flex; }
-            .lang-cap-pill { font-size: 10px; font-weight: bold; border: 1.5px solid currentColor; padding: 1px 4px; border-radius: 4px; cursor: pointer; }
-            .hamburger { display: flex; flex-direction: column; gap: 6px; cursor: pointer; width: 18px; position: relative; z-index: 10002; }
-            .line { width: 100%; height: 1.2px; background: currentColor; transition: 0.3s; }
-            .hamburger.active .line:nth-child(1) { transform: translateY(3.5px) rotate(45deg); }
-            .hamburger.active .line:nth-child(2) { transform: translateY(-3.5px) rotate(-45deg); }
-            .mobile-overlay-fixed { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #fff; z-index: 999; padding-top: var(--nav-h); overflow-y: auto; }
+            .logo-box, .action-area { flex: initial; }
+            .mobile-utility { display: flex; opacity: 0.82; }
+            .lang-cap-pill {
+              font-size: 10px;
+              font-weight: 600;
+              border: none;
+              padding: 3px 7px;
+              border-radius: 999px;
+              cursor: pointer;
+              opacity: 0.9;
+              transition: background 0.2s ease, opacity 0.2s ease;
+            }
+            .lang-cap-pill:hover { background: rgba(0,0,0,0.08); opacity: 1; }
+            .is-dark .lang-cap-pill:hover { background: rgba(255,255,255,0.14); }
+            .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; width: 17px; position: relative; z-index: 10002; }
+            .line { width: 100%; height: 1px; background: currentColor; transition: transform 0.34s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease; transform-origin: center; }
+            .hamburger.active .line:nth-child(1) { transform: translateY(3px) rotate(45deg); }
+            .hamburger.active .line:nth-child(2) { transform: translateY(-3px) rotate(-45deg); }
+            .mobile-overlay-fixed { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #fff; z-index: 999; padding-top: var(--nav-h); overflow-y: auto; animation: mobileMenuIn 0.34s cubic-bezier(0.16, 1, 0.3, 1); }
             .mobile-overlay-fixed.is-dark { background: #000; color: #f5f5f7; }
-            .mobile-col { flex-direction: column; align-items: stretch !important; padding: 30px 40px !important; }
-            .m-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-size: 28px; font-weight: 600; cursor: pointer; }
+            .mobile-col { flex-direction: column; align-items: stretch !important; padding: 24px 30px !important; animation: mobileMenuItemsIn 0.38s cubic-bezier(0.22, 1, 0.36, 1); }
+            .m-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-size: 24px; font-weight: 500; letter-spacing: -0.01em; cursor: pointer; }
             .is-dark .m-row { border-bottom-color: #333; }
             .footer-grid { flex-direction: column; gap: 0; }
             .f-col { border-bottom: 1px solid #d2d2d7; width: 100%; box-sizing: border-box; }
@@ -471,8 +659,16 @@ export default function RootLayout({
             .f-col.is-open .f-list { max-height: 400px; opacity: 1; padding-bottom: 15px; }
             
             /* 🍎 悬浮菜单子项优化 🍎 */
-            .m-sub-i { padding: 16px 0; font-size: 19px; font-weight: 500; opacity: 0.85; cursor: pointer; }
-            .m-subs { padding-top: 10px; padding-left: 10px; }
+            .m-sub-i { padding: 12px 0; font-size: 16px; font-weight: 400; opacity: 0.78; cursor: pointer; letter-spacing: -0.005em; }
+            .m-subs { padding-top: 6px; padding-left: 8px; }
+            @keyframes mobileMenuIn {
+              from { opacity: 0; transform: translateY(-8px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes mobileMenuItemsIn {
+              from { opacity: 0; transform: translateY(10px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
 
             /* 🍎 移动端表单垂直排列锁定 🍎 */
             .drawer-form { display: flex !important; flex-direction: column !important; }
