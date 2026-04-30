@@ -260,6 +260,10 @@ export default function RootLayout({
   const [sampledNavDark, setSampledNavDark] = useState<boolean | null>(null);
   const [homeAtTop, setHomeAtTop] = useState(true);
   const lastInquiryCloseAtRef = React.useRef(0);
+  const mobileToggleLockRef = React.useRef(false);
+  const mobileToggleUnlockTimerRef = React.useRef<number | null>(null);
+  const mobileQueuedToggleRef = React.useRef(false);
+  const mobileExpandedResetTimerRef = React.useRef<number | null>(null);
 
   const config = useMemo(() => GLOBAL_CONFIG[lang], [lang]);
 
@@ -354,9 +358,73 @@ export default function RootLayout({
       setMobileMenuVisible(true);
       return;
     }
-    setMobileExpandedApp(null);
-    const timer = window.setTimeout(() => setMobileMenuVisible(false), 420);
-    return () => window.clearTimeout(timer);
+    const timer = window.setTimeout(() => setMobileMenuVisible(false), 620);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      if (mobileExpandedResetTimerRef.current) {
+        window.clearTimeout(mobileExpandedResetTimerRef.current);
+        mobileExpandedResetTimerRef.current = null;
+      }
+      return;
+    }
+    mobileExpandedResetTimerRef.current = window.setTimeout(() => {
+      setMobileExpandedApp(null);
+      mobileExpandedResetTimerRef.current = null;
+    }, 620);
+    return () => {
+      if (mobileExpandedResetTimerRef.current) {
+        window.clearTimeout(mobileExpandedResetTimerRef.current);
+        mobileExpandedResetTimerRef.current = null;
+      }
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const body = document.body;
+    const html = document.documentElement;
+    const prevBodyOverflow = body.style.overflow;
+    const prevBodyOverscroll = body.style.overscrollBehavior;
+    const prevHtmlOverscroll = html.style.overscrollBehavior;
+    body.style.overflow = 'hidden';
+    body.style.overscrollBehavior = 'none';
+    html.style.overscrollBehavior = 'none';
+
+    const blockBackgroundTouchMove = (event: TouchEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('.mobile-overlay-fixed')) return;
+      event.preventDefault();
+    };
+    const blockBackgroundWheel = (event: WheelEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('.mobile-overlay-fixed')) return;
+      event.preventDefault();
+    };
+    const blockBackgroundScrollKeys = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target && /input|textarea|select/i.test(target.tagName)) return;
+      if ([' ', 'PageUp', 'PageDown', 'End', 'Home', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+        event.preventDefault();
+      }
+    };
+    document.addEventListener('touchmove', blockBackgroundTouchMove, { passive: false });
+    document.addEventListener('wheel', blockBackgroundWheel, { passive: false });
+    document.addEventListener('keydown', blockBackgroundScrollKeys);
+
+    return () => {
+      document.removeEventListener('touchmove', blockBackgroundTouchMove);
+      document.removeEventListener('wheel', blockBackgroundWheel);
+      document.removeEventListener('keydown', blockBackgroundScrollKeys);
+      body.style.overflow = prevBodyOverflow;
+      body.style.overscrollBehavior = prevBodyOverscroll;
+      html.style.overscrollBehavior = prevHtmlOverscroll;
+    };
   }, [isMobileMenuOpen]);
 
   useEffect(() => {
@@ -416,6 +484,34 @@ export default function RootLayout({
     };
   }, [pathname]);
 
+  useEffect(() => {
+    return () => {
+      if (mobileToggleUnlockTimerRef.current) {
+        window.clearTimeout(mobileToggleUnlockTimerRef.current);
+      }
+      if (mobileExpandedResetTimerRef.current) {
+        window.clearTimeout(mobileExpandedResetTimerRef.current);
+      }
+    };
+  }, []);
+
+  const triggerMobileMenuToggle = React.useCallback(() => {
+    mobileToggleLockRef.current = true;
+    setShowSearch(false);
+    setIsMobileMenuOpen((prev) => !prev);
+
+    if (mobileToggleUnlockTimerRef.current) {
+      window.clearTimeout(mobileToggleUnlockTimerRef.current);
+    }
+    mobileToggleUnlockTimerRef.current = window.setTimeout(() => {
+      mobileToggleLockRef.current = false;
+      if (mobileQueuedToggleRef.current) {
+        mobileQueuedToggleRef.current = false;
+        triggerMobileMenuToggle();
+      }
+    }, 680);
+  }, []);
+
   const navIsDark = pathname === '/'
     ? (sampledNavDark ?? isDark)
     : (navToneOverride ? navToneOverride === 'dark' : isDark);
@@ -460,7 +556,7 @@ export default function RootLayout({
           )}
 
           <nav
-            className={`apple-nav ${navIsDark ? 'is-dark' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homeAtTop ? 'home-clear' : ''}`}
+            className={`apple-nav ${navIsDark ? 'is-dark' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homeAtTop ? 'home-clear' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}
             style={pathname === '/' ? undefined : {
               transform: `translate3d(0, -${(subPageNavProgress * 104).toFixed(2)}%, 0)`,
               opacity: Math.max(0, 1 - subPageNavProgress),
@@ -498,7 +594,16 @@ export default function RootLayout({
                   </span>
                   <span className="lang-cap-pill" onClick={toggleLang}>{config.ui.mobileLang}</span>
                 </div>
-                <div className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`} onClick={() => { setIsMobileMenuOpen(!isMobileMenuOpen); setShowSearch(false); }}>
+                <div
+                  className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`}
+                  onClick={() => {
+                    if (mobileToggleLockRef.current) {
+                      mobileQueuedToggleRef.current = true;
+                      return;
+                    }
+                    triggerMobileMenuToggle();
+                  }}
+                >
                   <div className="line"></div>
                   <div className="line"></div>
                 </div>
@@ -563,35 +668,36 @@ export default function RootLayout({
                 </div>
               </div>
             </div>
-            {mobileMenuVisible && (
-              <div className={`mobile-overlay-fixed ${isMobileMenuOpen ? 'open' : ''} ${navIsDark ? 'is-dark' : ''}`}>
-                <div className="nav-container mobile-col">
-                  {config.nav.map((item, idx) => (
-                    <div
-                      key={item.label}
-                      className={`m-sec ${mobileExpandedApp === item.label ? 'open' : ''}`}
-                      style={{ ['--i' as string]: idx }}
-                    >
-                      <div className="m-row" onClick={() => setMobileExpandedApp(mobileExpandedApp === item.label ? null : item.label)}>
-                        <span>{item.label}</span>
-                      </div>
-                      <div className="m-subs" aria-hidden={mobileExpandedApp !== item.label}>
-                        {item.links.map((sub) => (
-                          <div
-                            key={navSubLabel(sub)}
-                            className="m-sub-i"
-                            onClick={() => followNavUrl(navSubUrl(item, sub), () => setIsMobileMenuOpen(false))}
-                          >
-                            {navSubLabel(sub)}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </nav>
+
+          {mobileMenuVisible && (
+            <div className={`mobile-overlay-fixed ${isMobileMenuOpen ? 'open' : 'closing'} ${navIsDark ? 'is-dark' : ''}`}>
+              <div className="nav-container mobile-col">
+                {config.nav.map((item, idx) => (
+                  <div
+                    key={item.label}
+                    className={`m-sec ${mobileExpandedApp === item.label ? 'open' : ''}`}
+                    style={{ ['--i' as string]: idx }}
+                  >
+                    <div className="m-row" onClick={() => setMobileExpandedApp(mobileExpandedApp === item.label ? null : item.label)}>
+                      <span>{item.label}</span>
+                    </div>
+                    <div className="m-subs" aria-hidden={mobileExpandedApp !== item.label}>
+                      {item.links.map((sub) => (
+                        <div
+                          key={navSubLabel(sub)}
+                          className="m-sub-i"
+                          onClick={() => followNavUrl(navSubUrl(item, sub), () => setIsMobileMenuOpen(false))}
+                        >
+                          {navSubLabel(sub)}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <main
   style={{
@@ -798,7 +904,9 @@ export default function RootLayout({
           .f-bottom { border-top: 1px solid #d2d2d7; padding-top: 20px; margin-top: 20px; font-size: 11px; }
           .apple-footer-wrapper.is-dark .f-bottom { border-top-color: #333; }
           .nav-mask-master { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 9997; backdrop-filter: blur(4px); }
+          .mobile-overlay-fixed { display: none; }
           @media (max-width: 734px) {
+            .mobile-overlay-fixed { display: block; }
             .nav-mask-master { background: rgba(0,0,0,0.22); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
             .search-panel-layer.active { height: 390px; }
             .search-inner { padding-top: 52px !important; padding-bottom: 24px !important; }
@@ -829,18 +937,20 @@ export default function RootLayout({
               top: 0;
               left: 0;
               width: 100%;
-              height: 100dvh;
-              background: rgba(252, 252, 254, 0.92);
-              -webkit-backdrop-filter: saturate(170%) blur(24px);
-              backdrop-filter: saturate(170%) blur(24px);
-              z-index: 999;
-              padding-top: calc(var(--nav-h) + 8px);
+              bottom: env(safe-area-inset-bottom);
+              height: auto;
+              background: transparent;
+              -webkit-backdrop-filter: none;
+              backdrop-filter: none;
+              z-index: 9998;
+              padding-top: calc(var(--nav-h) + 10px);
+              padding-bottom: 10px;
               overflow-y: auto;
               opacity: 0;
-              transform: translateY(-6px) scale(1.01);
+              transform: translate3d(0, -118%, 0) scale(1);
               visibility: hidden;
               pointer-events: none;
-              transition: opacity 0.34s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.42s;
+              transition: opacity 0.3s ease, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.62s;
             }
             .mobile-overlay-fixed::before {
               content: '';
@@ -849,21 +959,60 @@ export default function RootLayout({
               left: 0;
               right: 0;
               height: 22px;
-              background: linear-gradient(to bottom, rgba(255,255,255,0.72), rgba(255,255,255,0));
+              background: transparent;
               pointer-events: none;
               opacity: 0;
               transition: opacity 0.28s ease;
             }
             .mobile-overlay-fixed.open {
               opacity: 1;
-              transform: translateY(0) scale(1);
+              transform: translate3d(0, 0, 0) scale(1);
               visibility: visible;
               pointer-events: auto;
-              transition: opacity 0.34s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+              transition: opacity 0.3s ease, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+            }
+            .mobile-overlay-fixed.closing {
+              opacity: 0;
+              transform: translate3d(0, -118%, 0) scale(1);
+              visibility: visible;
+              pointer-events: none;
+              transition: opacity 0.3s ease, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+            }
+            .mobile-overlay-fixed.closed {
+              opacity: 0;
+              transform: translate3d(0, -118%, 0) scale(1);
+              visibility: hidden;
+              pointer-events: none;
+              background: transparent;
+              -webkit-backdrop-filter: none;
+              backdrop-filter: none;
+              transition: opacity 0.3s ease, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.62s;
+            }
+            .mobile-overlay-fixed.open,
+            .mobile-overlay-fixed.closing {
+              background: transparent;
+              -webkit-backdrop-filter: saturate(180%) blur(22px);
+              backdrop-filter: saturate(180%) blur(22px);
             }
             .mobile-overlay-fixed.open::before { opacity: 1; }
-            .mobile-overlay-fixed.is-dark { background: rgba(12, 12, 13, 0.84); color: #f5f5f7; }
-            .mobile-overlay-fixed.is-dark::before { background: linear-gradient(to bottom, rgba(18,18,20,0.74), rgba(18,18,20,0)); }
+            .mobile-overlay-fixed.is-dark { color: #f5f5f7; }
+            .apple-nav.mobile-menu-open .logo-box,
+            .apple-nav.mobile-menu-open .mobile-utility {
+              opacity: 0;
+              pointer-events: none;
+              transform: translateY(-6px);
+              transition: opacity 0.2s ease, transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .apple-nav.mobile-menu-open .action-area {
+              gap: 0;
+            }
+            .mobile-overlay-fixed.is-dark::before { background: transparent; }
+            .apple-nav.mobile-menu-open {
+              background: transparent !important;
+              border-bottom-color: transparent !important;
+              backdrop-filter: none !important;
+              -webkit-backdrop-filter: none !important;
+            }
             .mobile-col {
               flex-direction: column;
               align-items: stretch !important;
@@ -876,11 +1025,18 @@ export default function RootLayout({
               border-bottom: none;
               opacity: 0;
               transform: translateY(14px);
-              transition: opacity 0.22s ease, transform 0.22s ease;
+              transition: opacity 0.2s ease, transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
             }
             .mobile-overlay-fixed.open .m-sec {
               animation: mobileMenuRowIn 0.56s cubic-bezier(0.22, 1, 0.36, 1) both;
-              animation-delay: calc(var(--i, 0) * 110ms);
+              animation-delay: calc(var(--i, 0) * 95ms);
+              opacity: 1;
+              transform: translateY(0);
+            }
+            .mobile-overlay-fixed.closing .m-sec {
+              opacity: 0;
+              transform: translateY(-8px);
+              transition-delay: calc((4 - var(--i, 0)) * 28ms);
             }
             .m-row {
               display: flex;
