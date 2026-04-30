@@ -1,359 +1,367 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 
 const TRANSLATIONS = {
   zh: {
+    langBtn: 'EN',
     inquiry: '咨询',
-    hero: { h: 'AX-1 Pro', p: '精密，显身手。' },
+    hero: { h: 'FAIRINO FR5', p: '精钢风骨，细腻如瓷。' },
     h: {
-      title: '获取精彩亮点',
+      title: '精彩亮点。',
       cards: [
-        { t: '钛金属机身', d: '航空级强度，惊人轻盈。', v: '💎', pos: 'top-left' },
-        { t: 'R3 芯片', d: '每秒万亿次运算，智能核心。', v: '🚀', pos: 'bottom-right' },
-        { t: '6轴联动', d: '极致丝滑协同，毫秒级响应。', v: '🦾', pos: 'bottom-left' },
-        { t: 'IP67 防护', d: '全天候防尘防水，无惧挑战。', v: '🛡️', pos: 'top-right' },
-        { t: '无线控制', d: '低延迟连接，自由操控。', v: '📶', pos: 'bottom-left' },
-        { t: '模块化末端', d: '一秒切换工具，全能助手。', v: '🔧', pos: 'top-left' },
+        { t: '法兰头 L6_flange', d: '高精度末端法兰，稳定支持夹具与工具快换。', orbit: '34deg 78deg 1.35m', target: '0m 1.58m 0m', node: 'J6_Flange' },
+        { t: '底座 Base', d: '低重心底座结构，抑振并提升整机刚性。', orbit: '212deg 72deg 2.25m', target: '0m 0.18m 0m', node: 'J1_Base' },
+        { t: '中段关节 J3', d: '关键承重关节，兼顾速度与轨迹平滑性。', orbit: '125deg 84deg 1.95m', target: '0m 0.95m 0m', node: 'J3_Elbow' },
+        { t: '腕部关节 J5/J6', d: '小空间姿态调整更灵活，适合复杂工位。', orbit: '-35deg 72deg 1.5m', target: '0m 1.34m 0m', node: 'Wrist_Roll' },
       ],
     },
-    c: { title: '近距离观察' },
-    n1: { h: 'R3 芯片', p: '性能怪兽', sub: '专为高密度计算打造，让实时路径规划快如闪电。' },
-    n2: { h: '±0.02 mm', p: '细致入微', sub: '微米级精度，让操作游刃有余。' },
+    c: { title: '近距离观察。' },
+    n1: { h: 'R3 芯片', p: '性能怪兽', sub: '实时路径规划，快如闪电。' },
     specs: {
-      title: '哪款机械臂适合你？',
+      title: '哪款适合你？',
       buy: '咨询',
       items: [
         { label: '有效负载', v1: '5 kg', v2: '10 kg' },
         { label: '重复精度', v1: '±0.02 mm', v2: '±0.01 mm' },
         { label: '自由度', v1: '6 轴', v2: '7 轴' },
         { label: '防护等级', v1: 'IP67', v2: 'IP68' },
-        { label: '芯片', v1: 'R3 核心', v2: 'R3 Ultra' },
       ],
     },
   },
   en: {
+    langBtn: '中文',
     inquiry: 'Inquiry',
-    hero: { h: 'AX-1 Pro', p: 'Precision. Power.' },
+    hero: { h: 'FAIRINO FR5', p: 'Precision of Steel. Touch of Silk.' },
     h: {
-      title: 'Get the highlights.',
+      title: 'Highlights.',
       cards: [
-        { t: 'Titanium', d: 'Strong and light.', v: '💎', pos: 'top-left' },
-        { t: 'R3 Chip', d: 'Trillions of ops.', v: '🚀', pos: 'bottom-right' },
-        { t: '6-Axis', d: 'Seamless coordination.', v: '🦾', pos: 'bottom-left' },
-        { t: 'IP67 Rated', d: 'Water resistant.', v: '🛡️', pos: 'top-right' },
-        { t: 'Wireless', d: 'Zero lag control.', v: '📶', pos: 'bottom-left' },
-        { t: 'Modular', d: 'Switch in seconds.', v: '🔧', pos: 'top-left' },
+        { t: 'Flange Head L6_flange', d: 'High-precision flange for quick tool switching.', orbit: '34deg 78deg 1.35m', target: '0m 1.58m 0m', node: 'J6_Flange' },
+        { t: 'Base Module', d: 'Low-center base improves stability and damping.', orbit: '212deg 72deg 2.25m', target: '0m 0.18m 0m', node: 'J1_Base' },
+        { t: 'Middle Joint J3', d: 'Core load-bearing joint for smooth pathing.', orbit: '125deg 84deg 1.95m', target: '0m 0.95m 0m', node: 'J3_Elbow' },
+        { t: 'Wrist J5/J6', d: 'Fine attitude control for tight workspaces.', orbit: '-35deg 72deg 1.5m', target: '0m 1.34m 0m', node: 'Wrist_Roll' },
       ],
     },
     c: { title: 'Take a closer look.' },
-    n1: { h: 'R3 Chip', p: 'Power Beast', sub: 'Lightning-fast path planning.' },
-    n2: { h: '±0.02 mm', p: 'Precision', sub: 'Micron-level control.' },
+    n1: { h: 'R3 Chip', p: 'Ultimate Power', sub: 'Lightning-fast path planning.' },
     specs: {
-      title: 'Which Arm is right for you?',
+      title: 'Which Arm is right?',
       buy: 'Inquiry',
       items: [
         { label: 'Payload', v1: '5 kg', v2: '10 kg' },
         { label: 'Repeatability', v1: '±0.02 mm', v2: '±0.01 mm' },
         { label: 'DOF', v1: '6 Axis', v2: '7 Axis' },
         { label: 'Protection', v1: 'IP67', v2: 'IP68' },
-        { label: 'Chip', v1: 'R3 Core', v2: 'R3 Ultra' },
       ],
     },
-  },
+  }
 };
 
-export default function ArmAppleAdaptiveFinal() {
+export default function ArmDetailFinal() {
   const [lang, setLang] = useState<'zh' | 'en'>('zh');
-  const [heroReady, setHeroReady] = useState(false);
-  const [textReady, setTextReady] = useState(false);
   const [scrollVal, setScrollVal] = useState(0);
-  const [heroExitDistance, setHeroExitDistance] = useState(360);
-  const [subNavTrigger, setSubNavTrigger] = useState(760);
-  const [progH, setProgH] = useState(0);
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const [heroReady, setHeroReady] = useState(false);
   const scrollRefH = useRef<HTMLDivElement>(null);
+  const [progH, setProgH] = useState(0);
+  const cardSpinTimersRef = useRef<number[]>([]);
 
-  const t = TRANSLATIONS[lang] || TRANSLATIONS.zh;
+  const t = TRANSLATIONS[lang];
 
-  const triggerInquiry = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    window.dispatchEvent(new Event('apple-inquiry-open'));
-  };
+  useLayoutEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+    setScrollVal(0);
+    setHasScrolled(false);
+  }, []);
 
   useEffect(() => {
-    const sync = () => {
-      const saved = localStorage.getItem('user-lang');
-      if (saved === 'en' || saved === 'zh') setLang(saved as 'zh' | 'en');
+    const syncLang = () => {
+      const saved = (localStorage.getItem('user-lang') as 'zh' | 'en') || 'zh';
+      setLang(saved);
     };
-    sync();
-    const handleScroll = () => setScrollVal(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('langChange', sync);
+    syncLang();
+    window.addEventListener('langChange', syncLang);
+
+    const handleScroll = () => {
+      const y = window.scrollY;
+      setScrollVal(y);
+      if (!hasScrolled && y > 2) setHasScrolled(true);
+    };
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
+    window.addEventListener('scroll', handleScroll, { passive: true });
     document.body.style.backgroundColor = '#000';
-    setTimeout(() => setHeroReady(true), 300);
-    setTimeout(() => setTextReady(true), 1200);
-    const syncThresholds = () => {
-      const vh = window.innerHeight || 900;
-      setHeroExitDistance(Math.max(220, Math.round(vh * 0.52)));
-      setSubNavTrigger(Math.max(420, Math.round(vh * 0.96)));
-    };
-    syncThresholds();
-    window.addEventListener('resize', syncThresholds);
+    setTimeout(() => setHeroReady(true), 100);
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('langChange', sync);
-      window.removeEventListener('resize', syncThresholds);
+      window.removeEventListener('langChange', syncLang);
     };
   }, []);
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add('reveal');
-          else entry.target.classList.remove('reveal');
-        });
-      }, { threshold: 0.1 });
-    document.querySelectorAll('.apple-huge-title, .card, .narrative, .spec-grid').forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [lang, heroReady]);
-
-  const factorSub = Math.min(scrollVal / 300, 1);
-  const mainNavProgress = Math.min(scrollVal / heroExitDistance, 1);
-  const isSubNavVisible = scrollVal > subNavTrigger;
-  const isDeepSection = scrollVal > 3400;
-
-  useEffect(() => {
-    window.dispatchEvent(new CustomEvent('apple-subnav-visibility', { detail: { visible: isSubNavVisible } }));
-    return () => {
-      window.dispatchEvent(new CustomEvent('apple-subnav-visibility', { detail: { visible: false } }));
-    };
-  }, [isSubNavVisible]);
-
-  useEffect(() => {
-    window.dispatchEvent(new CustomEvent('apple-main-nav-progress', { detail: { progress: mainNavProgress } }));
+    const navHideStart = 24;
+    const navHideRange = 86;
+    const progress = Math.max(0, Math.min(1, (scrollVal - navHideStart) / navHideRange));
+    window.dispatchEvent(new CustomEvent('apple-main-nav-progress', { detail: { progress } }));
     return () => {
       window.dispatchEvent(new CustomEvent('apple-main-nav-progress', { detail: { progress: 0 } }));
     };
-  }, [mainNavProgress]);
+  }, [scrollVal]);
+
+  const applyAppleStyle = (model: any) => {
+    if (!model) return;
+    model.materials.forEach((m: any) => {
+      const name = m.name || '';
+      const lowerName = name.toLowerCase();
+      const isMetal =
+        lowerName.includes('metal') ||
+        lowerName.includes('steel') ||
+        lowerName.includes('iron') ||
+        lowerName.includes('joint') ||
+        name === 'Material.001' ||
+        name === 'Material.003';
+      if (isMetal) {
+        m.pbrMetallicRoughness.setMetallicFactor(0.92);
+        m.pbrMetallicRoughness.setRoughnessFactor(0.28);
+        m.pbrMetallicRoughness.setBaseColorFactor([0.86, 0.83, 0.8, 1]);
+      } else {
+        m.pbrMetallicRoughness.setMetallicFactor(0.0);
+        m.pbrMetallicRoughness.setRoughnessFactor(0.48);
+        m.pbrMetallicRoughness.setBaseColorFactor([0.95, 0.94, 0.93, 1]);
+      }
+    });
+  };
+  const startCardNodeMotion = (viewer: any, nodeName: string, speed = 0.02) => {
+    const node = viewer?.model?.getNode?.(nodeName);
+    if (!node) return;
+    let angle = 0;
+    const timer = window.setInterval(() => {
+      angle += speed;
+      node.rotation = nodeName.toLowerCase().includes('wrist')
+        ? [angle * 0.6, 0, 0]
+        : [0, angle, 0];
+    }, 16);
+    cardSpinTimersRef.current.push(timer);
+  };
+
+  useEffect(() => {
+    return () => {
+      cardSpinTimersRef.current.forEach((timer) => window.clearInterval(timer));
+      cardSpinTimersRef.current = [];
+    };
+  }, []);
+
+  const navHideStart = 24;
+  const navHideRange = 86;
+  const navProgress = Math.max(0, Math.min(1, (scrollVal - navHideStart) / navHideRange));
+  const isNavHidden = navProgress > 0.98;
+  const isSubNavShow = hasScrolled && scrollVal > 620 && isNavHidden;
 
   return (
-    <div className="apple-ax1-wrapper" key={lang}>
-      <nav className="fixed-sub-nav" style={{
-          height: `${52 - factorSub * 4}px`,
-          backgroundColor: `rgba(0,0,0, ${0.75 + factorSub * 0.15})`,
-          backdropFilter: `blur(20px) saturate(180%)`,
-          WebkitBackdropFilter: `blur(20px) saturate(180%)`,
-          borderBottom: `1px solid rgba(255,255,255,0.1)`,
-          transform: isSubNavVisible ? 'translate3d(0, 0, 0)' : 'translate3d(0, calc(-100% - 44px), 0)',
-          opacity: isSubNavVisible ? 1 : 0,
-          pointerEvents: isSubNavVisible ? 'auto' : 'none',
-          transition: 'transform 0.52s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease, height 0.3s ease',
-        }}>
-        <div className="nav-content-limiter">
-          <span className="p-name" style={{ fontSize: `${21 - factorSub * 3}px` }}>{t.hero.h}</span>
-          <div className="p-actions">
-            <button className="p-inquiry" onClick={triggerInquiry} style={{
-                padding: `${4}px ${16 - factorSub * 6}px`,
-                backgroundColor: isDeepSection ? '#fff' : '#0071e3',
-                color: isDeepSection ? '#000' : '#fff',
-                fontSize: `${12 - factorSub * 1}px`,
-                borderRadius: '20px',
-                border: 'none',
-                outline: 'none',
-                boxShadow: 'none',
-                WebkitAppearance: 'none',
-                appearance: 'none',
-              }}>{t.inquiry}</button>
+    <div className="apple-wrapper">
+      {/* 🍎 二级导航：主导航飞出后再接管位置 */}
+      {isSubNavShow && (
+        <nav className="nav-sub nav-sub-enter">
+          <div className="nav-box">
+            <span className="p-name">FAIRINO FR5</span>
+            <button
+              className="p-btn-buy"
+              onClick={() => window.dispatchEvent(new Event('apple-inquiry-open'))}
+            >
+              {t.inquiry}
+            </button>
           </div>
-        </div>
-      </nav>
+        </nav>
+      )}
 
-      {/* 1屏: Hero */}
-      <section className="h-sec">
-        <div className={`h-img ${heroReady ? 'reveal' : ''}`}><span className="h-icon">🦾</span></div>
-        <div className={`h-text ${textReady ? 'reveal' : ''}`}>
-          <h1 className="h-giant">{t.hero.h}</h1>
-          <p className="h-sub">{t.hero.p}</p>
+      {/* Hero Section: 真正顶死 */}
+      <section className="hero-section">
+        <div className={`hero-3d-wrap ${heroReady ? 'reveal' : ''}`}>
+           <model-viewer
+              src="/models/fr5.glb"
+              camera-controls
+              auto-rotate
+              disable-zoom
+              touch-action="pan-y"
+              interaction-prompt="none"
+              camera-orbit="45deg 85deg 1900m"
+              camera-target="auto 110% auto"
+              field-of-view="15.5deg"
+              shadow-intensity="0.75"
+              shadow-softness="1.2"
+              environment-image="neutral"
+              environment-intensity="0.72"
+              exposure="0.92"
+              onLoad={(e: any) => applyAppleStyle(e.target.model)}
+              style={{ width: '100%', height: '100%' } as any}
+            />
+        </div>
+        <div className="hero-content">
+          <h1>{t.hero.h}</h1>
+          <p>{t.hero.p}</p>
         </div>
       </section>
 
-      {/* 2屏: Highlights */}
-      <section className="scroll-wall">
-        <div className="title-container">
-          <h2 className="apple-huge-title anim-huge-title">{t.h.title}</h2>
-        </div>
-        <div className="wall-scroller scroll-snap-x-mandatory" ref={scrollRefH} onScroll={() => {
+      {/* Highlights Section */}
+      <section className="highlights-section">
+        <h2 className="section-title">{t.h.title}</h2>
+        <div className="h-scroller" ref={scrollRefH} onScroll={() => {
             if (scrollRefH.current) {
               const { scrollLeft, scrollWidth, clientWidth } = scrollRefH.current;
               setProgH((scrollLeft / (scrollWidth - clientWidth)) * 100);
             }
           }}>
-          <div className="wall-track">
-            <div className="snap-padding-edge" />
-            {t.h.cards.map((item, i) => (
-              <div key={i} className="card snap-center-card w-giant closer-look-style">
-                <div className={`card-info-floating ${item.pos} anim-text-breathe-heavy`}>
-                  <h3 className="f-white">{item.t}</h3>
-                  <p className="f-grey">{item.d}</p>
+          <div className="h-track">
+            <div className="snap-edge" />
+            {t.h.cards.map((card, i) => (
+              <div key={i} className="h-card">
+                <div className="card-3d">
+                   <model-viewer
+                      src="/models/fr5.glb"
+                      camera-orbit={card.orbit}
+                      camera-target={card.target} // 👈 强制聚焦
+                      field-of-view="22deg"
+                      auto-rotate touch-action="pan-y" interaction-prompt="none"
+                      environment-image="neutral" exposure="1.1"
+                      onLoad={(e: any) => {
+                        applyAppleStyle(e.target.model);
+                        startCardNodeMotion(e.target, card.node, i === 0 || i === 3 ? 0.028 : 0.018);
+                      }}
+                      style={{ width: '100%', height: '100%' } as any}
+                    />
                 </div>
-                <div className="card-bg-icon-box">{item.v}</div>
+                <div className="card-text">
+                  <h3>{card.t}</h3>
+                  <p>{card.d}</p>
+                </div>
               </div>
             ))}
-            <div className="snap-padding-edge" />
+            <div className="snap-edge" />
           </div>
         </div>
-        <div className="bar-track-dark"><div className="bar-fill-white" style={{ left: `${progH}%` }}></div></div>
+        <div className="h-progress"><div className="h-bar" style={{ width: `${progH}%` }} /></div>
       </section>
 
-      {/* 3屏: Closer Look */}
-      <section className="scroll-wall deeper-dark">
-        <div className="title-container">
-          <h2 className="apple-huge-title anim-huge-title">{t.c.title}</h2>
-        </div>
-        <div className="wall-scroller scroll-snap-x-mandatory">
-          <div className="wall-track">
-            <div className="snap-padding-edge" />
-            <div className="card snap-center-card w-l closer-look-style img-placeholder-1" />
-            <div className="card snap-center-card w-s closer-look-style img-placeholder-2" />
-            <div className="card snap-center-card w-s closer-look-style img-placeholder-3" />
-            <div className="snap-padding-edge" />
-          </div>
+      {/* Closer Look Placeholder */}
+      <section className="closer-section">
+        <h2 className="section-title">{t.c.title}</h2>
+        <div className="closer-grid">
+           <div className="closer-card l" />
+           <div className="closer-card s" />
         </div>
       </section>
 
-      {/* 4屏 & 5屏: 叙事屏 */}
-      <section className="narrative is-black">
-        <div className="n-bg-visual">🚀</div>
-        <div className="n-content anim-group">
-          <h2 className="n-white-huge">{t.n1.h}</h2>
-          <h2 className="n-grey-huge">{t.n1.p}</h2>
-          <p className="n-desc-white">{t.n1.sub}</p>
-        </div>
-      </section>
-      <section className="narrative is-deeper-grey">
-        <div className="n-bg-visual">🎯</div>
-        <div className="n-content anim-group">
-          <h2 className="n-white-huge">{t.n2.h}</h2>
-          <h2 className="n-grey-huge">{t.n2.p}</h2>
-          <p className="n-desc-white">{t.n2.sub}</p>
-        </div>
+      {/* Narrative Section */}
+      <section className="narrative-section">
+        <h2 className="white-txt">{t.n1.h}</h2>
+        <h2 className="grey-txt">{t.n1.p}</h2>
+        <p className="sub-txt">{t.n1.sub}</p>
       </section>
 
-      {/* 6屏: 对比大卡片 */}
+      {/* Spec Section: 补全对比 */}
       <section className="spec-section">
-        <div className="title-container">
-          <h2 className="apple-huge-title anim-huge-title">{t.specs.title}</h2>
-        </div>
-        <div className="spec-grid">
-          <div className="spec-comparison-card-float closer-look-style responsive-spec-box">
-            <div className="spec-card-header">
-              <div className="model-col">
-                <div className="model-visual">🦾</div>
-                <h3 className="adaptive-title">AX-1 Pro</h3>
-                <button className="model-buy-pill" onClick={triggerInquiry}>{t.specs.buy}</button>
-              </div>
-              <div className="model-col">
-                <div className="model-visual">🏗️</div>
-                <h3 className="adaptive-title">AX-1 Ultra</h3>
-                <button className="model-buy-pill" onClick={triggerInquiry}>{t.specs.buy}</button>
-              </div>
-            </div>
-            <div className="spec-card-body">
-              {t.specs.items.map((row, idx) => (
-                <div key={idx} className="spec-row-item">
-                  <div className="spec-row-label adaptive-label">{row.label}</div>
-                  <div className="spec-row-values">
-                    <div className="val-box adaptive-val">{row.v1}</div>
-                    <div className="val-box adaptive-val">{row.v2}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <h2 className="section-title">{t.specs.title}</h2>
+        <div className="spec-box">
+          <div className="spec-header">
+             <div className="col"><span>🦾</span><h3>FR5</h3></div>
+             <div className="col"><span>🏗️</span><h3>FR20</h3></div>
           </div>
+          {t.specs.items.map((row, idx) => (
+            <div key={idx} className="spec-row">
+              <label>{row.label}</label>
+              <div className="val-box"><span>{row.v1}</span><span>{row.v2}</span></div>
+            </div>
+          ))}
         </div>
       </section>
 
       <style jsx global>{`
-        body { margin: 0; font-family: -apple-system, sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+        body { background: #000; margin: 0; font-family: -apple-system, sans-serif; color: #fff; overflow-x: hidden; }
         
-        /* 🍎 标题容器与位置对齐 🍎 */
-        .title-container { width: 100%; max-width: 1024px; margin: 0 auto; padding: 0 32px; box-sizing: border-box; }
-        .nav-content-limiter { width: 100%; max-width: 980px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
-        .fixed-sub-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; display: flex; align-items: center; will-change: transform, opacity; backface-visibility: hidden; }
-        .p-inquiry:focus,
-        .p-inquiry:focus-visible {
-          outline: none;
-          box-shadow: none;
+        .nav-sub { position: fixed; top: 0; left: 0; width: 100%; height: 52px; z-index: 1001; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid #333; align-items: center; display: flex; }
+        .nav-sub-enter { animation: subNavDropIn 0.34s cubic-bezier(0.22, 1, 0.36, 1); }
+        @keyframes subNavDropIn {
+          from { opacity: 0; transform: translateY(-16px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         
-        .apple-huge-title { 
-          font-size: clamp(48px, 8vw, 80px); /* 👈 等比缩放 */
-          font-weight: 700; 
-          margin: 0 0 60px 0;
-          text-align: left;
-          opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.15, 0, 0.15, 1);
+        .nav-box { width: 100%; max-width: 1024px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; }
+        .p-name { font-size: 21px; font-weight: 600; }
+        .p-btn-buy { background: #0071e3; color: #fff; border: none; padding: 6px 16px; border-radius: 20px; font-size: 12px; cursor: pointer; }
+
+        /* Hero 真正顶死 */
+        .hero-section {
+          height: 100vh;
+          position: relative;
+          margin-top: -52px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          background: #000;
         }
-        .apple-huge-title.reveal { opacity: 1; transform: translateY(0); }
-
-        .n-white-huge { font-size: clamp(60px, 11vw, 110px); font-weight: 700; margin: 0; }
-        .n-grey-huge { font-size: clamp(60px, 11vw, 110px); font-weight: 700; color: #86868b; margin: 0; }
-
-        .closer-look-style {
-          background: rgba(22, 22, 23, 0.6) !important;
-          backdrop-filter: blur(40px) saturate(210%) brightness(85%);
-          WebkitBackdropFilter: blur(40px) saturate(210%) brightness(85%);
-          border: 1px solid rgba(255,255,255,0.1);
-          border-radius: clamp(24px, 4vw, 44px);
+        .hero-3d-wrap {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          transform: scale(1.07) translate3d(0, 6%, 0);
+          filter: blur(8px);
+          z-index: 1;
+          will-change: transform, opacity, filter;
         }
-
-        .h-sec { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .h-img { opacity: 0; transition: 2.5s; } .h-img.reveal { opacity: 1; }
-        .h-icon { font-size: 180px; }
-        .h-text { text-align: center; margin-top: 40px; z-index: 2; }
-        .h-giant { font-size: clamp(60px, 10vw, 100px); font-weight: 700; margin: 0; }
-        .h-sub { font-size: clamp(20px, 3.2vw, 32px); color: #86868b; }
-
-        /* 🍎 卡片内部文字等比缩放 🍎 */
-        @keyframes textBreathe { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(1vw, -1vw) scale(1.05); } }
-        .anim-text-breathe-heavy { animation: textBreathe 6s ease-in-out infinite; }
-        
-        .card-info-floating { position: absolute; z-index: 2; padding: clamp(30px, 6vw, 60px); width: 100%; box-sizing: border-box; }
-        .f-white { font-size: clamp(24px, 4.5vw, 56px); font-weight: 700; line-height: 1.1; }
-        .f-grey { font-size: clamp(14px, 1.8vw, 24px); color: #86868b; margin-top: 15px; }
-        .card-bg-icon-box { position: absolute; bottom: -5%; right: -5%; font-size: 25vw; opacity: 0.04; pointer-events: none; }
-
-        /* 磁吸容器 */
-        .wall-scroller { width: 100%; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x mandatory; }
-        .wall-track { display: flex; gap: 40px; padding: 40px 0; width: max-content; }
-        .snap-padding-edge { flex: 0 0 5vw; }
-        .card { scroll-snap-align: center; flex: 0 0 92vw; height: 88vh; position: relative; overflow: hidden; }
-        .card.w-l { flex: 0 0 78vw; height: 550px; } .card.w-s { flex: 0 0 44vw; height: 550px; }
-
-        /* 叙事屏 */
-        .narrative { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; }
-        .n-bg-visual { font-size: 25vw; position: absolute; opacity: 0.15; z-index: 1; }
-        .n-desc-white { font-size: clamp(16px, 2.2vw, 24px); color: #86868b; margin-top: 40px; max-width: 750px; z-index: 2; }
-
-        /* 🍎 第6屏自适应细节 🍎 */
-        .spec-section { padding: 150px 0; background: #000; }
-        .spec-grid { width: 100%; max-width: 1024px; margin: 0 auto; padding: 0 32px; box-sizing: border-box; }
-        .responsive-spec-box { padding: 8% 5%; width: 100%; box-sizing: border-box; }
-        .spec-card-header { display: flex; justify-content: center; gap: 10%; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 60px; margin-bottom: 40px; align-items: flex-end; }
-        .model-col { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; }
-        .model-visual { font-size: clamp(50px, 9vw, 110px); }
-        .adaptive-title { font-size: clamp(18px, 2.8vw, 32px); font-weight: 600; color: #fff; margin: 0; }
-        .model-buy-pill { background: #0071e3; color: #fff; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: clamp(11px, 1.4vw, 16px); }
-
-        .spec-row-item { display: flex; flex-direction: column; align-items: center; padding: 40px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .adaptive-label { font-size: clamp(10px, 1.2vw, 14px); color: #86868b; text-transform: uppercase; font-weight: 600; margin-bottom: 20px; }
-        .spec-row-values { width: 100%; display: flex; justify-content: center; gap: 10%; }
-        .adaptive-val { flex: 1; text-align: center; font-size: clamp(16px, 2.4vw, 24px); font-weight: 700; color: #fff; }
-
-        @media (max-width: 734px) {
-          .apple-huge-title { font-size: 42px; margin-bottom: 30px; }
-          .title-container { padding: 0 20px; }
-          .spec-grid { padding: 0 20px; }
-          .card { height: 75vh; }
+        .hero-3d-wrap.reveal {
+          animation: heroModelFlyIn 1.45s cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
         }
+        @keyframes heroModelFlyIn {
+          0% {
+            opacity: 0;
+            transform: scale(1.07) translate3d(0, 6%, 0);
+            filter: blur(8px);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1) translate3d(0, 0, 0);
+            filter: blur(0);
+          }
+        }
+        .hero-content { position: relative; z-index: 10; text-align: center; }
+        .hero-content h1 { font-size: clamp(60px, 10vw, 100px); font-weight: 700; margin: 0; }
+        .hero-content p { font-size: 24px; color: #86868b; margin-top: 10px; }
+
+        /* Highlights */
+        .highlights-section { padding: 100px 0; }
+        .section-title { font-size: clamp(40px, 8vw, 64px); font-weight: 700; margin: 0 0 50px 40px; }
+        .h-scroller { width: 100%; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x mandatory; }
+        .h-track { display: flex; gap: 30px; padding-bottom: 30px; width: max-content; }
+        .snap-edge { flex: 0 0 4vw; }
+        .h-card { flex: 0 0 85vw; height: 75vh; background: #161617; border-radius: 36px; position: relative; overflow: hidden; scroll-snap-align: center; border: 1px solid #333; }
+        .card-3d { position: absolute; width: 100%; height: 100%; z-index: 1; }
+        .card-text { position: absolute; top: 40px; left: 40px; z-index: 10; }
+        .card-text h3 { font-size: 42px; font-weight: 700; margin: 0; }
+        .card-text p { font-size: 20px; color: #86868b; margin-top: 10px; }
+
+        .closer-section { padding: 100px 40px; }
+        .closer-grid { display: flex; gap: 20px; }
+        .closer-card { background: #161617; border-radius: 30px; height: 500px; }
+        .closer-card.l { flex: 2; } .closer-card.s { flex: 1; }
+
+        .narrative-section { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .white-txt { font-size: clamp(60px, 11vw, 110px); font-weight: 700; margin: 0; }
+        .grey-txt { font-size: clamp(60px, 11vw, 110px); font-weight: 700; color: #424245; margin: 0; }
+        .sub-txt { font-size: 22px; color: #86868b; margin-top: 40px; max-width: 700px; }
+
+        .spec-section { padding: 100px 40px; }
+        .spec-box { max-width: 900px; margin: 0 auto; background: #161617; border-radius: 40px; padding: 60px; }
+        .spec-header { display: flex; justify-content: space-around; border-bottom: 1px solid #333; padding-bottom: 40px; }
+        .spec-row { display: flex; flex-direction: column; align-items: center; padding: 30px 0; border-bottom: 1px solid #333; }
+        .spec-row label { font-size: 12px; color: #86868b; text-transform: uppercase; margin-bottom: 12px; }
+        .val-box { display: flex; gap: 100px; font-size: 24px; font-weight: 700; }
+
+        .h-progress { width: 300px; height: 2px; background: #333; margin: 40px auto; position: relative; }
+        .h-bar { position: absolute; height: 100%; background: #fff; }
       `}</style>
     </div>
   );

@@ -7,6 +7,7 @@ import React, {
   useContext,
 } from 'react';
 import { usePathname } from 'next/navigation';
+import Script from 'next/script';
 
 function parseColorToRgba(color: string): [number, number, number, number] | null {
   const nums = color.match(/[\d.]+/g);
@@ -23,28 +24,80 @@ const InquiryContext = createContext({
 });
 export const useInquiry = () => useContext(InquiryContext);
 
-// 🍎 你的 600 行配置字典 🍎
+type NavSubLink = { label: string; url: string };
+type NavSection = { label: string; url: string; links: NavSubLink[] };
+
+function navSubLabel(link: NavSubLink | string): string {
+  return typeof link === 'string' ? link : link.label;
+}
+
+function navSubUrl(section: NavSection, link: NavSubLink | string): string {
+  return typeof link === 'string' ? section.url : link.url;
+}
+
+function followNavUrl(url: string, closeUi?: () => void) {
+  if (url === '__inquiry__') {
+    closeUi?.();
+    window.dispatchEvent(new Event('apple-inquiry-open'));
+    return;
+  }
+  closeUi?.();
+  window.location.href = url;
+}
+
+// 🍎 主导航：产品矩阵 / 选型 / 方案 / 支持 / 关于
 const GLOBAL_CONFIG = {
   zh: {
     nav: [
       {
-        label: '机器人手臂',
-        url: '/arm',
-        links: ['AX-1', '技术规格', '工业应用', '开发者平台'],
+        label: '产品矩阵',
+        url: '/',
+        links: [
+          { label: 'FR5（协作灵动型）', url: '/arm' },
+          { label: 'FR20（强力负载型）', url: '/' },
+          { label: '人形系列（具身智能）', url: '/' },
+          { label: '配件生态', url: '/' },
+        ],
       },
       {
-        label: '家用机器人',
+        label: '选型中心',
         url: '/',
-        links: ['HomeBot 2', '厨房助手', '扫地机器人', '智能家居控制'],
+        links: [
+          { label: '产品筛选器', url: '/' },
+          { label: '横向对比', url: '/' },
+        ],
       },
       {
-        label: '服务机器人',
+        label: '行业方案',
         url: '/',
-        links: ['酒店配送', '医疗辅助', '教育套件'],
+        links: [
+          { label: '零售与服务', url: '/' },
+          { label: '智能制造', url: '/' },
+          { label: '医疗与实验室', url: '/' },
+          { label: '教育与科研', url: '/' },
+        ],
       },
-      { label: '支持', url: '/', links: ['保修查询', '手册下载', '预约维修'] },
-      { label: '关于', url: '/', links: ['企业愿景', 'Newsroom', '联系我们'] },
-    ],
+      {
+        label: '技术支持',
+        url: '/',
+        links: [
+          { label: '资源中心', url: '/' },
+          { label: '技术学院', url: '/' },
+          { label: '全球服务', url: '/' },
+          { label: '工单与咨询', url: '__inquiry__' },
+        ],
+      },
+      {
+        label: '关于我们',
+        url: '/',
+        links: [
+          { label: '品牌故事', url: '/' },
+          { label: '技术与创新', url: '/' },
+          { label: '新闻动态', url: '/' },
+          { label: '联系我们', url: '/' },
+        ],
+      },
+    ] satisfies NavSection[],
     search: {
       title: '快速链接',
       noResult: '未找到匹配结果',
@@ -90,31 +143,54 @@ const GLOBAL_CONFIG = {
   en: {
     nav: [
       {
-        label: 'Robot Arm',
-        url: '/arm',
-        links: ['AX-1', 'Specs', 'Industrial', 'Dev Platform'],
+        label: 'Robots',
+        url: '/',
+        links: [
+          { label: 'FR5 (Agile Cobot)', url: '/arm' },
+          { label: 'FR20 (Heavy Duty)', url: '/' },
+          { label: 'Humanoid Series', url: '/' },
+          { label: 'Accessory Ecosystem', url: '/' },
+        ],
       },
       {
-        label: 'Home Bot',
+        label: 'Compare',
         url: '/',
-        links: ['HomeBot 2', 'Kitchen Aid', 'Vacuum Bot', 'Smart Home'],
+        links: [
+          { label: 'Product Selector', url: '/' },
+          { label: 'Robot vs. Robot', url: '/' },
+        ],
       },
       {
-        label: 'Service Bot',
+        label: 'Solutions',
         url: '/',
-        links: ['Hotel Delivery', 'Medical', 'Edu Kits'],
+        links: [
+          { label: 'Retail & Service', url: '/' },
+          { label: 'Smart Manufacturing', url: '/' },
+          { label: 'Medical & Lab', url: '/' },
+          { label: 'Education & Research', url: '/' },
+        ],
       },
       {
         label: 'Support',
         url: '/',
-        links: ['Warranty', 'Manuals', 'Genius Bar'],
+        links: [
+          { label: 'Resource Center', url: '/' },
+          { label: 'Technical Academy', url: '/' },
+          { label: 'Global Service', url: '/' },
+          { label: 'Inquiry / Ticket', url: '__inquiry__' },
+        ],
       },
       {
         label: 'About',
         url: '/',
-        links: ['Our Vision', 'Newsroom', 'Contact'],
+        links: [
+          { label: 'Our Story', url: '/' },
+          { label: 'Technology & Innovation', url: '/' },
+          { label: 'Newsroom', url: '/' },
+          { label: 'Contact Us', url: '/' },
+        ],
       },
-    ],
+    ] satisfies NavSection[],
     search: {
       title: 'Quick Links',
       noResult: 'No results found',
@@ -166,6 +242,7 @@ export default function RootLayout({
 }) {
   const pathname = usePathname();
   const isHome = pathname === '/';
+  const isArm = pathname === '/arm';
   const [lang, setLang] = useState<'zh' | 'en'>('zh');
   const [isReady, setIsReady] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -174,6 +251,7 @@ export default function RootLayout({
   const [isDark, setIsDark] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileExpandedApp, setMobileExpandedApp] = useState<string | null>(null);
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
   const [footerExpandedSection, setFooterExpandedSection] = useState<string | null>(null);
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
   const [isChildSubNavVisible, setIsChildSubNavVisible] = useState(false);
@@ -181,6 +259,7 @@ export default function RootLayout({
   const [navToneOverride, setNavToneOverride] = useState<'dark' | 'light' | null>(null);
   const [sampledNavDark, setSampledNavDark] = useState<boolean | null>(null);
   const [homeAtTop, setHomeAtTop] = useState(true);
+  const lastInquiryCloseAtRef = React.useRef(0);
 
   const config = useMemo(() => GLOBAL_CONFIG[lang], [lang]);
 
@@ -196,8 +275,22 @@ export default function RootLayout({
     window.location.href = `mailto:info@roooll.com?subject=${subject}&body=${body}`;
   };
 
+  const handleCloseInquiry = (e?: React.SyntheticEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    lastInquiryCloseAtRef.current = Date.now();
+    const active = document.activeElement as HTMLElement | null;
+    active?.blur?.();
+    setIsInquiryOpen(false);
+  };
+
   useEffect(() => {
-    const handleInquirySignal = () => setIsInquiryOpen(true);
+    const handleInquirySignal = () => {
+      if (Date.now() - lastInquiryCloseAtRef.current < 360) return;
+      setIsInquiryOpen(true);
+    };
     window.addEventListener('apple-inquiry-open', handleInquirySignal);
     const savedLang = (localStorage.getItem('user-lang') as 'zh' | 'en') || 'zh';
     setLang(savedLang);
@@ -255,6 +348,17 @@ export default function RootLayout({
     }
 
   }, [pathname]);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      setMobileMenuVisible(true);
+      return;
+    }
+    setMobileExpandedApp(null);
+    const timer = window.setTimeout(() => setMobileMenuVisible(false), 420);
+    return () => window.clearTimeout(timer);
+  }, [isMobileMenuOpen]);
+
   useEffect(() => {
     if (pathname !== '/') return;
   
@@ -321,7 +425,12 @@ export default function RootLayout({
     const rawIndex: { name: string; url: string }[] = [];
     config.nav.forEach((item) => {
       rawIndex.push({ name: String(item.label), url: item.url });
-      item.links.forEach((link) => rawIndex.push({ name: `${item.label} - ${link}`, url: item.url }));
+      item.links.forEach((link) =>
+        rawIndex.push({
+          name: `${item.label} - ${navSubLabel(link)}`,
+          url: navSubUrl(item, link),
+        }),
+      );
     });
     return { index: rawIndex, quickLinks: config.nav.slice(0, 3).map((i) => i.label), labels: config.search };
   }, [config]);
@@ -343,7 +452,7 @@ export default function RootLayout({
 
   return (
     <html lang={lang}>
-      <body style={{ opacity: isReady ? 1 : 0, transition: 'opacity 0.3s ease', margin: 0, backgroundColor: isDark ? '#000' : '#fff', overflowX: 'hidden' }}>
+      <body style={{ opacity: isReady ? 1 : 0, transition: 'opacity 0.3s ease', margin: 0, backgroundColor: pathname === '/' ? 'transparent' : (isDark ? '#000' : '#fff'), overflowX: 'hidden' }}>
         <InquiryContext.Provider value={{ isOpen: isInquiryOpen, open: () => setIsInquiryOpen(true), close: () => setIsInquiryOpen(false) }}>
           
           {(activeMenu || isMobileMenuOpen || showSearch || isInquiryOpen) && (
@@ -357,14 +466,18 @@ export default function RootLayout({
               opacity: Math.max(0, 1 - subPageNavProgress),
               pointerEvents: subPageNavProgress > 0.98 ? 'none' : 'auto',
               transition: 'background 0.3s',
+              background: isArm && subPageNavProgress < 0.01 ? 'transparent' : undefined,
+              borderBottomColor: isArm && subPageNavProgress < 0.01 ? 'transparent' : undefined,
+              backdropFilter: isArm && subPageNavProgress < 0.01 ? 'none' : undefined,
+              WebkitBackdropFilter: isArm && subPageNavProgress < 0.01 ? 'none' : undefined,
             }}
           >
             <div className="nav-container">
               <div className="logo-box" onClick={() => (window.location.href = '/')}>
-                <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
-                  <circle cx="50" cy="50" r="28" fill="currentColor" />
-                  <path d="M15 55 C 10 45, 90 25, 85 45 C 82 52, 60 62, 50 62 C 40 62, 18 60, 15 55 Z" stroke="currentColor" strokeWidth="6" fill="none" strokeLinecap="round" />
-                  <path d="M30 42 C 40 35, 60 30, 75 35" stroke="white" className="logo-stroke-fix" strokeWidth="8" fill="none" />
+                <svg viewBox="0 0 128 128" aria-label="brand logo" role="img">
+                  <circle cx="64" cy="66" r="34" fill="currentColor" />
+                  <path d="M18 67C18 58 37 51 63 51C89 51 110 58 110 67C110 76 89 83 63 83C37 83 18 76 18 67Z" stroke="currentColor" strokeWidth="9" fill="none" strokeLinecap="round" />
+                  <path d="M32 74C52 80 82 78 98 71" stroke="var(--logo-cutout)" strokeWidth="9" strokeLinecap="round" />
                 </svg>
               </div>
               <div className="desktop-links-group">
@@ -398,8 +511,18 @@ export default function RootLayout({
                   <div className="menu-col">
                     <h4 className="menu-label">{config.ui.explore}</h4>
                     <ul>
-                      {config.nav.find((i) => i.label === activeMenu)?.links.map((link) => (
-                          <li key={link} onClick={() => { window.location.href = config.nav.find((i) => i.label === activeMenu)!.url; setActiveMenu(null); }}>{link}</li>
+                      {config.nav
+                        .find((i) => i.label === activeMenu)
+                        ?.links.map((link) => (
+                          <li
+                            key={navSubLabel(link)}
+                            onClick={() => {
+                              const section = config.nav.find((i) => i.label === activeMenu)!;
+                              followNavUrl(navSubUrl(section, link), () => setActiveMenu(null));
+                            }}
+                          >
+                            {navSubLabel(link)}
+                          </li>
                         ))}
                     </ul>
                   </div>
@@ -417,7 +540,18 @@ export default function RootLayout({
                   {searchQuery ? (
                     <div className="live-results">
                       {filteredResults.length > 0 ? filteredResults.map((res) => (
-                          <div key={res.name} className="s-item" onClick={() => { window.location.href = res.url; setShowSearch(false); setSearchQuery(''); }}>{res.name}</div>
+                          <div
+                            key={res.name}
+                            className="s-item"
+                            onClick={() => {
+                              followNavUrl(res.url, () => {
+                                setShowSearch(false);
+                                setSearchQuery('');
+                              });
+                            }}
+                          >
+                            {res.name}
+                          </div>
                         )) : <p className="s-no-results">{config.search.noResult}</p>}
                     </div>
                   ) : (
@@ -429,19 +563,28 @@ export default function RootLayout({
                 </div>
               </div>
             </div>
-            {isMobileMenuOpen && (
-              <div className={`mobile-overlay-fixed visible ${navIsDark ? 'is-dark' : ''}`}>
+            {mobileMenuVisible && (
+              <div className={`mobile-overlay-fixed ${isMobileMenuOpen ? 'open' : ''} ${navIsDark ? 'is-dark' : ''}`}>
                 <div className="nav-container mobile-col">
-                  {config.nav.map((item) => (
-                    <div key={item.label} className={`m-sec ${mobileExpandedApp === item.label ? 'open' : ''}`}>
+                  {config.nav.map((item, idx) => (
+                    <div
+                      key={item.label}
+                      className={`m-sec ${mobileExpandedApp === item.label ? 'open' : ''}`}
+                      style={{ ['--i' as string]: idx }}
+                    >
                       <div className="m-row" onClick={() => setMobileExpandedApp(mobileExpandedApp === item.label ? null : item.label)}>
                         <span>{item.label}</span>
-                        <span className="m-plus">{mobileExpandedApp === item.label ? '−' : '+'}</span>
                       </div>
-                      <div className="m-subs">
-                        {mobileExpandedApp === item.label && item.links.map((sub) => (
-                            <div key={sub} className="m-sub-i" onClick={() => { window.location.href = item.url; setIsMobileMenuOpen(false); }}>{sub}</div>
-                          ))}
+                      <div className="m-subs" aria-hidden={mobileExpandedApp !== item.label}>
+                        {item.links.map((sub) => (
+                          <div
+                            key={navSubLabel(sub)}
+                            className="m-sub-i"
+                            onClick={() => followNavUrl(navSubUrl(item, sub), () => setIsMobileMenuOpen(false))}
+                          >
+                            {navSubLabel(sub)}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   ))}
@@ -475,7 +618,15 @@ export default function RootLayout({
                   {config.nav.map((section) => (
                     <div key={section.label} className={`f-col ${footerExpandedSection === section.label ? 'is-open' : ''}`}>
                       <h4 onClick={() => setFooterExpandedSection(footerExpandedSection === section.label ? null : section.label)}>{section.label}<span className="f-chevron-apple"></span></h4>
-                      <div className="f-list">{section.links.map((link) => (<span key={link} onClick={() => (window.location.href = section.url)}>{link}</span>))}</div>
+                      <div className="f-list">
+                        <div className="f-list-inner">
+                          {section.links.map((link) => (
+                            <span key={navSubLabel(link)} onClick={() => followNavUrl(navSubUrl(section, link))}>
+                              {navSubLabel(link)}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -488,10 +639,10 @@ export default function RootLayout({
           <div
             className={`exclusive-final-drawer ${isInquiryOpen ? 'open' : ''}`}
             style={{
-              position: 'fixed', top: 0, right: 0, width: '100%', maxWidth: '480px', height: '100%',
-              backgroundColor: 'rgba(28, 28, 30, 0.45)', 
-              backdropFilter: 'blur(50px) saturate(210%) brightness(80%)',
-              WebkitBackdropFilter: 'blur(50px) saturate(210%) brightness(80%)',
+              position: 'fixed', top: 0, right: 0, bottom: 0, width: '100%', maxWidth: '480px',
+              backgroundColor: 'rgba(28, 28, 30, 0.32)', 
+              backdropFilter: 'blur(44px) saturate(185%) brightness(88%)',
+              WebkitBackdropFilter: 'blur(44px) saturate(185%) brightness(88%)',
               zIndex: 1000000,
               transform: isInquiryOpen ? 'translate3d(0, 0, 0)' : 'translate3d(104%, 0, 0)',
               opacity: isInquiryOpen ? 1 : 0,
@@ -500,34 +651,56 @@ export default function RootLayout({
               pointerEvents: isInquiryOpen ? 'auto' : 'none',
               borderLeft: '1px solid rgba(255,255,255,0.1)', color: '#fff',
               display: 'flex', flexDirection: 'column', boxShadow: '-24px 0 80px rgba(0,0,0,0.34)',
+              overscrollBehavior: 'contain',
+              WebkitOverflowScrolling: 'touch',
             }}
           >
             <button
-              onClick={() => setIsInquiryOpen(false)}
+              type="button"
+              onPointerDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onClick={handleCloseInquiry}
               style={{
-                position: 'absolute', top: '30px', left: '30px', background: 'rgba(255,255,255,0.15)',
-                border: 'none', color: '#fff', width: '32px', height: '32px', borderRadius: '50%',
-                cursor: 'pointer', fontSize: '14px', zIndex: 10,
+                position: 'absolute',
+                top: 'max(env(safe-area-inset-top), 14px)',
+                right: '18px',
+                zIndex: 30,
+                background: 'rgba(255,255,255,0.15)',
+                border: 'none',
+                color: '#fff',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                fontSize: '14px',
                 opacity: isInquiryOpen ? 1 : 0,
                 transform: isInquiryOpen ? 'translate3d(0,0,0)' : 'translate3d(10px,0,0)',
                 transition: 'opacity 0.26s ease 0.12s, transform 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.12s',
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent',
               }}
-            >✕</button>
+            >
+              ✕
+            </button>
             <div className="drawer-scroll-container" style={{
               flex: 1,
               overflowY: 'auto',
-              padding: '100px 40px 40px',
+              padding: '88px 40px 40px',
               boxSizing: 'border-box',
               opacity: isInquiryOpen ? 1 : 0,
               transform: isInquiryOpen ? 'translate3d(0,0,0)' : 'translate3d(24px,0,0)',
               transition: 'opacity 0.32s ease 0.14s, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1) 0.14s',
+              overscrollBehavior: 'contain',
+              WebkitOverflowScrolling: 'touch',
             }}>
               <h2 style={{ fontSize: '42px', fontWeight: 700, margin: '0 0 12px 0', letterSpacing: '-1.5px' }}>{lang === 'zh' ? '开启咨询' : 'Get Quote'}</h2>
               <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '17px', lineHeight: 1.4, marginBottom: '40px' }}>{lang === 'zh' ? '留下您的联系方式，我们将提供正式报价。' : 'Leave contact for official quote.'}</p>
               <form onSubmit={handleInquirySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', boxSizing: 'border-box' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-name-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '您的姓名' : 'Full Name'}</label><input name="Name" id="client-name-final" placeholder={lang === 'zh' ? '您的姓名' : 'Full Name'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-email-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '企业邮箱' : 'Business Email'}</label><input name="Email" id="client-email-final" type="email" placeholder={lang === 'zh' ? '企业邮箱' : 'Business Email'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-industry-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '所属行业' : 'Industry'}</label><div style={{ position: 'relative' }}><select name="Industry" id="client-industry-final" required style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', appearance: 'none', cursor: 'pointer' }}><option value="" disabled selected>{lang === 'zh' ? '所属行业' : 'Industry'}</option>{industries.map((item) => (<option key={item} value={item} style={{ background: '#1c1c1e' }}>{item}</option>))}</select><span style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none', fontSize: '12px' }}>▼</span></div></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-industry-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '所属行业' : 'Industry'}</label><div style={{ position: 'relative' }}><select name="Industry" id="client-industry-final" required defaultValue="" style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', appearance: 'none', cursor: 'pointer' }}><option value="" disabled>{lang === 'zh' ? '所属行业' : 'Industry'}</option>{industries.map((item) => (<option key={item} value={item} style={{ background: '#1c1c1e' }}>{item}</option>))}</select><span style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none', fontSize: '12px' }}>▼</span></div></div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-body-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '项目简述' : 'Message'}</label><textarea name="Body" id="client-body-final" placeholder={lang === 'zh' ? '项目简述...' : 'Message...'} rows={6} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', resize: 'none' }} required /></div>
                 <div style={{ paddingBottom: '60px' }}><button type="submit" style={{ background: '#0071e3', color: '#fff', border: 'none', borderRadius: '16px', padding: '20px', width: '100%', fontSize: '18px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,113,227,0.3)' }}>{lang === 'zh' ? '生成咨询邮件' : 'Generate Email'}</button></div>
               </form>
@@ -537,6 +710,10 @@ export default function RootLayout({
 
         <style jsx global>{`
           :root { --nav-h: 44px; --apple-w: 1024px; --z-nav: 9999; --z-ui: 10001; --bg-grey: #f5f5f7; }
+          html {
+            background: transparent;
+            min-height: 100%;
+          }
           body { font-family: -apple-system, sans-serif; margin: 0; overflow-x: hidden; }
           .nav-container { width: 100%; max-width: var(--apple-w); margin: 0 auto; padding: 0 22px; display: flex; justify-content: space-between; align-items: center; height: 100%; box-sizing: border-box; }
           .apple-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); background: rgba(251,251,253,0.2); backdrop-filter: saturate(135%) blur(8px); z-index: var(--z-nav); border-bottom: 1px solid rgba(0,0,0,0.012); transition: background 0.3s, transform 0.58s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, border-color 0.25s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
@@ -549,9 +726,10 @@ export default function RootLayout({
   -webkit-backdrop-filter: none !important;
 }
           .apple-nav.search-mode { background: #fff !important; }
+          .apple-nav { --logo-cutout: #ffffff; }
+          .apple-nav.is-dark { --logo-cutout: #161617; }
           .logo-box { cursor: pointer; display: flex; align-items: center; z-index: var(--z-ui); flex: 0 0 164px; justify-content: flex-start; }
-          .logo-stroke-fix { stroke: #fff; }
-          .is-dark .logo-stroke-fix { stroke: #161617; }
+          .logo-box svg { width: 26px; height: 26px; display: block; }
           .desktop-links-group { display: flex !important; flex: 1; justify-content: center; gap: 32px; font-size: 12px; align-items: center; z-index: var(--z-ui); min-width: 0; }
           .desktop-links-group span { cursor: pointer; opacity: 0.68; transition: opacity 0.2s ease; white-space: nowrap; }
           .desktop-links-group span:hover { opacity: 0.92; }
@@ -613,13 +791,15 @@ export default function RootLayout({
           .footer-grid { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
           .f-col h4 { font-size: 12px; color: #1d1d1f; margin-bottom: 10px; font-weight: 600; cursor: default; }
           .apple-footer-wrapper.is-dark .f-col h4 { color: #f5f5f7; }
-          .f-list { display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
+          .f-list { display: block; font-size: 12px; }
+          .f-list-inner { display: flex; flex-direction: column; gap: 8px; }
           .f-list span { cursor: pointer; display: block; }
           .f-list span:hover { text-decoration: underline; }
           .f-bottom { border-top: 1px solid #d2d2d7; padding-top: 20px; margin-top: 20px; font-size: 11px; }
           .apple-footer-wrapper.is-dark .f-bottom { border-top-color: #333; }
           .nav-mask-master { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 9997; backdrop-filter: blur(4px); }
           @media (max-width: 734px) {
+            .nav-mask-master { background: rgba(0,0,0,0.22); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
             .search-panel-layer.active { height: 390px; }
             .search-inner { padding-top: 52px !important; padding-bottom: 24px !important; }
             .search-bar { min-height: 48px; border-radius: 12px; padding: 0 10px; gap: 8px; }
@@ -640,33 +820,138 @@ export default function RootLayout({
             }
             .lang-cap-pill:hover { background: rgba(0,0,0,0.08); opacity: 1; }
             .is-dark .lang-cap-pill:hover { background: rgba(255,255,255,0.14); }
-            .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; width: 17px; position: relative; z-index: 10002; }
-            .line { width: 100%; height: 1px; background: currentColor; transition: transform 0.34s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease; transform-origin: center; }
-            .hamburger.active .line:nth-child(1) { transform: translateY(3px) rotate(45deg); }
-            .hamburger.active .line:nth-child(2) { transform: translateY(-3px) rotate(-45deg); }
-            .mobile-overlay-fixed { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #fff; z-index: 999; padding-top: var(--nav-h); overflow-y: auto; animation: mobileMenuIn 0.34s cubic-bezier(0.16, 1, 0.3, 1); }
-            .mobile-overlay-fixed.is-dark { background: #000; color: #f5f5f7; }
-            .mobile-col { flex-direction: column; align-items: stretch !important; padding: 24px 30px !important; animation: mobileMenuItemsIn 0.38s cubic-bezier(0.22, 1, 0.36, 1); }
-            .m-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-size: 24px; font-weight: 500; letter-spacing: -0.01em; cursor: pointer; }
-            .is-dark .m-row { border-bottom-color: #333; }
+            .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; width: 18px; position: relative; z-index: 10002; }
+            .line { width: 100%; height: 1.5px; border-radius: 999px; background: currentColor; transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.26s ease; transform-origin: center; }
+            .hamburger.active .line:nth-child(1) { transform: translateY(3.25px) rotate(45deg) scaleX(1.02); }
+            .hamburger.active .line:nth-child(2) { transform: translateY(-3.25px) rotate(-45deg) scaleX(1.02); }
+            .mobile-overlay-fixed {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100dvh;
+              background: rgba(252, 252, 254, 0.92);
+              -webkit-backdrop-filter: saturate(170%) blur(24px);
+              backdrop-filter: saturate(170%) blur(24px);
+              z-index: 999;
+              padding-top: calc(var(--nav-h) + 8px);
+              overflow-y: auto;
+              opacity: 0;
+              transform: translateY(-6px) scale(1.01);
+              visibility: hidden;
+              pointer-events: none;
+              transition: opacity 0.34s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.42s;
+            }
+            .mobile-overlay-fixed::before {
+              content: '';
+              position: fixed;
+              top: var(--nav-h);
+              left: 0;
+              right: 0;
+              height: 22px;
+              background: linear-gradient(to bottom, rgba(255,255,255,0.72), rgba(255,255,255,0));
+              pointer-events: none;
+              opacity: 0;
+              transition: opacity 0.28s ease;
+            }
+            .mobile-overlay-fixed.open {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+              visibility: visible;
+              pointer-events: auto;
+              transition: opacity 0.34s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+            }
+            .mobile-overlay-fixed.open::before { opacity: 1; }
+            .mobile-overlay-fixed.is-dark { background: rgba(12, 12, 13, 0.84); color: #f5f5f7; }
+            .mobile-overlay-fixed.is-dark::before { background: linear-gradient(to bottom, rgba(18,18,20,0.74), rgba(18,18,20,0)); }
+            .mobile-col {
+              flex-direction: column;
+              align-items: stretch !important;
+              justify-content: flex-start !important;
+              height: auto !important;
+              padding: 10px 28px 20px !important;
+              gap: 12px;
+            }
+            .m-sec {
+              border-bottom: none;
+              opacity: 0;
+              transform: translateY(14px);
+              transition: opacity 0.22s ease, transform 0.22s ease;
+            }
+            .mobile-overlay-fixed.open .m-sec {
+              animation: mobileMenuRowIn 0.56s cubic-bezier(0.22, 1, 0.36, 1) both;
+              animation-delay: calc(var(--i, 0) * 110ms);
+            }
+            .m-row {
+              display: flex;
+              justify-content: flex-start;
+              align-items: center;
+              padding: 5px 0;
+              font-size: clamp(25px, 7.2vw, 30px);
+              line-height: 1.02;
+              font-weight: 600;
+              letter-spacing: -0.03em;
+              cursor: pointer;
+              transition: opacity 0.2s ease, transform 0.22s ease;
+            }
+            .m-row:active { opacity: 0.68; transform: scale(0.995); }
             .footer-grid { flex-direction: column; gap: 0; }
             .f-col { border-bottom: 1px solid #d2d2d7; width: 100%; box-sizing: border-box; }
             .apple-footer-wrapper.is-dark .f-col { border-bottom-color: #333; }
             .f-col h4 { padding: 12px 0; margin: 0; cursor: pointer; display: flex; justify-content: space-between; font-weight: 400; align-items: center; }
             .f-chevron-apple { display: block; width: 8px; height: 8px; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); transition: 0.2s; opacity: 0.6; }
             .f-col.is-open .f-chevron-apple { transform: rotate(-135deg); }
-            .f-list { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s; padding-bottom: 0; }
-            .f-col.is-open .f-list { max-height: 400px; opacity: 1; padding-bottom: 15px; }
-            
-            /* 🍎 悬浮菜单子项优化 🍎 */
-            .m-sub-i { padding: 12px 0; font-size: 16px; font-weight: 400; opacity: 0.78; cursor: pointer; letter-spacing: -0.005em; }
-            .m-subs { padding-top: 6px; padding-left: 8px; }
-            @keyframes mobileMenuIn {
-              from { opacity: 0; transform: translateY(-8px); }
-              to { opacity: 1; transform: translateY(0); }
+            .f-list {
+              display: grid;
+              grid-template-rows: 0fr;
+              overflow: hidden;
+              opacity: 0;
+              transition: grid-template-rows 0.46s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.26s ease;
+              padding-bottom: 0;
             }
-            @keyframes mobileMenuItemsIn {
-              from { opacity: 0; transform: translateY(10px); }
+            .f-list-inner {
+              min-height: 0;
+              overflow: hidden;
+              transform: translateY(-6px);
+              transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .f-col.is-open .f-list { grid-template-rows: 1fr; opacity: 1; padding-bottom: 12px; }
+            .f-col.is-open .f-list-inner { transform: translateY(0); }
+            .f-col:last-child { border-bottom: none; }
+            .f-bottom { border-top: none; margin-top: 10px; padding-top: 10px; }
+            
+            .m-subs {
+              max-height: 0;
+              overflow: hidden;
+              opacity: 0;
+              padding-left: 4px;
+              margin-top: -1px;
+              transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease;
+            }
+            .m-sec.open .m-subs { max-height: 360px; opacity: 1; }
+            .m-sub-i {
+              padding: 8px 0;
+              font-size: 16px;
+              font-weight: 450;
+              opacity: 0;
+              transform: translateX(-6px);
+              cursor: pointer;
+              letter-spacing: -0.01em;
+              color: rgba(29,29,31,0.86);
+              transition: opacity 0.24s ease, transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
+            }
+            .m-sub-i:hover { color: rgba(29,29,31,0.98); }
+            .m-sec.open .m-sub-i { opacity: 1; transform: translateX(0); }
+            .m-sec.open .m-sub-i:nth-child(1) { transition-delay: 40ms; }
+            .m-sec.open .m-sub-i:nth-child(2) { transition-delay: 70ms; }
+            .m-sec.open .m-sub-i:nth-child(3) { transition-delay: 100ms; }
+            .m-sec.open .m-sub-i:nth-child(4) { transition-delay: 130ms; }
+            .m-sec.open .m-sub-i:nth-child(5) { transition-delay: 160ms; }
+            .m-sub-i:active { opacity: 0.64; transform: translateX(1px); }
+            .is-dark .m-sub-i { color: rgba(245,245,247,0.86); }
+            .is-dark .m-sub-i:hover { color: rgba(245,245,247,1); }
+            @keyframes mobileMenuRowIn {
+              from { opacity: 0; transform: translateY(14px); }
               to { opacity: 1; transform: translateY(0); }
             }
 
@@ -675,6 +960,8 @@ export default function RootLayout({
             .exclusive-final-drawer { max-width: 100% !important; }
           }
         `}</style>
+        <Script src="/model-viewer.min.js" strategy="afterInteractive" type="module" />
+        
       </body>
     </html>
   );
