@@ -1,3 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 遗留工具类（若有旧页面引用） */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -12,4 +17,63 @@
   border: none;
   cursor: pointer;
   font-size: 14px;
+}
+
+/* /compare/selector：依次入场 + 阴影呼吸 + 内层微微缩放 */
+@keyframes selector-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes selector-card-breathe {
+  0%,
+  100% {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.05);
+  }
+  50% {
+    box-shadow: 0 22px 56px rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.09);
+  }
+}
+
+@keyframes selector-card-scale-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.014);
+  }
+}
+
+.selector-card-surface {
+  --stagger: 0ms;
+  opacity: 0;
+  animation:
+    selector-card-enter 0.88s cubic-bezier(0.22, 1, 0.36, 1) both,
+    selector-card-breathe 4.8s ease-in-out infinite;
+  animation-delay: var(--stagger), calc(var(--stagger) + 0.88s);
+}
+
+.selector-card-scale-pulse {
+  animation: selector-card-scale-pulse 3.35s ease-in-out infinite;
+  animation-delay: calc(var(--stagger) + 0.88s);
+  transform-origin: center center;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .selector-card-surface,
+  .selector-card-scale-pulse {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

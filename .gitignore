@@ -4,3 +4,5 @@ out
 build
 .DS_Store
 *.log
+# PDF 脚本导出的中间图（成品 fr*.png 可提交）
+public/images/robots/_raw/

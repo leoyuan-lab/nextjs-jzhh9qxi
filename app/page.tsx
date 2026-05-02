@@ -1,5 +1,10 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
+import { rSeriesData } from '@/data/products';
+
+function familyTitle(familyId: string) {
+  return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
+}
 
 export default function HomePage() {
   const [lang, setLang] = useState('zh');
@@ -19,11 +24,13 @@ export default function HomePage() {
   const ctaInquiry = lang === 'zh' ? '咨询' : 'Inquiry';
   const openInquiry = () => window.dispatchEvent(new Event('apple-inquiry-open'));
 
-  useEffect(() => {
-    // 🍎 已移除 Meta 标签 JS 操作补丁
-    const update = () => setLang(localStorage.getItem('user-lang') || 'zh');
-    window.addEventListener('langChange', update);
+  const titleRcore = useMemo(() => familyTitle('r-core'), []);
+  const titleRmax = useMemo(() => familyTitle('r-max'), []);
+
+  useLayoutEffect(() => {
+    const update = () => setLang(localStorage.getItem('user-lang') === 'en' ? 'en' : 'zh');
     update();
+    window.addEventListener('langChange', update);
     return () => window.removeEventListener('langChange', update);
   }, []);
 
@@ -209,21 +216,37 @@ export default function HomePage() {
       {/* Loading Screen */}
       {showLoadingScreen && (
         <div className={`loading-screen ${isLoaded ? 'exit' : ''}`}>
-          <div className="loading-content">
-            <h1 className="slogan">Let's get rolling.</h1>
-            <p className="description">
-              {lang === 'zh' ? '赋能双手，重塑灵感。' : 'Empowering hands, reshaping inspiration.'}
-            </p>
-            <div className="progress-container">
-              <div className="progress-bar" style={{ width: `${loadingProgress}%` }}></div>
+          <div className="loading-scale-shell">
+            <div className="loading-content">
+              <div className="loading-hero-type">
+                <h1 className="loading-slogan-main">
+                  {lang === 'zh' ? '让我们大干一场' : "Let's get rolling."}
+                </h1>
+                {lang === 'zh' ? (
+                  <>
+                    <p className="loading-subline">赋能双手</p>
+                    <p className="loading-subline">重塑灵感</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="loading-subline">Empowering hands</p>
+                    <p className="loading-subline">Reshaping inspiration</p>
+                  </>
+                )}
+              </div>
+              <div className="loading-progress-wrap">
+                <div className="progress-container">
+                  <div className="progress-bar" style={{ width: `${loadingProgress}%` }} />
+                </div>
+                <span className="progress-text">{loadingProgress}%</span>
+              </div>
             </div>
-            <span className="progress-text">{loadingProgress}%</span>
           </div>
         </div>
       )}
 
-      {/* 屏1: FR5 */}
-      <section className="screen-outer" style={{ backgroundColor: '#ffffff', color: '#1d1d1f' }}>
+      {/* 屏1: r-core（fr5.glb） */}
+      <section className="screen-outer screen-outer--hero" style={{ backgroundColor: '#ffffff', color: '#1d1d1f' }}>
         <div className={`hero-3d-wrap ${isLoaded ? 'fr5-entry-animation' : 'hidden-init'}`}>
           <model-viewer 
             ref={viewerRef5} 
@@ -239,7 +262,15 @@ export default function HomePage() {
             exposure="0.98"
             interaction-prompt="none" 
             touch-action="pan-y" 
-            style={{ width: '100%', height: '100%', outline: 'none' } as any} 
+            style={{
+              width: '100%',
+              height: '100%',
+              outline: 'none',
+              backgroundColor: '#ffffff',
+              // model-viewer default top loading stripe (#default-progress-bar); ~1s fade matches user-visible flash
+              ['--progress-bar-height' as string]: '0px',
+              ['--progress-bar-color' as string]: 'transparent',
+            } as any}
           />
         </div>
         <div className={`drag-hint ${showDragHint ? 'show' : ''}`}>
@@ -247,7 +278,7 @@ export default function HomePage() {
         </div>
         <div className="content-limit">
           <div className="text-box dark-copy">
-            <h2 className="title">{lang === 'zh' ? '法奥 FR5' : 'FAIRINO FR5'}</h2>
+            <h2 className="title">{titleRcore}</h2>
             <p className="subtitle">{lang === 'zh' ? '极致精密，协作之巅。' : 'The new era of cobots.'}</p>
             <div className="cta-row">
               <a href="/arm" className="cta-link">{ctaLearn}</a>
@@ -257,9 +288,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 屏2: FR20 */}
-      <section className="screen-outer" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
-        <div className={`hero-3d-wrap ${isLoaded ? 'ready-visible' : 'hidden-init'}`}>
+      {/* 屏2: r-max（fr20.glb） */}
+      <section className="screen-outer screen-outer--hero-dark" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
+        <div className={`hero-3d-wrap hero-3d-wrap--dark ${isLoaded ? 'ready-visible' : 'hidden-init'}`}>
           <model-viewer 
             ref={viewerRef20} 
             src="/models/fr20.glb" 
@@ -274,12 +305,19 @@ export default function HomePage() {
             exposure="1.02"
             field-of-view="15.5deg" 
             touch-action="pan-y"
-            style={{ width: '100%', height: '100%', outline: 'none' } as any} 
+            style={{
+              width: '100%',
+              height: '100%',
+              outline: 'none',
+              backgroundColor: '#000000',
+              ['--progress-bar-height' as string]: '0px',
+              ['--progress-bar-color' as string]: 'transparent',
+            } as any}
           />
         </div>
         <div className="content-limit">
           <div className="text-box">
-            <h2 className="title">{lang === 'zh' ? '法奥 FR20' : 'FAIRINO FR20'}</h2>
+            <h2 className="title">{titleRmax}</h2>
             <p className="subtitle">{lang === 'zh' ? '超强负载，工业核心。' : 'Born for heavy duty.'}</p>
             <div className="cta-row">
               <a href="/" className="cta-link">{ctaLearn}</a>
@@ -354,13 +392,115 @@ export default function HomePage() {
         .card-text p { font-size: 16px; color: #86868b; margin-top: 6px; }
         .card-cta { margin-top: 14px; }
         .card-image-box { flex: 1; background-size: cover; background-position: center; margin: 0 40px 40px 40px; }
-        .loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 100; display: flex; justify-content: center; align-items: center; transition: all 1.2s cubic-bezier(0.645, 0.045, 0.355, 1); }
-        .loading-screen.exit { opacity: 0; pointer-events: none; transform: scale(1.1); }
-        .loading-content { text-align: center; width: 100%; max-width: 900px; }
-        .slogan { font-size: clamp(44px, 10vw, 96px); font-weight: 800; letter-spacing: -0.05em; color: #000; }
-        .progress-container { width: 200px; height: 3px; background: #f2f2f2; margin: 20px auto; overflow: hidden; }
+        .loading-screen {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          height: 100dvh;
+          background: #ffffff;
+          z-index: 100;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: clamp(16px, 4vh, 40px) clamp(20px, 5vw, 48px);
+          box-sizing: border-box;
+          overflow: visible;
+          transition: opacity 1.2s cubic-bezier(0.645, 0.045, 0.355, 1), transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+        .loading-screen.exit { opacity: 0; pointer-events: none; transform: scale(1.04); }
+        .loading-scale-shell {
+          transform: scale(1.5);
+          transform-origin: center center;
+          will-change: transform;
+          backface-visibility: hidden;
+        }
+        .loading-content {
+          text-align: left;
+          width: max-content;
+          max-width: min(960px, calc(100vw - 40px));
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .loading-hero-type {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0;
+          margin: 0;
+        }
+        .loading-slogan-main {
+          margin: 0;
+          padding: 0;
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+          font-size: clamp(36px, 8.6vw, 92px);
+          font-weight: 800;
+          letter-spacing: -0.052em;
+          line-height: 1.05;
+          color: #000000;
+          text-wrap: balance;
+        }
+        .loading-slogan-main + .loading-subline {
+          margin: 0.38em 0 0;
+          padding: 0;
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+          font-size: clamp(22px, 5.17vw, 54px);
+          font-weight: 700;
+          letter-spacing: -0.04em;
+          line-height: 1.12;
+          color: #2b2b2e;
+        }
+        .loading-subline + .loading-subline {
+          margin: 0.2em 0 0;
+          padding: 0;
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+          font-size: clamp(22px, 5.17vw, 54px);
+          font-weight: 600;
+          letter-spacing: -0.038em;
+          line-height: 1.12;
+          color: #6e6e73;
+        }
+        .loading-progress-wrap {
+          margin-top: clamp(28px, 5vh, 48px);
+          width: min(6cm, calc(100vw - 48px));
+          min-width: min(6cm, calc(100vw - 48px));
+          max-width: min(6cm, calc(100vw - 48px));
+          flex-shrink: 0;
+          box-sizing: border-box;
+        }
+        .progress-container {
+          width: 100%;
+          min-width: 0;
+          height: 3px;
+          background: #f0f0f0;
+          overflow: hidden;
+          border-radius: 2px;
+        }
         .progress-bar { height: 100%; background: #000; transition: width 0.3s ease; }
-        .hero-3d-wrap { position: absolute; width: 100%; height: 100%; z-index: 1; }
+        .progress-text {
+          display: block;
+          margin-top: 10px;
+          font-size: 13px;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+          color: #aeaeb2;
+        }
+        .hero-3d-wrap {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+          background: #ffffff;
+          transform: translateZ(0);
+        }
+        .hero-3d-wrap--dark {
+          background: #000000;
+        }
         .hidden-init { opacity: 0 !important; visibility: hidden; }
         .ready-visible { opacity: 1; visibility: visible; }
         .fr5-entry-animation { animation: fr5FullEntry 1.4s cubic-bezier(0.2, 0.75, 0.25, 1) forwards; }

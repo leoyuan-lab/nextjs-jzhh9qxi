@@ -1,13 +1,18 @@
 'use client';
+import './globals.css';
 import React, {
   useState,
   useEffect,
   useMemo,
   createContext,
-  useContext,
 } from 'react';
 import { usePathname } from 'next/navigation';
 import Script from 'next/script';
+import { rSeriesData } from '@/data/products';
+
+function navFamilyName(familyId: string) {
+  return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
+}
 
 function parseColorToRgba(color: string): [number, number, number, number] | null {
   const nums = color.match(/[\d.]+/g);
@@ -16,14 +21,38 @@ function parseColorToRgba(color: string): [number, number, number, number] | nul
   return [r, g, b, Number.isFinite(a) ? a : 1];
 }
 
+/** Same rule as former rAF tone detect: sample pixel under nav, walk to opaque bg, luma < 150 → dark nav. */
+function computeHomeNavDarkFromUnderNav(): boolean {
+  const sampleY = 88;
+  const sampleX = Math.floor(window.innerWidth / 2);
+  const target = document.elementFromPoint(sampleX, sampleY) as HTMLElement | null;
+
+  let node: HTMLElement | null = target;
+  let bgColor = 'rgb(255, 255, 255)';
+  while (node && node !== document.body) {
+    const candidate = window.getComputedStyle(node).backgroundColor;
+    const parsed = parseColorToRgba(candidate);
+    if (parsed && parsed[3] > 0.03) {
+      bgColor = candidate;
+      break;
+    }
+    node = node.parentElement;
+  }
+  if (!node) bgColor = window.getComputedStyle(document.body).backgroundColor || bgColor;
+
+  const rgba = parseColorToRgba(bgColor);
+  if (!rgba) return false;
+  const [r, g, b] = rgba;
+  const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+  return luma < 150;
+}
+
 // --- 🍎 1. 标准 Context 接口 ---
 const InquiryContext = createContext({
   isOpen: false,
   open: () => {},
   close: () => {},
 });
-export const useInquiry = () => useContext(InquiryContext);
-
 type NavSubLink = { label: string; url: string };
 type NavSection = { label: string; url: string; links: NavSubLink[] };
 
@@ -53,8 +82,8 @@ const GLOBAL_CONFIG = {
         label: '产品矩阵',
         url: '/',
         links: [
-          { label: 'FR5（协作灵动型）', url: '/arm' },
-          { label: 'FR20（强力负载型）', url: '/' },
+          { label: `${navFamilyName('r-core')}（协作灵动型）`, url: '/arm' },
+          { label: `${navFamilyName('r-max')}（强力负载型）`, url: '/' },
           { label: '人形系列（具身智能）', url: '/' },
           { label: '配件生态', url: '/' },
         ],
@@ -63,7 +92,7 @@ const GLOBAL_CONFIG = {
         label: '选型中心',
         url: '/',
         links: [
-          { label: '产品筛选器', url: '/' },
+          { label: '产品筛选器', url: '/compare/selector' },
           { label: '横向对比', url: '/' },
         ],
       },
@@ -146,9 +175,9 @@ const GLOBAL_CONFIG = {
         label: 'Robots',
         url: '/',
         links: [
-          { label: 'FR5 (Agile Cobot)', url: '/arm' },
-          { label: 'FR20 (Heavy Duty)', url: '/' },
-          { label: 'Humanoid Series', url: '/' },
+          { label: `${navFamilyName('r-core')} (Agile cobot)`, url: '/arm' },
+          { label: `${navFamilyName('r-max')} (Heavy duty)`, url: '/' },
+          { label: 'Humanoid (Embodied AI)', url: '/' },
           { label: 'Accessory Ecosystem', url: '/' },
         ],
       },
@@ -156,7 +185,7 @@ const GLOBAL_CONFIG = {
         label: 'Compare',
         url: '/',
         links: [
-          { label: 'Product Selector', url: '/' },
+          { label: 'Product Selector', url: '/compare/selector' },
           { label: 'Robot vs. Robot', url: '/' },
         ],
       },
@@ -244,7 +273,6 @@ export default function RootLayout({
   const isHome = pathname === '/';
   const isArm = pathname === '/arm';
   const [lang, setLang] = useState<'zh' | 'en'>('zh');
-  const [isReady, setIsReady] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -258,14 +286,17 @@ export default function RootLayout({
   const [mainNavScrollProgress, setMainNavScrollProgress] = useState(0);
   const [navToneOverride, setNavToneOverride] = useState<'dark' | 'light' | null>(null);
   const [sampledNavDark, setSampledNavDark] = useState<boolean | null>(null);
-  const [homeAtTop, setHomeAtTop] = useState(true);
+  /** True only at literal top of home — full clear bar; any scroll → whisper-glass (`home-ghost`). */
+  const [homePinnedClear, setHomePinnedClear] = useState(true);
   const lastInquiryCloseAtRef = React.useRef(0);
   const mobileToggleLockRef = React.useRef(false);
   const mobileToggleUnlockTimerRef = React.useRef<number | null>(null);
   const mobileQueuedToggleRef = React.useRef(false);
   const mobileExpandedResetTimerRef = React.useRef<number | null>(null);
 
-  const config = useMemo(() => GLOBAL_CONFIG[lang], [lang]);
+  /** `localStorage` may contain garbage; never index `GLOBAL_CONFIG` with a non-key. */
+  const resolvedLang: 'zh' | 'en' = lang === 'en' ? 'en' : 'zh';
+  const config = useMemo(() => GLOBAL_CONFIG[resolvedLang], [resolvedLang]);
 
   const handleInquirySubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -296,9 +327,11 @@ export default function RootLayout({
       setIsInquiryOpen(true);
     };
     window.addEventListener('apple-inquiry-open', handleInquirySignal);
-    const savedLang = (localStorage.getItem('user-lang') as 'zh' | 'en') || 'zh';
-    setLang(savedLang);
-    setIsReady(true);
+    try {
+      setLang(localStorage.getItem('user-lang') === 'en' ? 'en' : 'zh');
+    } catch {
+      setLang('zh');
+    }
     const checkTheme = () => {
       const bgColor = window.getComputedStyle(document.body).backgroundColor;
       setIsDark(bgColor === 'rgb(0, 0, 0)' || bgColor === '#000' || bgColor === 'rgb(22, 22, 23)');
@@ -313,7 +346,13 @@ export default function RootLayout({
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    const handleLangChange = () => setLang((localStorage.getItem('user-lang') as 'zh' | 'en') || 'zh');
+    const handleLangChange = () => {
+      try {
+        setLang(localStorage.getItem('user-lang') === 'en' ? 'en' : 'zh');
+      } catch {
+        setLang('zh');
+      }
+    };
     const handleSubNavVisibility = (event: Event) => {
       const customEvent = event as CustomEvent<{ visible?: boolean }>;
       setIsChildSubNavVisible(Boolean(customEvent.detail?.visible));
@@ -428,59 +467,26 @@ export default function RootLayout({
   }, [isMobileMenuOpen]);
 
   useEffect(() => {
-    if (pathname !== '/') return;
-  
-    const onScroll = () => setHomeAtTop(window.scrollY < 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-  
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [pathname]);
-
-  useEffect(() => {
     if (pathname !== '/') {
       setSampledNavDark(null);
       return;
     }
-    let rafId = 0;
-    const detectTone = () => {
-      const sampleY = 88;
-      const sampleX = Math.floor(window.innerWidth / 2);
-      const target = document.elementFromPoint(sampleX, sampleY) as HTMLElement | null;
 
-      let node: HTMLElement | null = target;
-      let bgColor = 'rgb(255, 255, 255)';
-      while (node && node !== document.body) {
-        const candidate = window.getComputedStyle(node).backgroundColor;
-        const parsed = parseColorToRgba(candidate);
-        if (parsed && parsed[3] > 0.03) {
-          bgColor = candidate;
-          break;
-        }
-        node = node.parentElement;
-      }
-      if (!node) bgColor = window.getComputedStyle(document.body).backgroundColor || bgColor;
-
-      const rgba = parseColorToRgba(bgColor);
-      if (!rgba) return;
-      const [r, g, b] = rgba;
-      const luma = 0.299 * r + 0.587 * g + 0.114 * b;
-      const next = luma < 150;
-      setSampledNavDark((prev) => (prev === next ? prev : next));
+    const syncHomeScrollAndTone = () => {
+      setHomePinnedClear(window.scrollY < 2);
+      const nextDark = computeHomeNavDarkFromUnderNav();
+      setSampledNavDark((prev) => (prev === nextDark ? prev : nextDark));
     };
 
-    const scheduleDetect = () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(detectTone);
-    };
+    syncHomeScrollAndTone();
+    window.addEventListener('scroll', syncHomeScrollAndTone, { passive: true });
+    window.addEventListener('resize', syncHomeScrollAndTone, { passive: true });
+    window.visualViewport?.addEventListener('resize', syncHomeScrollAndTone);
 
-    scheduleDetect();
-    window.addEventListener('scroll', scheduleDetect, { passive: true });
-    window.addEventListener('resize', scheduleDetect);
     return () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      window.removeEventListener('scroll', scheduleDetect);
-      window.removeEventListener('resize', scheduleDetect);
+      window.removeEventListener('scroll', syncHomeScrollAndTone);
+      window.removeEventListener('resize', syncHomeScrollAndTone);
+      window.visualViewport?.removeEventListener('resize', syncHomeScrollAndTone);
     };
   }, [pathname]);
 
@@ -538,17 +544,20 @@ export default function RootLayout({
   }, [searchQuery, searchConfig]);
 
   const toggleLang = () => {
-    const newLang = lang === 'zh' ? 'en' : 'zh';
+    const newLang = resolvedLang === 'zh' ? 'en' : 'zh';
     localStorage.setItem('user-lang', newLang);
     window.dispatchEvent(new Event('langChange'));
     setIsMobileMenuOpen(false);
   };
 
-  const industries = lang === 'zh' ? ['医疗/生物', '汽车制造', '精密电子', '科研教育', '物流仓储', '餐饮/零售', '其他'] : ['Medical & Bio', 'Automotive', 'Electronics', 'Education', 'Logistics', 'Retail', 'Others'];
+  const industries =
+    resolvedLang === 'zh'
+      ? ['医疗/生物', '汽车制造', '精密电子', '科研教育', '物流仓储', '餐饮/零售', '其他']
+      : ['Medical & Bio', 'Automotive', 'Electronics', 'Education', 'Logistics', 'Retail', 'Others'];
 
   return (
-    <html lang={lang}>
-      <body style={{ opacity: isReady ? 1 : 0, transition: 'opacity 0.3s ease', margin: 0, backgroundColor: pathname === '/' ? 'transparent' : (isDark ? '#000' : '#fff'), overflowX: 'hidden' }}>
+    <html lang={resolvedLang}>
+      <body style={{ margin: 0, backgroundColor: pathname === '/' ? 'transparent' : (isDark ? '#000' : '#fff'), overflowX: 'hidden' }}>
         <InquiryContext.Provider value={{ isOpen: isInquiryOpen, open: () => setIsInquiryOpen(true), close: () => setIsInquiryOpen(false) }}>
           
           {(activeMenu || isMobileMenuOpen || showSearch || isInquiryOpen) && (
@@ -556,7 +565,7 @@ export default function RootLayout({
           )}
 
           <nav
-            className={`apple-nav ${navIsDark ? 'is-dark' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homeAtTop ? 'home-clear' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}
+            className={`apple-nav ${isHome ? 'is-home' : ''} ${navIsDark ? 'is-dark' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homePinnedClear ? 'home-clear' : ''} ${isHome && !homePinnedClear && !showSearch ? 'home-ghost' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}
             style={pathname === '/' ? undefined : {
               transform: `translate3d(0, -${(subPageNavProgress * 104).toFixed(2)}%, 0)`,
               opacity: Math.max(0, 1 - subPageNavProgress),
@@ -822,16 +831,32 @@ export default function RootLayout({
           }
           body { font-family: -apple-system, sans-serif; margin: 0; overflow-x: hidden; }
           .nav-container { width: 100%; max-width: var(--apple-w); margin: 0 auto; padding: 0 22px; display: flex; justify-content: space-between; align-items: center; height: 100%; box-sizing: border-box; }
-          .apple-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); background: rgba(251,251,253,0.2); backdrop-filter: saturate(135%) blur(8px); z-index: var(--z-nav); border-bottom: 1px solid rgba(0,0,0,0.012); transition: background 0.3s, transform 0.58s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, border-color 0.25s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
+          .apple-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); background: rgba(251,251,253,0.2); backdrop-filter: saturate(135%) blur(8px); z-index: var(--z-nav); border-bottom: 1px solid rgba(0,0,0,0.012); transition: background 0.38s ease, backdrop-filter 0.38s ease, -webkit-backdrop-filter 0.38s ease, transform 0.58s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, border-color 0.2s ease, color 0.28s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
           .apple-nav.slide-up { transform: translateY(-104%); opacity: 0; pointer-events: none; }
           .apple-nav.is-dark { background: rgba(22, 22, 23, 0.16); color: #f5f5f7; border-bottom-color: rgba(255,255,255,0.02); }
+          .apple-nav.is-home:not(.search-mode) {
+            border-bottom: none !important;
+            box-shadow: none !important;
+          }
           .apple-nav.home-clear {
-  background: transparent !important;
-  border-bottom-color: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-          .apple-nav.search-mode { background: #fff !important; }
+            background: transparent !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+          }
+          .apple-nav.home-ghost:not(.search-mode) {
+            background: rgba(251, 251, 253, 0.026) !important;
+            backdrop-filter: saturate(165%) blur(4px) !important;
+            -webkit-backdrop-filter: saturate(165%) blur(4px) !important;
+          }
+          .apple-nav.home-ghost.is-dark:not(.search-mode) {
+            background: rgba(22, 22, 23, 0.038) !important;
+            color: #f5f5f7;
+            backdrop-filter: saturate(155%) blur(5px) !important;
+            -webkit-backdrop-filter: saturate(155%) blur(5px) !important;
+          }
+          .apple-nav.search-mode { background: #fff !important; border-bottom: 1px solid rgba(0,0,0,0.06) !important; }
           .apple-nav { --logo-cutout: #ffffff; }
           .apple-nav.is-dark { --logo-cutout: #161617; }
           .logo-box { cursor: pointer; display: flex; align-items: center; z-index: var(--z-ui); flex: 0 0 164px; justify-content: flex-start; }

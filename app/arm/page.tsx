@@ -1,11 +1,15 @@
 'use client';
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { rSeriesData } from '@/data/products';
+
+const R_CORE = rSeriesData.find((f) => f.id === 'r-core')!.displayName;
+const R_MAX = rSeriesData.find((f) => f.id === 'r-max')!.displayName;
 
 const TRANSLATIONS = {
   zh: {
     langBtn: 'EN',
     inquiry: '咨询',
-    hero: { h: 'FAIRINO FR5', p: '精钢风骨，细腻如瓷。' },
+    hero: { h: R_CORE, p: '精钢风骨，细腻如瓷。' },
     h: {
       title: '精彩亮点。',
       cards: [
@@ -31,7 +35,7 @@ const TRANSLATIONS = {
   en: {
     langBtn: '中文',
     inquiry: 'Inquiry',
-    hero: { h: 'FAIRINO FR5', p: 'Precision of Steel. Touch of Silk.' },
+    hero: { h: R_CORE, p: 'Precision of Steel. Touch of Silk.' },
     h: {
       title: 'Highlights.',
       cards: [
@@ -165,7 +169,7 @@ export default function ArmDetailFinal() {
       {isSubNavShow && (
         <nav className="nav-sub nav-sub-enter">
           <div className="nav-box">
-            <span className="p-name">FAIRINO FR5</span>
+            <span className="p-name">{R_CORE}</span>
             <button
               className="p-btn-buy"
               onClick={() => window.dispatchEvent(new Event('apple-inquiry-open'))}
@@ -265,8 +269,8 @@ export default function ArmDetailFinal() {
         <h2 className="section-title">{t.specs.title}</h2>
         <div className="spec-box">
           <div className="spec-header">
-             <div className="col"><span>🦾</span><h3>FR5</h3></div>
-             <div className="col"><span>🏗️</span><h3>FR20</h3></div>
+             <div className="col"><span>🦾</span><h3>{R_CORE}</h3></div>
+             <div className="col"><span>🏗️</span><h3>{R_MAX}</h3></div>
           </div>
           {t.specs.items.map((row, idx) => (
             <div key={idx} className="spec-row">
