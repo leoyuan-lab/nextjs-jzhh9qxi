@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
-import { rSeriesData } from '@/data/products';
+import { cobotGlbModels, rSeriesData, robotVariantImageAlt } from '@/data/products';
 
 const R_CORE = rSeriesData.find((f) => f.id === 'r-core')!.displayName;
 const R_MAX = rSeriesData.find((f) => f.id === 'r-max')!.displayName;
@@ -60,7 +60,7 @@ const TRANSLATIONS = {
   }
 };
 
-export default function ArmDetailFinal() {
+export default function CobotsRCorePage() {
   const [lang, setLang] = useState<'zh' | 'en'>('zh');
   const [scrollVal, setScrollVal] = useState(0);
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -70,6 +70,7 @@ export default function ArmDetailFinal() {
   const cardSpinTimersRef = useRef<number[]>([]);
 
   const t = TRANSLATIONS[lang];
+  const fr5HeroAlt = robotVariantImageAlt('fr5-std', lang);
 
   useLayoutEffect(() => {
     if ('scrollRestoration' in window.history) {
@@ -170,6 +171,7 @@ export default function ArmDetailFinal() {
           <div className="nav-box">
             <span className="p-name">{R_CORE}</span>
             <button
+              type="button"
               className="p-btn-buy"
               onClick={() => window.dispatchEvent(new Event('apple-inquiry-open'))}
             >
@@ -183,7 +185,8 @@ export default function ArmDetailFinal() {
       <section className="hero-section">
         <div className={`hero-3d-wrap ${heroReady ? 'reveal' : ''}`}>
            <model-viewer
-              src="/models/fr5.glb"
+              src={cobotGlbModels.rCoreFr5}
+              alt={fr5HeroAlt}
               camera-controls
               auto-rotate
               disable-zoom
@@ -222,7 +225,8 @@ export default function ArmDetailFinal() {
               <div key={i} className="h-card">
                 <div className="card-3d">
                    <model-viewer
-                      src="/models/fr5.glb"
+                      src={cobotGlbModels.rCoreFr5}
+                      alt={fr5HeroAlt}
                       camera-orbit={card.orbit}
                       camera-target={card.target} // 👈 强制聚焦
                       field-of-view="22deg"

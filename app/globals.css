@@ -266,11 +266,11 @@ html {
   visibility: visible;
 }
 
-.apple-home-wrapper .fr5-entry-animation {
-  animation: apple-home-fr5-entry 1.4s cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
+.apple-home-wrapper .r-core-cobot-fr5-entry-animation {
+  animation: apple-home-r-core-cobot-fr5-entry 1.4s cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
 }
 
-@keyframes apple-home-fr5-entry {
+@keyframes apple-home-r-core-cobot-fr5-entry {
   0% {
     opacity: 0;
     transform: scale(1.05) translate3d(0, 5%, 0);
@@ -403,7 +403,7 @@ html {
 }
 
 /*
- * /arm 详情：与 app/arm/page.tsx 原 styled-jsx global 对齐，随 globals 尽早下发。
+ * r‑Core 详情 (`app/cobots/r-core/page.tsx`)：与原 styled‑jsx global 对齐，随 globals 尽早下发。
  * 全部挂在 .arm-page-root 下，避免污染全站（不用 body 选择器）。
  */
 .arm-page-root {
@@ -716,7 +716,7 @@ html {
   background: #fff;
 }
 
-/* /arm 顶栏：透明顶 ↔ 下滑毛玻璃（与 ClientLayout 内联样式一致；!important 避免 styled-jsx 抢样式） */
+/* r‑Core `/cobots/r-core` 顶栏：透明顶 ↔ 下滑毛玻璃（与 ClientLayout 内联样式一致；!important 避免 styled-jsx 抢样式） */
 .apple-nav.is-dark.arm-nav-top-clear:not(.search-mode) {
   background: transparent !important;
   border-bottom-color: transparent !important;
@@ -1010,7 +1010,7 @@ html {
   font-size: 14px;
 }
 
-/* /compare/selector：依次入场 + 阴影呼吸 + 内层微微缩放 */
+/* `/selector/all-specs`（选型）：依次入场 + 阴影呼吸 + 内层微微缩放 */
 @keyframes selector-card-enter {
   from {
     opacity: 0;
@@ -1068,3 +1068,69 @@ html {
     transform: none !important;
   }
 }
+
+/* --- SEO landing (stub) typography --- */
+.seo-brief-root {
+  padding: 8px max(22px, env(safe-area-inset-left)) 72px;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.seo-brief-inner h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.75rem;
+  color: #1d1d1f;
+}
+
+.seo-brief-inner p {
+  margin: 0 0 1.5rem;
+  font-size: 1.0625rem;
+  line-height: 1.47;
+  color: #515154;
+}
+
+.seo-brief-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.seo-brief-link {
+  font-size: 17px;
+  color: #06c;
+  text-decoration: none;
+}
+
+.seo-brief-link:hover {
+  text-decoration: underline;
+}
+
+.seo-brief-inquiry {
+  cursor: pointer;
+  border: none;
+  background: #1d1d1f;
+  color: #f5f5f7;
+  font-size: 15px;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+}
+
+.seo-brief-inquiry:hover {
+  opacity: 0.9;
+}
+
+.seo-contact-mail {
+  padding: 0 max(22px, env(safe-area-inset-left)) 72px;
+  max-width: 42rem;
+  margin: -40px auto 0;
+}
+
+.seo-contact-mail a {
+  font-size: 1.0625rem;
+  color: #06c;
+  word-break: break-all;
+}
+

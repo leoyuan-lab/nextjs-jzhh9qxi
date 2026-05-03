@@ -5,6 +5,7 @@ import type { RefObject } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
+  robotVariantImageAlt,
   robotVariantImageUrl,
   rSeriesData,
   specLabels,
@@ -612,7 +613,7 @@ function SelectorHero2ModelCompare({
                       <div className="flex h-[120px] w-full max-w-[220px] items-center justify-center md:h-[132px] md:max-w-none">
                         <Image
                           src={robotVariantImageUrl[item.id]}
-                          alt=""
+                          alt={robotVariantImageAlt(item.id, lang)}
                           width={200}
                           height={160}
                           className="h-auto max-h-[120px] w-auto max-w-full object-contain md:max-h-[132px]"
@@ -739,7 +740,7 @@ function SelectorLineupCard({
           <div className="flex h-full w-full items-center justify-center px-8 pb-4 pt-10">
             <Image
               src={robotVariantImageUrl[item.id]}
-              alt=""
+              alt={robotVariantImageAlt(item.id, lang)}
               width={340}
               height={380}
               className="h-auto max-h-[260px] w-auto max-w-full object-contain md:max-h-[280px]"

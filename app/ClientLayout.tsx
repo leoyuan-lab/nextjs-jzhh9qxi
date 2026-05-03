@@ -57,6 +57,13 @@ const InquiryContext = createContext({
 type NavSubLink = { label: string; url: string };
 type NavSection = { label: string; url: string; links: NavSubLink[] };
 
+const ARM_NAV_PATHS = new Set(['/cobots/r-core']);
+
+const SELECTOR_NAV_PATHS = new Set(['/selector/all-specs', '/selector/advisor']);
+
+/** Same chrome behavior as homepage (immersive hero, clear nav baseline). */
+const HOME_CHROME_PATHS = new Set(['/', '/selector/comparison']);
+
 function navSubLabel(link: NavSubLink | string): string {
   return typeof link === 'string' ? link : link.label;
 }
@@ -80,56 +87,55 @@ function followNavUrl(url: string, closeUi?: () => void) {
   else setTimeout(go, 0);
 }
 
-// 🍎 主导航：产品矩阵 / 选型 / 方案 / 支持 / 关于
+// 🍎 主导航：Cobots / Selector / Applications / Support / About（SEO 路径与文案）
 const GLOBAL_CONFIG = {
   zh: {
     nav: [
       {
-        label: '产品矩阵',
+        label: '协作机器人',
         url: '/',
         links: [
-          { label: `${navFamilyName('r-core')}（协作灵动型）`, url: '/arm' },
-          { label: `${navFamilyName('r-max')}（强力负载型）`, url: '/' },
-          { label: '人形系列（具身智能）', url: '/' },
-          { label: '配件生态', url: '/' },
+          { label: `${navFamilyName('r-core')}（协作灵动型）`, url: '/cobots/r-core' },
+          { label: `${navFamilyName('r-max')}（强力负载型）`, url: '/cobots/r-max' },
+          { label: '人形机器人（具身智能）', url: '/cobots/humanoid' },
+          { label: '协作机器人配件生态', url: '/cobots/accessories' },
         ],
       },
       {
         label: '选型中心',
         url: '/',
         links: [
-          { label: '产品筛选器', url: '/compare/selector' },
-          { label: '横向对比', url: '/' },
+          { label: '全系列型号与规格', url: '/selector/all-specs' },
+          { label: '横向对比选型', url: '/selector/comparison' },
+          { label: '智能选型向导', url: '/selector/advisor' },
         ],
       },
       {
         label: '行业方案',
         url: '/',
         links: [
-          { label: '零售与服务', url: '/' },
-          { label: '智能制造', url: '/' },
-          { label: '医疗与实验室', url: '/' },
-          { label: '教育与科研', url: '/' },
+          { label: '零售与服务', url: '/applications/retail-service' },
+          { label: '智能制造', url: '/applications/manufacturing' },
+          { label: '医疗与实验室', url: '/applications/medical-lab' },
+          { label: '教育与科研', url: '/applications/education' },
         ],
       },
       {
         label: '技术支持',
         url: '/',
         links: [
-          { label: '资源中心', url: '/' },
-          { label: '技术学院', url: '/' },
-          { label: '全球服务', url: '/' },
-          { label: '工单与咨询', url: '__inquiry__' },
+          { label: '资源中心（下载）', url: '/support/resources' },
+          { label: '技术学院', url: '/support/academy' },
+          { label: '全球服务支持', url: '/support/service' },
         ],
       },
       {
         label: '关于我们',
         url: '/',
         links: [
-          { label: '品牌故事', url: '/' },
-          { label: '技术与创新', url: '/' },
-          { label: '新闻动态', url: '/' },
-          { label: '联系我们', url: '/' },
+          { label: '品牌故事', url: '/about/story' },
+          { label: '新闻资讯', url: '/news' },
+          { label: '联系我们', url: '/contact' },
         ],
       },
     ] satisfies NavSection[],
@@ -178,51 +184,50 @@ const GLOBAL_CONFIG = {
   en: {
     nav: [
       {
-        label: 'Robots',
+        label: 'Cobots',
         url: '/',
         links: [
-          { label: `${navFamilyName('r-core')} (Agile cobot)`, url: '/arm' },
-          { label: `${navFamilyName('r-max')} (Heavy duty)`, url: '/' },
-          { label: 'Humanoid (Embodied AI)', url: '/' },
-          { label: 'Accessory Ecosystem', url: '/' },
+          { label: `${navFamilyName('r-core')} (Agile Series)`, url: '/cobots/r-core' },
+          { label: `${navFamilyName('r-max')} (High Payload)`, url: '/cobots/r-max' },
+          { label: 'Humanoid (Embodied AI)', url: '/cobots/humanoid' },
+          { label: 'Cobot Accessories', url: '/cobots/accessories' },
         ],
       },
       {
-        label: 'Compare',
+        label: 'Selector',
         url: '/',
         links: [
-          { label: 'Product Selector', url: '/compare/selector' },
-          { label: 'Robot vs. Robot', url: '/' },
+          { label: 'All Models & Specs', url: '/selector/all-specs' },
+          { label: 'Side-by-Side Comparison', url: '/selector/comparison' },
+          { label: 'Product Advisor (Find Your Match)', url: '/selector/advisor' },
         ],
       },
       {
-        label: 'Solutions',
+        label: 'Applications',
         url: '/',
         links: [
-          { label: 'Retail & Service', url: '/' },
-          { label: 'Smart Manufacturing', url: '/' },
-          { label: 'Medical & Lab', url: '/' },
-          { label: 'Education & Research', url: '/' },
+          { label: 'Retail & Service', url: '/applications/retail-service' },
+          { label: 'Smart Manufacturing', url: '/applications/manufacturing' },
+          { label: 'Medical & Lab', url: '/applications/medical-lab' },
+          { label: 'Education & Research', url: '/applications/education' },
         ],
       },
       {
         label: 'Support',
         url: '/',
         links: [
-          { label: 'Resource Center', url: '/' },
-          { label: 'Technical Academy', url: '/' },
-          { label: 'Global Service', url: '/' },
-          { label: 'Inquiry / Ticket', url: '__inquiry__' },
+          { label: 'Resource Center (Downloads)', url: '/support/resources' },
+          { label: 'Technical Academy', url: '/support/academy' },
+          { label: 'Global Service Support', url: '/support/service' },
         ],
       },
       {
         label: 'About',
         url: '/',
         links: [
-          { label: 'Our Story', url: '/' },
-          { label: 'Technology & Innovation', url: '/' },
-          { label: 'Newsroom', url: '/' },
-          { label: 'Contact Us', url: '/' },
+          { label: 'Our Story', url: '/about/story' },
+          { label: 'Newsroom', url: '/news' },
+          { label: 'Contact Us', url: '/contact' },
         ],
       },
     ] satisfies NavSection[],
@@ -278,9 +283,9 @@ export default function ClientLayout({
   initialLang: 'zh' | 'en';
 }) {
   const pathname = usePathname();
-  const isHome = pathname === '/';
-  const isArm = pathname === '/arm';
-  const isSelector = pathname === '/compare/selector';
+  const isHome = HOME_CHROME_PATHS.has(pathname);
+  const isArm = ARM_NAV_PATHS.has(pathname);
+  const isSelector = SELECTOR_NAV_PATHS.has(pathname);
   const [lang, setLang] = useState<'zh' | 'en'>(initialLang);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -311,9 +316,9 @@ export default function ClientLayout({
     document.body.style.margin = '0';
     document.body.style.overflowX = 'hidden';
     document.body.style.backgroundColor =
-      pathname === '/'
+      isHome
         ? 'transparent'
-        : pathname === '/arm'
+        : isArm
           ? '#000'
           : isDark
             ? '#000'
@@ -417,14 +422,11 @@ export default function ClientLayout({
   }, []);
 
   useEffect(() => {
-    if (pathname === '/') {
-      setIsChildSubNavVisible(false);
-      setMainNavScrollProgress(0);
-    } else if (pathname === '/arm' || pathname === '/compare/selector') {
+    if (isHome || isArm || isSelector) {
       setIsChildSubNavVisible(false);
       setMainNavScrollProgress(0);
     }
-  }, [pathname]);
+  }, [pathname, isHome, isArm, isSelector]);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -501,7 +503,7 @@ export default function ClientLayout({
   }, [isMobileMenuOpen]);
 
   useEffect(() => {
-    if (pathname !== '/') {
+    if (!HOME_CHROME_PATHS.has(pathname)) {
       setSampledNavDark(null);
       return;
     }
@@ -552,18 +554,18 @@ export default function ClientLayout({
     }, 680);
   }, []);
 
-  /** /arm 黑底页：首帧即深色顶栏，避免 isDark 尚未采样时出现浅色「白条」再变黑 */
+  /** r‑Core 黑底页：首帧即深色顶栏，避免 isDark 尚未采样时出现浅色「白条」再变黑 */
   const navIsDark =
-    pathname === '/'
+    isHome
       ? (sampledNavDark ?? isDark)
-      : pathname === '/arm'
+      : isArm
         ? navToneOverride === 'light'
           ? false
           : true
         : navToneOverride
           ? navToneOverride === 'dark'
           : isDark;
-  const subPageNavProgress = pathname === '/' ? 0 : Math.max(mainNavScrollProgress, isChildSubNavVisible ? 1 : 0);
+  const subPageNavProgress = isHome ? 0 : Math.max(mainNavScrollProgress, isChildSubNavVisible ? 1 : 0);
 
   const searchConfig = useMemo(() => {
     const rawIndex: { name: string; url: string }[] = [];
@@ -615,7 +617,7 @@ export default function ClientLayout({
           <nav
             className={`apple-nav ${isHome ? 'is-home' : ''} ${navIsDark ? 'is-dark' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homePinnedClear ? 'home-clear' : ''} ${isHome && !homePinnedClear && !showSearch ? 'home-ghost' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}${isArm && !showSearch ? (subPageNavProgress < 0.01 ? ' arm-nav-top-clear' : ' arm-nav-scroll-glass') : ''}`}
             style={
-              pathname === '/'
+              isHome
                 ? undefined
                 : {
                     transform: `translate3d(0, -${(subPageNavProgress * 104).toFixed(2)}%, 0)`,
@@ -840,7 +842,7 @@ export default function ClientLayout({
             style={{
               position: 'relative',
               zIndex: 1,
-              /* /arm：与首页一致顶对齐，避免 main 上内边距在透明导航下形成一条「无 3D」的黑/空带 */
+              /* r‑Core `/cobots/r-core`：与首页一致顶对齐，避免 main 上内边距在透明导航下形成一条「无 3D」的黑/空带 */
               paddingTop: isHome || isArm ? '0px' : '44px',
               minHeight: '80vh',
             }}

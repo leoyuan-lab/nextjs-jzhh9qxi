@@ -1,11 +1,17 @@
 'use client';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { rSeriesData } from '@/data/products';
+import { cobotGlbModels, rSeriesData, robotVariantImageAlt } from '@/data/products';
 import { useSiteLang } from '@/lib/site-lang-context';
 
 function familyTitle(familyId: string) {
   return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
 }
+
+/** 屏3 详情卡背景（旧 `/images/detail1.jpg`、`detail2.jpg` 已移除；与 `public/images/robots` 资产一致） */
+const HOME_DETAIL_CARD_IMAGES = {
+  preciseTouch: '/images/robots/r-core-cobot-fr5-std.png',
+  smartCore: '/images/robots/r-max-cobot-fr20-std.png',
+} as const;
 
 export default function HomePage() {
   const lang = useSiteLang();
@@ -27,6 +33,8 @@ export default function HomePage() {
 
   const titleRcore = useMemo(() => familyTitle('r-core'), []);
   const titleRmax = useMemo(() => familyTitle('r-max'), []);
+  const altHeroRcoreGlb = useMemo(() => robotVariantImageAlt('fr5-std', lang), [lang]);
+  const altHeroRmaxGlb = useMemo(() => robotVariantImageAlt('fr20-std', lang), [lang]);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -251,12 +259,13 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* 屏1: r-core（fr5.glb） */}
+      {/* 屏1: r-core（r-core-cobot-fr5.glb） */}
       <section className="screen-outer screen-outer--hero" style={{ backgroundColor: '#ffffff', color: '#1d1d1f' }}>
-        <div className={`hero-3d-wrap ${isLoaded ? 'fr5-entry-animation' : 'hidden-init'}`}>
+        <div className={`hero-3d-wrap ${isLoaded ? 'r-core-cobot-fr5-entry-animation' : 'hidden-init'}`}>
           <model-viewer 
             ref={viewerRef5} 
-            src="/models/fr5.glb" 
+            src={cobotGlbModels.rCoreFr5}
+            alt={altHeroRcoreGlb}
             disable-zoom 
             camera-orbit="45deg 85deg 1900m" 
             camera-target="auto 110% auto" 
@@ -287,19 +296,20 @@ export default function HomePage() {
             <h2 className="title">{titleRcore}</h2>
             <p className="subtitle">{lang === 'zh' ? '极致精密，协作之巅。' : 'The new era of cobots.'}</p>
             <div className="cta-row">
-              <a href="/arm" className="cta-link">{ctaLearn}</a>
+              <a href="/cobots/r-core" className="cta-link">{ctaLearn}</a>
               <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 屏2: r-max（fr20.glb） */}
+      {/* 屏2: r-max（r-max-cobot-fr20.glb） */}
       <section className="screen-outer screen-outer--hero-dark" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
         <div className={`hero-3d-wrap hero-3d-wrap--dark ${isLoaded ? 'ready-visible' : 'hidden-init'}`}>
           <model-viewer 
             ref={viewerRef20} 
-            src="/models/fr20.glb" 
+            src={cobotGlbModels.rMaxFr20}
+            alt={altHeroRmaxGlb}
             auto-rotate 
             disable-zoom 
             camera-orbit="-45deg 80deg 2000m" 
@@ -341,22 +351,36 @@ export default function HomePage() {
               <h3>{lang === 'zh' ? '极致触觉' : 'Precise Touch'}</h3>
               <p>{lang === 'zh' ? '毫秒级碰撞响应' : 'Millisecond response.'}</p>
               <div className="cta-row card-cta">
-                <a href="/" className="cta-link">{ctaLearn}</a>
+                <a href="/cobots/r-core" className="cta-link">
+                  {lang === 'zh' ? '了解 r-Core 协作臂' : 'Explore r-Core cobot'}
+                </a>
                 <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
               </div>
             </div>
-            <div className="card-image-box" style={{ backgroundImage: 'url(/images/detail1.jpg)' }}></div>
+            <div
+              className="card-image-box"
+              role="img"
+              aria-label={robotVariantImageAlt('fr5-std', lang)}
+              style={{ backgroundImage: `url(${HOME_DETAIL_CARD_IMAGES.preciseTouch})` }}
+            />
           </div>
           <div className="sharp-card">
             <div className="card-text">
               <h3>{lang === 'zh' ? '智慧核心' : 'Smart Core'}</h3>
               <p>{lang === 'zh' ? '自研轨迹规划' : 'Smart path planning.'}</p>
               <div className="cta-row card-cta">
-                <a href="/" className="cta-link">{ctaLearn}</a>
+                <a href="/cobots/r-max" className="cta-link">
+                  {lang === 'zh' ? '了解 r-Max 重载臂' : 'Explore r-Max cobot'}
+                </a>
                 <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
               </div>
             </div>
-            <div className="card-image-box" style={{ backgroundImage: 'url(/images/detail2.jpg)' }}></div>
+            <div
+              className="card-image-box"
+              role="img"
+              aria-label={robotVariantImageAlt('fr20-std', lang)}
+              style={{ backgroundImage: `url(${HOME_DETAIL_CARD_IMAGES.smartCore})` }}
+            />
           </div>
         </div>
       </section>

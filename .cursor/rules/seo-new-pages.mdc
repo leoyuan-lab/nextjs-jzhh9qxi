@@ -1,0 +1,18 @@
+---
+description: Mandatory SEO for every new route (metadata + invisible JSON-LD breadcrumbs)
+alwaysApply: true
+---
+
+# New pages: SEO checklist (auto-apply)
+
+Whenever adding a new `app/**/page.tsx` or route segment:
+
+1. **Metadata** — In the segment `layout.tsx`, export `metadata` using `pageMetadata()` from `lib/site-seo.ts` so:
+   - **`title`** includes the literal substrings **`Cobot`** and **`Robotic Arm`** (use `seoTitle()` / `pageMetadata()` which enforces `… Cobot · Robotic Arm · Apple Robot`).
+   - **`description`** includes both concepts; `seoDescription()` will append missing phrases when needed.
+
+2. **Breadcrumbs** — Do **not** add visible breadcrumb UI. Add **only** invisible structured data:
+   - Import `BreadcrumbJsonLd` from `components/BreadcrumbJsonLd.tsx`.
+   - Render `<BreadcrumbJsonLd id="jsonld-bc-{unique}" items={[ { href, en }… ]} />` with **English `en` labels** for Schema.org; hierarchy should match site IA (Home → section → page).
+
+3. **No duplicate nav** — Avoid second on-screen breadcrumb bars; crawlers read the JSON-LD script only.

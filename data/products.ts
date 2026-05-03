@@ -637,11 +637,61 @@ export const robotVariantById: Record<string, RobotVariant> = Object.fromEntries
   rSeriesData.flatMap((f) => f.variants.map((v) => [v.id, v])),
 );
 
-const ROBOT_IMG_BASE = '/images/robots';
+export const ROBOT_IMG_BASE = '/images/robots';
+
+/** 含 3D hero 的 `.glb`，命名：`{rfamily}-cobot-{型号干名}.glb`（与 public 一致） */
+export const cobotGlbModels = {
+  /** r-Core 线（FR5）首页 / 详情 hero */
+  rCoreFr5: '/models/r-core-cobot-fr5.glb',
+  /** r-Max 线（FR20）首页 hero */
+  rMaxFr20: '/models/r-max-cobot-fr20.glb',
+} as const;
+
+export function robotFamilyForVariant(variantId: string): RobotFamily {
+  const fam = rSeriesData.find((f) => f.variants.some((v) => v.id === variantId));
+  if (!fam) throw new Error(`Unknown robot variant id: ${variantId}`);
+  return fam;
+}
+
+/** 公台文件名：`{displayName 小写}-cobot-{variantId}.png`，如 `r-core-cobot-fr5-std.png` */
+export function robotVariantPngFilename(variantId: string): string {
+  const fam = robotFamilyForVariant(variantId);
+  return `${fam.displayName.toLowerCase()}-cobot-${variantId}.png`;
+}
+
+/** 样册营销型号码：FR5、FR5-C、FR10…（`-std` 后缀省略） */
+export function variantCatalogModelCode(variantId: string): string {
+  const upper = variantId.toUpperCase();
+  return upper.endsWith('-STD') ? upper.slice(0, -4) : upper;
+}
+
+function descriptionSnippet(text: string, lang: 'zh' | 'en'): string {
+  const t = text.trim();
+  if (!t) return lang === 'zh' ? '工业协作自动化场景' : 'industrial cobot automation';
+  const parts = lang === 'zh' ? t.split(/[。.]/) : t.split('.');
+  const snip = (parts[0] ?? t).trim();
+  return snip.length > 140 ? `${snip.slice(0, 137)}…` : snip;
+}
+
+/** `<Image alt>` / 无障碍：r 系列名 + 型号 + 数据摘用途 */
+export function robotVariantImageAlt(variantId: string, lang: 'zh' | 'en'): string {
+  const v = robotVariantById[variantId];
+  if (!v) return lang === 'zh' ? '协作机器人机械臂' : 'Collaborative robot arm';
+  const fam = robotFamilyForVariant(variantId);
+  const code = variantCatalogModelCode(variantId);
+  const purpose = descriptionSnippet(lang === 'zh' ? v.description.zh : v.description.en, lang);
+  if (lang === 'zh') {
+    return `${fam.displayName}（${code}）协作机器人机械臂，适用于 ${purpose}`;
+  }
+  return `${fam.displayName} (${code}) Collaborative Robot Arm for ${purpose}`;
+}
 
 /** 与 `robotVariantById` 的 id 一一对应；PNG 由 `scripts/robot_pdf_pipeline.py` 从样册生成 */
 export const robotVariantImageUrl: Record<string, string> = Object.fromEntries(
-  Object.keys(robotVariantById).map((id) => [id, `${ROBOT_IMG_BASE}/${id}.png`]),
+  Object.keys(robotVariantById).map((id) => [
+    id,
+    `${ROBOT_IMG_BASE}/${robotVariantPngFilename(id)}`,
+  ]),
 ) as Record<string, string>;
 
 /** 扁平索引：按显示型号名（如 FR3、FR5-WML）模糊匹配首条 variant */

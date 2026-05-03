@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 从法奥 / FAIRINO 产品手册 PDF 提取嵌入图，按 mapping 处理为透明底 PNG，
-输出到 public/images/robots/{variant_id}.png（与 data/products.ts 中 variant id 一致）。
+输出到 public/images/robots/{rfamily}-cobot-{variant_id}.png，
+与 data/products.ts 中 `robotVariantPngFilename()` 一致（例：r-core-cobot-fr5-std.png）。
 
 依赖: pip install pymupdf pillow numpy
 
@@ -49,6 +50,23 @@ VARIANT_IDS = [
     "fr20-std",
     "fr30-std",
 ]
+
+
+def variant_public_png_name(variant_id: str) -> str:
+    """与 TS `robotVariantPngFilename()` 对齐：{r-family}-cobot-{variant_id}.png"""
+    if variant_id.startswith("fr3-"):
+        fam = "r-lite"
+    elif variant_id.startswith("fr5-"):
+        fam = "r-core"
+    elif variant_id.startswith("fr10-"):
+        fam = "r-reach"
+    elif variant_id.startswith("fr30-"):
+        fam = "r-ultra"
+    elif variant_id.startswith(("fr16-", "fr20-")):
+        fam = "r-max"
+    else:
+        raise ValueError(f"未知 variant id: {variant_id}")
+    return f"{fam}-cobot-{variant_id}.png"
 
 
 def ensure_deps() -> None:
@@ -180,7 +198,7 @@ def process_mapping(mapping_path: Path, upscale: int) -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for vid, rel in mapping.items():
         src = resolve_source(rel)
-        process_one(src, OUT_DIR / f"{vid}.png", upscale)
+        process_one(src, OUT_DIR / variant_public_png_name(vid), upscale)
 
 
 def run(pdf: Path, mapping_path: Path, upscale: int) -> None:
@@ -192,7 +210,7 @@ def run(pdf: Path, mapping_path: Path, upscale: int) -> None:
 def write_placeholder_pngs() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for vid in VARIANT_IDS:
-        p = OUT_DIR / f"{vid}.png"
+        p = OUT_DIR / variant_public_png_name(vid)
         if p.is_file() and p.stat().st_size > 800:
             continue
         p.write_bytes(_PLACEHOLDER_PNG)
@@ -200,7 +218,7 @@ def write_placeholder_pngs() -> None:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="法奥手册 → public/images/robots/*.png")
+    ap = argparse.ArgumentParser(description="法奥手册 → public/images/robots/{family}-cobot-{id}.png")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p1 = sub.add_parser("extract", help="从 PDF 导出嵌入图到 _raw/")
