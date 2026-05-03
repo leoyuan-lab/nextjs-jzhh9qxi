@@ -1,0 +1,1279 @@
+'use client';
+import React, {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  createContext,
+} from 'react';
+import { usePathname } from 'next/navigation';
+import Script from 'next/script';
+import { rSeriesData } from '@/data/products';
+import { SiteLangContext } from '@/lib/site-lang-context';
+
+function navFamilyName(familyId: string) {
+  return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
+}
+
+function parseColorToRgba(color: string): [number, number, number, number] | null {
+  const nums = color.match(/[\d.]+/g);
+  if (!nums || nums.length < 3) return null;
+  const [r, g, b, a] = nums.map(Number);
+  return [r, g, b, Number.isFinite(a) ? a : 1];
+}
+
+/** Same rule as former rAF tone detect: sample pixel under nav, walk to opaque bg, luma < 150 → dark nav. */
+function computeHomeNavDarkFromUnderNav(): boolean {
+  const sampleY = 88;
+  const sampleX = Math.floor(window.innerWidth / 2);
+  const target = document.elementFromPoint(sampleX, sampleY) as HTMLElement | null;
+
+  let node: HTMLElement | null = target;
+  let bgColor = 'rgb(255, 255, 255)';
+  while (node && node !== document.body) {
+    const candidate = window.getComputedStyle(node).backgroundColor;
+    const parsed = parseColorToRgba(candidate);
+    if (parsed && parsed[3] > 0.03) {
+      bgColor = candidate;
+      break;
+    }
+    node = node.parentElement;
+  }
+  if (!node) bgColor = window.getComputedStyle(document.body).backgroundColor || bgColor;
+
+  const rgba = parseColorToRgba(bgColor);
+  if (!rgba) return false;
+  const [r, g, b] = rgba;
+  const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+  return luma < 150;
+}
+
+// --- 🍎 1. 标准 Context 接口 ---
+const InquiryContext = createContext({
+  isOpen: false,
+  open: () => {},
+  close: () => {},
+});
+type NavSubLink = { label: string; url: string };
+type NavSection = { label: string; url: string; links: NavSubLink[] };
+
+function navSubLabel(link: NavSubLink | string): string {
+  return typeof link === 'string' ? link : link.label;
+}
+
+function navSubUrl(section: NavSection, link: NavSubLink | string): string {
+  return typeof link === 'string' ? section.url : link.url;
+}
+
+function followNavUrl(url: string, closeUi?: () => void) {
+  if (url === '__inquiry__') {
+    closeUi?.();
+    window.dispatchEvent(new Event('apple-inquiry-open'));
+    return;
+  }
+  closeUi?.();
+  /* 让关闭 mega/遮罩的 setState 先落盘再跳转，避免首击被卸载中的 DOM「吃掉」需点两次 */
+  const go = () => {
+    window.location.assign(url);
+  };
+  if (typeof queueMicrotask === 'function') queueMicrotask(go);
+  else setTimeout(go, 0);
+}
+
+// 🍎 主导航：产品矩阵 / 选型 / 方案 / 支持 / 关于
+const GLOBAL_CONFIG = {
+  zh: {
+    nav: [
+      {
+        label: '产品矩阵',
+        url: '/',
+        links: [
+          { label: `${navFamilyName('r-core')}（协作灵动型）`, url: '/arm' },
+          { label: `${navFamilyName('r-max')}（强力负载型）`, url: '/' },
+          { label: '人形系列（具身智能）', url: '/' },
+          { label: '配件生态', url: '/' },
+        ],
+      },
+      {
+        label: '选型中心',
+        url: '/',
+        links: [
+          { label: '产品筛选器', url: '/compare/selector' },
+          { label: '横向对比', url: '/' },
+        ],
+      },
+      {
+        label: '行业方案',
+        url: '/',
+        links: [
+          { label: '零售与服务', url: '/' },
+          { label: '智能制造', url: '/' },
+          { label: '医疗与实验室', url: '/' },
+          { label: '教育与科研', url: '/' },
+        ],
+      },
+      {
+        label: '技术支持',
+        url: '/',
+        links: [
+          { label: '资源中心', url: '/' },
+          { label: '技术学院', url: '/' },
+          { label: '全球服务', url: '/' },
+          { label: '工单与咨询', url: '__inquiry__' },
+        ],
+      },
+      {
+        label: '关于我们',
+        url: '/',
+        links: [
+          { label: '品牌故事', url: '/' },
+          { label: '技术与创新', url: '/' },
+          { label: '新闻动态', url: '/' },
+          { label: '联系我们', url: '/' },
+        ],
+      },
+    ] satisfies NavSection[],
+    search: {
+      title: '快速链接',
+      noResult: '未找到匹配结果',
+      placeholder: '搜索机器人...',
+    },
+    ui: {
+      explore: '探索',
+      copyright: 'Copyright © 2026 Apple Robot Inc. 保留所有权利。',
+      langBtn: 'English',
+      mobileLang: 'EN',
+    },
+    footnotes: [
+      {
+        q: '核心优势',
+        a: '我们在机器人手臂领域拥有超过 5 年中的专业分销与技术支持经验；所有产品在离厂前均通过 100% 严格质量检测，确保一流品质与卓越性能。',
+      },
+      {
+        q: '订购咨询',
+        a: '销售代表提供 24/7 在线咨询服务。只需发送业务询价邮件并提供您的具体需求，我们保证在 12 小时内为您提供正式回复。',
+      },
+      {
+        q: '现货订单',
+        a: '标准规格的现货产品在确认付款后 3-5 个工作日内安排发货。大宗订单或特殊定制订单的交货周期请以销售合同最终确认时间为准。',
+      },
+      {
+        q: '性能数据',
+        a: '所有技术参数（如重复定位精度 ±0.02mm）均在受控实验室环境下测得。实际运行表现可能因有效负载、移动速度及环境湿度波动而产生细微差异。',
+      },
+      {
+        q: '定制服务',
+        a: '我们支持深度 OEM/ODM 定制，包括但不限于机身涂装、Logo 丝印及针对特定行业开发的专用末端执行器。定制周期通常为 20-30 个工作日。',
+      },
+      {
+        q: '保修服务',
+        a: '核心机械部件（电机、减速机）及控制系统享有 2 年有限保修。我们提供全球范围内的技术支持响应，确保您的生产线始终保持高效运转。',
+      },
+      {
+        q: '合规认证',
+        a: '本网站展示的所有产品均符合国际 RoHS 环保标准，不含有害物质，并已通过欧盟 CE 强制性安全认证及 ISO9001 质量管理体系认证。',
+      },
+    ],
+  },
+  en: {
+    nav: [
+      {
+        label: 'Robots',
+        url: '/',
+        links: [
+          { label: `${navFamilyName('r-core')} (Agile cobot)`, url: '/arm' },
+          { label: `${navFamilyName('r-max')} (Heavy duty)`, url: '/' },
+          { label: 'Humanoid (Embodied AI)', url: '/' },
+          { label: 'Accessory Ecosystem', url: '/' },
+        ],
+      },
+      {
+        label: 'Compare',
+        url: '/',
+        links: [
+          { label: 'Product Selector', url: '/compare/selector' },
+          { label: 'Robot vs. Robot', url: '/' },
+        ],
+      },
+      {
+        label: 'Solutions',
+        url: '/',
+        links: [
+          { label: 'Retail & Service', url: '/' },
+          { label: 'Smart Manufacturing', url: '/' },
+          { label: 'Medical & Lab', url: '/' },
+          { label: 'Education & Research', url: '/' },
+        ],
+      },
+      {
+        label: 'Support',
+        url: '/',
+        links: [
+          { label: 'Resource Center', url: '/' },
+          { label: 'Technical Academy', url: '/' },
+          { label: 'Global Service', url: '/' },
+          { label: 'Inquiry / Ticket', url: '__inquiry__' },
+        ],
+      },
+      {
+        label: 'About',
+        url: '/',
+        links: [
+          { label: 'Our Story', url: '/' },
+          { label: 'Technology & Innovation', url: '/' },
+          { label: 'Newsroom', url: '/' },
+          { label: 'Contact Us', url: '/' },
+        ],
+      },
+    ] satisfies NavSection[],
+    search: {
+      title: 'Quick Links',
+      noResult: 'No results found',
+      placeholder: 'Search Robot...',
+    },
+    ui: {
+      explore: 'Explore',
+      copyright: 'Copyright © 2026 Apple Robot Inc. All rights reserved.',
+      langBtn: '中文',
+      mobileLang: '中',
+    },
+    footnotes: [
+      {
+        q: 'Advantage',
+        a: 'Professional robot arms provider with OVER 5 years of experience. 100% quality inspection before shipment ensures top-tier reliability.',
+      },
+      {
+        q: 'Ordering',
+        a: 'Sales representatives online 24/7. Send us an inquiry with your specs and expect an official email response within 12 hours.',
+      },
+      {
+        q: 'Delivery',
+        a: 'Standard stock products are shipped within 3-5 business days upon payment. Lead time for bulk or custom orders is subject to contract confirmation.',
+      },
+      {
+        q: 'Performance',
+        a: 'Specs like repeatability (±0.02mm) are tested in controlled lab environments. Actual results may vary based on load, speed, and environmental humidity.',
+      },
+      {
+        q: 'Customization',
+        a: 'Full OEM/ODM services supported, including custom colors, Logo printing, and specialized end-effectors. Custom lead time is typically 20-30 days.',
+      },
+      {
+        q: 'Warranty',
+        a: 'Core mechanical parts (motors, reducers) come with a 2-year limited warranty. Global technical support is available to ensure minimal production downtime.',
+      },
+      {
+        q: 'Compliance',
+        a: 'All products comply with international RoHS standards and have passed official CE safety certifications and ISO9001 quality management standards.',
+      },
+    ],
+  },
+};
+
+export default function ClientLayout({
+  children,
+  initialLang,
+}: {
+  children: React.ReactNode;
+  initialLang: 'zh' | 'en';
+}) {
+  const pathname = usePathname();
+  const isHome = pathname === '/';
+  const isArm = pathname === '/arm';
+  const isSelector = pathname === '/compare/selector';
+  const [lang, setLang] = useState<'zh' | 'en'>(initialLang);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [mobileExpandedApp, setMobileExpandedApp] = useState<string | null>(null);
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
+  const [footerExpandedSection, setFooterExpandedSection] = useState<string | null>(null);
+  const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+  const [isChildSubNavVisible, setIsChildSubNavVisible] = useState(false);
+  const [mainNavScrollProgress, setMainNavScrollProgress] = useState(0);
+  const [navToneOverride, setNavToneOverride] = useState<'dark' | 'light' | null>(null);
+  const [sampledNavDark, setSampledNavDark] = useState<boolean | null>(null);
+  /** True only at literal top of home — full clear bar; any scroll → whisper-glass (`home-ghost`). */
+  const [homePinnedClear, setHomePinnedClear] = useState(true);
+  const lastInquiryCloseAtRef = React.useRef(0);
+  const mobileToggleLockRef = React.useRef(false);
+  const mobileToggleUnlockTimerRef = React.useRef<number | null>(null);
+  const mobileQueuedToggleRef = React.useRef(false);
+  const mobileExpandedResetTimerRef = React.useRef<number | null>(null);
+
+  /** `localStorage` may contain garbage; never index `GLOBAL_CONFIG` with a non-key. */
+  const resolvedLang: 'zh' | 'en' = lang === 'en' ? 'en' : 'zh';
+  const config = useMemo(() => GLOBAL_CONFIG[resolvedLang], [resolvedLang]);
+
+  useLayoutEffect(() => {
+    document.body.style.margin = '0';
+    document.body.style.overflowX = 'hidden';
+    document.body.style.backgroundColor =
+      pathname === '/'
+        ? 'transparent'
+        : pathname === '/arm'
+          ? '#000'
+          : isDark
+            ? '#000'
+            : '#fff';
+    try {
+      /* 尚无 cookie 但旧版只写了 localStorage：首帧前对齐语言并写入 cookie，避免与 FOUC 同拍闪切 */
+      if (initialLang === 'zh' && localStorage.getItem('user-lang') === 'en') {
+        document.cookie = 'user-lang=en; Path=/; Max-Age=31536000; SameSite=Lax';
+        setLang('en');
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [pathname, isDark, initialLang]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('lang', resolvedLang);
+  }, [resolvedLang]);
+
+  const handleInquirySubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get('Name');
+    const email = formData.get('Email');
+    const industry = formData.get('Industry');
+    const msg = formData.get('Body');
+    const subject = encodeURIComponent(`AX-1 Inquiry from ${name} (${industry})`);
+    const body = encodeURIComponent(`Name: ${name}\r\nEmail: ${email}\r\nIndustry: ${industry}\r\n\r\nMessage:\r\n${msg}`);
+    window.location.href = `mailto:info@roooll.com?subject=${subject}&body=${body}`;
+  };
+
+  const handleCloseInquiry = (e?: React.SyntheticEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    lastInquiryCloseAtRef.current = Date.now();
+    const active = document.activeElement as HTMLElement | null;
+    active?.blur?.();
+    setIsInquiryOpen(false);
+  };
+
+  useEffect(() => {
+    const handleInquirySignal = () => {
+      if (Date.now() - lastInquiryCloseAtRef.current < 360) return;
+      setIsInquiryOpen(true);
+    };
+    window.addEventListener('apple-inquiry-open', handleInquirySignal);
+    const checkTheme = () => {
+      const bgColor = window.getComputedStyle(document.body).backgroundColor;
+      setIsDark(bgColor === 'rgb(0, 0, 0)' || bgColor === '#000' || bgColor === 'rgb(22, 22, 23)');
+    };
+    checkTheme();
+    const themeTimer = setInterval(checkTheme, 500);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowSearch(false);
+        setSearchQuery('');
+        setIsInquiryOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    const handleLangChange = () => {
+      try {
+        const next = localStorage.getItem('user-lang') === 'en' ? 'en' : 'zh';
+        setLang(next);
+        document.cookie = `user-lang=${next}; Path=/; Max-Age=31536000; SameSite=Lax`;
+      } catch {
+        setLang('zh');
+      }
+    };
+    const handleSubNavVisibility = (event: Event) => {
+      const customEvent = event as CustomEvent<{ visible?: boolean }>;
+      setIsChildSubNavVisible(Boolean(customEvent.detail?.visible));
+    };
+    const handleNavTone = (event: Event) => {
+      const customEvent = event as CustomEvent<{ tone?: 'dark' | 'light' | null }>;
+      const tone = customEvent.detail?.tone;
+      if (tone === 'dark' || tone === 'light') setNavToneOverride(tone);
+      else setNavToneOverride(null);
+    };
+    const handleMainNavProgress = (event: Event) => {
+      const customEvent = event as CustomEvent<{ progress?: number }>;
+      const raw = customEvent.detail?.progress ?? 0;
+      const clamped = Math.max(0, Math.min(1, raw));
+      setMainNavScrollProgress(clamped);
+    };
+    window.addEventListener('langChange', handleLangChange);
+    window.addEventListener('apple-subnav-visibility', handleSubNavVisibility as EventListener);
+    window.addEventListener('apple-nav-tone', handleNavTone as EventListener);
+    window.addEventListener('apple-main-nav-progress', handleMainNavProgress as EventListener);
+    return () => {
+      window.removeEventListener('langChange', handleLangChange);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('apple-inquiry-open', handleInquirySignal);
+      window.removeEventListener('apple-subnav-visibility', handleSubNavVisibility as EventListener);
+      window.removeEventListener('apple-nav-tone', handleNavTone as EventListener);
+      window.removeEventListener('apple-main-nav-progress', handleMainNavProgress as EventListener);
+      clearInterval(themeTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (pathname === '/') {
+      setIsChildSubNavVisible(false);
+      setMainNavScrollProgress(0);
+    } else if (pathname === '/arm' || pathname === '/compare/selector') {
+      setIsChildSubNavVisible(false);
+      setMainNavScrollProgress(0);
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      setMobileMenuVisible(true);
+      return;
+    }
+    const timer = window.setTimeout(() => setMobileMenuVisible(false), 620);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      if (mobileExpandedResetTimerRef.current) {
+        window.clearTimeout(mobileExpandedResetTimerRef.current);
+        mobileExpandedResetTimerRef.current = null;
+      }
+      return;
+    }
+    mobileExpandedResetTimerRef.current = window.setTimeout(() => {
+      setMobileExpandedApp(null);
+      mobileExpandedResetTimerRef.current = null;
+    }, 620);
+    return () => {
+      if (mobileExpandedResetTimerRef.current) {
+        window.clearTimeout(mobileExpandedResetTimerRef.current);
+        mobileExpandedResetTimerRef.current = null;
+      }
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const body = document.body;
+    const html = document.documentElement;
+    const prevBodyOverflow = body.style.overflow;
+    const prevBodyOverscroll = body.style.overscrollBehavior;
+    const prevHtmlOverscroll = html.style.overscrollBehavior;
+    body.style.overflow = 'hidden';
+    body.style.overscrollBehavior = 'none';
+    html.style.overscrollBehavior = 'none';
+
+    const blockBackgroundTouchMove = (event: TouchEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('.mobile-overlay-fixed')) return;
+      event.preventDefault();
+    };
+    const blockBackgroundWheel = (event: WheelEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('.mobile-overlay-fixed')) return;
+      event.preventDefault();
+    };
+    const blockBackgroundScrollKeys = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target && /input|textarea|select/i.test(target.tagName)) return;
+      if ([' ', 'PageUp', 'PageDown', 'End', 'Home', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+        event.preventDefault();
+      }
+    };
+    document.addEventListener('touchmove', blockBackgroundTouchMove, { passive: false });
+    document.addEventListener('wheel', blockBackgroundWheel, { passive: false });
+    document.addEventListener('keydown', blockBackgroundScrollKeys);
+
+    return () => {
+      document.removeEventListener('touchmove', blockBackgroundTouchMove);
+      document.removeEventListener('wheel', blockBackgroundWheel);
+      document.removeEventListener('keydown', blockBackgroundScrollKeys);
+      body.style.overflow = prevBodyOverflow;
+      body.style.overscrollBehavior = prevBodyOverscroll;
+      html.style.overscrollBehavior = prevHtmlOverscroll;
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (pathname !== '/') {
+      setSampledNavDark(null);
+      return;
+    }
+
+    const syncHomeScrollAndTone = () => {
+      setHomePinnedClear(window.scrollY < 2);
+      const nextDark = computeHomeNavDarkFromUnderNav();
+      setSampledNavDark((prev) => (prev === nextDark ? prev : nextDark));
+    };
+
+    syncHomeScrollAndTone();
+    window.addEventListener('scroll', syncHomeScrollAndTone, { passive: true });
+    window.addEventListener('resize', syncHomeScrollAndTone, { passive: true });
+    window.visualViewport?.addEventListener('resize', syncHomeScrollAndTone);
+
+    return () => {
+      window.removeEventListener('scroll', syncHomeScrollAndTone);
+      window.removeEventListener('resize', syncHomeScrollAndTone);
+      window.visualViewport?.removeEventListener('resize', syncHomeScrollAndTone);
+    };
+  }, [pathname]);
+
+  useEffect(() => {
+    return () => {
+      if (mobileToggleUnlockTimerRef.current) {
+        window.clearTimeout(mobileToggleUnlockTimerRef.current);
+      }
+      if (mobileExpandedResetTimerRef.current) {
+        window.clearTimeout(mobileExpandedResetTimerRef.current);
+      }
+    };
+  }, []);
+
+  const triggerMobileMenuToggle = React.useCallback(() => {
+    mobileToggleLockRef.current = true;
+    setShowSearch(false);
+    setIsMobileMenuOpen((prev) => !prev);
+
+    if (mobileToggleUnlockTimerRef.current) {
+      window.clearTimeout(mobileToggleUnlockTimerRef.current);
+    }
+    mobileToggleUnlockTimerRef.current = window.setTimeout(() => {
+      mobileToggleLockRef.current = false;
+      if (mobileQueuedToggleRef.current) {
+        mobileQueuedToggleRef.current = false;
+        triggerMobileMenuToggle();
+      }
+    }, 680);
+  }, []);
+
+  /** /arm 黑底页：首帧即深色顶栏，避免 isDark 尚未采样时出现浅色「白条」再变黑 */
+  const navIsDark =
+    pathname === '/'
+      ? (sampledNavDark ?? isDark)
+      : pathname === '/arm'
+        ? navToneOverride === 'light'
+          ? false
+          : true
+        : navToneOverride
+          ? navToneOverride === 'dark'
+          : isDark;
+  const subPageNavProgress = pathname === '/' ? 0 : Math.max(mainNavScrollProgress, isChildSubNavVisible ? 1 : 0);
+
+  const searchConfig = useMemo(() => {
+    const rawIndex: { name: string; url: string }[] = [];
+    config.nav.forEach((item) => {
+      rawIndex.push({ name: String(item.label), url: item.url });
+      item.links.forEach((link) =>
+        rawIndex.push({
+          name: `${item.label} - ${navSubLabel(link)}`,
+          url: navSubUrl(item, link),
+        }),
+      );
+    });
+    return { index: rawIndex, quickLinks: config.nav.slice(0, 3).map((i) => i.label), labels: config.search };
+  }, [config]);
+
+  const filteredResults = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return [];
+    return searchConfig.index.filter((item) => item.name.toLowerCase().includes(query)).slice(0, 6);
+  }, [searchQuery, searchConfig]);
+
+  const toggleLang = () => {
+    const newLang = resolvedLang === 'zh' ? 'en' : 'zh';
+    try {
+      localStorage.setItem('user-lang', newLang);
+      document.cookie = `user-lang=${newLang}; Path=/; Max-Age=31536000; SameSite=Lax`;
+    } catch {
+      /* ignore */
+    }
+    setLang(newLang);
+    window.dispatchEvent(new Event('langChange'));
+    setIsMobileMenuOpen(false);
+  };
+
+  const industries =
+    resolvedLang === 'zh'
+      ? ['医疗/生物', '汽车制造', '精密电子', '科研教育', '物流仓储', '餐饮/零售', '其他']
+      : ['Medical & Bio', 'Automotive', 'Electronics', 'Education', 'Logistics', 'Retail', 'Others'];
+
+  return (
+    <>
+      <SiteLangContext.Provider value={resolvedLang}>
+        <InquiryContext.Provider value={{ isOpen: isInquiryOpen, open: () => setIsInquiryOpen(true), close: () => setIsInquiryOpen(false) }}>
+          
+          {(activeMenu || isMobileMenuOpen || showSearch || isInquiryOpen) && (
+            <div className="nav-mask-master" onClick={() => { setActiveMenu(null); setIsMobileMenuOpen(false); setShowSearch(false); setIsInquiryOpen(false); setSearchQuery(''); }} />
+          )}
+
+          <nav
+            className={`apple-nav ${isHome ? 'is-home' : ''} ${navIsDark ? 'is-dark' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homePinnedClear ? 'home-clear' : ''} ${isHome && !homePinnedClear && !showSearch ? 'home-ghost' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}${isArm && !showSearch ? (subPageNavProgress < 0.01 ? ' arm-nav-top-clear' : ' arm-nav-scroll-glass') : ''}`}
+            style={
+              pathname === '/'
+                ? undefined
+                : {
+                    transform: `translate3d(0, -${(subPageNavProgress * 104).toFixed(2)}%, 0)`,
+                    /* selector：不淡出整栏；位移过渡加快，避免手机侧栏「慢半拍」 */
+                    opacity: isSelector ? 1 : Math.max(0, 1 - subPageNavProgress),
+                    pointerEvents: subPageNavProgress > 0.98 ? 'none' : 'auto',
+                    ...(isSelector
+                      ? {
+                          transition:
+                            'transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0s, background 0.25s ease, border-color 0.2s ease, backdrop-filter 0.25s ease, -webkit-backdrop-filter 0.25s ease',
+                        }
+                      : isArm
+                        ? subPageNavProgress < 0.01
+                          ? {
+                              background: 'transparent',
+                              borderBottom: '1px solid transparent',
+                              backdropFilter: 'none',
+                              WebkitBackdropFilter: 'none',
+                              transition:
+                                'background 0.38s ease, backdrop-filter 0.38s ease, -webkit-backdrop-filter 0.38s ease, border-color 0.38s ease',
+                            }
+                          : {
+                              background: 'rgba(22, 22, 23, 0.34)',
+                              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                              backdropFilter: 'saturate(160%) blur(12px)',
+                              WebkitBackdropFilter: 'saturate(160%) blur(12px)',
+                              transition:
+                                'background 0.38s ease, backdrop-filter 0.38s ease, -webkit-backdrop-filter 0.38s ease, border-color 0.38s ease',
+                            }
+                        : {
+                            transition: 'background 0.3s',
+                          }),
+                  }
+            }
+          >
+            <div className="nav-container">
+              <div className="logo-box" onClick={() => (window.location.href = '/')}>
+                <svg width={26} height={26} viewBox="0 0 128 128" aria-label="brand logo" role="img">
+                  <circle cx="64" cy="66" r="34" fill="currentColor" />
+                  <path d="M18 67C18 58 37 51 63 51C89 51 110 58 110 67C110 76 89 83 63 83C37 83 18 76 18 67Z" stroke="currentColor" strokeWidth="9" fill="none" strokeLinecap="round" />
+                  <path d="M32 74C52 80 82 78 98 71" stroke="var(--logo-cutout)" strokeWidth="9" strokeLinecap="round" />
+                </svg>
+              </div>
+              <div className="desktop-links-group">
+                {config.nav.map((item) => (
+                  <span
+                    key={item.label}
+                    onMouseEnter={() => {
+                      setActiveMenu(item.label);
+                      setShowSearch(false);
+                    }}
+                    onClick={() => {
+                      setShowSearch(false);
+                      /* 配置里一级 url 多为 '/'：在首页点文字会整页重载，误像「要点两次」。有子菜单时只开关 mega。 */
+                      if (item.links.length > 0 && item.url === '/') {
+                        setActiveMenu((prev) => (prev === item.label ? null : item.label));
+                        return;
+                      }
+                      window.location.href = item.url;
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                ))}
+                <span className="pc-search-trigger" onClick={() => setShowSearch(true)}>
+                  <svg width="15" height="15" viewBox="0 0 18 18"><path fill="currentColor" d="M17.766 16.66l-4.55-4.55C14.113 10.993 14.75 9.57 14.75 8 14.75 4.27 11.73 1.25 8 1.25S1.25 4.27 1.25 8 4.27 14.75 8 14.75c1.57 0 2.993-.637 4.11-1.534l4.55 4.55a.749.749 0 0 0 1.06 0 .75.75 0 0 0 0-1.06zM2.75 8c0-2.895 2.355-5.25 5.25-5.25 2.895 0 5.25 2.355 5.25 5.25s-2.355 5.25-5.25 5.25A5.256 5.256 0 0 1 2.75 8z"></path></svg>
+                </span>
+              </div>
+              <div className="action-area">
+                <button className="lang-pc-switch" onClick={toggleLang}>{config.ui.langBtn}</button>
+                <div className="mobile-utility">
+                  <span
+                    className="mobile-nav-search-hit"
+                    onClick={() => {
+                      setShowSearch(true);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 18 18"><path fill="currentColor" d="M17.766 16.66l-4.55-4.55C14.113 10.993 14.75 9.57 14.75 8 14.75 4.27 11.73 1.25 8 1.25S1.25 4.27 1.25 8 4.27 14.75 8 14.75c1.57 0 2.993-.637 4.11-1.534l4.55 4.55a.749.749 0 0 0 1.06 0 .75.75 0 0 0 0-1.06zM2.75 8c0-2.895 2.355-5.25 5.25-5.25 2.895 0 5.25 2.355 5.25 5.25s-2.355 5.25-5.25 5.25A5.256 5.256 0 0 1 2.75 8z"></path></svg>
+                  </span>
+                  <span className="lang-cap-pill" onClick={toggleLang}>{config.ui.mobileLang}</span>
+                  <div
+                    className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 5,
+                      width: 18,
+                      minWidth: 18,
+                      flexShrink: 0,
+                      cursor: 'pointer',
+                      position: 'relative',
+                      zIndex: 10002,
+                    }}
+                    onClick={() => {
+                      if (mobileToggleLockRef.current) {
+                        mobileQueuedToggleRef.current = true;
+                        return;
+                      }
+                      triggerMobileMenuToggle();
+                    }}
+                  >
+                    <div
+                      className="line"
+                      style={{
+                        width: '100%',
+                        height: 1.5,
+                        borderRadius: 999,
+                        background: 'currentColor',
+                        flexShrink: 0,
+                        display: 'block',
+                        transformOrigin: 'center',
+                      }}
+                    />
+                    <div
+                      className="line"
+                      style={{
+                        width: '100%',
+                        height: 1.5,
+                        borderRadius: 999,
+                        background: 'currentColor',
+                        flexShrink: 0,
+                        display: 'block',
+                        transformOrigin: 'center',
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {activeMenu && (
+              <div className={`mega-menu-hard-layer ${navIsDark ? 'is-dark' : ''}`} onMouseLeave={() => setActiveMenu(null)}>
+                <div className="nav-container menu-inner">
+                  <div className="menu-col">
+                    <h4 className="menu-label">{config.ui.explore}</h4>
+                    <ul>
+                      {config.nav
+                        .find((i) => i.label === activeMenu)
+                        ?.links.map((link) => (
+                          <li
+                            key={navSubLabel(link)}
+                            onClick={() => {
+                              const section = config.nav.find((i) => i.label === activeMenu)!;
+                              followNavUrl(navSubUrl(section, link), () => setActiveMenu(null));
+                            }}
+                          >
+                            {navSubLabel(link)}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className={`search-panel-layer ${showSearch ? 'active' : ''} ${navIsDark ? 'is-dark' : ''}`}>
+              <div className="nav-container search-inner">
+                <div className="search-bar">
+                  <span className="search-leading-icon">🔍</span>
+                  <input type="text" placeholder={config.search.placeholder} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} autoFocus={showSearch} />
+                  <button className="close-x" onClick={() => { setShowSearch(false); setSearchQuery(''); }} aria-label="Close search">✕</button>
+                </div>
+                <div className="search-results-box">
+                  {searchQuery ? (
+                    <div className="live-results">
+                      {filteredResults.length > 0 ? filteredResults.map((res) => (
+                          <div
+                            key={res.name}
+                            className="s-item"
+                            onClick={() => {
+                              followNavUrl(res.url, () => {
+                                setShowSearch(false);
+                                setSearchQuery('');
+                              });
+                            }}
+                          >
+                            {res.name}
+                          </div>
+                        )) : <p className="s-no-results">{config.search.noResult}</p>}
+                    </div>
+                  ) : (
+                    <div className="quick-links">
+                      <p className="s-section-title">{config.search.title}</p>
+                      {searchConfig.quickLinks.map((link) => (<div key={link} className="s-item" onClick={() => setSearchQuery(link)}>{link}</div>))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </nav>
+
+          {mobileMenuVisible && (
+            <div className={`mobile-overlay-fixed ${isMobileMenuOpen ? 'open' : 'closing'} ${navIsDark ? 'is-dark' : ''}`}>
+              <div className="nav-container mobile-col">
+                {config.nav.map((item, idx) => (
+                  <div
+                    key={item.label}
+                    className={`m-sec ${mobileExpandedApp === item.label ? 'open' : ''}`}
+                    style={{ ['--i' as string]: idx }}
+                  >
+                    <div className="m-row" onClick={() => setMobileExpandedApp(mobileExpandedApp === item.label ? null : item.label)}>
+                      <span>{item.label}</span>
+                    </div>
+                    <div className="m-subs" aria-hidden={mobileExpandedApp !== item.label}>
+                      {item.links.map((sub) => (
+                        <div
+                          key={navSubLabel(sub)}
+                          className="m-sub-i"
+                          onClick={() => followNavUrl(navSubUrl(item, sub), () => setIsMobileMenuOpen(false))}
+                        >
+                          {navSubLabel(sub)}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <main
+            style={{
+              position: 'relative',
+              zIndex: 1,
+              /* /arm：与首页一致顶对齐，避免 main 上内边距在透明导航下形成一条「无 3D」的黑/空带 */
+              paddingTop: isHome || isArm ? '0px' : '44px',
+              minHeight: '80vh',
+            }}
+          >
+            {children}
+          </main>
+
+          <div className={`apple-footer-wrapper ${isDark ? 'is-dark' : ''}`}>
+            <div className="nav-container footer-content-stack">
+              <section className="footnotes">
+                <ol className="fn-list">
+                  {config.footnotes.map((note, index) => (
+                    <li key={index} className="fn-item"><span>{index + 1}. <b>{note.q}: </b>{note.a}</span></li>
+                  ))}
+                </ol>
+              </section>
+              <footer className="footer-nav">
+                <div className="footer-grid">
+                  {config.nav.map((section) => (
+                    <div key={section.label} className={`f-col ${footerExpandedSection === section.label ? 'is-open' : ''}`}>
+                      <h4 onClick={() => setFooterExpandedSection(footerExpandedSection === section.label ? null : section.label)}>{section.label}<span className="f-chevron-apple"></span></h4>
+                      <div className="f-list">
+                        <div className="f-list-inner">
+                          {section.links.map((link) => (
+                            <span key={navSubLabel(link)} onClick={() => followNavUrl(navSubUrl(section, link))}>
+                              {navSubLabel(link)}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="f-bottom"><div className="copyright-line">{config.ui.copyright}</div></div>
+              </footer>
+            </div>
+          </div>
+
+          {/* 🍎 极致优化：咨询抽屉 🍎 */}
+          <div
+            className={`exclusive-final-drawer ${isInquiryOpen ? 'open' : ''}`}
+            style={{
+              position: 'fixed', top: 0, right: 0, bottom: 0, width: '100%', maxWidth: '480px',
+              backgroundColor: 'rgba(28, 28, 30, 0.32)', 
+              backdropFilter: 'blur(44px) saturate(185%) brightness(88%)',
+              WebkitBackdropFilter: 'blur(44px) saturate(185%) brightness(88%)',
+              zIndex: 1000000,
+              transform: isInquiryOpen ? 'translate3d(0, 0, 0)' : 'translate3d(104%, 0, 0)',
+              opacity: isInquiryOpen ? 1 : 0,
+              transition: `transform 0.72s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.38s ease, visibility 0s linear ${isInquiryOpen ? '0s' : '0.72s'}`,
+              visibility: isInquiryOpen ? 'visible' : 'hidden',
+              pointerEvents: isInquiryOpen ? 'auto' : 'none',
+              borderLeft: '1px solid rgba(255,255,255,0.1)', color: '#fff',
+              display: 'flex', flexDirection: 'column', boxShadow: '-24px 0 80px rgba(0,0,0,0.34)',
+              overscrollBehavior: 'contain',
+              WebkitOverflowScrolling: 'touch',
+            }}
+          >
+            <button
+              type="button"
+              onPointerDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onClick={handleCloseInquiry}
+              style={{
+                position: 'absolute',
+                top: 'max(env(safe-area-inset-top), 14px)',
+                right: '18px',
+                zIndex: 30,
+                background: 'rgba(255,255,255,0.15)',
+                border: 'none',
+                color: '#fff',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                fontSize: '14px',
+                opacity: isInquiryOpen ? 1 : 0,
+                transform: isInquiryOpen ? 'translate3d(0,0,0)' : 'translate3d(10px,0,0)',
+                transition: 'opacity 0.26s ease 0.12s, transform 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.12s',
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent',
+              }}
+            >
+              ✕
+            </button>
+            <div className="drawer-scroll-container" style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: '88px 40px 40px',
+              boxSizing: 'border-box',
+              opacity: isInquiryOpen ? 1 : 0,
+              transform: isInquiryOpen ? 'translate3d(0,0,0)' : 'translate3d(24px,0,0)',
+              transition: 'opacity 0.32s ease 0.14s, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1) 0.14s',
+              overscrollBehavior: 'contain',
+              WebkitOverflowScrolling: 'touch',
+            }}>
+              <h2 style={{ fontSize: '42px', fontWeight: 700, margin: '0 0 12px 0', letterSpacing: '-1.5px' }}>{lang === 'zh' ? '开启咨询' : 'Get Quote'}</h2>
+              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '17px', lineHeight: 1.4, marginBottom: '40px' }}>{lang === 'zh' ? '留下您的联系方式，我们将提供正式报价。' : 'Leave contact for official quote.'}</p>
+              <form onSubmit={handleInquirySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', boxSizing: 'border-box' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-name-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '您的姓名' : 'Full Name'}</label><input name="Name" id="client-name-final" placeholder={lang === 'zh' ? '您的姓名' : 'Full Name'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-email-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '企业邮箱' : 'Business Email'}</label><input name="Email" id="client-email-final" type="email" placeholder={lang === 'zh' ? '企业邮箱' : 'Business Email'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-industry-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '所属行业' : 'Industry'}</label><div style={{ position: 'relative' }}><select name="Industry" id="client-industry-final" required defaultValue="" style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', appearance: 'none', cursor: 'pointer' }}><option value="" disabled>{lang === 'zh' ? '所属行业' : 'Industry'}</option>{industries.map((item) => (<option key={item} value={item} style={{ background: '#1c1c1e' }}>{item}</option>))}</select><span style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none', fontSize: '12px' }}>▼</span></div></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-body-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '项目简述' : 'Message'}</label><textarea name="Body" id="client-body-final" placeholder={lang === 'zh' ? '项目简述...' : 'Message...'} rows={6} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', resize: 'none' }} required /></div>
+                <div style={{ paddingBottom: '60px' }}><button type="submit" style={{ background: '#0071e3', color: '#fff', border: 'none', borderRadius: '16px', padding: '20px', width: '100%', fontSize: '18px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,113,227,0.3)' }}>{lang === 'zh' ? '生成咨询邮件' : 'Generate Email'}</button></div>
+              </form>
+            </div>
+          </div>
+        </InquiryContext.Provider>
+      </SiteLangContext.Provider>
+
+        <style jsx global>{`
+          :root { --nav-h: 44px; --apple-w: 1024px; --z-nav: 9999; --z-ui: 10001; --bg-grey: #f5f5f7; }
+          html {
+            background: transparent;
+            min-height: 100%;
+          }
+          body { font-family: -apple-system, sans-serif; margin: 0; overflow-x: hidden; }
+          .nav-container { width: 100%; max-width: var(--apple-w); margin: 0 auto; padding: 0 22px; display: flex; justify-content: space-between; align-items: center; height: 100%; box-sizing: border-box; }
+          .apple-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); background: rgba(251,251,253,0.2); backdrop-filter: saturate(135%) blur(8px); z-index: var(--z-nav); border-bottom: 1px solid rgba(0,0,0,0.012); transition: background 0.38s ease, backdrop-filter 0.38s ease, -webkit-backdrop-filter 0.38s ease, transform 0.58s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.14s ease, border-color 0.2s ease, color 0.28s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
+          .apple-nav.slide-up { transform: translateY(-104%); opacity: 0; pointer-events: none; }
+          .apple-nav.is-dark { background: rgba(22, 22, 23, 0.16); color: #f5f5f7; border-bottom-color: rgba(255,255,255,0.02); }
+          .apple-nav.is-home:not(.search-mode) {
+            border-bottom: none !important;
+            box-shadow: none !important;
+          }
+          .apple-nav.home-clear {
+            background: transparent !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+          }
+          .apple-nav.home-ghost:not(.search-mode) {
+            background: rgba(251, 251, 253, 0.026) !important;
+            backdrop-filter: saturate(165%) blur(4px) !important;
+            -webkit-backdrop-filter: saturate(165%) blur(4px) !important;
+          }
+          .apple-nav.home-ghost.is-dark:not(.search-mode) {
+            background: rgba(22, 22, 23, 0.038) !important;
+            color: #f5f5f7;
+            backdrop-filter: saturate(155%) blur(5px) !important;
+            -webkit-backdrop-filter: saturate(155%) blur(5px) !important;
+          }
+          .apple-nav.search-mode { background: #fff !important; border-bottom: 1px solid rgba(0,0,0,0.06) !important; }
+          .apple-nav { --logo-cutout: #ffffff; }
+          .apple-nav.is-dark { --logo-cutout: #161617; }
+          .logo-box { cursor: pointer; display: flex; align-items: center; z-index: var(--z-ui); flex: 0 0 164px; justify-content: flex-start; }
+          .logo-box svg { width: 26px; height: 26px; display: block; }
+          .desktop-links-group { display: flex !important; flex: 1; justify-content: center; gap: 32px; font-size: 12px; align-items: center; z-index: var(--z-ui); min-width: 0; }
+          .desktop-links-group span { cursor: pointer; opacity: 0.68; transition: opacity 0.2s ease; white-space: nowrap; }
+          .desktop-links-group span:hover { opacity: 0.92; }
+          .pc-search-trigger { cursor: pointer; opacity: 0.62; padding: 5px; display: flex; align-items: center; transition: opacity 0.2s ease; }
+          .pc-search-trigger:hover { opacity: 0.9; }
+          .action-area { display: flex; align-items: center; gap: 20px; z-index: var(--z-ui); flex: 0 0 164px; justify-content: flex-end; }
+          .lang-pc-switch {
+            display: block;
+            background: transparent;
+            border: none;
+            color: inherit;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            opacity: 0.86;
+            transition: background 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+          }
+          .lang-pc-switch:hover { background: rgba(0,0,0,0.08); opacity: 1; }
+          .lang-pc-switch:focus-visible { outline: none; background: rgba(0,0,0,0.12); opacity: 1; }
+          .is-dark .lang-pc-switch:hover { background: rgba(255,255,255,0.14); }
+          .is-dark .lang-pc-switch:focus-visible { background: rgba(255,255,255,0.18); }
+          .mobile-utility { display: none; align-items: center; gap: 15px; }
+          .mega-menu-hard-layer { position: absolute; top: var(--nav-h); left: 0; width: 100%; background: #fbfbfd; height: 320px; border-bottom: 1px solid #d2d2d7; z-index: 9998; animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+          .mega-menu-hard-layer.is-dark { background: #161617; border-bottom-color: #424245; color: #f5f5f7; }
+          @keyframes slideDown { from { height: 0; opacity: 0; } to { height: 320px; opacity: 1; } }
+          .menu-inner { align-items: flex-start !important; padding-top: 40px !important; }
+          .menu-label { font-size: 12px; color: #6e6e73; margin-bottom: 15px; }
+          .menu-col li { font-size: 24px; font-weight: 600; margin-bottom: 8px; cursor: pointer; list-style: none; }
+          .search-panel-layer { position: absolute; top: 0; left: 0; width: 100%; height: 0; background: rgba(251,251,253,0.96); backdrop-filter: saturate(180%) blur(26px); -webkit-backdrop-filter: saturate(180%) blur(26px); overflow: hidden; transition: height 0.36s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.24s ease; z-index: 10000; visibility: hidden; opacity: 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+          .search-panel-layer.is-dark { background: rgba(22,22,23,0.92) !important; color: #f5f5f7; border-bottom-color: rgba(255,255,255,0.1); }
+          .search-panel-layer.active { height: 460px; visibility: visible; opacity: 1; }
+          .search-inner { padding-top: 54px !important; padding-bottom: 34px !important; flex-direction: column !important; align-items: flex-start !important; }
+          .search-bar { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 0 14px; box-sizing: border-box; background: rgba(255,255,255,0.72); box-shadow: 0 8px 30px rgba(0,0,0,0.06); overflow: hidden; }
+          .search-panel-layer.is-dark .search-bar { background: rgba(45,45,48,0.75); border-color: rgba(255,255,255,0.12); box-shadow: none; }
+          .search-leading-icon { font-size: 15px; opacity: 0.6; }
+          .search-bar input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: currentColor; }
+          .search-bar input::placeholder { color: rgba(110,110,115,0.85); }
+          .search-panel-layer.is-dark .search-bar input::placeholder { color: rgba(174,174,178,0.85); }
+          .close-x { border: none; background: rgba(0,0,0,0.08); color: inherit; width: 28px; min-width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0; font-size: 14px; line-height: 1; opacity: 0.8; flex-shrink: 0; }
+          .search-panel-layer.is-dark .close-x { background: rgba(255,255,255,0.14); }
+          .search-results-box { margin-top: 24px; width: 100%; padding-bottom: 10px; }
+          .s-section-title { margin: 0 0 10px 2px; font-size: 12px; letter-spacing: 0.02em; text-transform: uppercase; color: #6e6e73; font-weight: 600; }
+          .search-panel-layer.is-dark .s-section-title { color: #a1a1a6; }
+          .s-item { padding: 11px 12px; font-size: 15px; cursor: pointer; color: #1d1d1f; border-radius: 10px; transition: background 0.18s ease, transform 0.18s ease; }
+          .s-item:hover { background: rgba(0,0,0,0.04); transform: translateX(2px); }
+          .search-panel-layer.is-dark .s-item { color: #f5f5f7; }
+          .search-panel-layer.is-dark .s-item:hover { background: rgba(255,255,255,0.08); }
+          .s-no-results { margin: 4px 0 0 2px; font-size: 14px; color: #8e8e93; }
+          .apple-footer-wrapper { background: var(--bg-grey); color: #6e6e73; padding: 40px 0; transition: background 0.3s; border-top: 1px solid #d2d2d7; }
+          .apple-footer-wrapper.is-dark { background: #000; border-top-color: #333; color: #86868b; }
+          .footer-content-stack { flex-direction: column !important; align-items: stretch !important; height: auto !important; }
+          .footnotes { font-size: 11px; line-height: 1.6; border-bottom: 1px solid #d2d2d7; padding-bottom: 20px; margin-bottom: 20px; }
+          .apple-footer-wrapper.is-dark .footnotes { border-bottom-color: #333; }
+          .fn-list { padding: 0; list-style: none; margin: 0; }
+          .fn-item { margin-bottom: 10px; }
+          .footer-nav { width: 100%; }
+          .footer-grid { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+          .f-col h4 { font-size: 12px; color: #1d1d1f; margin-bottom: 10px; font-weight: 600; cursor: default; }
+          .apple-footer-wrapper.is-dark .f-col h4 { color: #f5f5f7; }
+          .f-list { display: block; font-size: 12px; }
+          .f-list-inner { display: flex; flex-direction: column; gap: 8px; }
+          .f-list span { cursor: pointer; display: block; }
+          .f-list span:hover { text-decoration: underline; }
+          .f-bottom { border-top: 1px solid #d2d2d7; padding-top: 20px; margin-top: 20px; font-size: 11px; }
+          .apple-footer-wrapper.is-dark .f-bottom { border-top-color: #333; }
+          .nav-mask-master { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 9997; backdrop-filter: blur(4px); }
+          .mobile-overlay-fixed { display: none; }
+          @media (max-width: 734px) {
+            .mobile-overlay-fixed { display: block; }
+            .nav-mask-master { background: rgba(0,0,0,0.22); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+            .search-panel-layer.active { height: 390px; }
+            .search-inner { padding-top: 52px !important; padding-bottom: 24px !important; }
+            .search-bar { min-height: 48px; border-radius: 12px; padding: 0 10px; gap: 8px; }
+            .search-bar input { font-size: 21px; }
+            .close-x { width: 26px; min-width: 26px; height: 26px; }
+            .desktop-links-group, .lang-pc-switch { display: none !important; }
+            .logo-box, .action-area { flex: initial; }
+            .action-area { gap: 0; }
+            .mobile-utility {
+              display: flex;
+              flex-shrink: 0;
+              align-items: center;
+              gap: 8px;
+              opacity: 0.82;
+            }
+            .apple-nav .mobile-utility .lang-cap-pill {
+              transition: background 0.2s ease, opacity 0.2s ease;
+            }
+            .line { width: 100%; height: 1.5px; border-radius: 999px; background: currentColor; transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.26s ease; transform-origin: center; }
+            .hamburger.active .line:nth-child(1) { transform: translateY(3.25px) rotate(45deg) scaleX(1.02); }
+            .hamburger.active .line:nth-child(2) { transform: translateY(-3.25px) rotate(-45deg) scaleX(1.02); }
+            .mobile-overlay-fixed {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              bottom: env(safe-area-inset-bottom);
+              height: auto;
+              background: transparent;
+              -webkit-backdrop-filter: none;
+              backdrop-filter: none;
+              z-index: 9998;
+              padding-top: calc(var(--nav-h) + 10px);
+              padding-bottom: 10px;
+              overflow-y: auto;
+              opacity: 0;
+              transform: translate3d(0, -118%, 0) scale(1);
+              visibility: hidden;
+              pointer-events: none;
+              transition: opacity 0.3s ease, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.62s;
+            }
+            .mobile-overlay-fixed::before {
+              content: '';
+              position: fixed;
+              top: var(--nav-h);
+              left: 0;
+              right: 0;
+              height: 22px;
+              background: transparent;
+              pointer-events: none;
+              opacity: 0;
+              transition: opacity 0.28s ease;
+            }
+            .mobile-overlay-fixed.open {
+              opacity: 1;
+              transform: translate3d(0, 0, 0) scale(1);
+              visibility: visible;
+              pointer-events: auto;
+              transition: opacity 0.3s ease, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+            }
+            .mobile-overlay-fixed.closing {
+              opacity: 0;
+              transform: translate3d(0, -118%, 0) scale(1);
+              visibility: visible;
+              pointer-events: none;
+              transition: opacity 0.3s ease, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+            }
+            .mobile-overlay-fixed.closed {
+              opacity: 0;
+              transform: translate3d(0, -118%, 0) scale(1);
+              visibility: hidden;
+              pointer-events: none;
+              background: transparent;
+              -webkit-backdrop-filter: none;
+              backdrop-filter: none;
+              transition: opacity 0.3s ease, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.62s;
+            }
+            .mobile-overlay-fixed.open,
+            .mobile-overlay-fixed.closing {
+              background: transparent;
+              -webkit-backdrop-filter: saturate(180%) blur(22px);
+              backdrop-filter: saturate(180%) blur(22px);
+            }
+            .mobile-overlay-fixed.open::before { opacity: 1; }
+            .mobile-overlay-fixed.is-dark { color: #f5f5f7; }
+            .apple-nav.mobile-menu-open .logo-box {
+              opacity: 0;
+              pointer-events: none;
+              transform: translateY(-6px);
+              transition: opacity 0.2s ease, transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .apple-nav.mobile-menu-open .mobile-utility > :not(.hamburger) {
+              opacity: 0;
+              pointer-events: none;
+              transform: translateY(-6px);
+              transition: opacity 0.2s ease, transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .apple-nav.mobile-menu-open .action-area {
+              gap: 0;
+            }
+            .mobile-overlay-fixed.is-dark::before { background: transparent; }
+            .apple-nav.mobile-menu-open {
+              background: transparent !important;
+              border-bottom-color: transparent !important;
+              backdrop-filter: none !important;
+              -webkit-backdrop-filter: none !important;
+            }
+            .mobile-col {
+              flex-direction: column;
+              align-items: stretch !important;
+              justify-content: flex-start !important;
+              height: auto !important;
+              padding: 10px 28px 20px !important;
+              gap: 12px;
+            }
+            .m-sec {
+              border-bottom: none;
+              opacity: 0;
+              transform: translateY(14px);
+              transition: opacity 0.2s ease, transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .mobile-overlay-fixed.open .m-sec {
+              animation: mobileMenuRowIn 0.56s cubic-bezier(0.22, 1, 0.36, 1) both;
+              animation-delay: calc(var(--i, 0) * 95ms);
+              opacity: 1;
+              transform: translateY(0);
+            }
+            .mobile-overlay-fixed.closing .m-sec {
+              opacity: 0;
+              transform: translateY(-8px);
+              transition-delay: calc((4 - var(--i, 0)) * 28ms);
+            }
+            .m-row {
+              display: flex;
+              justify-content: flex-start;
+              align-items: center;
+              padding: 5px 0;
+              font-size: clamp(25px, 7.2vw, 30px);
+              line-height: 1.02;
+              font-weight: 600;
+              letter-spacing: -0.03em;
+              cursor: pointer;
+              transition: opacity 0.2s ease, transform 0.22s ease;
+            }
+            .m-row:active { opacity: 0.68; transform: scale(0.995); }
+            .footer-grid { flex-direction: column; gap: 0; }
+            .f-col { border-bottom: 1px solid #d2d2d7; width: 100%; box-sizing: border-box; }
+            .apple-footer-wrapper.is-dark .f-col { border-bottom-color: #333; }
+            .f-col h4 { padding: 12px 0; margin: 0; cursor: pointer; display: flex; justify-content: space-between; font-weight: 400; align-items: center; }
+            .f-chevron-apple { display: block; width: 8px; height: 8px; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); transition: 0.2s; opacity: 0.6; }
+            .f-col.is-open .f-chevron-apple { transform: rotate(-135deg); }
+            .f-list {
+              display: grid;
+              grid-template-rows: 0fr;
+              overflow: hidden;
+              opacity: 0;
+              transition: grid-template-rows 0.46s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.26s ease;
+              padding-bottom: 0;
+            }
+            .f-list-inner {
+              min-height: 0;
+              overflow: hidden;
+              transform: translateY(-6px);
+              transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .f-col.is-open .f-list { grid-template-rows: 1fr; opacity: 1; padding-bottom: 12px; }
+            .f-col.is-open .f-list-inner { transform: translateY(0); }
+            .f-col:last-child { border-bottom: none; }
+            .f-bottom { border-top: none; margin-top: 10px; padding-top: 10px; }
+            
+            .m-subs {
+              max-height: 0;
+              overflow: hidden;
+              opacity: 0;
+              padding-left: 4px;
+              margin-top: -1px;
+              transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease;
+            }
+            .m-sec.open .m-subs { max-height: 360px; opacity: 1; }
+            .m-sub-i {
+              padding: 8px 0;
+              font-size: 16px;
+              font-weight: 450;
+              opacity: 0;
+              transform: translateX(-6px);
+              cursor: pointer;
+              letter-spacing: -0.01em;
+              color: rgba(29,29,31,0.86);
+              transition: opacity 0.24s ease, transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
+            }
+            .m-sub-i:hover { color: rgba(29,29,31,0.98); }
+            .m-sec.open .m-sub-i { opacity: 1; transform: translateX(0); }
+            .m-sec.open .m-sub-i:nth-child(1) { transition-delay: 40ms; }
+            .m-sec.open .m-sub-i:nth-child(2) { transition-delay: 70ms; }
+            .m-sec.open .m-sub-i:nth-child(3) { transition-delay: 100ms; }
+            .m-sec.open .m-sub-i:nth-child(4) { transition-delay: 130ms; }
+            .m-sec.open .m-sub-i:nth-child(5) { transition-delay: 160ms; }
+            .m-sub-i:active { opacity: 0.64; transform: translateX(1px); }
+            .is-dark .m-sub-i { color: rgba(245,245,247,0.86); }
+            .is-dark .m-sub-i:hover { color: rgba(245,245,247,1); }
+            @keyframes mobileMenuRowIn {
+              from { opacity: 0; transform: translateY(14px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+
+            /* 🍎 移动端表单垂直排列锁定 🍎 */
+            .drawer-form { display: flex !important; flex-direction: column !important; }
+            .exclusive-final-drawer { max-width: 100% !important; }
+          }
+        `}</style>
+        <Script src="/model-viewer.min.js" strategy="afterInteractive" type="module" />
+    </>
+  );
+}

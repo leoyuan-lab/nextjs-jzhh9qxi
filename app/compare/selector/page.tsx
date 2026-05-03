@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import type { RefObject } from 'react';
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   robotVariantImageUrl,
@@ -11,6 +11,7 @@ import {
   type RobotFamily,
   type RobotVariant,
 } from '@/data/products';
+import { useSiteLang } from '@/lib/site-lang-context';
 
 type LineItem = RobotVariant & {
   family: RobotFamily;
@@ -186,10 +187,15 @@ const SELECTOR_I18N = {
   },
 } as const;
 
+/** 与 ClientLayout 主导航收起动画一致（apple-main-nav-progress） */
+const SELECTOR_HERO2_NAV_HIDE_START = 44 + 100;
+const SELECTOR_HERO2_NAV_HIDE_END = 44;
+
 export default function ProductSelectorPage() {
-  const [lang, setLang] = useState<'zh' | 'en'>('zh');
+  const lang = useSiteLang();
   const [detailId, setDetailId] = useState<string | null>(null);
   const detailScrollRef = useRef<HTMLDivElement>(null);
+  const hero2SectionRef = useRef<HTMLSectionElement | null>(null);
   const lineup = useMemo(() => buildLineup(), []);
 
   const detailItem = useMemo(
@@ -203,16 +209,6 @@ export default function ProductSelectorPage() {
   );
 
   useScrollNotchHaptics(detailScrollRef, detailItem !== null);
-
-  useLayoutEffect(() => {
-    const read = () => {
-      const raw = localStorage.getItem('user-lang');
-      setLang(raw === 'en' ? 'en' : 'zh');
-    };
-    read();
-    window.addEventListener('langChange', read);
-    return () => window.removeEventListener('langChange', read);
-  }, []);
 
   useEffect(() => {
     if (!detailId) return;
@@ -231,6 +227,32 @@ export default function ProductSelectorPage() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [detailId]);
+
+  useEffect(() => {
+    const emit = (progress: number) => {
+      window.dispatchEvent(
+        new CustomEvent('apple-main-nav-progress', { detail: { progress } }),
+      );
+    };
+
+    const tick = () => {
+      const el = hero2SectionRef.current;
+      if (!el) return;
+      const top = el.getBoundingClientRect().top;
+      const span = Math.max(1, SELECTOR_HERO2_NAV_HIDE_START - SELECTOR_HERO2_NAV_HIDE_END);
+      const p = Math.max(0, Math.min(1, (SELECTOR_HERO2_NAV_HIDE_START - top) / span));
+      emit(p);
+    };
+
+    tick();
+    window.addEventListener('scroll', tick, { passive: true });
+    window.addEventListener('resize', tick);
+    return () => {
+      window.removeEventListener('scroll', tick);
+      window.removeEventListener('resize', tick);
+      emit(0);
+    };
+  }, []);
 
   const safeLang: 'zh' | 'en' = lang === 'en' ? 'en' : 'zh';
   const t = SELECTOR_I18N[safeLang];
@@ -271,6 +293,7 @@ export default function ProductSelectorPage() {
       </div>
 
       <section
+        ref={hero2SectionRef}
         className="selector-hero2 border-t border-[#d2d2d7]/80 bg-white text-[#1d1d1f]"
         aria-labelledby="selector-hero2-title"
       >

@@ -1,13 +1,14 @@
 'use client';
-import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { rSeriesData } from '@/data/products';
+import { useSiteLang } from '@/lib/site-lang-context';
 
 function familyTitle(familyId: string) {
   return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
 }
 
 export default function HomePage() {
-  const [lang, setLang] = useState('zh');
+  const lang = useSiteLang();
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
@@ -26,13 +27,6 @@ export default function HomePage() {
 
   const titleRcore = useMemo(() => familyTitle('r-core'), []);
   const titleRmax = useMemo(() => familyTitle('r-max'), []);
-
-  useLayoutEffect(() => {
-    const update = () => setLang(localStorage.getItem('user-lang') === 'en' ? 'en' : 'zh');
-    update();
-    window.addEventListener('langChange', update);
-    return () => window.removeEventListener('langChange', update);
-  }, []);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -157,6 +151,8 @@ export default function HomePage() {
       
       if (heroRotateDelayRef.current) window.clearTimeout(heroRotateDelayRef.current);
       heroRotateDelayRef.current = window.setTimeout(() => {
+        /* 默认 auto-rotate 为逆时针；负的 rotation-per-second 反转方向（与默认同速用 -100%） */
+        viewer.setAttribute('rotation-per-second', '-100%');
         viewer.setAttribute('auto-rotate', '');
         setShowDragHint(true);
         if (hintHideTimerRef.current) window.clearTimeout(hintHideTimerRef.current);
@@ -215,7 +211,17 @@ export default function HomePage() {
     <main className="apple-home-wrapper">
       {/* Loading Screen */}
       {showLoadingScreen && (
-        <div className={`loading-screen ${isLoaded ? 'exit' : ''}`}>
+        <div
+          className={`loading-screen ${isLoaded ? 'exit' : ''}`}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 100,
+            backgroundColor: '#ffffff',
+            /* 不依赖 styled-jsx 是否已注入：加载完成后立刻放行点击，避免整页卡死 */
+            pointerEvents: isLoaded ? 'none' : 'auto',
+          }}
+        >
           <div className="loading-scale-shell">
             <div className="loading-content">
               <div className="loading-hero-type">
@@ -354,197 +360,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      <style jsx>{`
-        .apple-home-wrapper { 
-          width: 100%; 
-          background: transparent; 
-          overflow-x: hidden;
-        }
-        
-        .screen-outer { 
-          position: relative; 
-          width: 100%; 
-          height: 100vh; 
-          height: 100dvh; 
-          overflow: hidden;
-          display: flex; 
-          flex-direction: column; 
-          align-items: center; 
-          margin: 0;
-          padding: 0;
-        }
-        
-        .screen-outer-gap { 
-          position: relative; 
-          width: 100%; 
-          height: 100vh; 
-          height: 100dvh; 
-          padding: 10px; 
-          box-sizing: border-box; 
-          background: #ffffff; 
-        }
-
-        .grid-container { display: flex; width: 100%; height: 100%; gap: 10px; }
-        .sharp-card { flex: 1; background: #f5f5f7; display: flex; flex-direction: column; overflow: hidden; }
-        .card-text { padding: 40px; }
-        .card-text h3 { font-size: 24px; font-weight: 600; color: #1d1d1f; margin: 0; }
-        .card-text p { font-size: 16px; color: #86868b; margin-top: 6px; }
-        .card-cta { margin-top: 14px; }
-        .card-image-box { flex: 1; background-size: cover; background-position: center; margin: 0 40px 40px 40px; }
-        .loading-screen {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          height: 100dvh;
-          background: #ffffff;
-          z-index: 100;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: clamp(16px, 4vh, 40px) clamp(20px, 5vw, 48px);
-          box-sizing: border-box;
-          overflow: visible;
-          transition: opacity 1.2s cubic-bezier(0.645, 0.045, 0.355, 1), transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-        }
-        .loading-screen.exit { opacity: 0; pointer-events: none; transform: scale(1.04); }
-        .loading-scale-shell {
-          transform: scale(1.5);
-          transform-origin: center center;
-          will-change: transform;
-          backface-visibility: hidden;
-        }
-        .loading-content {
-          text-align: left;
-          width: max-content;
-          max-width: min(960px, calc(100vw - 40px));
-          margin: 0 auto;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-        }
-        .loading-hero-type {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 0;
-          margin: 0;
-        }
-        .loading-slogan-main {
-          margin: 0;
-          padding: 0;
-          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-          font-size: clamp(36px, 8.6vw, 92px);
-          font-weight: 800;
-          letter-spacing: -0.052em;
-          line-height: 1.05;
-          color: #000000;
-          text-wrap: balance;
-        }
-        .loading-slogan-main + .loading-subline {
-          margin: 0.38em 0 0;
-          padding: 0;
-          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-          font-size: clamp(22px, 5.17vw, 54px);
-          font-weight: 700;
-          letter-spacing: -0.04em;
-          line-height: 1.12;
-          color: #2b2b2e;
-        }
-        .loading-subline + .loading-subline {
-          margin: 0.2em 0 0;
-          padding: 0;
-          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-          font-size: clamp(22px, 5.17vw, 54px);
-          font-weight: 600;
-          letter-spacing: -0.038em;
-          line-height: 1.12;
-          color: #6e6e73;
-        }
-        .loading-progress-wrap {
-          margin-top: clamp(28px, 5vh, 48px);
-          width: min(6cm, calc(100vw - 48px));
-          min-width: min(6cm, calc(100vw - 48px));
-          max-width: min(6cm, calc(100vw - 48px));
-          flex-shrink: 0;
-          box-sizing: border-box;
-        }
-        .progress-container {
-          width: 100%;
-          min-width: 0;
-          height: 3px;
-          background: #f0f0f0;
-          overflow: hidden;
-          border-radius: 2px;
-        }
-        .progress-bar { height: 100%; background: #000; transition: width 0.3s ease; }
-        .progress-text {
-          display: block;
-          margin-top: 10px;
-          font-size: 13px;
-          font-weight: 600;
-          letter-spacing: 0.02em;
-          color: #aeaeb2;
-        }
-        .hero-3d-wrap {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 1;
-          background: #ffffff;
-          transform: translateZ(0);
-        }
-        .hero-3d-wrap--dark {
-          background: #000000;
-        }
-        .hidden-init { opacity: 0 !important; visibility: hidden; }
-        .ready-visible { opacity: 1; visibility: visible; }
-        .fr5-entry-animation { animation: fr5FullEntry 1.4s cubic-bezier(0.2, 0.75, 0.25, 1) forwards; }
-        @keyframes fr5FullEntry {
-          0% { opacity: 0; transform: scale(1.05) translate3d(0, 5%, 0); filter: blur(6px); }
-          100% { opacity: 1; transform: scale(1) translate3d(0, 0, 0); filter: blur(0px); }
-        }
-        .drag-hint { position: absolute; left: 50%; bottom: 8vh; transform: translateX(-50%) translateY(8px); z-index: 3; font-size: 14px; background: rgba(0, 0, 0, 0.66); color: #fff; padding: 8px 12px; border-radius: 999px; opacity: 0; transition: opacity 0.35s ease, transform 0.35s ease; pointer-events: none; white-space: nowrap; }
-        .drag-hint.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .content-limit { position: relative; z-index: 2; margin-top: 10vh; text-align: center; }
-        .text-box { pointer-events: auto; }
-        .title { font-size: clamp(40px, 8vw, 56px); font-weight: 600; margin: 0; }
-        .subtitle { font-size: clamp(20px, 3vw, 26px); margin-top: 12px; opacity: 0.8; }
-        .cta-row {
-          display: inline-flex;
-          align-items: center;
-          gap: 18px;
-          margin-top: 14px;
-        }
-        .cta-link {
-          color: #06c;
-          font-size: 18px;
-          font-weight: 500;
-          letter-spacing: -0.01em;
-          text-decoration: none;
-          border: none;
-          background: transparent;
-          padding: 0;
-          cursor: pointer;
-        }
-        .cta-link:hover { text-decoration: underline; }
-        .cta-btn { font-family: inherit; }
-        .dark-copy .cta-link { color: #2997ff; }
-        @media (max-width: 768px) {
-          .grid-container { flex-direction: column; }
-          .screen-outer-gap { height: auto; min-height: 100dvh; }
-          .sharp-card { min-height: 50dvh; }
-          .cta-link { font-size: 17px; }
-          .apple-home-wrapper > .screen-outer:nth-of-type(-n + 2) {
-            height: 112dvh;
-            min-height: 112dvh;
-          }
-        }
-      `}</style>
     </main>
   );
 }

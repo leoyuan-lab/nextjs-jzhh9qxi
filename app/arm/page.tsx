@@ -96,7 +96,6 @@ export default function ArmDetailFinal() {
     window.scrollTo(0, 0);
     requestAnimationFrame(() => window.scrollTo(0, 0));
     window.addEventListener('scroll', handleScroll, { passive: true });
-    document.body.style.backgroundColor = '#000';
     setTimeout(() => setHeroReady(true), 100);
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -164,7 +163,7 @@ export default function ArmDetailFinal() {
   const isSubNavShow = hasScrolled && scrollVal > 620 && isNavHidden;
 
   return (
-    <div className="apple-wrapper">
+    <div className="apple-wrapper arm-page-root">
       {/* 🍎 二级导航：主导航飞出后再接管位置 */}
       {isSubNavShow && (
         <nav className="nav-sub nav-sub-enter">
@@ -280,93 +279,6 @@ export default function ArmDetailFinal() {
           ))}
         </div>
       </section>
-
-      <style jsx global>{`
-        body { background: #000; margin: 0; font-family: -apple-system, sans-serif; color: #fff; overflow-x: hidden; }
-        
-        .nav-sub { position: fixed; top: 0; left: 0; width: 100%; height: 52px; z-index: 1001; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid #333; align-items: center; display: flex; }
-        .nav-sub-enter { animation: subNavDropIn 0.34s cubic-bezier(0.22, 1, 0.36, 1); }
-        @keyframes subNavDropIn {
-          from { opacity: 0; transform: translateY(-16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .nav-box { width: 100%; max-width: 1024px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; }
-        .p-name { font-size: 21px; font-weight: 600; }
-        .p-btn-buy { background: #0071e3; color: #fff; border: none; padding: 6px 16px; border-radius: 20px; font-size: 12px; cursor: pointer; }
-
-        /* Hero 真正顶死 */
-        .hero-section {
-          height: 100vh;
-          position: relative;
-          margin-top: -52px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-          background: #000;
-        }
-        .hero-3d-wrap {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          opacity: 0;
-          transform: scale(1.07) translate3d(0, 6%, 0);
-          filter: blur(8px);
-          z-index: 1;
-          will-change: transform, opacity, filter;
-        }
-        .hero-3d-wrap.reveal {
-          animation: heroModelFlyIn 1.45s cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
-        }
-        @keyframes heroModelFlyIn {
-          0% {
-            opacity: 0;
-            transform: scale(1.07) translate3d(0, 6%, 0);
-            filter: blur(8px);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1) translate3d(0, 0, 0);
-            filter: blur(0);
-          }
-        }
-        .hero-content { position: relative; z-index: 10; text-align: center; }
-        .hero-content h1 { font-size: clamp(60px, 10vw, 100px); font-weight: 700; margin: 0; }
-        .hero-content p { font-size: 24px; color: #86868b; margin-top: 10px; }
-
-        /* Highlights */
-        .highlights-section { padding: 100px 0; }
-        .section-title { font-size: clamp(40px, 8vw, 64px); font-weight: 700; margin: 0 0 50px 40px; }
-        .h-scroller { width: 100%; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x mandatory; }
-        .h-track { display: flex; gap: 30px; padding-bottom: 30px; width: max-content; }
-        .snap-edge { flex: 0 0 4vw; }
-        .h-card { flex: 0 0 85vw; height: 75vh; background: #161617; border-radius: 36px; position: relative; overflow: hidden; scroll-snap-align: center; border: 1px solid #333; }
-        .card-3d { position: absolute; width: 100%; height: 100%; z-index: 1; }
-        .card-text { position: absolute; top: 40px; left: 40px; z-index: 10; }
-        .card-text h3 { font-size: 42px; font-weight: 700; margin: 0; }
-        .card-text p { font-size: 20px; color: #86868b; margin-top: 10px; }
-
-        .closer-section { padding: 100px 40px; }
-        .closer-grid { display: flex; gap: 20px; }
-        .closer-card { background: #161617; border-radius: 30px; height: 500px; }
-        .closer-card.l { flex: 2; } .closer-card.s { flex: 1; }
-
-        .narrative-section { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .white-txt { font-size: clamp(60px, 11vw, 110px); font-weight: 700; margin: 0; }
-        .grey-txt { font-size: clamp(60px, 11vw, 110px); font-weight: 700; color: #424245; margin: 0; }
-        .sub-txt { font-size: 22px; color: #86868b; margin-top: 40px; max-width: 700px; }
-
-        .spec-section { padding: 100px 40px; }
-        .spec-box { max-width: 900px; margin: 0 auto; background: #161617; border-radius: 40px; padding: 60px; }
-        .spec-header { display: flex; justify-content: space-around; border-bottom: 1px solid #333; padding-bottom: 40px; }
-        .spec-row { display: flex; flex-direction: column; align-items: center; padding: 30px 0; border-bottom: 1px solid #333; }
-        .spec-row label { font-size: 12px; color: #86868b; text-transform: uppercase; margin-bottom: 12px; }
-        .val-box { display: flex; gap: 100px; font-size: 24px; font-weight: 700; }
-
-        .h-progress { width: 300px; height: 2px; background: #333; margin: 40px auto; position: relative; }
-        .h-bar { position: absolute; height: 100%; background: #fff; }
-      `}</style>
     </div>
   );
 }
