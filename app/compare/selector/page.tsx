@@ -195,7 +195,7 @@ export default function ProductSelectorPage() {
   const lang = useSiteLang();
   const [detailId, setDetailId] = useState<string | null>(null);
   const detailScrollRef = useRef<HTMLDivElement>(null);
-  const hero2SectionRef = useRef<HTMLSectionElement | null>(null);
+  const hero2SectionRef = useRef<HTMLElement | null>(null);
   const lineup = useMemo(() => buildLineup(), []);
 
   const detailItem = useMemo(
