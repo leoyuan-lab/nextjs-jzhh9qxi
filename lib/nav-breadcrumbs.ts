@@ -8,7 +8,7 @@ export const BC_NAV_COBOTS = {
 } as const;
 
 export const BC_NAV_SELECTOR = {
-  href: '/selector/all-specs',
+  href: '/selector/advisor',
   zh: '选型中心',
   en: 'Selector',
 } as const;

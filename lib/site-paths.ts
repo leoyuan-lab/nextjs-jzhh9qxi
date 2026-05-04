@@ -16,7 +16,7 @@ export const SITEMAP_PATHS: readonly string[] = [
   '/cobots/r-max',
   '/news',
   '/selector/advisor',
-  '/selector/all-specs',
+  '/cobots/all-cobots-specs',
   '/selector/comparison',
   '/support/academy',
   '/support/resources',

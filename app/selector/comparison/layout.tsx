@@ -5,7 +5,7 @@ import { pageMetadata } from '@/lib/site-seo';
 
 export const metadata: Metadata = pageMetadata(
   'Side-by-Side Cobot Comparison',
-  'Interactive home experience for comparing heavyweight vs agile Cobots and exploring flagship robotic arm visual stories.',
+  'Side-by-side r-Series Cobot and robotic arm comparison: choose three models and inspect payload, reach, axes, and power specs in one view.',
   '/selector/comparison',
 );
 

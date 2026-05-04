@@ -9,8 +9,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return SITEMAP_PATHS.map((path) => {
     const url = new URL(path, `${origin}/`).href;
+    const isTopPriorityPath =
+      path.startsWith('/cobots/') || path.startsWith('/applications/');
     const priority =
-      path === '/' ? 1 : path.startsWith('/cobots/') || path.startsWith('/applications/') ? 0.9 : 0.72;
+      path === '/' ? 1 : isTopPriorityPath ? 0.9 : 0.72;
     return {
       url,
       lastModified: now,

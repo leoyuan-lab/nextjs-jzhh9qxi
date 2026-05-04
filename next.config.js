@@ -9,7 +9,22 @@ const nextConfig = {
       },
       {
         source: '/compare/selector',
-        destination: '/selector/all-specs',
+        destination: '/cobots/all-cobots-specs',
+        permanent: true,
+      },
+      {
+        source: '/selector/all-specs',
+        destination: '/cobots/all-cobots-specs',
+        permanent: true,
+      },
+      {
+        source: '/cobots/all cobots & specs',
+        destination: '/cobots/all-cobots-specs',
+        permanent: true,
+      },
+      {
+        source: '/cobots/all%20cobots%20%26%20specs',
+        destination: '/cobots/all-cobots-specs',
         permanent: true,
       },
     ];

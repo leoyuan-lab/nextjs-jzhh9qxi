@@ -59,13 +59,13 @@ type NavSection = { label: string; url: string; links: NavSubLink[] };
 
 const ARM_NAV_PATHS = new Set(['/cobots/r-core']);
 
-const SELECTOR_NAV_PATHS = new Set(['/selector/all-specs', '/selector/advisor']);
+const SELECTOR_NAV_PATHS = new Set(['/selector/advisor', '/selector/comparison']);
 
 /** 与 `/cobots/r-core` 相同：`main` 顶内边距为 0，首屏 3D 从视口顶铺满至透明导航下沿。 */
 const ADVISOR_HERO_PEEK_PATH = '/selector/advisor';
 
 /** Same chrome behavior as homepage (immersive hero, clear nav baseline). */
-const HOME_CHROME_PATHS = new Set(['/', '/selector/comparison']);
+const HOME_CHROME_PATHS = new Set(['/']);
 
 function navSubLabel(link: NavSubLink | string): string {
   return typeof link === 'string' ? link : link.label;
@@ -81,13 +81,15 @@ function followNavUrl(url: string, closeUi?: () => void) {
     window.dispatchEvent(new Event('apple-inquiry-open'));
     return;
   }
-  closeUi?.();
-  /* 让关闭 mega/遮罩的 setState 先落盘再跳转，避免首击被卸载中的 DOM「吃掉」需点两次 */
-  const go = () => {
-    window.location.assign(url);
-  };
-  if (typeof queueMicrotask === 'function') queueMicrotask(go);
-  else setTimeout(go, 0);
+  /**
+   * Safari dev 环境下，先执行一组 setState 再用 microtask 跳转，偶发会出现首击不导航。
+   * 对真实页面跳转优先立即导航；UI 收拢交给页面卸载处理，避免需要点两次。
+   */
+  window.location.assign(url);
+}
+
+function isPrimaryPointerDown(event: React.MouseEvent<HTMLElement>) {
+  return event.button === 0;
 }
 
 // 🍎 主导航：Cobots / Selector / Applications / Support / About（SEO 路径与文案）
@@ -98,6 +100,7 @@ const GLOBAL_CONFIG = {
         label: '协作机器人',
         url: '/',
         links: [
+          { label: '全系列型号与规格', url: '/cobots/all-cobots-specs' },
           { label: `${navFamilyName('r-core')}（协作灵动型）`, url: '/cobots/r-core' },
           { label: `${navFamilyName('r-max')}（强力负载型）`, url: '/cobots/r-max' },
           { label: '人形机器人（具身智能）', url: '/cobots/humanoid' },
@@ -108,7 +111,6 @@ const GLOBAL_CONFIG = {
         label: '选型中心',
         url: '/',
         links: [
-          { label: '全系列型号与规格', url: '/selector/all-specs' },
           { label: '横向对比选型', url: '/selector/comparison' },
           { label: '智能选型向导', url: '/selector/advisor' },
         ],
@@ -190,6 +192,7 @@ const GLOBAL_CONFIG = {
         label: 'Cobots',
         url: '/',
         links: [
+          { label: 'All cobots & Specs', url: '/cobots/all-cobots-specs' },
           { label: `${navFamilyName('r-core')} (Agile Series)`, url: '/cobots/r-core' },
           { label: `${navFamilyName('r-max')} (High Payload)`, url: '/cobots/r-max' },
           { label: 'Humanoid (Embodied AI)', url: '/cobots/humanoid' },
@@ -200,7 +203,6 @@ const GLOBAL_CONFIG = {
         label: 'Selector',
         url: '/',
         links: [
-          { label: 'All Models & Specs', url: '/selector/all-specs' },
           { label: 'Side-by-Side Comparison', url: '/selector/comparison' },
           { label: 'Product Advisor (Find Your Match)', url: '/selector/advisor' },
         ],
@@ -329,15 +331,6 @@ export default function ClientLayout({
           : isDark
             ? '#000'
             : '#fff';
-    try {
-      /* 尚无 cookie 但旧版只写了 localStorage：首帧前对齐语言并写入 cookie，避免与 FOUC 同拍闪切 */
-      if (initialLang === 'zh' && localStorage.getItem('user-lang') === 'en') {
-        document.cookie = 'user-lang=en; Path=/; Max-Age=31536000; SameSite=Lax';
-        setLang('en');
-      }
-    } catch {
-      /* ignore */
-    }
   }, [pathname, isDark, initialLang]);
 
   useEffect(() => {
@@ -624,7 +617,7 @@ export default function ClientLayout({
       <SiteLangContext.Provider value={resolvedLang}>
         <InquiryContext.Provider value={{ isOpen: isInquiryOpen, open: () => setIsInquiryOpen(true), close: () => setIsInquiryOpen(false) }}>
           
-          {(activeMenu || isMobileMenuOpen || showSearch || isInquiryOpen) && (
+          {(isMobileMenuOpen || showSearch || isInquiryOpen) && (
             <div className="nav-mask-master" onClick={() => { setActiveMenu(null); setIsMobileMenuOpen(false); setShowSearch(false); setIsInquiryOpen(false); setSearchQuery(''); }} />
           )}
 
@@ -683,7 +676,22 @@ export default function ClientLayout({
             }
           >
             <div className="nav-container">
-              <div className="logo-box" onClick={() => (window.location.href = '/')}>
+              <div
+                className="logo-box"
+                onMouseDown={(event) => {
+                  if (!isPrimaryPointerDown(event)) return;
+                  event.preventDefault();
+                  window.location.assign('/');
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    window.location.assign('/');
+                  }
+                }}
+                tabIndex={0}
+                role="link"
+              >
                 <svg width={26} height={26} viewBox="0 0 128 128" aria-label="brand logo" role="img">
                   <circle cx="64" cy="66" r="34" fill="currentColor" />
                   <path d="M18 67C18 58 37 51 63 51C89 51 110 58 110 67C110 76 89 83 63 83C37 83 18 76 18 67Z" stroke="currentColor" strokeWidth="9" fill="none" strokeLinecap="round" />
@@ -789,7 +797,9 @@ export default function ClientLayout({
                         ?.links.map((link) => (
                           <li
                             key={navSubLabel(link)}
-                            onClick={() => {
+                            onMouseDown={(event) => {
+                              if (!isPrimaryPointerDown(event)) return;
+                              event.preventDefault();
                               const section = config.nav.find((i) => i.label === activeMenu)!;
                               followNavUrl(navSubUrl(section, link), () => setActiveMenu(null));
                             }}
@@ -816,7 +826,9 @@ export default function ClientLayout({
                           <div
                             key={res.name}
                             className="s-item"
-                            onClick={() => {
+                            onMouseDown={(event) => {
+                              if (!isPrimaryPointerDown(event)) return;
+                              event.preventDefault();
                               followNavUrl(res.url, () => {
                                 setShowSearch(false);
                                 setSearchQuery('');
@@ -855,7 +867,11 @@ export default function ClientLayout({
                         <div
                           key={navSubLabel(sub)}
                           className="m-sub-i"
-                          onClick={() => followNavUrl(navSubUrl(item, sub), () => setIsMobileMenuOpen(false))}
+                          onMouseDown={(event) => {
+                            if (!isPrimaryPointerDown(event)) return;
+                            event.preventDefault();
+                            followNavUrl(navSubUrl(item, sub), () => setIsMobileMenuOpen(false));
+                          }}
                         >
                           {navSubLabel(sub)}
                         </div>
@@ -896,7 +912,14 @@ export default function ClientLayout({
                       <div className="f-list">
                         <div className="f-list-inner">
                           {section.links.map((link) => (
-                            <span key={navSubLabel(link)} onClick={() => followNavUrl(navSubUrl(section, link))}>
+                            <span
+                              key={navSubLabel(link)}
+                              onMouseDown={(event) => {
+                                if (!isPrimaryPointerDown(event)) return;
+                                event.preventDefault();
+                                followNavUrl(navSubUrl(section, link));
+                              }}
+                            >
                               {navSubLabel(link)}
                             </span>
                           ))}
@@ -990,7 +1013,7 @@ export default function ClientLayout({
             background: transparent;
             min-height: 100%;
           }
-          body { font-family: -apple-system, sans-serif; margin: 0; overflow-x: hidden; }
+          body { margin: 0; overflow-x: hidden; }
           .nav-container { width: 100%; max-width: var(--apple-w); margin: 0 auto; padding: 0 22px; display: flex; justify-content: space-between; align-items: center; height: 100%; box-sizing: border-box; }
           .apple-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); background: rgba(251,251,253,0.2); backdrop-filter: saturate(135%) blur(8px); z-index: var(--z-nav); border-bottom: 1px solid rgba(0,0,0,0.012); transition: background 0.38s ease, backdrop-filter 0.38s ease, -webkit-backdrop-filter 0.38s ease, transform 0.58s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.14s ease, border-color 0.2s ease, color 0.28s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
           .apple-nav.slide-up { transform: translateY(-104%); opacity: 0; pointer-events: none; }

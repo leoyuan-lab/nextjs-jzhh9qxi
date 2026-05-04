@@ -17,6 +17,14 @@
 html {
   background: transparent;
   min-height: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 /*
@@ -1025,7 +1033,7 @@ html {
   font-size: 14px;
 }
 
-/* `/selector/all-specs`（选型）：依次入场 + 阴影呼吸 + 内层微微缩放 */
+/* `/cobots/all-cobots-specs`（选型）：依次入场 + 阴影呼吸 + 内层微微缩放 */
 @keyframes selector-card-enter {
   from {
     opacity: 0;
