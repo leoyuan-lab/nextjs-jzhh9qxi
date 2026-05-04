@@ -1,21 +1,56 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-/** Syncs `?lang=zh|en` to the `user-lang` cookie so SSR matches hreflang alternate URLs. */
-export function middleware(request: NextRequest) {
-  const raw = request.nextUrl.searchParams.get('lang');
-  const lang = raw === 'en' ? 'en' : raw === 'zh' ? 'zh' : null;
-  if (!lang) return NextResponse.next();
+type SiteLang = 'zh' | 'en';
 
-  const res = NextResponse.next();
-  res.cookies.set('user-lang', lang, {
+const COOKIE_NAME = 'user-lang';
+const LANGUAGE_PREFIX_RE = /^\/(zh|en)(\/|$)/;
+
+function detectLangFromHeader(acceptLanguage: string | null): SiteLang {
+  if (!acceptLanguage) return 'en';
+  const normalized = acceptLanguage.toLowerCase();
+  return normalized.startsWith('zh') || normalized.includes(',zh') ? 'zh' : 'en';
+}
+
+function withLangCookie(response: NextResponse, lang: SiteLang) {
+  response.cookies.set(COOKIE_NAME, lang, {
     path: '/',
     maxAge: 31536000,
     sameSite: 'lax',
   });
-  return res;
+  return response;
+}
+
+export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const matchedPrefix = pathname.match(LANGUAGE_PREFIX_RE);
+
+  if (matchedPrefix) {
+    const lang = matchedPrefix[1] === 'zh' ? 'zh' : 'en';
+    const strippedPath = pathname.replace(LANGUAGE_PREFIX_RE, '/') || '/';
+    const rewriteUrl = request.nextUrl.clone();
+    rewriteUrl.pathname = strippedPath;
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set('x-site-lang', lang);
+    return withLangCookie(
+      NextResponse.rewrite(rewriteUrl, { request: { headers: requestHeaders } }),
+      lang,
+    );
+  }
+
+  const preferred =
+    request.cookies.get(COOKIE_NAME)?.value === 'zh' ||
+    request.cookies.get(COOKIE_NAME)?.value === 'en'
+      ? (request.cookies.get(COOKIE_NAME)?.value as SiteLang)
+      : detectLangFromHeader(request.headers.get('accept-language'));
+
+  const redirectUrl = request.nextUrl.clone();
+  redirectUrl.pathname = `/${preferred}${pathname === '/' ? '/' : pathname}`;
+  return withLangCookie(NextResponse.redirect(redirectUrl), preferred);
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|js|map|glb|gltf)$).*)'],
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|js|map|glb|gltf)$).*)',
+  ],
 };

@@ -20,27 +20,22 @@ export function seoDescription(body: string): string {
 }
 
 /**
- * `rel="alternate"` + hreflang for zh/en. Uses `?lang=zh|en` so crawlers get distinct URLs
- * while the app keeps a single pathname; `middleware.ts` maps the query to the `user-lang` cookie.
+ * `rel="alternate"` + hreflang for zh/en physical subdirectory routes.
  */
 export function languageAlternates(pathname: string): Metadata['alternates'] {
   const path = pathname.startsWith('/') ? pathname : `/${pathname}`;
   const origin = getSiteOrigin().replace(/\/$/, '');
   let canonical: string;
   try {
-    canonical = new URL(path, `${origin}/`).href;
+    canonical = new URL(`/en${path}`, `${origin}/`).href;
   } catch {
     return undefined;
   }
-  const withLang = (lang: 'zh' | 'en') => {
-    const u = new URL(path, `${origin}/`);
-    u.searchParams.set('lang', lang);
-    return u.href;
-  };
+  const withLang = (lang: 'zh' | 'en') => new URL(`/${lang}${path}`, `${origin}/`).href;
   return {
     canonical,
     languages: {
-      'x-default': canonical,
+      'x-default': new URL(path, `${origin}/`).href,
       'zh-CN': withLang('zh'),
       'en-US': withLang('en'),
     },

@@ -66,6 +66,14 @@ const ADVISOR_HERO_PEEK_PATH = '/selector/advisor';
 
 /** Same chrome behavior as homepage (immersive hero, clear nav baseline). */
 const HOME_CHROME_PATHS = new Set(['/']);
+const LOCALE_PREFIX_RE = /^\/(zh|en)(\/|$)/;
+
+function stripLocalePrefix(pathname: string): string {
+  if (!pathname || pathname === '/') return '/';
+  if (!LOCALE_PREFIX_RE.test(pathname)) return pathname;
+  const next = pathname.replace(LOCALE_PREFIX_RE, '/');
+  return next || '/';
+}
 
 function navSubLabel(link: NavSubLink | string): string {
   return typeof link === 'string' ? link : link.label;
@@ -288,10 +296,11 @@ export default function ClientLayout({
   initialLang: 'zh' | 'en';
 }) {
   const pathname = usePathname();
-  const isHome = HOME_CHROME_PATHS.has(pathname);
-  const isArm = ARM_NAV_PATHS.has(pathname);
-  const isSelector = SELECTOR_NAV_PATHS.has(pathname);
-  const isAdvisorHeroPeek = pathname === ADVISOR_HERO_PEEK_PATH;
+  const logicalPathname = useMemo(() => stripLocalePrefix(pathname || '/'), [pathname]);
+  const isHome = HOME_CHROME_PATHS.has(logicalPathname);
+  const isArm = ARM_NAV_PATHS.has(logicalPathname);
+  const isSelector = SELECTOR_NAV_PATHS.has(logicalPathname);
+  const isAdvisorHeroPeek = logicalPathname === ADVISOR_HERO_PEEK_PATH;
   const [lang, setLang] = useState<'zh' | 'en'>(initialLang);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -319,6 +328,23 @@ export default function ClientLayout({
   /** `localStorage` may contain garbage; never index `GLOBAL_CONFIG` with a non-key. */
   const resolvedLang: 'zh' | 'en' = lang === 'en' ? 'en' : 'zh';
   const config = useMemo(() => GLOBAL_CONFIG[resolvedLang], [resolvedLang]);
+  const localizePath = React.useCallback(
+    (url: string, targetLang: 'zh' | 'en' = resolvedLang) => {
+      if (
+        url === '__inquiry__' ||
+        url.startsWith('mailto:') ||
+        url.startsWith('tel:') ||
+        url.startsWith('#') ||
+        /^https?:\/\//.test(url)
+      ) {
+        return url;
+      }
+      const normalized = url.startsWith('/') ? url : `/${url}`;
+      if (LOCALE_PREFIX_RE.test(normalized)) return normalized;
+      return `/${targetLang}${normalized === '/' ? '/' : normalized}`;
+    },
+    [resolvedLang],
+  );
 
   useLayoutEffect(() => {
     document.body.style.margin = '0';
@@ -331,7 +357,7 @@ export default function ClientLayout({
           : isDark
             ? '#000'
             : '#fff';
-  }, [pathname, isDark, initialLang]);
+  }, [isArm, isDark, isHome, pathname]);
 
   useEffect(() => {
     document.documentElement.setAttribute('lang', resolvedLang);
@@ -433,7 +459,7 @@ export default function ClientLayout({
       setIsChildSubNavVisible(false);
       setMainNavScrollProgress(0);
     }
-  }, [pathname, isHome, isArm, isSelector]);
+  }, [logicalPathname, isArm, isHome, isSelector]);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -510,7 +536,7 @@ export default function ClientLayout({
   }, [isMobileMenuOpen]);
 
   useEffect(() => {
-    if (!HOME_CHROME_PATHS.has(pathname)) {
+    if (!HOME_CHROME_PATHS.has(logicalPathname)) {
       setSampledNavDark(null);
       return;
     }
@@ -531,7 +557,7 @@ export default function ClientLayout({
       window.removeEventListener('resize', syncHomeScrollAndTone);
       window.visualViewport?.removeEventListener('resize', syncHomeScrollAndTone);
     };
-  }, [pathname]);
+  }, [logicalPathname]);
 
   useEffect(() => {
     return () => {
@@ -604,6 +630,10 @@ export default function ClientLayout({
     }
     setLang(newLang);
     window.dispatchEvent(new Event('langChange'));
+    const targetPath = localizePath(logicalPathname, newLang);
+    const query = window.location.search || '';
+    const hash = window.location.hash || '';
+    window.location.assign(`${targetPath}${query}${hash}`);
     setIsMobileMenuOpen(false);
   };
 
@@ -681,12 +711,12 @@ export default function ClientLayout({
                 onMouseDown={(event) => {
                   if (!isPrimaryPointerDown(event)) return;
                   event.preventDefault();
-                  window.location.assign('/');
+                  window.location.assign(localizePath('/'));
                 }}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault();
-                    window.location.assign('/');
+                    window.location.assign(localizePath('/'));
                   }
                 }}
                 tabIndex={0}
@@ -713,7 +743,7 @@ export default function ClientLayout({
                         setActiveMenu((prev) => (prev === item.label ? null : item.label));
                         return;
                       }
-                      window.location.href = item.url;
+                      window.location.href = localizePath(item.url);
                     }}
                   >
                     {item.label}
@@ -801,7 +831,7 @@ export default function ClientLayout({
                               if (!isPrimaryPointerDown(event)) return;
                               event.preventDefault();
                               const section = config.nav.find((i) => i.label === activeMenu)!;
-                              followNavUrl(navSubUrl(section, link), () => setActiveMenu(null));
+                              followNavUrl(localizePath(navSubUrl(section, link)), () => setActiveMenu(null));
                             }}
                           >
                             {navSubLabel(link)}
@@ -829,7 +859,7 @@ export default function ClientLayout({
                             onMouseDown={(event) => {
                               if (!isPrimaryPointerDown(event)) return;
                               event.preventDefault();
-                              followNavUrl(res.url, () => {
+                              followNavUrl(localizePath(res.url), () => {
                                 setShowSearch(false);
                                 setSearchQuery('');
                               });
@@ -870,7 +900,7 @@ export default function ClientLayout({
                           onMouseDown={(event) => {
                             if (!isPrimaryPointerDown(event)) return;
                             event.preventDefault();
-                            followNavUrl(navSubUrl(item, sub), () => setIsMobileMenuOpen(false));
+                            followNavUrl(localizePath(navSubUrl(item, sub)), () => setIsMobileMenuOpen(false));
                           }}
                         >
                           {navSubLabel(sub)}
@@ -917,7 +947,7 @@ export default function ClientLayout({
                               onMouseDown={(event) => {
                                 if (!isPrimaryPointerDown(event)) return;
                                 event.preventDefault();
-                                followNavUrl(navSubUrl(section, link));
+                                followNavUrl(localizePath(navSubUrl(section, link)));
                               }}
                             >
                               {navSubLabel(link)}

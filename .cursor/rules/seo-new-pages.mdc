@@ -10,11 +10,14 @@ Whenever **adding or changing** a route under `app/**` (new `page.tsx`, new segm
 1. **Metadata** — In the segment `layout.tsx`, export `metadata` using `pageMetadata()` from `@/lib/site-seo.ts` so:
    - **`title`** includes the literal substrings **Cobot** and **Robotic Arm** (use `seoTitle()` / `pageMetadata()` which enforces `… Cobot · Robotic Arm · Apple Robot`).
    - **`description`** is appropriate for the page; use `seoDescription()` so missing required phrases are appended when needed.
+   - **`alternates` is mandatory**: metadata must include zh/en alternates that resolve to `/zh/...` and `/en/...` variants (via `pageMetadata(..., pathname)` / `languageAlternates()`).
 
 2. **Breadcrumbs** — Do **not** add visible breadcrumb UI. Add **only** invisible structured data:
    - Import `BreadcrumbJsonLd` from `@/components/BreadcrumbJsonLd.tsx`.
    - Render `<BreadcrumbJsonLd id="jsonld-bc-{unique}" items={[ { href, en }… ]} />` with **English `en` labels** for Schema.org; hierarchy should match site IA (Home → section → page).
 
 3. **No duplicate nav** — Avoid second on-screen breadcrumb bars; crawlers read the JSON-LD script only.
+
+4. **Localized linking guardrail** — Any newly added internal link in `app/**` must carry language-prefix behavior (no bare `/about`-style links that bypass `/zh` or `/en` context).
 
 **Branding, asset filenames, alt text, and routing patterns:** see `seo-branding-assets.mdc`.

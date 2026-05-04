@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import { headers } from 'next/headers';
 import './globals.css';
 import ClientLayout from './ClientLayout';
 import { rootMetadata } from '@/lib/site-seo';
@@ -11,7 +12,15 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const jar = await cookies();
-  const initialLang = jar.get('user-lang')?.value === 'en' ? 'en' : 'zh';
+  const reqHeaders = await headers();
+  const headerLang = reqHeaders.get('x-site-lang');
+  const cookieLang = jar.get('user-lang')?.value;
+  const initialLang =
+    headerLang === 'en' || headerLang === 'zh'
+      ? headerLang
+      : cookieLang === 'en'
+        ? 'en'
+        : 'zh';
 
   return (
     <html lang={initialLang} suppressHydrationWarning>
