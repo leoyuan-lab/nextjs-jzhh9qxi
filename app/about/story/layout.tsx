@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Our Cobot Story',
   'Mission, lineage, robotics arm engineering principles, roadmap transparency, Cobot stewardship from Apple Robot founders.',
+  '/about/story',
 );
 
 export default function AboutStoryLayout({ children }: { children: React.ReactNode }) {

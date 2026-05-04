@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'r-Max Heavy Payload Cobot',
   'r‑Max Cobots cover FR16–FR20 class heavy payloads: compact and long‑reach robotic arm options for stamping, handling, palletizing.',
+  '/cobots/r-max',
 );
 
 export default function CobotsRMaxLayout({ children }: { children: React.ReactNode }) {

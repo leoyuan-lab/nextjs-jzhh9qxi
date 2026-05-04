@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Cobot Technical Academy',
   'Hands‑on Cobot academy: onboarding checklists, safety refreshers, programming exercises, robotics arm commissioning labs.',
+  '/support/academy',
 );
 
 export default function SupportAcademyLayout({ children }: { children: React.ReactNode }) {

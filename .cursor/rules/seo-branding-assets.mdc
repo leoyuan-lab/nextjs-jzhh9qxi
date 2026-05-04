@@ -1,0 +1,34 @@
+---
+description: Branding, asset naming, alt/3D accessibility, URL/copy patterns, Lighthouse checks
+alwaysApply: true
+---
+
+# SEO & branding (assets, routing, verification)
+
+Apply on **every** substantive change involving **UI, assets, copy, or metadata** (not only new pages). **New route `layout.tsx`, `pageMetadata()`, and `BreadcrumbJsonLd`:** see `seo-new-pages.mdc`.
+
+## 1. Asset naming, alt text & 3D (critical)
+
+- **File names**: All **new** images and model assets use hybrid naming: `[r-series]-cobot-[fr-model].[ext]`.
+- **Alt text**: Every `<Image />` or `<img>` must include `alt` using: `[r-series] ([fr-model]) Collaborative Robot for [Context]` (replace placeholders with real series, model, and page-specific context).
+- **3D / Canvas**: For Canvas or 3D viewers, set `aria-label` or an equivalent `description` prop so the robotic arm model is described for assistive tech.
+
+## 2. Metadata (when editing titles or descriptions)
+
+- **Title**: Must include **Cobot** and **Robotic Arm**. Use `seoTitle()` from `@/lib/site-seo.ts` where a title is set or overridden.
+- **Description**: Must be **unique** per page where applicable, include **brand keywords**, and use `seoDescription()` when the helper should append missing required phrases.
+
+## 3. Routing & IA
+
+- **No redundancy**: Avoid generic paths like `/arm`. Prefer `/cobots/r-core` or other specific product paths.
+- **Applications**: Prefer industry-specific, long-tail framing (e.g. Medical, Lab, Manufacturing) in URLs, copy, and metadata where it matches IA.
+
+## 4. Sitemap, robots & hreflang (technical)
+
+- **Sitemap / robots**: Implemented via `app/sitemap.ts` and `app/robots.ts`; URL list lives in `lib/site-paths.ts` — **add every new indexable path** there (must cover all `/cobots/*` and `/applications/*` pages).
+- **Production URL**: Set `NEXT_PUBLIC_SITE_URL` (no trailing slash) so sitemap, robots, and hreflang absolute URLs match the live domain.
+- **Hreflang**: Route layouts pass a pathname into `pageMetadata(..., pathname)` so Next emits `link rel="alternate" hreflang="zh-CN|en-US|x-default"`. Language variants use `?lang=zh` / `?lang=en` (see `middleware.ts` + cookie `user-lang`); crawlers and shared links can open the correct language without separate path segments.
+
+## 5. Verification
+
+- After meaningful UI or SEO-affecting changes, **remind the user** to run Lighthouse (SEO category) and aim for **100/100** where feasible.

@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Cobot Accessories Ecosystem',
   'End‑effectors, vision kits, cabling, stands, safety stacks, and software bundles that complete your Cobot robotic arm workstation.',
+  '/cobots/accessories',
 );
 
 export default function CobotsAccessoriesLayout({ children }: { children: React.ReactNode }) {

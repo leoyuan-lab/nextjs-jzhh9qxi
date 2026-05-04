@@ -10,6 +10,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'r-Core Agile Series',
   'r‑Series r‑Core Cobot platform: agile collaborative robotic arm with industrial reach, repeatability, and tooling options.',
+  '/cobots/r-core',
 );
 
 export default function CobotsRCoreLayout({ children }: { children: React.ReactNode }) {

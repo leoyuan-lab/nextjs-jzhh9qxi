@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Global Cobot Service',
   'Global service for robotic arm fleets: RMA portals, SLA packs, robotics arm preventative maintenance, escalation lines.',
+  '/support/service',
 );
 
 export default function SupportServiceLayout({ children }: { children: React.ReactNode }) {

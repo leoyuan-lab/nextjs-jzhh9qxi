@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Humanoid Embodied Cobot Vision',
   'Humanoid Cobot roadmap: embodied AI tooling, tactile interaction, and next‑gen robotic arm research partnerships.',
+  '/cobots/humanoid',
 );
 
 export default function CobotsHumanoidLayout({ children }: { children: React.ReactNode }) {

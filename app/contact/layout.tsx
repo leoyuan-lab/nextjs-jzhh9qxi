@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Contact Cobot Sales',
   'Contact Cobot OEM sales, integrations, quoting, demos, robotics arm PoCs via Apple Robot teams worldwide.',
+  '/contact',
 );
 
 export default function ContactLayout({ children }: { children: React.ReactNode }) {

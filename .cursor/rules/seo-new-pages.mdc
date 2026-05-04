@@ -1,18 +1,20 @@
 ---
-description: Mandatory SEO for every new route (metadata + invisible JSON-LD breadcrumbs)
+description: Mandatory SEO for new/changed app route segments (metadata + invisible JSON-LD breadcrumbs)
 alwaysApply: true
 ---
 
-# New pages: SEO checklist (auto-apply)
+# New routes: metadata & structured data
 
-Whenever adding a new `app/**/page.tsx` or route segment:
+Whenever **adding or changing** a route under `app/**` (new `page.tsx`, new segment, or `layout.tsx` for that segment):
 
-1. **Metadata** — In the segment `layout.tsx`, export `metadata` using `pageMetadata()` from `lib/site-seo.ts` so:
-   - **`title`** includes the literal substrings **`Cobot`** and **`Robotic Arm`** (use `seoTitle()` / `pageMetadata()` which enforces `… Cobot · Robotic Arm · Apple Robot`).
-   - **`description`** includes both concepts; `seoDescription()` will append missing phrases when needed.
+1. **Metadata** — In the segment `layout.tsx`, export `metadata` using `pageMetadata()` from `@/lib/site-seo.ts` so:
+   - **`title`** includes the literal substrings **Cobot** and **Robotic Arm** (use `seoTitle()` / `pageMetadata()` which enforces `… Cobot · Robotic Arm · Apple Robot`).
+   - **`description`** is appropriate for the page; use `seoDescription()` so missing required phrases are appended when needed.
 
 2. **Breadcrumbs** — Do **not** add visible breadcrumb UI. Add **only** invisible structured data:
-   - Import `BreadcrumbJsonLd` from `components/BreadcrumbJsonLd.tsx`.
+   - Import `BreadcrumbJsonLd` from `@/components/BreadcrumbJsonLd.tsx`.
    - Render `<BreadcrumbJsonLd id="jsonld-bc-{unique}" items={[ { href, en }… ]} />` with **English `en` labels** for Schema.org; hierarchy should match site IA (Home → section → page).
 
 3. **No duplicate nav** — Avoid second on-screen breadcrumb bars; crawlers read the JSON-LD script only.
+
+**Branding, asset filenames, alt text, and routing patterns:** see `seo-branding-assets.mdc`.

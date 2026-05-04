@@ -716,7 +716,7 @@ html {
   background: #fff;
 }
 
-/* r‑Core `/cobots/r-core` 顶栏：透明顶 ↔ 下滑毛玻璃（与 ClientLayout 内联样式一致；!important 避免 styled-jsx 抢样式） */
+/* r‑Core `/cobots/r-core` 顶栏：透明顶 ↔ 下滑毛玻璃（与 ClientLayout `subPageNavProgress < 0.02` 分支一致；!important 避免其它规则抢样式） */
 .apple-nav.is-dark.arm-nav-top-clear:not(.search-mode) {
   background: transparent !important;
   border-bottom-color: transparent !important;
@@ -729,6 +729,21 @@ html {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   -webkit-backdrop-filter: saturate(160%) blur(12px) !important;
   backdrop-filter: saturate(160%) blur(12px) !important;
+}
+
+/* 选型页 `/selector/*`：首屏顶栏全透明，避免默认 `.apple-nav` 浅色底在浅色 hero 上像「白条」 */
+.apple-nav.selector-nav-top-clear:not(.search-mode) {
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.apple-nav.selector-nav-scroll-glass:not(.search-mode) {
+  background: rgba(251, 251, 253, 0.76) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(18px) !important;
+  backdrop-filter: saturate(180%) blur(18px) !important;
 }
 
 .apple-nav {
@@ -1132,5 +1147,251 @@ html {
   font-size: 1.0625rem;
   color: #06c;
   word-break: break-all;
+}
+
+/* —— Advisor hero1：70vh 构图，背景顶穿导航；模型全幅（100vw）铺底 —— */
+.advisor-hero-glb {
+  position: relative;
+  background: transparent;
+  width: 100vw;
+  max-width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: -64px;
+  overflow: hidden;
+  isolation: isolate;
+  z-index: 0;
+  /* 视觉主体 70vh，同时补回被负 margin 吃掉的顶部空间 */
+  height: calc(70vh + 64px);
+  height: calc(70dvh + 64px);
+  min-height: calc(70vh + 64px);
+  min-height: calc(70dvh + 64px);
+}
+
+.advisor-hero-glb .advisor-hero-model-layer {
+  position: absolute;
+  /* 扩展可视区域：模型下移后，顶部新增空间继续显示模型而非白底 */
+  top: calc(-64px - 64vh);
+  right: -10vw;
+  bottom: -28vh;
+  left: -10vw;
+  z-index: 0;
+  width: auto;
+  height: auto;
+  min-height: 100%;
+  overflow: hidden;
+  background: transparent;
+  pointer-events: none;
+}
+
+.advisor-hero-glb .advisor-hero-model-layer model-viewer {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Hero2 与 Hero1 解耦：保留轻微安全间距，避免视觉重叠 */
+.advisor-hero2-stack {
+  padding-top: 0;
+  box-sizing: border-box;
+}
+
+.advisor-hero-glb .advisor-hero-text-band {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  background: transparent;
+  pointer-events: none;
+  /* 文案位置还原：保持原先视觉锚点，不随模型补顶被推挤 */
+  padding-top: calc(clamp(92px, 19vh, 180px) + 15vh);
+  padding-bottom: 0;
+  box-sizing: border-box;
+}
+
+.advisor-hero-glb .advisor-hero-text-inner {
+  width: 100%;
+  max-width: 1024px;
+  margin: 0 auto;
+  padding-left: 22px;
+  padding-right: 22px;
+  box-sizing: border-box;
+  background: transparent;
+}
+
+.advisor-hero-glb .advisor-hero-text-scale {
+  transform: scale(1.5);
+  transform-origin: left bottom;
+  will-change: transform;
+  backface-visibility: hidden;
+  background: transparent;
+}
+
+.advisor-hero-glb .advisor-hero-type {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  margin: 0;
+  background: transparent;
+}
+
+.advisor-hero-glb .advisor-loading-slogan-main {
+  margin: 0;
+  padding: 0;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    'SF Pro Display',
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    sans-serif;
+  font-size: clamp(36px, 8.6vw, 92px);
+  font-weight: 800;
+  letter-spacing: -0.052em;
+  line-height: 1.05;
+  color: #000000;
+  text-wrap: balance;
+}
+
+/* 桌面略缩小主标题；手机保持原 clamp */
+@media (min-width: 735px) {
+  .advisor-hero-glb .advisor-loading-slogan-main {
+    font-size: clamp(28px, 4.9vw, 68px);
+  }
+}
+
+/* 手机：vision. 单独换行 */
+@media (max-width: 734px) {
+  .advisor-hero-glb .advisor-slogan-vision {
+    display: block;
+  }
+}
+
+/* 金属渐变：仅在加载后播放一次，结束定格（不循环） */
+.advisor-hero-glb .advisor-slogan-shine {
+  color: transparent;
+  background-image: linear-gradient(
+    105deg,
+    #0a0a0a 0%,
+    #5c5c62 18%,
+    #d1d1d6 36%,
+    #2e2e31 52%,
+    #8e8e93 70%,
+    #0a0a0a 100%
+  );
+  background-size: 220% auto;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .advisor-hero-glb .advisor-slogan-shine {
+    animation: advisor-slogan-shimmer-once 1.25s ease-out 1 forwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .advisor-hero-glb .advisor-slogan-shine {
+    color: #000000;
+    background-image: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+  }
+}
+
+@keyframes advisor-slogan-shimmer-once {
+  0% {
+    color: transparent;
+    background-image: linear-gradient(
+      105deg,
+      #0a0a0a 0%,
+      #5c5c62 18%,
+      #d1d1d6 36%,
+      #2e2e31 52%,
+      #8e8e93 70%,
+      #0a0a0a 100%
+    );
+    background-size: 220% auto;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  70% {
+    color: transparent;
+    background-image: linear-gradient(
+      105deg,
+      #0a0a0a 0%,
+      #5c5c62 18%,
+      #d1d1d6 36%,
+      #2e2e31 52%,
+      #8e8e93 70%,
+      #0a0a0a 100%
+    );
+    background-size: 220% auto;
+    background-position: 100% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  71%,
+  100% {
+    color: #000000;
+    background-image: none;
+    background-size: auto;
+    background-position: 0 0;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+  }
+}
+
+.advisor-hero-glb .advisor-loading-slogan-main + .advisor-loading-subline {
+  margin: 0.38em 0 0;
+  padding: 0;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    'SF Pro Display',
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    sans-serif;
+  font-size: clamp(22px, 5.17vw, 54px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.12;
+  color: #2b2b2e;
+  background: transparent;
+  text-shadow:
+    0 0 20px rgba(255, 255, 255, 0.9),
+    0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.advisor-hero-glb .advisor-hero-model-shift {
+  position: absolute;
+  inset: 0;
+  /* 真正缩小一点，并回收过量下移，补出导航下方与底部交接处内容 */
+  transform: translate(6%, calc(22% + 30vh)) scale(0.95);
+  transform-origin: 50% 58%;
+  background: transparent;
+}
+
+@media (max-width: 734px) {
+  .advisor-hero-glb {
+    height: calc(70svh + 64px);
+    min-height: calc(70svh + 64px);
+  }
+
+  .advisor-hero-glb .advisor-hero-text-band {
+    padding-top: calc(clamp(88px, 17vh, 150px) + 15vh);
+  }
+
+  .advisor-hero-glb .advisor-hero-model-shift {
+    transform: translate(4%, calc(24% + 30vh)) scale(0.92);
+  }
 }
 

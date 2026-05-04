@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 
+import { getSiteOrigin } from '@/lib/site-origin';
+
 /** Visible <title> must include Cobot & Robotic Arm (product SEO). */
 export function seoTitle(focusPhrase: string): string {
   const trimmed = focusPhrase.trim();
@@ -17,12 +19,49 @@ export function seoDescription(body: string): string {
   return out.replace(/\s+/g, ' ').trim();
 }
 
-/** Use in route `layout.tsx` for `export const metadata`. */
-export function pageMetadata(titleFocus: string, descriptionSentence: string): Metadata {
+/**
+ * `rel="alternate"` + hreflang for zh/en. Uses `?lang=zh|en` so crawlers get distinct URLs
+ * while the app keeps a single pathname; `middleware.ts` maps the query to the `user-lang` cookie.
+ */
+export function languageAlternates(pathname: string): Metadata['alternates'] {
+  const path = pathname.startsWith('/') ? pathname : `/${pathname}`;
+  const origin = getSiteOrigin().replace(/\/$/, '');
+  let canonical: string;
+  try {
+    canonical = new URL(path, `${origin}/`).href;
+  } catch {
+    return undefined;
+  }
+  const withLang = (lang: 'zh' | 'en') => {
+    const u = new URL(path, `${origin}/`);
+    u.searchParams.set('lang', lang);
+    return u.href;
+  };
   return {
+    canonical,
+    languages: {
+      'x-default': canonical,
+      'zh-CN': withLang('zh'),
+      'en-US': withLang('en'),
+    },
+  };
+}
+
+/** Use in route `layout.tsx` for `export const metadata`. Pass `pathname` (e.g. `/cobots/r-core`) for hreflang. */
+export function pageMetadata(
+  titleFocus: string,
+  descriptionSentence: string,
+  pathname?: string,
+): Metadata {
+  const meta: Metadata = {
     title: seoTitle(titleFocus),
     description: seoDescription(descriptionSentence),
   };
+  if (pathname) {
+    const alternates = languageAlternates(pathname);
+    if (alternates) meta.alternates = alternates;
+  }
+  return meta;
 }
 
 export const rootMetadata: Metadata = {

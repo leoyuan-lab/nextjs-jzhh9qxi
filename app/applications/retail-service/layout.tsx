@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Retail & Service Cobot Applications',
   'Retail and front‑house Cobots: compact robotic arms for greetings, dispensing, tending kiosks, and reliable service chores.',
+  '/applications/retail-service',
 );
 
 export default function RetailServiceLayout({ children }: { children: React.ReactNode }) {

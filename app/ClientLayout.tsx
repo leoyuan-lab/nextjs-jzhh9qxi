@@ -61,6 +61,9 @@ const ARM_NAV_PATHS = new Set(['/cobots/r-core']);
 
 const SELECTOR_NAV_PATHS = new Set(['/selector/all-specs', '/selector/advisor']);
 
+/** 与 `/cobots/r-core` 相同：`main` 顶内边距为 0，首屏 3D 从视口顶铺满至透明导航下沿。 */
+const ADVISOR_HERO_PEEK_PATH = '/selector/advisor';
+
 /** Same chrome behavior as homepage (immersive hero, clear nav baseline). */
 const HOME_CHROME_PATHS = new Set(['/', '/selector/comparison']);
 
@@ -286,6 +289,7 @@ export default function ClientLayout({
   const isHome = HOME_CHROME_PATHS.has(pathname);
   const isArm = ARM_NAV_PATHS.has(pathname);
   const isSelector = SELECTOR_NAV_PATHS.has(pathname);
+  const isAdvisorHeroPeek = pathname === ADVISOR_HERO_PEEK_PATH;
   const [lang, setLang] = useState<'zh' | 'en'>(initialLang);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -296,6 +300,8 @@ export default function ClientLayout({
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
   const [footerExpandedSection, setFooterExpandedSection] = useState<string | null>(null);
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+  const [inquiryPrefillBody, setInquiryPrefillBody] = useState<string | undefined>(undefined);
+  const [inquiryFormKey, setInquiryFormKey] = useState(0);
   const [isChildSubNavVisible, setIsChildSubNavVisible] = useState(false);
   const [mainNavScrollProgress, setMainNavScrollProgress] = useState(0);
   const [navToneOverride, setNavToneOverride] = useState<'dark' | 'light' | null>(null);
@@ -359,14 +365,22 @@ export default function ClientLayout({
     const active = document.activeElement as HTMLElement | null;
     active?.blur?.();
     setIsInquiryOpen(false);
+    window.setTimeout(() => setInquiryPrefillBody(undefined), 420);
   };
 
   useEffect(() => {
-    const handleInquirySignal = () => {
+    const handleInquirySignal = (ev: Event) => {
       if (Date.now() - lastInquiryCloseAtRef.current < 360) return;
+      const detail = (ev as CustomEvent<{ body?: string }>).detail;
+      if (detail && typeof detail.body === 'string') {
+        setInquiryPrefillBody(detail.body);
+      } else {
+        setInquiryPrefillBody(undefined);
+      }
+      setInquiryFormKey((k) => k + 1);
       setIsInquiryOpen(true);
     };
-    window.addEventListener('apple-inquiry-open', handleInquirySignal);
+    window.addEventListener('apple-inquiry-open', handleInquirySignal as EventListener);
     const checkTheme = () => {
       const bgColor = window.getComputedStyle(document.body).backgroundColor;
       setIsDark(bgColor === 'rgb(0, 0, 0)' || bgColor === '#000' || bgColor === 'rgb(22, 22, 23)');
@@ -413,7 +427,7 @@ export default function ClientLayout({
     return () => {
       window.removeEventListener('langChange', handleLangChange);
       window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('apple-inquiry-open', handleInquirySignal);
+      window.removeEventListener('apple-inquiry-open', handleInquirySignal as EventListener);
       window.removeEventListener('apple-subnav-visibility', handleSubNavVisibility as EventListener);
       window.removeEventListener('apple-nav-tone', handleNavTone as EventListener);
       window.removeEventListener('apple-main-nav-progress', handleMainNavProgress as EventListener);
@@ -421,7 +435,7 @@ export default function ClientLayout({
     };
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isHome || isArm || isSelector) {
       setIsChildSubNavVisible(false);
       setMainNavScrollProgress(0);
@@ -615,22 +629,37 @@ export default function ClientLayout({
           )}
 
           <nav
-            className={`apple-nav ${isHome ? 'is-home' : ''} ${navIsDark ? 'is-dark' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homePinnedClear ? 'home-clear' : ''} ${isHome && !homePinnedClear && !showSearch ? 'home-ghost' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}${isArm && !showSearch ? (subPageNavProgress < 0.01 ? ' arm-nav-top-clear' : ' arm-nav-scroll-glass') : ''}`}
+            className={`apple-nav ${isHome ? 'is-home' : ''} ${navIsDark ? 'is-dark' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homePinnedClear ? 'home-clear' : ''} ${isHome && !homePinnedClear && !showSearch ? 'home-ghost' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}${isArm && !showSearch ? (subPageNavProgress < 0.02 ? ' arm-nav-top-clear' : ' arm-nav-scroll-glass') : ''}${isSelector && !showSearch ? (subPageNavProgress < 0.02 ? ' selector-nav-top-clear' : ' selector-nav-scroll-glass') : ''}`}
             style={
               isHome
                 ? undefined
                 : {
-                    transform: `translate3d(0, -${(subPageNavProgress * 104).toFixed(2)}%, 0)`,
-                    /* selector：不淡出整栏；位移过渡加快，避免手机侧栏「慢半拍」 */
+                    /* 选型页顶栏不随 progress 上滑隐藏，仅用 progress 切换透明 / 毛玻璃（与 r‑Core 首屏透底一致） */
+                    transform: isSelector
+                      ? 'translate3d(0, 0, 0)'
+                      : `translate3d(0, -${(subPageNavProgress * 104).toFixed(2)}%, 0)`,
                     opacity: isSelector ? 1 : Math.max(0, 1 - subPageNavProgress),
-                    pointerEvents: subPageNavProgress > 0.98 ? 'none' : 'auto',
+                    pointerEvents: isSelector ? 'auto' : subPageNavProgress > 0.98 ? 'none' : 'auto',
                     ...(isSelector
-                      ? {
-                          transition:
-                            'transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0s, background 0.25s ease, border-color 0.2s ease, backdrop-filter 0.25s ease, -webkit-backdrop-filter 0.25s ease',
-                        }
+                      ? subPageNavProgress < 0.02
+                        ? {
+                            background: 'transparent',
+                            borderBottom: '1px solid transparent',
+                            backdropFilter: 'none',
+                            WebkitBackdropFilter: 'none',
+                            transition:
+                              'background 0.28s ease, border-color 0.22s ease, backdrop-filter 0.28s ease, -webkit-backdrop-filter 0.28s ease',
+                          }
+                        : {
+                            background: 'rgba(251, 251, 253, 0.76)',
+                            borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
+                            backdropFilter: 'saturate(180%) blur(18px)',
+                            WebkitBackdropFilter: 'saturate(180%) blur(18px)',
+                            transition:
+                              'background 0.28s ease, border-color 0.22s ease, backdrop-filter 0.28s ease, -webkit-backdrop-filter 0.28s ease',
+                          }
                       : isArm
-                        ? subPageNavProgress < 0.01
+                        ? subPageNavProgress < 0.02
                           ? {
                               background: 'transparent',
                               borderBottom: '1px solid transparent',
@@ -842,8 +871,8 @@ export default function ClientLayout({
             style={{
               position: 'relative',
               zIndex: 1,
-              /* r‑Core `/cobots/r-core`：与首页一致顶对齐，避免 main 上内边距在透明导航下形成一条「无 3D」的黑/空带 */
-              paddingTop: isHome || isArm ? '0px' : '44px',
+              /* r‑Core、Advisor 首屏：顶对齐，3D 可从固定导航下沿透出（透明顶栏下无空带） */
+              paddingTop: isHome || isArm || isAdvisorHeroPeek ? '0px' : '44px',
               minHeight: '80vh',
             }}
           >
@@ -943,11 +972,11 @@ export default function ClientLayout({
             }}>
               <h2 style={{ fontSize: '42px', fontWeight: 700, margin: '0 0 12px 0', letterSpacing: '-1.5px' }}>{lang === 'zh' ? '开启咨询' : 'Get Quote'}</h2>
               <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '17px', lineHeight: 1.4, marginBottom: '40px' }}>{lang === 'zh' ? '留下您的联系方式，我们将提供正式报价。' : 'Leave contact for official quote.'}</p>
-              <form onSubmit={handleInquirySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', boxSizing: 'border-box' }}>
+              <form key={inquiryFormKey} onSubmit={handleInquirySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', boxSizing: 'border-box' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-name-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '您的姓名' : 'Full Name'}</label><input name="Name" id="client-name-final" placeholder={lang === 'zh' ? '您的姓名' : 'Full Name'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-email-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '企业邮箱' : 'Business Email'}</label><input name="Email" id="client-email-final" type="email" placeholder={lang === 'zh' ? '企业邮箱' : 'Business Email'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-industry-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '所属行业' : 'Industry'}</label><div style={{ position: 'relative' }}><select name="Industry" id="client-industry-final" required defaultValue="" style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', appearance: 'none', cursor: 'pointer' }}><option value="" disabled>{lang === 'zh' ? '所属行业' : 'Industry'}</option>{industries.map((item) => (<option key={item} value={item} style={{ background: '#1c1c1e' }}>{item}</option>))}</select><span style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none', fontSize: '12px' }}>▼</span></div></div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-body-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '项目简述' : 'Message'}</label><textarea name="Body" id="client-body-final" placeholder={lang === 'zh' ? '项目简述...' : 'Message...'} rows={6} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', resize: 'none' }} required /></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-body-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '项目简述' : 'Message'}</label><textarea name="Body" id="client-body-final" key={`body-${inquiryFormKey}`} defaultValue={inquiryPrefillBody ?? ''} placeholder={lang === 'zh' ? '项目简述...' : 'Message...'} rows={10} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', resize: 'vertical', minHeight: '140px' }} required /></div>
                 <div style={{ paddingBottom: '60px' }}><button type="submit" style={{ background: '#0071e3', color: '#fff', border: 'none', borderRadius: '16px', padding: '20px', width: '100%', fontSize: '18px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,113,227,0.3)' }}>{lang === 'zh' ? '生成咨询邮件' : 'Generate Email'}</button></div>
               </form>
             </div>

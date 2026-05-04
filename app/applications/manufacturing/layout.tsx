@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Smart Manufacturing Cobots',
   'Smart factory Cobots: CNC tending, AOI, adhesives, and line‑balancing with programmable collaborative robotic arms.',
+  '/applications/manufacturing',
 );
 
 export default function ManufacturingLayout({ children }: { children: React.ReactNode }) {

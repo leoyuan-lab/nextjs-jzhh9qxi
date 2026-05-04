@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Medical & Lab Cobots',
   'Medical and diagnostics Cobots deliver sterile tending, repeatable pipetting robotics, bench‑top robotic arms, ISO‑ready workflows.',
+  '/applications/medical-lab',
 );
 
 export default function MedicalLabLayout({ children }: { children: React.ReactNode }) {

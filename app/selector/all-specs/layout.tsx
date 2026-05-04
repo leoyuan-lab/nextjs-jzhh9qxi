@@ -9,6 +9,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Selector All Models & Specs',
   'Browse every r‑Series Cobot variant matrix: payloads, robotic arm axes, repeats, reaches, and power notes in one Selector.',
+  '/selector/all-specs',
 );
 
 export default function SelectorAllSpecsLayout({ children }: { children: React.ReactNode }) {

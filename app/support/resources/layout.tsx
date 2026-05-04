@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Cobot Downloads & CAD',
   'Resource Center for Cobot CAD, conformity packs, certs, PLC snippets, robotics arm cabling drawings, manuals, revisions.',
+  '/support/resources',
 );
 
 export default function SupportResourcesLayout({ children }: { children: React.ReactNode }) {

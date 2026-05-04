@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Cobot Newsroom',
   'Press releases for Cobots, trade show robotics arm debuts, partner wins, roadmap notes, embodied AI filings.',
+  '/news',
 );
 
 export default function NewsLayout({ children }: { children: React.ReactNode }) {

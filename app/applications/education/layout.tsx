@@ -6,6 +6,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export const metadata: Metadata = pageMetadata(
   'Education Cobot Programs',
   'University and research Cobot labs deploy curriculum bundles, LMS integration, robotics arm curriculum, embodied AI demos.',
+  '/applications/education',
 );
 
 export default function EducationLayout({ children }: { children: React.ReactNode }) {
