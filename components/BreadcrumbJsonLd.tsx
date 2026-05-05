@@ -1,4 +1,6 @@
-/** One breadcrumb segment; Schema.org item names use `en` (stable for crawlers). */
+import { getSiteOrigin } from '@/lib/site-origin';
+
+/** Logical path without locale (`/` = home). Matches site router paths under middleware. */
 export type BreadcrumbLdSegment = {
   href: string;
   /** English label in structured data only—never rendered as visible UI. */
@@ -8,35 +10,34 @@ export type BreadcrumbLdSegment = {
 type Props = {
   /** Unique per layout (<script id>); avoid collisions across stacked layouts. */
   id: string;
+  /** Physical language prefix aligned with crawled URLs (`/zh/...`, `/en/...`). */
+  lang: 'zh' | 'en';
   items: BreadcrumbLdSegment[];
 };
 
+function absoluteLocalizedPath(origin: string, lang: 'zh' | 'en', logicalHref: string): string {
+  const trimmed = origin.replace(/\/$/, '');
+  const pathOnly = logicalHref === '/' ? `/${lang}/` : `/${lang}${logicalHref.startsWith('/') ? logicalHref : `/${logicalHref}`}`;
+  return `${trimmed}${pathOnly}`;
+}
+
 /**
- * Invisible JSON-LD BreadcrumbList. Emitted inline for crawlers only (no nav UI).
- * Google supports JSON-LD in the `<body>`; App Router avoids multiple `beforeInteractive` Script limits this way.
+ * Invisible JSON-LD BreadcrumbList. `item` URLs are absolute and include `/zh/` or `/en/` for parity with live routes.
  */
-export function BreadcrumbJsonLd({ id, items }: Props) {
+export function BreadcrumbJsonLd({ id, lang, items }: Props) {
   if (items.length === 0) return null;
 
-  const base =
-    typeof process.env.NEXT_PUBLIC_SITE_URL === 'string'
-      ? process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, '')
-      : '';
+  const base = getSiteOrigin().replace(/\/$/, '');
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: items.map((c, i) => {
-      const row: Record<string, unknown> = {
-        '@type': 'ListItem',
-        position: i + 1,
-        name: c.en,
-      };
-      if (base) {
-        row.item = `${base}${c.href.startsWith('/') ? c.href : `/${c.href}`}`;
-      }
-      return row;
-    }),
+    itemListElement: items.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.en,
+      item: absoluteLocalizedPath(base, lang, c.href),
+    })),
   };
 
   return (

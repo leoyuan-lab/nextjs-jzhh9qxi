@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { cobotGlbModels, rSeriesData, robotVariantImageAlt } from '@/data/products';
+import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
 
 function familyTitle(familyId: string) {
@@ -27,9 +28,11 @@ export default function HomePage() {
   const hideTimerRef = useRef<number | null>(null);
   const forceHideTimerRef = useRef<number | null>(null);
   const loadingUnmountTimerRef = useRef<number | null>(null);
-  const ctaLearn = lang === 'zh' ? '进一步了解' : 'Learn more';
-  const ctaInquiry = lang === 'zh' ? '咨询' : 'Inquiry';
+  const home = getMessages(lang).homepage;
+  const ctaLearn = home.ctaLearn;
+  const ctaInquiry = home.ctaInquiry;
   const openInquiry = () => window.dispatchEvent(new Event('apple-inquiry-open'));
+  const path = (p: string) => `/${lang}${p.startsWith('/') ? p : `/${p}`}`;
 
   const titleRcore = useMemo(() => familyTitle('r-core'), []);
   const titleRmax = useMemo(() => familyTitle('r-max'), []);
@@ -233,20 +236,9 @@ export default function HomePage() {
           <div className="loading-scale-shell">
             <div className="loading-content">
               <div className="loading-hero-type">
-                <h1 className="loading-slogan-main">
-                  {lang === 'zh' ? '让我们大干一场' : "Let's get rolling."}
-                </h1>
-                {lang === 'zh' ? (
-                  <>
-                    <p className="loading-subline">赋能双手</p>
-                    <p className="loading-subline">重塑灵感</p>
-                  </>
-                ) : (
-                  <>
-                    <p className="loading-subline">Empowering hands</p>
-                    <p className="loading-subline">Reshaping inspiration</p>
-                  </>
-                )}
+                <h1 className="loading-slogan-main">{home.loadingSloganMain}</h1>
+                <p className="loading-subline">{home.loadingSubline1}</p>
+                <p className="loading-subline">{home.loadingSubline2}</p>
               </div>
               <div className="loading-progress-wrap">
                 <div className="progress-container">
@@ -288,15 +280,15 @@ export default function HomePage() {
             } as any}
           />
         </div>
-        <div className={`drag-hint ${showDragHint ? 'show' : ''}`}>
-          {lang === 'zh' ? '按住鼠标拖动，可 360° 查看' : 'Drag to view in 360°'}
-        </div>
+        <div className={`drag-hint ${showDragHint ? 'show' : ''}`}>{home.dragHint}</div>
         <div className="content-limit">
           <div className="text-box dark-copy">
             <h2 className="title">{titleRcore}</h2>
-            <p className="subtitle">{lang === 'zh' ? '极致精密，协作之巅。' : 'The new era of cobots.'}</p>
+            <p className="subtitle">{home.heroRcoreSubtitle}</p>
             <div className="cta-row">
-              <a href="/cobots/r-core" className="cta-link">{ctaLearn}</a>
+              <a href={path('/cobots/r-core')} className="cta-link">
+                {ctaLearn}
+              </a>
               <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
             </div>
           </div>
@@ -334,9 +326,11 @@ export default function HomePage() {
         <div className="content-limit">
           <div className="text-box">
             <h2 className="title">{titleRmax}</h2>
-            <p className="subtitle">{lang === 'zh' ? '超强负载，工业核心。' : 'Born for heavy duty.'}</p>
+            <p className="subtitle">{home.heroRmaxSubtitle}</p>
             <div className="cta-row">
-              <a href="/" className="cta-link">{ctaLearn}</a>
+              <a href={path('/cobots/r-max')} className="cta-link">
+                {ctaLearn}
+              </a>
               <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
             </div>
           </div>
@@ -348,11 +342,11 @@ export default function HomePage() {
         <div className="grid-container">
           <div className="sharp-card">
             <div className="card-text">
-              <h3>{lang === 'zh' ? '极致触觉' : 'Precise Touch'}</h3>
-              <p>{lang === 'zh' ? '毫秒级碰撞响应' : 'Millisecond response.'}</p>
+              <h3>{home.cardPreciseTitle}</h3>
+              <p>{home.cardPreciseBody}</p>
               <div className="cta-row card-cta">
-                <a href="/cobots/r-core" className="cta-link">
-                  {lang === 'zh' ? '了解 r-Core 协作臂' : 'Explore r-Core cobot'}
+                <a href={path('/cobots/r-core')} className="cta-link">
+                  {home.cardPreciseCta}
                 </a>
                 <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
               </div>
@@ -366,11 +360,11 @@ export default function HomePage() {
           </div>
           <div className="sharp-card">
             <div className="card-text">
-              <h3>{lang === 'zh' ? '智慧核心' : 'Smart Core'}</h3>
-              <p>{lang === 'zh' ? '自研轨迹规划' : 'Smart path planning.'}</p>
+              <h3>{home.cardSmartTitle}</h3>
+              <p>{home.cardSmartBody}</p>
               <div className="cta-row card-cta">
-                <a href="/cobots/r-max" className="cta-link">
-                  {lang === 'zh' ? '了解 r-Max 重载臂' : 'Explore r-Max cobot'}
+                <a href={path('/cobots/r-max')} className="cta-link">
+                  {home.cardSmartCta}
                 </a>
                 <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
               </div>

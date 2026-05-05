@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_SUPPORT } from '@/lib/nav-breadcrumbs';
+import { getSiteLang } from '@/lib/get-site-lang';
 import { pageMetadata } from '@/lib/site-seo';
 
 export const metadata: Metadata = pageMetadata(
@@ -9,10 +10,12 @@ export const metadata: Metadata = pageMetadata(
   '/support/academy',
 );
 
-export default function SupportAcademyLayout({ children }: { children: React.ReactNode }) {
+export default async function SupportAcademyLayout({ children }: { children: React.ReactNode }) {
+  const lang = await getSiteLang();
   return (
     <>
       <BreadcrumbJsonLd
+        lang={lang}
         id="jsonld-bc-support-academy"
         items={[
           { href: BC_HOME.href, en: BC_HOME.en },

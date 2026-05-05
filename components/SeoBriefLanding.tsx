@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
 
 type CopyBlock = {
@@ -11,7 +12,9 @@ type CopyBlock = {
 export function SeoBriefLanding({ copy }: { copy: CopyBlock }) {
   const lang = useSiteLang();
   const t = lang === 'en' ? copy.en : copy.zh;
+  const inquiryDefault = getMessages(lang).chrome.seoBrief.ctaInquiryDefault;
   const openInquiry = () => window.dispatchEvent(new Event('apple-inquiry-open'));
+  const homeHref = `/${lang}/`;
 
   return (
     <div className="seo-brief-root">
@@ -19,11 +22,11 @@ export function SeoBriefLanding({ copy }: { copy: CopyBlock }) {
         <h1>{t.title}</h1>
         <p>{t.body}</p>
         <div className="seo-brief-actions">
-          <Link href="/" className="seo-brief-link">
+          <Link href={homeHref} className="seo-brief-link">
             {t.ctaHome}
           </Link>
           <button type="button" className="seo-brief-inquiry" onClick={openInquiry}>
-            {t.ctaInquiry ?? (lang === 'zh' ? '咨询' : 'Inquiry')}
+            {t.ctaInquiry ?? inquiryDefault}
           </button>
         </div>
       </div>

@@ -1,0 +1,189 @@
+{
+  "nav": {
+    "cobots_section": "Cobots",
+    "cobots": {
+      "all_specs": "All cobots & Specs",
+      "r_core_suffix": " (Agile Series)",
+      "r_max_suffix": " (High Payload)",
+      "humanoid": "Humanoid (Embodied AI)"
+    },
+    "r_ecosystem_section": "R-ecosystem",
+    "r_ecosystem": {
+      "roooll_os": "Roooll OS (System)",
+      "roooll_insight": "Roooll Insight (Cloud)",
+      "integrated_tools": "Integrated Tools"
+    },
+    "selector_section": "Selector",
+    "selector": {
+      "comparison": "Side-by-Side Comparison",
+      "advisor": "Product Advisor (Find Your Match)"
+    },
+    "applications_section": "Applications",
+    "applications": {
+      "retail_service": "Retail & Service",
+      "manufacturing": "Smart Manufacturing",
+      "medical_lab": "Medical & Lab",
+      "education": "Education & Research"
+    },
+    "support_section": "Support",
+    "support": {
+      "resources": "Resource Center (Downloads)",
+      "academy": "Technical Academy",
+      "service": "Global Service Support"
+    },
+    "accessories_section": "Accessories",
+    "accessories": {
+      "catalog": "Cobot Accessories Ecosystem"
+    },
+    "about_section": "About",
+    "about": {
+      "story": "Our Story",
+      "news": "Newsroom",
+      "contact": "Contact Us"
+    }
+  },
+  "chrome": {
+    "search": {
+      "title": "Quick Links",
+      "noResult": "No results found",
+      "placeholder": "Search Robot...",
+      "closeAria": "Close search"
+    },
+    "ui": {
+      "explore": "Explore",
+      "copyright": "Copyright © 2026 Apple Robot Inc. All rights reserved.",
+      "langBtn": "中文",
+      "mobileLang": "中"
+    },
+    "seoBrief": {
+      "ctaInquiryDefault": "Inquiry"
+    }
+  },
+  "drawer": {
+    "title": "Get Quote",
+    "subtitle": "Leave contact details for an official quote.",
+    "nameLabel": "Full Name",
+    "namePlaceholder": "Full Name",
+    "emailLabel": "Business Email",
+    "emailPlaceholder": "Business Email",
+    "industryLabel": "Industry",
+    "industryPlaceholder": "Industry",
+    "bodyLabel": "Message",
+    "bodyPlaceholder": "Message...",
+    "submit": "Generate Email",
+    "mailSubjectTemplate": "AX-1 Inquiry from {name} ({industry})",
+    "industries": [
+      "Medical & Bio",
+      "Automotive",
+      "Electronics",
+      "Education",
+      "Logistics",
+      "Retail",
+      "Others"
+    ]
+  },
+  "homepage": {
+    "ctaLearn": "Learn more",
+    "ctaInquiry": "Inquiry",
+    "loadingSloganMain": "Let's get rolling.",
+    "loadingSubline1": "Empowering hands",
+    "loadingSubline2": "Reshaping inspiration",
+    "dragHint": "Drag to view in 360°",
+    "heroRcoreSubtitle": "The new era of cobots.",
+    "heroRmaxSubtitle": "Born for heavy duty.",
+    "cardPreciseTitle": "Precise Touch",
+    "cardPreciseBody": "Millisecond response.",
+    "cardPreciseCta": "Explore r-Core cobot",
+    "cardSmartTitle": "Smart Core",
+    "cardSmartBody": "Smart path planning.",
+    "cardSmartCta": "Explore r-Max cobot"
+  },
+  "footnotes": [
+    {
+      "q": "Advantage",
+      "a": "Professional robot arms provider with OVER 5 years of experience. 100% quality inspection before shipment ensures top-tier reliability."
+    },
+    {
+      "q": "Ordering",
+      "a": "Sales representatives online 24/7. Send us an inquiry with your specs and expect an official email response within 12 hours."
+    },
+    {
+      "q": "Delivery",
+      "a": "Standard stock products are shipped within 3-5 business days upon payment. Lead time for bulk or custom orders is subject to contract confirmation."
+    },
+    {
+      "q": "Performance",
+      "a": "Specs like repeatability (±0.02mm) are tested in controlled lab environments. Actual results may vary based on load, speed, and environmental humidity."
+    },
+    {
+      "q": "Customization",
+      "a": "Full OEM/ODM services supported, including custom colors, Logo printing, and specialized end-effectors. Custom lead time is typically 20-30 days."
+    },
+    {
+      "q": "Warranty",
+      "a": "Core mechanical parts (motors, reducers) come with a 2-year limited warranty. Global technical support is available to ensure minimal production downtime."
+    },
+    {
+      "q": "Compliance",
+      "a": "All products comply with international RoHS standards and have passed official CE safety certifications and ISO9001 quality management standards."
+    }
+  ],
+  "pages": {
+    "contact": {
+      "title": "Contact Us",
+      "body": "Sales, partnerships, and follow-the-sun service—reach us by email or use the Inquiry entry point sitewide.",
+      "ctaHome": "Back to Home"
+    },
+    "accessories": {
+      "introTitle": "Cobot Accessories Ecosystem",
+      "introBody": "End tools, vision, controllers, and cabling will be listed by category; placeholder cards below until detail pages ship from locales.",
+      "categories": {
+        "end_effectors": {
+          "title": "End Effectors",
+          "body": "Grippers, vacuum tooling, and tool changers mapped to Roooll Cobot flange patterns (placeholder)."
+        },
+        "vision": {
+          "title": "Vision Systems",
+          "body": "2D / 3D vision bundles and calibration utilities (placeholder)."
+        },
+        "controllers": {
+          "title": "Controllers",
+          "body": "Industrial controllers, I/O expansion, and safety relays (placeholder)."
+        }
+      }
+    },
+    "r_ecosystem": {
+      "hub": {
+        "metaTitleFocus": "R-ecosystem Stack",
+        "metaDescription": "Roooll OS, Roooll Insight, and Integrated Tools form the open Cobot robotic arm software stack for R-series automation.",
+        "h1": "R-ecosystem & Technical Stack",
+        "body": "Roooll OS, cloud insight, and integration tooling for the R-series Cobot robotic arm will live here; this hub is staged early for navigation and discovery.",
+        "ctaHome": "Back to Home"
+      }
+    },
+    "r_ecosystem_roooll_os": {
+      "metaTitleFocus": "Roooll OS System",
+      "metaDescription": "Roooll OS runs motion, safety, and device policies for your Cobot robotic arm fleet with deterministic scheduling.",
+      "breadcrumbSchema": "Roooll OS (System)",
+      "h1": "Roooll OS (System)",
+      "body": "Operating-system capabilities, APIs, and release cadence for Cobot robotic arms will be published here; placeholder page.",
+      "ctaHome": "Back to Home"
+    },
+    "r_ecosystem_roooll_insight": {
+      "metaTitleFocus": "Roooll Insight Cloud",
+      "metaDescription": "Roooll Insight connects Cobot robotic arm telemetry to cloud dashboards, alerts, and fleet analytics.",
+      "breadcrumbSchema": "Roooll Insight (Cloud)",
+      "h1": "Roooll Insight (Cloud)",
+      "body": "Cloud monitoring, alerting, and fleet insight for Cobot robotic arms will aggregate here; placeholder page.",
+      "ctaHome": "Back to Home"
+    },
+    "r_ecosystem_integrated_tools": {
+      "metaTitleFocus": "Integrated Tools",
+      "metaDescription": "Integrated Tools bundle calibrators, simulators, and IDE plugins for Cobot robotic arm integration workflows.",
+      "breadcrumbSchema": "Integrated Tools",
+      "h1": "Integrated Tools",
+      "body": "Simulation, calibration, IDE plugins, and DevOps tooling will align here; placeholder page.",
+      "ctaHome": "Back to Home"
+    }
+  }
+}

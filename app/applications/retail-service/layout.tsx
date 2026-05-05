@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_APPLICATIONS } from '@/lib/nav-breadcrumbs';
+import { getSiteLang } from '@/lib/get-site-lang';
 import { pageMetadata } from '@/lib/site-seo';
 
 export const metadata: Metadata = pageMetadata(
@@ -9,10 +10,12 @@ export const metadata: Metadata = pageMetadata(
   '/applications/retail-service',
 );
 
-export default function RetailServiceLayout({ children }: { children: React.ReactNode }) {
+export default async function RetailServiceLayout({ children }: { children: React.ReactNode }) {
+  const lang = await getSiteLang();
   return (
     <>
       <BreadcrumbJsonLd
+        lang={lang}
         id="jsonld-bc-app-retail"
         items={[
           { href: BC_HOME.href, en: BC_HOME.en },

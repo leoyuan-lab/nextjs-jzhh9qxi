@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { ArmRouteShell } from '@/components/ArmRouteShell';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_COBOTS } from '@/lib/nav-breadcrumbs';
+import { getSiteLang } from '@/lib/get-site-lang';
 import { pageMetadata } from '@/lib/site-seo';
 
 export const metadata: Metadata = pageMetadata(
@@ -13,10 +14,12 @@ export const metadata: Metadata = pageMetadata(
   '/cobots/r-core',
 );
 
-export default function CobotsRCoreLayout({ children }: { children: React.ReactNode }) {
+export default async function CobotsRCoreLayout({ children }: { children: React.ReactNode }) {
+  const lang = await getSiteLang();
   return (
     <ArmRouteShell>
       <BreadcrumbJsonLd
+        lang={lang}
         id="jsonld-bc-cobots-rcore"
         items={[
           { href: BC_HOME.href, en: BC_HOME.en },

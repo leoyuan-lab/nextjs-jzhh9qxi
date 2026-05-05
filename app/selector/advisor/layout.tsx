@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_SELECTOR } from '@/lib/nav-breadcrumbs';
+import { getSiteLang } from '@/lib/get-site-lang';
 import { pageMetadata } from '@/lib/site-seo';
 
 export const metadata: Metadata = pageMetadata(
@@ -10,10 +11,12 @@ export const metadata: Metadata = pageMetadata(
   '/selector/advisor',
 );
 
-export default function SelectorAdvisorLayout({ children }: { children: React.ReactNode }) {
+export default async function SelectorAdvisorLayout({ children }: { children: React.ReactNode }) {
+  const lang = await getSiteLang();
   return (
     <>
       <BreadcrumbJsonLd
+        lang={lang}
         id="jsonld-bc-selector-advisor"
         items={[
           { href: BC_HOME.href, en: BC_HOME.en },

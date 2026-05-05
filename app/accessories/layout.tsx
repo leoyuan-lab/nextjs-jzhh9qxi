@@ -1,23 +1,25 @@
 import type { Metadata } from 'next';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
-import { BC_HOME, BC_NAV_COBOTS } from '@/lib/nav-breadcrumbs';
+import { BC_HOME } from '@/lib/nav-breadcrumbs';
+import { getSiteLang } from '@/lib/get-site-lang';
 import { pageMetadata } from '@/lib/site-seo';
 
 export const metadata: Metadata = pageMetadata(
   'Cobot Accessories Ecosystem',
   'End‑effectors, vision kits, cabling, stands, safety stacks, and software bundles that complete your Cobot robotic arm workstation.',
-  '/cobots/accessories',
+  '/accessories',
 );
 
-export default function CobotsAccessoriesLayout({ children }: { children: React.ReactNode }) {
+export default async function AccessoriesLayout({ children }: { children: React.ReactNode }) {
+  const lang = await getSiteLang();
   return (
     <>
       <BreadcrumbJsonLd
-        id="jsonld-bc-cobots-accessories"
+        lang={lang}
+        id="jsonld-bc-accessories"
         items={[
           { href: BC_HOME.href, en: BC_HOME.en },
-          { href: BC_NAV_COBOTS.href, en: BC_NAV_COBOTS.en },
-          { href: '/cobots/accessories', en: 'Cobot Accessories' },
+          { href: '/accessories', en: 'Cobot Accessories Ecosystem' },
         ]}
       />
       {children}

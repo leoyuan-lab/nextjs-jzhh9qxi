@@ -30,3 +30,9 @@ export const BC_NAV_ABOUT = {
   zh: '关于我们',
   en: 'About',
 } as const;
+
+export const BC_NAV_R_ECOSYSTEM = {
+  href: '/r-ecosystem',
+  zh: 'R 生态',
+  en: 'R-ecosystem',
+} as const;

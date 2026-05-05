@@ -3,6 +3,16 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: '/zh/cobots/accessories',
+        destination: '/zh/accessories',
+        permanent: true,
+      },
+      {
+        source: '/en/cobots/accessories',
+        destination: '/en/accessories',
+        permanent: true,
+      },
+      {
         source: '/arm',
         destination: '/cobots/r-core',
         permanent: true,

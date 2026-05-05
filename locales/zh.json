@@ -1,0 +1,189 @@
+{
+  "nav": {
+    "cobots_section": "协作机器人",
+    "cobots": {
+      "all_specs": "全系列型号与规格",
+      "r_core_suffix": "（协作灵动型）",
+      "r_max_suffix": "（强力负载型）",
+      "humanoid": "人形机器人（具身智能）"
+    },
+    "r_ecosystem_section": "R 生态",
+    "r_ecosystem": {
+      "roooll_os": "Roooll OS（系统）",
+      "roooll_insight": "Roooll Insight（云端）",
+      "integrated_tools": "集成工具"
+    },
+    "selector_section": "选型中心",
+    "selector": {
+      "comparison": "横向对比选型",
+      "advisor": "智能选型向导"
+    },
+    "applications_section": "行业方案",
+    "applications": {
+      "retail_service": "零售与服务",
+      "manufacturing": "智能制造",
+      "medical_lab": "医疗与实验室",
+      "education": "教育与科研"
+    },
+    "support_section": "技术支持",
+    "support": {
+      "resources": "资源中心（下载）",
+      "academy": "技术学院",
+      "service": "全球服务支持"
+    },
+    "accessories_section": "配件生态",
+    "accessories": {
+      "catalog": "协作机器人配件生态"
+    },
+    "about_section": "关于我们",
+    "about": {
+      "story": "品牌故事",
+      "news": "新闻资讯",
+      "contact": "联系我们"
+    }
+  },
+  "chrome": {
+    "search": {
+      "title": "快速链接",
+      "noResult": "未找到匹配结果",
+      "placeholder": "搜索机器人...",
+      "closeAria": "关闭搜索"
+    },
+    "ui": {
+      "explore": "探索",
+      "copyright": "Copyright © 2026 Apple Robot Inc. 保留所有权利。",
+      "langBtn": "English",
+      "mobileLang": "EN"
+    },
+    "seoBrief": {
+      "ctaInquiryDefault": "咨询"
+    }
+  },
+  "drawer": {
+    "title": "开启咨询",
+    "subtitle": "留下您的联系方式，我们将提供正式报价。",
+    "nameLabel": "您的姓名",
+    "namePlaceholder": "您的姓名",
+    "emailLabel": "企业邮箱",
+    "emailPlaceholder": "企业邮箱",
+    "industryLabel": "所属行业",
+    "industryPlaceholder": "所属行业",
+    "bodyLabel": "项目简述",
+    "bodyPlaceholder": "项目简述...",
+    "submit": "生成咨询邮件",
+    "mailSubjectTemplate": "AX-1 询价（{name}｜{industry}）",
+    "industries": [
+      "医疗/生物",
+      "汽车制造",
+      "精密电子",
+      "科研教育",
+      "物流仓储",
+      "餐饮/零售",
+      "其他"
+    ]
+  },
+  "homepage": {
+    "ctaLearn": "进一步了解",
+    "ctaInquiry": "咨询",
+    "loadingSloganMain": "让我们大干一场",
+    "loadingSubline1": "赋能双手",
+    "loadingSubline2": "重塑灵感",
+    "dragHint": "按住鼠标拖动，可 360° 查看",
+    "heroRcoreSubtitle": "极致精密，协作之巅。",
+    "heroRmaxSubtitle": "超强负载，工业核心。",
+    "cardPreciseTitle": "极致触觉",
+    "cardPreciseBody": "毫秒级碰撞响应",
+    "cardPreciseCta": "了解 r-Core 协作臂",
+    "cardSmartTitle": "智慧核心",
+    "cardSmartBody": "自研轨迹规划",
+    "cardSmartCta": "了解 r-Max 重载臂"
+  },
+  "footnotes": [
+    {
+      "q": "核心优势",
+      "a": "我们在机器人手臂领域拥有超过 5 年中的专业分销与技术支持经验；所有产品在离厂前均通过 100% 严格质量检测，确保一流品质与卓越性能。"
+    },
+    {
+      "q": "订购咨询",
+      "a": "销售代表提供 24/7 在线咨询服务。只需发送业务询价邮件并提供您的具体需求，我们保证在 12 小时内为您提供正式回复。"
+    },
+    {
+      "q": "现货订单",
+      "a": "标准规格的现货产品在确认付款后 3-5 个工作日内安排发货。大宗订单或特殊定制订单的交货周期请以销售合同最终确认时间为准。"
+    },
+    {
+      "q": "性能数据",
+      "a": "所有技术参数（如重复定位精度 ±0.02mm）均在受控实验室环境下测得。实际运行表现可能因有效负载、移动速度及环境湿度波动而产生细微差异。"
+    },
+    {
+      "q": "定制服务",
+      "a": "我们支持深度 OEM/ODM 定制，包括但不限于机身涂装、Logo 丝印及针对特定行业开发的专用末端执行器。定制周期通常为 20-30 个工作日。"
+    },
+    {
+      "q": "保修服务",
+      "a": "核心机械部件（电机、减速机）及控制系统享有 2 年有限保修。我们提供全球范围内的技术支持响应，确保您的生产线始终保持高效运转。"
+    },
+    {
+      "q": "合规认证",
+      "a": "本网站展示的所有产品均符合国际 RoHS 环保标准，不含有害物质，并已通过欧盟 CE 强制性安全认证及 ISO9001 质量管理体系认证。"
+    }
+  ],
+  "pages": {
+    "contact": {
+      "title": "联系我们",
+      "body": "销售、渠道合作与售后支持请通过下方邮箱联络；紧急项目也可通过站点「咨询」入口发起工单。",
+      "ctaHome": "返回首页"
+    },
+    "accessories": {
+      "introTitle": "协作机器人配件生态",
+      "introBody": "末端工具、视觉、控制器与线缆等将在此按类呈现；以下为占位分类卡片，正式上线后从 locales 驱动详情。",
+      "categories": {
+        "end_effectors": {
+          "title": "End Effectors（末端执行器）",
+          "body": "夹爪、真空、换枪盘等——兼容 Roooll Cobot 机械臂末端接口（占位）。"
+        },
+        "vision": {
+          "title": "Vision Systems（视觉）",
+          "body": "2D / 3D 视觉套件与标定工具（占位）。"
+        },
+        "controllers": {
+          "title": "Controllers（控制器）",
+          "body": "控制柜、I/O 扩展与安全链（占位）。"
+        }
+      }
+    },
+    "r_ecosystem": {
+      "hub": {
+        "metaTitleFocus": "R 生态技术栈",
+        "metaDescription": "Roooll OS、Roooll Insight 与集成工具构成 R 系列协作机器人机械臂开放生态；文档与接口持续扩展。",
+        "h1": "R 生态与技术栈",
+        "body": "围绕 R 系列协作机械臂的 Roooll OS、云端洞察与集成工具将在此集中呈现；当前页面为结构占位，便于导航与检索先行上线。",
+        "ctaHome": "返回首页"
+      }
+    },
+    "r_ecosystem_roooll_os": {
+      "metaTitleFocus": "Roooll OS System",
+      "metaDescription": "Roooll OS runs motion, safety, and device policies for your Cobot robotic arm fleet with deterministic scheduling.",
+      "breadcrumbSchema": "Roooll OS (System)",
+      "h1": "Roooll OS（系统）",
+      "body": "面向协作机器人机械臂的 Roooll 操作系统能力、接口与发布节奏将在此披露；当前为占位页。",
+      "ctaHome": "返回首页"
+    },
+    "r_ecosystem_roooll_insight": {
+      "metaTitleFocus": "Roooll Insight Cloud",
+      "metaDescription": "Roooll Insight connects Cobot robotic arm telemetry to cloud dashboards, alerts, and fleet analytics.",
+      "breadcrumbSchema": "Roooll Insight (Cloud)",
+      "h1": "Roooll Insight（云端）",
+      "body": "云端监控、告警与机器人机械臂运行洞察将在此汇总；当前为占位页。",
+      "ctaHome": "返回首页"
+    },
+    "r_ecosystem_integrated_tools": {
+      "metaTitleFocus": "Integrated Tools",
+      "metaDescription": "Integrated Tools bundle calibrators, simulators, and IDE plugins for Cobot robotic arm integration workflows.",
+      "breadcrumbSchema": "Integrated Tools",
+      "h1": "集成工具",
+      "body": "仿真、标定、插件与 DevOps 工具链将在此对齐；当前为占位页。",
+      "ctaHome": "返回首页"
+    }
+  }
+}

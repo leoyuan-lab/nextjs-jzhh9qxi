@@ -9,6 +9,8 @@ import React, {
 import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 import { rSeriesData } from '@/data/products';
+import enLocale from '@/locales/en.json';
+import zhLocale from '@/locales/zh.json';
 import { SiteLangContext } from '@/lib/site-lang-context';
 
 function navFamilyName(familyId: string) {
@@ -100,191 +102,90 @@ function isPrimaryPointerDown(event: React.MouseEvent<HTMLElement>) {
   return event.button === 0;
 }
 
-// 🍎 主导航：Cobots / Selector / Applications / Support / About（SEO 路径与文案）
+type MessagesFile = typeof zhLocale;
+
+/** Main nav mega-menu + URLs; labels from `locales/*.json`. */
+function buildNav(messages: MessagesFile): NavSection[] {
+  const n = messages.nav;
+  return [
+    {
+      label: n.cobots_section,
+      url: '/',
+      links: [
+        { label: n.cobots.all_specs, url: '/cobots/all-cobots-specs' },
+        { label: `${navFamilyName('r-core')}${n.cobots.r_core_suffix}`, url: '/cobots/r-core' },
+        { label: `${navFamilyName('r-max')}${n.cobots.r_max_suffix}`, url: '/cobots/r-max' },
+        { label: n.cobots.humanoid, url: '/cobots/humanoid' },
+      ],
+    },
+    {
+      label: n.r_ecosystem_section,
+      url: '/',
+      links: [
+        { label: n.r_ecosystem.roooll_os, url: '/r-ecosystem/roooll-os' },
+        { label: n.r_ecosystem.roooll_insight, url: '/r-ecosystem/roooll-insight' },
+        { label: n.r_ecosystem.integrated_tools, url: '/r-ecosystem/integrated-tools' },
+      ],
+    },
+    {
+      label: n.selector_section,
+      url: '/',
+      links: [
+        { label: n.selector.comparison, url: '/selector/comparison' },
+        { label: n.selector.advisor, url: '/selector/advisor' },
+      ],
+    },
+    {
+      label: n.applications_section,
+      url: '/',
+      links: [
+        { label: n.applications.retail_service, url: '/applications/retail-service' },
+        { label: n.applications.manufacturing, url: '/applications/manufacturing' },
+        { label: n.applications.medical_lab, url: '/applications/medical-lab' },
+        { label: n.applications.education, url: '/applications/education' },
+      ],
+    },
+    {
+      label: n.support_section,
+      url: '/',
+      links: [
+        { label: n.support.resources, url: '/support/resources' },
+        { label: n.support.academy, url: '/support/academy' },
+        { label: n.support.service, url: '/support/service' },
+      ],
+    },
+    {
+      label: n.accessories_section,
+      url: '/accessories',
+      links: [{ label: n.accessories.catalog, url: '/accessories' }],
+    },
+    {
+      label: n.about_section,
+      url: '/',
+      links: [
+        { label: n.about.story, url: '/about/story' },
+        { label: n.about.news, url: '/news' },
+        { label: n.about.contact, url: '/contact' },
+      ],
+    },
+  ];
+}
+
+// 🍎 主导航／页脚脚注／搜索占位：文案来自 locales/*.json（R 系列产品名仍由 navFamilyName 运行时拼接）。
 const GLOBAL_CONFIG = {
   zh: {
-    nav: [
-      {
-        label: '协作机器人',
-        url: '/',
-        links: [
-          { label: '全系列型号与规格', url: '/cobots/all-cobots-specs' },
-          { label: `${navFamilyName('r-core')}（协作灵动型）`, url: '/cobots/r-core' },
-          { label: `${navFamilyName('r-max')}（强力负载型）`, url: '/cobots/r-max' },
-          { label: '人形机器人（具身智能）', url: '/cobots/humanoid' },
-          { label: '协作机器人配件生态', url: '/cobots/accessories' },
-        ],
-      },
-      {
-        label: '选型中心',
-        url: '/',
-        links: [
-          { label: '横向对比选型', url: '/selector/comparison' },
-          { label: '智能选型向导', url: '/selector/advisor' },
-        ],
-      },
-      {
-        label: '行业方案',
-        url: '/',
-        links: [
-          { label: '零售与服务', url: '/applications/retail-service' },
-          { label: '智能制造', url: '/applications/manufacturing' },
-          { label: '医疗与实验室', url: '/applications/medical-lab' },
-          { label: '教育与科研', url: '/applications/education' },
-        ],
-      },
-      {
-        label: '技术支持',
-        url: '/',
-        links: [
-          { label: '资源中心（下载）', url: '/support/resources' },
-          { label: '技术学院', url: '/support/academy' },
-          { label: '全球服务支持', url: '/support/service' },
-        ],
-      },
-      {
-        label: '关于我们',
-        url: '/',
-        links: [
-          { label: '品牌故事', url: '/about/story' },
-          { label: '新闻资讯', url: '/news' },
-          { label: '联系我们', url: '/contact' },
-        ],
-      },
-    ] satisfies NavSection[],
-    search: {
-      title: '快速链接',
-      noResult: '未找到匹配结果',
-      placeholder: '搜索机器人...',
-    },
-    ui: {
-      explore: '探索',
-      copyright: 'Copyright © 2026 Apple Robot Inc. 保留所有权利。',
-      langBtn: 'English',
-      mobileLang: 'EN',
-    },
-    footnotes: [
-      {
-        q: '核心优势',
-        a: '我们在机器人手臂领域拥有超过 5 年中的专业分销与技术支持经验；所有产品在离厂前均通过 100% 严格质量检测，确保一流品质与卓越性能。',
-      },
-      {
-        q: '订购咨询',
-        a: '销售代表提供 24/7 在线咨询服务。只需发送业务询价邮件并提供您的具体需求，我们保证在 12 小时内为您提供正式回复。',
-      },
-      {
-        q: '现货订单',
-        a: '标准规格的现货产品在确认付款后 3-5 个工作日内安排发货。大宗订单或特殊定制订单的交货周期请以销售合同最终确认时间为准。',
-      },
-      {
-        q: '性能数据',
-        a: '所有技术参数（如重复定位精度 ±0.02mm）均在受控实验室环境下测得。实际运行表现可能因有效负载、移动速度及环境湿度波动而产生细微差异。',
-      },
-      {
-        q: '定制服务',
-        a: '我们支持深度 OEM/ODM 定制，包括但不限于机身涂装、Logo 丝印及针对特定行业开发的专用末端执行器。定制周期通常为 20-30 个工作日。',
-      },
-      {
-        q: '保修服务',
-        a: '核心机械部件（电机、减速机）及控制系统享有 2 年有限保修。我们提供全球范围内的技术支持响应，确保您的生产线始终保持高效运转。',
-      },
-      {
-        q: '合规认证',
-        a: '本网站展示的所有产品均符合国际 RoHS 环保标准，不含有害物质，并已通过欧盟 CE 强制性安全认证及 ISO9001 质量管理体系认证。',
-      },
-    ],
+    nav: buildNav(zhLocale),
+    search: zhLocale.chrome.search,
+    ui: zhLocale.chrome.ui,
+    footnotes: zhLocale.footnotes,
+    drawer: zhLocale.drawer,
   },
   en: {
-    nav: [
-      {
-        label: 'Cobots',
-        url: '/',
-        links: [
-          { label: 'All cobots & Specs', url: '/cobots/all-cobots-specs' },
-          { label: `${navFamilyName('r-core')} (Agile Series)`, url: '/cobots/r-core' },
-          { label: `${navFamilyName('r-max')} (High Payload)`, url: '/cobots/r-max' },
-          { label: 'Humanoid (Embodied AI)', url: '/cobots/humanoid' },
-          { label: 'Cobot Accessories', url: '/cobots/accessories' },
-        ],
-      },
-      {
-        label: 'Selector',
-        url: '/',
-        links: [
-          { label: 'Side-by-Side Comparison', url: '/selector/comparison' },
-          { label: 'Product Advisor (Find Your Match)', url: '/selector/advisor' },
-        ],
-      },
-      {
-        label: 'Applications',
-        url: '/',
-        links: [
-          { label: 'Retail & Service', url: '/applications/retail-service' },
-          { label: 'Smart Manufacturing', url: '/applications/manufacturing' },
-          { label: 'Medical & Lab', url: '/applications/medical-lab' },
-          { label: 'Education & Research', url: '/applications/education' },
-        ],
-      },
-      {
-        label: 'Support',
-        url: '/',
-        links: [
-          { label: 'Resource Center (Downloads)', url: '/support/resources' },
-          { label: 'Technical Academy', url: '/support/academy' },
-          { label: 'Global Service Support', url: '/support/service' },
-        ],
-      },
-      {
-        label: 'About',
-        url: '/',
-        links: [
-          { label: 'Our Story', url: '/about/story' },
-          { label: 'Newsroom', url: '/news' },
-          { label: 'Contact Us', url: '/contact' },
-        ],
-      },
-    ] satisfies NavSection[],
-    search: {
-      title: 'Quick Links',
-      noResult: 'No results found',
-      placeholder: 'Search Robot...',
-    },
-    ui: {
-      explore: 'Explore',
-      copyright: 'Copyright © 2026 Apple Robot Inc. All rights reserved.',
-      langBtn: '中文',
-      mobileLang: '中',
-    },
-    footnotes: [
-      {
-        q: 'Advantage',
-        a: 'Professional robot arms provider with OVER 5 years of experience. 100% quality inspection before shipment ensures top-tier reliability.',
-      },
-      {
-        q: 'Ordering',
-        a: 'Sales representatives online 24/7. Send us an inquiry with your specs and expect an official email response within 12 hours.',
-      },
-      {
-        q: 'Delivery',
-        a: 'Standard stock products are shipped within 3-5 business days upon payment. Lead time for bulk or custom orders is subject to contract confirmation.',
-      },
-      {
-        q: 'Performance',
-        a: 'Specs like repeatability (±0.02mm) are tested in controlled lab environments. Actual results may vary based on load, speed, and environmental humidity.',
-      },
-      {
-        q: 'Customization',
-        a: 'Full OEM/ODM services supported, including custom colors, Logo printing, and specialized end-effectors. Custom lead time is typically 20-30 days.',
-      },
-      {
-        q: 'Warranty',
-        a: 'Core mechanical parts (motors, reducers) come with a 2-year limited warranty. Global technical support is available to ensure minimal production downtime.',
-      },
-      {
-        q: 'Compliance',
-        a: 'All products comply with international RoHS standards and have passed official CE safety certifications and ISO9001 quality management standards.',
-      },
-    ],
+    nav: buildNav(enLocale),
+    search: enLocale.chrome.search,
+    ui: enLocale.chrome.ui,
+    footnotes: enLocale.footnotes,
+    drawer: enLocale.drawer,
   },
 };
 
@@ -370,7 +271,12 @@ export default function ClientLayout({
     const email = formData.get('Email');
     const industry = formData.get('Industry');
     const msg = formData.get('Body');
-    const subject = encodeURIComponent(`AX-1 Inquiry from ${name} (${industry})`);
+    const tpl = config.drawer.mailSubjectTemplate;
+    const subject = encodeURIComponent(
+      String(tpl)
+        .replace(/{name}/g, String(name ?? ''))
+        .replace(/{industry}/g, String(industry ?? '')),
+    );
     const body = encodeURIComponent(`Name: ${name}\r\nEmail: ${email}\r\nIndustry: ${industry}\r\n\r\nMessage:\r\n${msg}`);
     window.location.href = `mailto:info@roooll.com?subject=${subject}&body=${body}`;
   };
@@ -637,10 +543,7 @@ export default function ClientLayout({
     setIsMobileMenuOpen(false);
   };
 
-  const industries =
-    resolvedLang === 'zh'
-      ? ['医疗/生物', '汽车制造', '精密电子', '科研教育', '物流仓储', '餐饮/零售', '其他']
-      : ['Medical & Bio', 'Automotive', 'Electronics', 'Education', 'Logistics', 'Retail', 'Others'];
+  const industries = config.drawer.industries;
 
   return (
     <>
@@ -847,7 +750,7 @@ export default function ClientLayout({
                 <div className="search-bar">
                   <span className="search-leading-icon">🔍</span>
                   <input type="text" placeholder={config.search.placeholder} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} autoFocus={showSearch} />
-                  <button className="close-x" onClick={() => { setShowSearch(false); setSearchQuery(''); }} aria-label="Close search">✕</button>
+                  <button className="close-x" onClick={() => { setShowSearch(false); setSearchQuery(''); }} aria-label={config.search.closeAria}>✕</button>
                 </div>
                 <div className="search-results-box">
                   {searchQuery ? (
@@ -1023,14 +926,14 @@ export default function ClientLayout({
               overscrollBehavior: 'contain',
               WebkitOverflowScrolling: 'touch',
             }}>
-              <h2 style={{ fontSize: '42px', fontWeight: 700, margin: '0 0 12px 0', letterSpacing: '-1.5px' }}>{lang === 'zh' ? '开启咨询' : 'Get Quote'}</h2>
-              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '17px', lineHeight: 1.4, marginBottom: '40px' }}>{lang === 'zh' ? '留下您的联系方式，我们将提供正式报价。' : 'Leave contact for official quote.'}</p>
+              <h2 style={{ fontSize: '42px', fontWeight: 700, margin: '0 0 12px 0', letterSpacing: '-1.5px' }}>{config.drawer.title}</h2>
+              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '17px', lineHeight: 1.4, marginBottom: '40px' }}>{config.drawer.subtitle}</p>
               <form key={inquiryFormKey} onSubmit={handleInquirySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', boxSizing: 'border-box' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-name-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '您的姓名' : 'Full Name'}</label><input name="Name" id="client-name-final" placeholder={lang === 'zh' ? '您的姓名' : 'Full Name'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-email-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '企业邮箱' : 'Business Email'}</label><input name="Email" id="client-email-final" type="email" placeholder={lang === 'zh' ? '企业邮箱' : 'Business Email'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-industry-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '所属行业' : 'Industry'}</label><div style={{ position: 'relative' }}><select name="Industry" id="client-industry-final" required defaultValue="" style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', appearance: 'none', cursor: 'pointer' }}><option value="" disabled>{lang === 'zh' ? '所属行业' : 'Industry'}</option>{industries.map((item) => (<option key={item} value={item} style={{ background: '#1c1c1e' }}>{item}</option>))}</select><span style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none', fontSize: '12px' }}>▼</span></div></div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-body-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{lang === 'zh' ? '项目简述' : 'Message'}</label><textarea name="Body" id="client-body-final" key={`body-${inquiryFormKey}`} defaultValue={inquiryPrefillBody ?? ''} placeholder={lang === 'zh' ? '项目简述...' : 'Message...'} rows={10} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', resize: 'vertical', minHeight: '140px' }} required /></div>
-                <div style={{ paddingBottom: '60px' }}><button type="submit" style={{ background: '#0071e3', color: '#fff', border: 'none', borderRadius: '16px', padding: '20px', width: '100%', fontSize: '18px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,113,227,0.3)' }}>{lang === 'zh' ? '生成咨询邮件' : 'Generate Email'}</button></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-name-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{config.drawer.nameLabel}</label><input name="Name" id="client-name-final" placeholder={config.drawer.namePlaceholder} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-email-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{config.drawer.emailLabel}</label><input name="Email" id="client-email-final" type="email" placeholder={config.drawer.emailPlaceholder} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-industry-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{config.drawer.industryLabel}</label><div style={{ position: 'relative' }}><select name="Industry" id="client-industry-final" required defaultValue="" style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', appearance: 'none', cursor: 'pointer' }}><option value="" disabled>{config.drawer.industryPlaceholder}</option>{industries.map((item) => (<option key={item} value={item} style={{ background: '#1c1c1e' }}>{item}</option>))}</select><span style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none', fontSize: '12px' }}>▼</span></div></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-body-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{config.drawer.bodyLabel}</label><textarea name="Body" id="client-body-final" key={`body-${inquiryFormKey}`} defaultValue={inquiryPrefillBody ?? ''} placeholder={config.drawer.bodyPlaceholder} rows={10} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', resize: 'vertical', minHeight: '140px' }} required /></div>
+                <div style={{ paddingBottom: '60px' }}><button type="submit" style={{ background: '#0071e3', color: '#fff', border: 'none', borderRadius: '16px', padding: '20px', width: '100%', fontSize: '18px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,113,227,0.3)' }}>{config.drawer.submit}</button></div>
               </form>
             </div>
           </div>
