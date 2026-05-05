@@ -211,6 +211,7 @@ function SelectorHero2ModelCompare({
                         <Image
                           src={robotVariantImageUrl[item.id]}
                           alt={robotVariantImageAlt(item.id, lang)}
+                          loading="lazy"
                           width={200}
                           height={160}
                           className="h-auto max-h-[120px] w-auto max-w-full object-contain md:max-h-[132px]"

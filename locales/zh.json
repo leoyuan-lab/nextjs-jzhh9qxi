@@ -129,6 +129,80 @@
     }
   ],
   "pages": {
+    "r_core": {
+      "metaTitleFocus": "r-Core 协作灵动型",
+      "metaDescription": "r 系列 r-Core 协作机器人平台：兼顾精度、节拍与部署灵活性的 Cobot robotic arm，适配多样工业工艺。",
+      "inquiry": "咨询",
+      "hero": {
+        "subtitle": "精钢风骨，细腻如瓷。"
+      },
+      "highlights": {
+        "title": "精彩亮点。",
+        "cards": [
+          {
+            "title": "法兰头 L6_flange",
+            "description": "高精度末端法兰，稳定支持夹具与工具快换。",
+            "orbit": "34deg 78deg 1.35m",
+            "target": "0m 1.58m 0m",
+            "node": "J6_Flange"
+          },
+          {
+            "title": "底座 Base",
+            "description": "低重心底座结构，抑振并提升整机刚性。",
+            "orbit": "212deg 72deg 2.25m",
+            "target": "0m 0.18m 0m",
+            "node": "J1_Base"
+          },
+          {
+            "title": "中段关节 J3",
+            "description": "关键承重关节，兼顾速度与轨迹平滑性。",
+            "orbit": "125deg 84deg 1.95m",
+            "target": "0m 0.95m 0m",
+            "node": "J3_Elbow"
+          },
+          {
+            "title": "腕部关节 J5/J6",
+            "description": "小空间姿态调整更灵活，适合复杂工位。",
+            "orbit": "-35deg 72deg 1.5m",
+            "target": "0m 1.34m 0m",
+            "node": "Wrist_Roll"
+          }
+        ]
+      },
+      "closer": {
+        "title": "近距离观察。"
+      },
+      "narrative": {
+        "title": "R3 芯片",
+        "headline": "性能怪兽",
+        "subtitle": "实时路径规划，快如闪电。"
+      },
+      "specs": {
+        "title": "哪款适合你？",
+        "items": [
+          {
+            "label": "有效负载",
+            "v1": "5 kg",
+            "v2": "10 kg"
+          },
+          {
+            "label": "重复精度",
+            "v1": "±0.02 mm",
+            "v2": "±0.01 mm"
+          },
+          {
+            "label": "自由度",
+            "v1": "6 轴",
+            "v2": "7 轴"
+          },
+          {
+            "label": "防护等级",
+            "v1": "IP67",
+            "v2": "IP68"
+          }
+        ]
+      }
+    },
     "contact": {
       "title": "联系我们",
       "body": "销售、渠道合作与售后支持请通过下方邮箱联络；紧急项目也可通过站点「咨询」入口发起工单。",
@@ -184,6 +258,34 @@
       "h1": "集成工具",
       "body": "仿真、标定、插件与 DevOps 工具链将在此对齐；当前为占位页。",
       "ctaHome": "返回首页"
+    }
+  },
+  "alt": {
+    "hero_rcore": "Roooll R-core 协作机器人 - 极致精密协作之巅",
+    "hero_rmax": "Roooll R-max 协作机器人 - 超强负载工业核心",
+    "acc_end_effectors": "协作机器人末端执行器与夹爪集成方案",
+    "acc_vision": "工业级 3D 视觉定位与标定系统",
+    "acc_controllers": "Roooll 机器人集成控制柜与扩展模块",
+    "ecosystem_os": "Roooll OS 操作系统交互界面展示",
+    "ecosystem_insight": "Roooll Insight 云端数字化监控仪表盘",
+    "r_core_detail": "Roooll R-core 关节与法兰细节展示",
+    "r_core_detail_flange": "Roooll R-core 法兰细节展示图",
+    "r_core_detail_base": "Roooll R-core 底座结构细节展示图",
+    "r_core_detail_elbow": "Roooll R-core 中段关节细节展示图",
+    "r_core_detail_wrist": "Roooll R-core 腕部关节细节展示图",
+    "selector_hero": "Roooll 选型向导首页协作机器人展示",
+    "variant_images": {
+      "r_lite_fr3_std": "Roooll FR3 协作机器人机械臂标准版",
+      "r_lite_fr3_c": "Roooll FR3-C 控制箱一体协作机器人机械臂",
+      "r_lite_fr3_wms": "Roooll FR3-WMS 移动协作机器人机械臂",
+      "r_lite_fr3_wml": "Roooll FR3-WML 长臂移动协作机器人机械臂",
+      "r_core_fr5_std": "Roooll FR5 协作机器人机械臂标准版",
+      "r_core_fr5_c": "Roooll FR5-C 控制箱一体协作机器人机械臂",
+      "r_core_fr5_wml": "Roooll FR5-WML 长臂协作机器人机械臂",
+      "r_reach_fr10_std": "Roooll FR10 协作机器人机械臂",
+      "r_max_fr16_std": "Roooll FR16 协作机器人机械臂",
+      "r_max_fr20_std": "Roooll FR20 协作机器人机械臂",
+      "r_ultra_fr30_std": "Roooll FR30 协作机器人机械臂"
     }
   }
 }

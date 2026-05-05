@@ -6,13 +6,14 @@ import { ArmRouteShell } from '@/components/ArmRouteShell';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_COBOTS } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
+import { getMessages } from '@/lib/messages';
 import { pageMetadata } from '@/lib/site-seo';
 
-export const metadata: Metadata = pageMetadata(
-  'r-Core Agile Series',
-  'r‑Series r‑Core Cobot platform: agile collaborative robotic arm with industrial reach, repeatability, and tooling options.',
-  '/cobots/r-core',
-);
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getSiteLang();
+  const page = getMessages(lang).pages.r_core;
+  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/cobots/r-core');
+}
 
 export default async function CobotsRCoreLayout({ children }: { children: React.ReactNode }) {
   const lang = await getSiteLang();

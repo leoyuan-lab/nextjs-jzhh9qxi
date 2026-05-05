@@ -3,13 +3,29 @@ import { getMessages } from '@/lib/messages';
 import { AccessoriesCategoryCards } from './AccessoriesCategoryCards';
 
 const CATEGORY_ORDER = ['end_effectors', 'vision', 'controllers'] as const;
+const CATEGORY_IMAGES = {
+  end_effectors: '/images/robots/r-core-cobot-fr5-std.png',
+  vision: '/images/robots/r-lite-cobot-fr3-std.png',
+  controllers: '/images/robots/r-max-cobot-fr16-std.png',
+} as const;
+const CATEGORY_ALT_KEY = {
+  end_effectors: 'acc_end_effectors',
+  vision: 'acc_vision',
+  controllers: 'acc_controllers',
+} as const;
 
 export default async function AccessoriesPage() {
   const lang = await getSiteLang();
   const base = getMessages(lang).pages.accessories;
+  const alt = getMessages(lang).alt;
   const cards = CATEGORY_ORDER.map((key) => {
     const c = base.categories[key];
-    return { title: c.title, body: c.body };
+    return {
+      title: c.title,
+      body: c.body,
+      image: CATEGORY_IMAGES[key],
+      alt: alt[CATEGORY_ALT_KEY[key]],
+    };
   });
   return (
     <>

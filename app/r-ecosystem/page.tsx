@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { SeoBriefLanding } from '@/components/SeoBriefLanding';
 import { BC_HOME, BC_NAV_R_ECOSYSTEM } from '@/lib/nav-breadcrumbs';
@@ -14,8 +15,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function REcosystemHubPage() {
   const lang = await getSiteLang();
-  const zh = getMessages('zh').pages.r_ecosystem.hub;
-  const en = getMessages('en').pages.r_ecosystem.hub;
+  const zhMsgs = getMessages('zh');
+  const enMsgs = getMessages('en');
+  const zh = zhMsgs.pages.r_ecosystem.hub;
+  const en = enMsgs.pages.r_ecosystem.hub;
+  const activeAlt = getMessages(lang).alt;
   return (
     <>
       <BreadcrumbJsonLd
@@ -32,6 +36,28 @@ export default async function REcosystemHubPage() {
           en: { title: en.h1, body: en.body, ctaHome: en.ctaHome },
         }}
       />
+      <section className="ecosystem-visual-grid" aria-label="ecosystem visuals">
+        <div className="ecosystem-visual-card">
+          <Image
+            src="/images/robots/r-core-cobot-fr5-c.png"
+            alt={activeAlt.ecosystem_os}
+            fill
+            loading="lazy"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-contain"
+          />
+        </div>
+        <div className="ecosystem-visual-card">
+          <Image
+            src="/images/robots/r-max-cobot-fr20-std.png"
+            alt={activeAlt.ecosystem_insight}
+            fill
+            loading="lazy"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-contain"
+          />
+        </div>
+      </section>
     </>
   );
 }

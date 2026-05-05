@@ -296,6 +296,7 @@ export function SelectorLineupCard({
               <Image
                 src={robotVariantImageUrl[item.id]}
                 alt={robotVariantImageAlt(item.id, lang)}
+                loading="lazy"
                 width={340}
                 height={380}
                 className="h-auto max-h-[260px] w-auto max-w-full object-contain md:max-h-[280px]"

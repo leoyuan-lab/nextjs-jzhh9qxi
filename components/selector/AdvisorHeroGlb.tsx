@@ -3,6 +3,8 @@
 import type { CSSProperties } from 'react';
 import { useEffect, useRef } from 'react';
 import { cobotGlbModels, robotVariantImageAlt } from '@/data/products';
+import { preloadGlb } from '@/lib/glb-cache';
+import { getMessages } from '@/lib/messages';
 
 type Lang = 'zh' | 'en';
 
@@ -47,6 +49,7 @@ export function AdvisorHeroGlb({ lang }: Props) {
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
+    void preloadGlb(cobotGlbModels.rCoreFr5);
     const el = ref.current;
     if (!el) return;
 
@@ -99,7 +102,7 @@ export function AdvisorHeroGlb({ lang }: Props) {
     };
   }, []);
 
-  const alt = robotVariantImageAlt('fr5-std', lang);
+  const alt = getMessages(lang).alt.selector_hero ?? robotVariantImageAlt('fr5-std', lang);
 
   return (
     <section className="advisor-hero-glb" aria-label={alt}>

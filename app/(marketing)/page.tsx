@@ -1,6 +1,8 @@
 'use client';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import Image from 'next/image';
 import { cobotGlbModels, rSeriesData, robotVariantImageAlt } from '@/data/products';
+import { preloadGlb } from '@/lib/glb-cache';
 import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
 
@@ -20,6 +22,8 @@ export default function HomePage() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [showDragHint, setShowDragHint] = useState(false);
+  const [isRcoreLoaded, setIsRcoreLoaded] = useState(false);
+  const [enableRmaxModel, setEnableRmaxModel] = useState(false);
   const viewerRef5 = useRef<any>(null);
   const viewerRef20 = useRef<any>(null);
   const flangeSpinTimerRef = useRef<number | null>(null);
@@ -29,6 +33,7 @@ export default function HomePage() {
   const forceHideTimerRef = useRef<number | null>(null);
   const loadingUnmountTimerRef = useRef<number | null>(null);
   const home = getMessages(lang).homepage;
+  const alt = getMessages(lang).alt;
   const ctaLearn = home.ctaLearn;
   const ctaInquiry = home.ctaInquiry;
   const openInquiry = () => window.dispatchEvent(new Event('apple-inquiry-open'));
@@ -36,8 +41,18 @@ export default function HomePage() {
 
   const titleRcore = useMemo(() => familyTitle('r-core'), []);
   const titleRmax = useMemo(() => familyTitle('r-max'), []);
-  const altHeroRcoreGlb = useMemo(() => robotVariantImageAlt('fr5-std', lang), [lang]);
-  const altHeroRmaxGlb = useMemo(() => robotVariantImageAlt('fr20-std', lang), [lang]);
+  const altHeroRcoreGlb = useMemo(() => alt.hero_rcore ?? robotVariantImageAlt('fr5-std', lang), [alt.hero_rcore, lang]);
+  const altHeroRmaxGlb = useMemo(() => alt.hero_rmax ?? robotVariantImageAlt('fr20-std', lang), [alt.hero_rmax, lang]);
+
+  useEffect(() => {
+    void preloadGlb(cobotGlbModels.rCoreFr5, { highPriority: true });
+  }, []);
+
+  useEffect(() => {
+    if (!isRcoreLoaded) return;
+    setEnableRmaxModel(true);
+    void preloadGlb(cobotGlbModels.rMaxFr20);
+  }, [isRcoreLoaded]);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -175,6 +190,7 @@ export default function HomePage() {
       applyPerfectMaterial(v5.model);
       startJointSpin(v5);
       startSimpleHeroSequence(v5);
+      setIsRcoreLoaded(true);
       finishLoading();
     };
 
@@ -187,6 +203,7 @@ export default function HomePage() {
     };
 
     if (v5) {
+      v5.setAttribute('fetchpriority', 'high');
       v5.addEventListener('progress', onProgress);
       v5.addEventListener('load', onLoad5);
     }
@@ -300,8 +317,9 @@ export default function HomePage() {
         <div className={`hero-3d-wrap hero-3d-wrap--dark ${isLoaded ? 'ready-visible' : 'hidden-init'}`}>
           <model-viewer 
             ref={viewerRef20} 
-            src={cobotGlbModels.rMaxFr20}
+            src={enableRmaxModel ? cobotGlbModels.rMaxFr20 : undefined}
             alt={altHeroRmaxGlb}
+            loading="lazy"
             auto-rotate 
             disable-zoom 
             camera-orbit="-45deg 80deg 2000m" 
@@ -351,12 +369,16 @@ export default function HomePage() {
                 <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
               </div>
             </div>
-            <div
-              className="card-image-box"
-              role="img"
-              aria-label={robotVariantImageAlt('fr5-std', lang)}
-              style={{ backgroundImage: `url(${HOME_DETAIL_CARD_IMAGES.preciseTouch})` }}
-            />
+            <div className="card-image-box">
+              <Image
+                src={HOME_DETAIL_CARD_IMAGES.preciseTouch}
+                alt={alt.hero_rcore}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-contain"
+              />
+            </div>
           </div>
           <div className="sharp-card">
             <div className="card-text">
@@ -369,12 +391,16 @@ export default function HomePage() {
                 <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
               </div>
             </div>
-            <div
-              className="card-image-box"
-              role="img"
-              aria-label={robotVariantImageAlt('fr20-std', lang)}
-              style={{ backgroundImage: `url(${HOME_DETAIL_CARD_IMAGES.smartCore})` }}
-            />
+            <div className="card-image-box">
+              <Image
+                src={HOME_DETAIL_CARD_IMAGES.smartCore}
+                alt={alt.hero_rmax}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-contain"
+              />
+            </div>
           </div>
         </div>
       </section>

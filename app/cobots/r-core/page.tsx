@@ -1,76 +1,34 @@
 'use client';
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { cobotGlbModels, rSeriesData, robotVariantImageAlt } from '@/data/products';
+import { getRCoreDetailCopy } from '@/lib/cobot-detail-pages';
+import { preloadGlb } from '@/lib/glb-cache';
+import { getMessages } from '@/lib/messages';
 
 const R_CORE = rSeriesData.find((f) => f.id === 'r-core')!.displayName;
 const R_MAX = rSeriesData.find((f) => f.id === 'r-max')!.displayName;
-
-const TRANSLATIONS = {
-  zh: {
-    langBtn: 'EN',
-    inquiry: '咨询',
-    hero: { h: R_CORE, p: '精钢风骨，细腻如瓷。' },
-    h: {
-      title: '精彩亮点。',
-      cards: [
-        { t: '法兰头 L6_flange', d: '高精度末端法兰，稳定支持夹具与工具快换。', orbit: '34deg 78deg 1.35m', target: '0m 1.58m 0m', node: 'J6_Flange' },
-        { t: '底座 Base', d: '低重心底座结构，抑振并提升整机刚性。', orbit: '212deg 72deg 2.25m', target: '0m 0.18m 0m', node: 'J1_Base' },
-        { t: '中段关节 J3', d: '关键承重关节，兼顾速度与轨迹平滑性。', orbit: '125deg 84deg 1.95m', target: '0m 0.95m 0m', node: 'J3_Elbow' },
-        { t: '腕部关节 J5/J6', d: '小空间姿态调整更灵活，适合复杂工位。', orbit: '-35deg 72deg 1.5m', target: '0m 1.34m 0m', node: 'Wrist_Roll' },
-      ],
-    },
-    c: { title: '近距离观察。' },
-    n1: { h: 'R3 芯片', p: '性能怪兽', sub: '实时路径规划，快如闪电。' },
-    specs: {
-      title: '哪款适合你？',
-      buy: '咨询',
-      items: [
-        { label: '有效负载', v1: '5 kg', v2: '10 kg' },
-        { label: '重复精度', v1: '±0.02 mm', v2: '±0.01 mm' },
-        { label: '自由度', v1: '6 轴', v2: '7 轴' },
-        { label: '防护等级', v1: 'IP67', v2: 'IP68' },
-      ],
-    },
-  },
-  en: {
-    langBtn: '中文',
-    inquiry: 'Inquiry',
-    hero: { h: R_CORE, p: 'Precision of Steel. Touch of Silk.' },
-    h: {
-      title: 'Highlights.',
-      cards: [
-        { t: 'Flange Head L6_flange', d: 'High-precision flange for quick tool switching.', orbit: '34deg 78deg 1.35m', target: '0m 1.58m 0m', node: 'J6_Flange' },
-        { t: 'Base Module', d: 'Low-center base improves stability and damping.', orbit: '212deg 72deg 2.25m', target: '0m 0.18m 0m', node: 'J1_Base' },
-        { t: 'Middle Joint J3', d: 'Core load-bearing joint for smooth pathing.', orbit: '125deg 84deg 1.95m', target: '0m 0.95m 0m', node: 'J3_Elbow' },
-        { t: 'Wrist J5/J6', d: 'Fine attitude control for tight workspaces.', orbit: '-35deg 72deg 1.5m', target: '0m 1.34m 0m', node: 'Wrist_Roll' },
-      ],
-    },
-    c: { title: 'Take a closer look.' },
-    n1: { h: 'R3 Chip', p: 'Ultimate Power', sub: 'Lightning-fast path planning.' },
-    specs: {
-      title: 'Which Arm is right?',
-      buy: 'Inquiry',
-      items: [
-        { label: 'Payload', v1: '5 kg', v2: '10 kg' },
-        { label: 'Repeatability', v1: '±0.02 mm', v2: '±0.01 mm' },
-        { label: 'DOF', v1: '6 Axis', v2: '7 Axis' },
-        { label: 'Protection', v1: 'IP67', v2: 'IP68' },
-      ],
-    },
-  }
-};
 
 export default function CobotsRCorePage() {
   const [lang, setLang] = useState<'zh' | 'en'>('zh');
   const [scrollVal, setScrollVal] = useState(0);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [heroReady, setHeroReady] = useState(false);
+  const [allowDetailModels, setAllowDetailModels] = useState(false);
   const scrollRefH = useRef<HTMLDivElement>(null);
   const [progH, setProgH] = useState(0);
   const cardSpinTimersRef = useRef<number[]>([]);
 
-  const t = TRANSLATIONS[lang];
-  const fr5HeroAlt = robotVariantImageAlt('fr5-std', lang);
+  const msgs = getMessages(lang);
+  const copy = getRCoreDetailCopy(lang, { rCore: R_CORE, rMax: R_MAX });
+  const alt = msgs.alt;
+  const fr5HeroAlt = alt.hero_rcore ?? robotVariantImageAlt('fr5-std', lang);
+  const fr5DetailAlt = alt.r_core_detail ?? fr5HeroAlt;
+  const detailAltByNode: Record<string, string> = {
+    J6_Flange: alt.r_core_detail_flange ?? fr5DetailAlt,
+    J1_Base: alt.r_core_detail_base ?? fr5DetailAlt,
+    J3_Elbow: alt.r_core_detail_elbow ?? fr5DetailAlt,
+    Wrist_Roll: alt.r_core_detail_wrist ?? fr5DetailAlt,
+  };
 
   useLayoutEffect(() => {
     if ('scrollRestoration' in window.history) {
@@ -79,6 +37,10 @@ export default function CobotsRCorePage() {
     window.scrollTo(0, 0);
     setScrollVal(0);
     setHasScrolled(false);
+  }, []);
+
+  useEffect(() => {
+    void preloadGlb(cobotGlbModels.rCoreFr5, { highPriority: true });
   }, []);
 
   useEffect(() => {
@@ -175,7 +137,7 @@ export default function CobotsRCorePage() {
               className="p-btn-buy"
               onClick={() => window.dispatchEvent(new Event('apple-inquiry-open'))}
             >
-              {t.inquiry}
+              {copy.inquiry}
             </button>
           </div>
         </nav>
@@ -200,19 +162,25 @@ export default function CobotsRCorePage() {
               environment-image="neutral"
               environment-intensity="0.72"
               exposure="0.92"
-              onLoad={(e: any) => applyAppleStyle(e.target.model)}
+              onLoad={(e: any) => {
+                applyAppleStyle(e.target.model);
+                setAllowDetailModels(true);
+              }}
+              onProgress={(e: any) => {
+                if ((e as any)?.detail?.totalProgress >= 0.98) setAllowDetailModels(true);
+              }}
               style={{ width: '100%', height: '100%' } as any}
             />
         </div>
         <div className="hero-content">
-          <h1>{t.hero.h}</h1>
-          <p>{t.hero.p}</p>
+          <h1>{copy.heroTitle}</h1>
+          <p>{copy.heroSubtitle}</p>
         </div>
       </section>
 
       {/* Highlights Section */}
       <section className="highlights-section">
-        <h2 className="section-title">{t.h.title}</h2>
+        <h2 className="section-title">{copy.highlightsTitle}</h2>
         <div className="h-scroller" ref={scrollRefH} onScroll={() => {
             if (scrollRefH.current) {
               const { scrollLeft, scrollWidth, clientWidth } = scrollRefH.current;
@@ -221,14 +189,15 @@ export default function CobotsRCorePage() {
           }}>
           <div className="h-track">
             <div className="snap-edge" />
-            {t.h.cards.map((card, i) => (
+            {copy.highlights.map((card, i) => (
               <div key={i} className="h-card">
                 <div className="card-3d">
                    <model-viewer
-                      src={cobotGlbModels.rCoreFr5}
-                      alt={fr5HeroAlt}
+                      src={allowDetailModels ? cobotGlbModels.rCoreFr5 : undefined}
+                      alt={detailAltByNode[card.node] ?? fr5DetailAlt}
+                      loading="lazy"
                       camera-orbit={card.orbit}
-                      camera-target={card.target} // 👈 强制聚焦
+                      camera-target={card.target}
                       field-of-view="22deg"
                       auto-rotate touch-action="pan-y" interaction-prompt="none"
                       environment-image="neutral" exposure="1.1"
@@ -240,8 +209,8 @@ export default function CobotsRCorePage() {
                     />
                 </div>
                 <div className="card-text">
-                  <h3>{card.t}</h3>
-                  <p>{card.d}</p>
+                  <h3>{card.title}</h3>
+                  <p>{card.description}</p>
                 </div>
               </div>
             ))}
@@ -253,7 +222,7 @@ export default function CobotsRCorePage() {
 
       {/* Closer Look Placeholder */}
       <section className="closer-section">
-        <h2 className="section-title">{t.c.title}</h2>
+        <h2 className="section-title">{copy.closerTitle}</h2>
         <div className="closer-grid">
            <div className="closer-card l" />
            <div className="closer-card s" />
@@ -262,20 +231,20 @@ export default function CobotsRCorePage() {
 
       {/* Narrative Section */}
       <section className="narrative-section">
-        <h2 className="white-txt">{t.n1.h}</h2>
-        <h2 className="grey-txt">{t.n1.p}</h2>
-        <p className="sub-txt">{t.n1.sub}</p>
+        <h2 className="white-txt">{copy.narrativeTitle}</h2>
+        <h2 className="grey-txt">{copy.narrativeHeadline}</h2>
+        <p className="sub-txt">{copy.narrativeSubtitle}</p>
       </section>
 
       {/* Spec Section: 补全对比 */}
       <section className="spec-section">
-        <h2 className="section-title">{t.specs.title}</h2>
+        <h2 className="section-title">{copy.specsTitle}</h2>
         <div className="spec-box">
           <div className="spec-header">
-             <div className="col"><span>🦾</span><h3>{R_CORE}</h3></div>
-             <div className="col"><span>🏗️</span><h3>{R_MAX}</h3></div>
+             <div className="col"><span>🦾</span><h3>{copy.compareLeftName}</h3></div>
+             <div className="col"><span>🏗️</span><h3>{copy.compareRightName}</h3></div>
           </div>
-          {t.specs.items.map((row, idx) => (
+          {copy.specs.map((row, idx) => (
             <div key={idx} className="spec-row">
               <label>{row.label}</label>
               <div className="val-box"><span>{row.v1}</span><span>{row.v2}</span></div>

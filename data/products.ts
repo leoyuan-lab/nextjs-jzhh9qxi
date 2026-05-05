@@ -1,5 +1,8 @@
 // data/products.ts — 协作机器人 FR 系列规格与配件摘要（站内统一数据源）
 
+import enLocale from '@/locales/en.json';
+import zhLocale from '@/locales/zh.json';
+
 export interface MultiLang {
   zh: string;
   en: string;
@@ -673,8 +676,21 @@ function descriptionSnippet(text: string, lang: 'zh' | 'en'): string {
   return snip.length > 140 ? `${snip.slice(0, 137)}…` : snip;
 }
 
+/** Locale alt key: `r_core_fr5_std`, `r_lite_fr3_c`, etc. */
+function variantAltLocaleKey(variantId: string): string {
+  const fam = robotFamilyForVariant(variantId).displayName.replace(/-/g, '_').toLowerCase();
+  const variant = variantId.replace(/-/g, '_').toLowerCase();
+  return `${fam}_${variant}`;
+}
+
 /** `<Image alt>` / 无障碍：r 系列名 + 型号 + 数据摘用途 */
 export function robotVariantImageAlt(variantId: string, lang: 'zh' | 'en'): string {
+  const localeAlt = (lang === 'zh' ? zhLocale.alt.variant_images : enLocale.alt.variant_images) as
+    | Record<string, string>
+    | undefined;
+  const mapped = localeAlt?.[variantAltLocaleKey(variantId)] ?? localeAlt?.[variantId];
+  if (mapped) return mapped;
+
   const v = robotVariantById[variantId];
   if (!v) return lang === 'zh' ? '协作机器人机械臂' : 'Collaborative robot arm';
   const fam = robotFamilyForVariant(variantId);

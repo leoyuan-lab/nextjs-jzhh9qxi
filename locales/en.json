@@ -129,6 +129,80 @@
     }
   ],
   "pages": {
+    "r_core": {
+      "metaTitleFocus": "r-Core Agile Series",
+      "metaDescription": "r-Series r-Core Cobot platform: agile Collaborative Robot Cobot Arm with industrial reach, repeatability, and tooling options for Industrial Automation.",
+      "inquiry": "Inquiry",
+      "hero": {
+        "subtitle": "Precision of Steel. Touch of Silk."
+      },
+      "highlights": {
+        "title": "Highlights.",
+        "cards": [
+          {
+            "title": "Flange Head L6_flange",
+            "description": "High-precision flange for quick tool switching.",
+            "orbit": "34deg 78deg 1.35m",
+            "target": "0m 1.58m 0m",
+            "node": "J6_Flange"
+          },
+          {
+            "title": "Base Module",
+            "description": "Low-center base improves stability and damping.",
+            "orbit": "212deg 72deg 2.25m",
+            "target": "0m 0.18m 0m",
+            "node": "J1_Base"
+          },
+          {
+            "title": "Middle Joint J3",
+            "description": "Core load-bearing joint for smooth pathing.",
+            "orbit": "125deg 84deg 1.95m",
+            "target": "0m 0.95m 0m",
+            "node": "J3_Elbow"
+          },
+          {
+            "title": "Wrist J5/J6",
+            "description": "Fine attitude control for tight workspaces.",
+            "orbit": "-35deg 72deg 1.5m",
+            "target": "0m 1.34m 0m",
+            "node": "Wrist_Roll"
+          }
+        ]
+      },
+      "closer": {
+        "title": "Take a closer look."
+      },
+      "narrative": {
+        "title": "R3 Chip",
+        "headline": "Ultimate Power",
+        "subtitle": "Lightning-fast path planning."
+      },
+      "specs": {
+        "title": "Which Arm is right?",
+        "items": [
+          {
+            "label": "Payload",
+            "v1": "5 kg",
+            "v2": "10 kg"
+          },
+          {
+            "label": "Repeatability",
+            "v1": "±0.02 mm",
+            "v2": "±0.01 mm"
+          },
+          {
+            "label": "DOF",
+            "v1": "6 Axis",
+            "v2": "7 Axis"
+          },
+          {
+            "label": "Protection",
+            "v1": "IP67",
+            "v2": "IP68"
+          }
+        ]
+      }
+    },
     "contact": {
       "title": "Contact Us",
       "body": "Sales, partnerships, and follow-the-sun service—reach us by email or use the Inquiry entry point sitewide.",
@@ -184,6 +258,34 @@
       "h1": "Integrated Tools",
       "body": "Simulation, calibration, IDE plugins, and DevOps tooling will align here; placeholder page.",
       "ctaHome": "Back to Home"
+    }
+  },
+  "alt": {
+    "hero_rcore": "Roooll R-core Collaborative Robot Cobot Arm for Industrial Automation precision workflows.",
+    "hero_rmax": "Roooll R-max Collaborative Robot Cobot Arm for Industrial Automation heavy-duty production cells.",
+    "acc_end_effectors": "End Effectors for Collaborative Robot Cobot Arm gripping and Industrial Automation tool-changing.",
+    "acc_vision": "Vision Systems for Collaborative Robot Cobot Arm 3D localization in Industrial Automation lines.",
+    "acc_controllers": "Controllers for Collaborative Robot Cobot Arm cabinets and Industrial Automation I/O expansion.",
+    "ecosystem_os": "Roooll OS interface for Collaborative Robot Cobot Arm runtime and Industrial Automation orchestration.",
+    "ecosystem_insight": "Roooll Insight cloud dashboard for Collaborative Robot Cobot Arm telemetry and Industrial Automation analytics.",
+    "r_core_detail": "Roooll R-core Collaborative Robot Cobot Arm detail model for Industrial Automation joints and flange.",
+    "r_core_detail_flange": "Roooll R-core flange detail on Collaborative Robot Cobot Arm for Industrial Automation tool changing.",
+    "r_core_detail_base": "Roooll R-core base structure on Collaborative Robot Cobot Arm for Industrial Automation stability.",
+    "r_core_detail_elbow": "Roooll R-core elbow joint detail on Collaborative Robot Cobot Arm for Industrial Automation path control.",
+    "r_core_detail_wrist": "Roooll R-core wrist joint detail on Collaborative Robot Cobot Arm for Industrial Automation precision orientation.",
+    "selector_hero": "Roooll R-core Collaborative Robot Cobot Arm advisor hero for Industrial Automation planning.",
+    "variant_images": {
+      "r_lite_fr3_std": "Roooll FR3 Collaborative Robot Cobot Arm for compact Industrial Automation tasks.",
+      "r_lite_fr3_c": "Roooll FR3-C Collaborative Robot Cobot Arm with integrated control for Industrial Automation.",
+      "r_lite_fr3_wms": "Roooll FR3-WMS Collaborative Robot Cobot Arm for mobile Industrial Automation cells.",
+      "r_lite_fr3_wml": "Roooll FR3-WML Collaborative Robot Cobot Arm for long-reach Industrial Automation.",
+      "r_core_fr5_std": "Roooll FR5 Collaborative Robot Cobot Arm for precision Industrial Automation assembly.",
+      "r_core_fr5_c": "Roooll FR5-C Collaborative Robot Cobot Arm with compact Industrial Automation footprint.",
+      "r_core_fr5_wml": "Roooll FR5-WML Collaborative Robot Cobot Arm for extended Industrial Automation reach.",
+      "r_reach_fr10_std": "Roooll FR10 Collaborative Robot Cobot Arm for mid-payload Industrial Automation.",
+      "r_max_fr16_std": "Roooll FR16 Collaborative Robot Cobot Arm for high-payload Industrial Automation.",
+      "r_max_fr20_std": "Roooll FR20 Collaborative Robot Cobot Arm for heavy Industrial Automation handling.",
+      "r_ultra_fr30_std": "Roooll FR30 Collaborative Robot Cobot Arm for ultra-payload Industrial Automation."
     }
   }
 }
