@@ -16,7 +16,7 @@ Apply on **every** substantive change involving **UI, assets, copy, or metadata*
 
 ### GLB preload (Lighthouse / production parity)
 
-- **Single pattern**: Use `GlbPreloadLinks` from `@/components/GlbPreloadLinks.tsx` in the **`layout.tsx`** for any route that mounts `<model-viewer>` or otherwise loads a `.glb`. Attributes must stay aligned with `preloadGlb()` in `@/lib/glb-cache.ts` and `GLB_MIME_TYPE` in `@/lib/glb-preload-constants.ts` (`rel="preload"`, `as="fetch"`, `type="model/gltf-binary"`, `crossOrigin="anonymous"`). **One** global `<Script src="/model-viewer.min.js" … crossOrigin="anonymous" />` in `ClientLayout` only.
+- **Single pattern**: On each **segment `layout.tsx` that mounts `<model-viewer>`**, add `ModelViewerScript` from `@/components/ModelViewerScript.tsx` and `GlbPreloadLinks`. Do **not** load `model-viewer.min.js` from root `ClientLayout` (avoids chunk preload warnings on text-only pages). Attributes stay aligned with `preloadGlb()` in `@/lib/glb-cache.ts` and `GLB_MIME_TYPE` in `@/lib/glb-preload-constants.ts` (`rel="preload"`, `as="fetch"`, `type="model/gltf-binary"`, `crossOrigin="anonymous"`). **Do not** also call `preloadGlb()` from pages when that layout already emits `GlbPreloadLinks` (duplicate fetch/noise).
 - **Paths**: Add every new hero/showcase model to `cobotGlbModels` (and related maps) in `@/data/products.ts`, then reference those same URL strings in `GlbPreloadLinks` / `GLB_PRELOAD_*` exports—**never** duplicate ad-hoc paths.
 - **Scope**: Preload only the `.glb` files actually used on that route (e.g. home: r-Lite + r-Max; Advisor / r-Lite detail: r-Lite only). When adding **R-Max** (or other) product pages with 3D, extend `GlbPreloadLinks` usage on that segment’s layout the same way.
 

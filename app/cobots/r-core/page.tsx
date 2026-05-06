@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { cobotGlbModels, rSeriesData, robotVariantImageAlt } from '@/data/products';
 import { getRCoreDetailCopy } from '@/lib/cobot-detail-pages';
-import { preloadGlb } from '@/lib/glb-cache';
 import { getMessages } from '@/lib/messages';
 
 const R_LITE = rSeriesData.find((f) => f.id === 'r-lite')!.displayName;
@@ -37,10 +36,6 @@ export default function CobotsRCorePage() {
     window.scrollTo(0, 0);
     setScrollVal(0);
     setHasScrolled(false);
-  }, []);
-
-  useEffect(() => {
-    void preloadGlb(cobotGlbModels.rLiteFr3C, { highPriority: true });
   }, []);
 
   useEffect(() => {

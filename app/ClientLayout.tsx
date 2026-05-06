@@ -7,7 +7,6 @@ import React, {
   createContext,
 } from 'react';
 import { usePathname } from 'next/navigation';
-import Script from 'next/script';
 import { rSeriesData } from '@/data/products';
 import enLocale from '@/locales/en.json';
 import zhLocale from '@/locales/zh.json';
@@ -1277,12 +1276,6 @@ export default function ClientLayout({
             .exclusive-final-drawer { max-width: 100% !important; }
           }
         `}</style>
-        <Script
-          src="/model-viewer.min.js"
-          strategy="afterInteractive"
-          type="module"
-          crossOrigin="anonymous"
-        />
     </>
   );
 }

@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Image from 'next/image';
 import { cobotGlbModels, rSeriesData, robotVariantImageAlt } from '@/data/products';
-import { preloadGlb } from '@/lib/glb-cache';
 import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
 
@@ -45,13 +44,8 @@ export default function HomePage() {
   const altHeroRmaxGlb = useMemo(() => alt.hero_rmax ?? robotVariantImageAlt('fr20-std', lang), [alt.hero_rmax, lang]);
 
   useEffect(() => {
-    void preloadGlb(cobotGlbModels.rLiteFr3C, { highPriority: true });
-  }, []);
-
-  useEffect(() => {
     if (!isRliteLoaded) return;
     setEnableRmaxModel(true);
-    void preloadGlb(cobotGlbModels.rMaxFr20);
   }, [isRliteLoaded]);
 
   useEffect(() => {

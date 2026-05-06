@@ -3,7 +3,6 @@
 import type { CSSProperties } from 'react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { cobotGlbModels, robotVariantImageAlt } from '@/data/products';
-import { preloadGlb } from '@/lib/glb-cache';
 import { getMessages } from '@/lib/messages';
 
 type Lang = 'zh' | 'en';
@@ -62,7 +61,6 @@ export function AdvisorHeroGlb({ lang }: Props) {
 
   useEffect(() => {
     setModelReady(false);
-    void preloadGlb(cobotGlbModels.rLiteFr3C);
     const el = ref.current;
     if (!el) return;
 
