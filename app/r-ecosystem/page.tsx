@@ -5,12 +5,14 @@ import { SeoBriefLanding } from '@/components/SeoBriefLanding';
 import { BC_HOME, BC_NAV_R_ECOSYSTEM } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
 import { getMessages } from '@/lib/messages';
+import { getRequestSiteOrigin } from '@/lib/site-origin';
 import { pageMetadata } from '@/lib/site-seo';
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
+  const siteOrigin = await getRequestSiteOrigin();
   const p = getMessages(lang).pages.r_ecosystem.hub;
-  return pageMetadata(p.metaTitleFocus, p.metaDescription, '/r-ecosystem', lang);
+  return pageMetadata(p.metaTitleFocus, p.metaDescription, '/r-ecosystem', lang, siteOrigin);
 }
 
 export default async function REcosystemHubPage() {

@@ -9,12 +9,14 @@ import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_COBOTS } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
 import { getMessages } from '@/lib/messages';
+import { getRequestSiteOrigin } from '@/lib/site-origin';
 import { pageMetadata } from '@/lib/site-seo';
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
+  const siteOrigin = await getRequestSiteOrigin();
   const page = getMessages(lang).pages.r_core;
-  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/cobots/r-core', lang);
+  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/cobots/r-core', lang, siteOrigin);
 }
 
 export default async function CobotsRCoreLayout({ children }: { children: React.ReactNode }) {

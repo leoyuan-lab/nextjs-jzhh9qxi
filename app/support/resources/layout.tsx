@@ -2,15 +2,18 @@ import type { Metadata } from 'next';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_SUPPORT } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
+import { getRequestSiteOrigin } from '@/lib/site-origin';
 import { pageMetadata } from '@/lib/site-seo';
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
+  const siteOrigin = await getRequestSiteOrigin();
   return pageMetadata(
     'Cobot Downloads & CAD',
     'Resource Center for Cobot CAD, conformity packs, certs, PLC snippets, robotics arm cabling drawings, manuals, revisions.',
     '/support/resources',
     lang,
+    siteOrigin,
   );
 }
 

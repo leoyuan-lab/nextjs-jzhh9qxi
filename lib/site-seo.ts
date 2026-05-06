@@ -21,14 +21,15 @@ export function seoDescription(body: string): string {
 
 /**
  * `rel="alternate"` + hreflang. Canonical must match **this** language URL (not always `/en/...`).
- * Set `NEXT_PUBLIC_SITE_URL` to your production origin so Vercel preview builds still emit production canonicals.
+ * Pass `siteOrigin` from `getRequestSiteOrigin()` in RSC so preview domains match Lighthouse.
  */
 export function languageAlternates(
   pathname: string,
   canonicalLang: 'zh' | 'en',
+  siteOrigin?: string,
 ): Metadata['alternates'] {
   const path = pathname.startsWith('/') ? pathname : `/${pathname}`;
-  const origin = getSiteOrigin().replace(/\/$/, '');
+  const origin = (siteOrigin ?? getSiteOrigin()).replace(/\/$/, '');
   let canonical: string;
   try {
     canonical = new URL(`/${canonicalLang}${path}`, `${origin}/`).href;
@@ -47,20 +48,21 @@ export function languageAlternates(
 }
 
 /**
- * Pass `pathname` + `canonicalLang` so `<link rel="canonical">` matches the current language URL.
+ * Pass `siteOrigin` from `getRequestSiteOrigin()` whenever `pathname` is set (see `languageAlternates`).
  */
 export function pageMetadata(
   titleFocus: string,
   descriptionSentence: string,
   pathname?: string,
   canonicalLang?: 'zh' | 'en',
+  siteOrigin?: string,
 ): Metadata {
   const meta: Metadata = {
     title: seoTitle(titleFocus),
     description: seoDescription(descriptionSentence),
   };
   if (pathname && canonicalLang) {
-    const alternates = languageAlternates(pathname, canonicalLang);
+    const alternates = languageAlternates(pathname, canonicalLang, siteOrigin);
     if (alternates) meta.alternates = alternates;
   }
   return meta;
