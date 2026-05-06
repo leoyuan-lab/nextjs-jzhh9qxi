@@ -1277,7 +1277,12 @@ export default function ClientLayout({
             .exclusive-final-drawer { max-width: 100% !important; }
           }
         `}</style>
-        <Script src="/model-viewer.min.js" strategy="afterInteractive" type="module" />
+        <Script
+          src="/model-viewer.min.js"
+          strategy="afterInteractive"
+          type="module"
+          crossOrigin="anonymous"
+        />
     </>
   );
 }

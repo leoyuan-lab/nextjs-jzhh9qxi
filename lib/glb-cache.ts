@@ -1,5 +1,7 @@
 'use client';
 
+import { GLB_MIME_TYPE, glbWarmupFetchInit } from '@/lib/glb-preload-constants';
+
 const inflight = new Map<string, Promise<void>>();
 const linked = new Set<string>();
 
@@ -21,7 +23,9 @@ function ensurePreloadLink(url: string, highPriority: boolean) {
   const link = document.createElement('link');
   link.rel = 'preload';
   link.as = 'fetch';
-  // Must precede `href`; matches fetch(`url`, { credentials: 'omit' }) / CORS for preload reuse.
+  link.type = GLB_MIME_TYPE;
+  link.setAttribute('type', GLB_MIME_TYPE);
+  // Must precede `href`; matches `glbWarmupFetchInit()` / CORS for preload reuse.
   link.crossOrigin = 'anonymous';
   link.setAttribute('crossorigin', 'anonymous');
   if (highPriority) {
@@ -38,11 +42,7 @@ export function preloadGlb(url: string, options?: { highPriority?: boolean }) {
   ensurePreloadLink(url, highPriority);
   if (inflight.has(url)) return inflight.get(url)!;
 
-  const task = fetch(url, {
-    cache: 'force-cache',
-    mode: 'cors',
-    credentials: 'omit',
-  })
+  const task = fetch(url, glbWarmupFetchInit())
     .then(() => undefined)
     .catch(() => undefined);
   inflight.set(url, task);
