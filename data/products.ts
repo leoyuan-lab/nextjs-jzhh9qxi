@@ -644,11 +644,16 @@ export const ROBOT_IMG_BASE = '/images/robots';
 
 /** 含 3D hero 的 `.glb`，命名：`{rfamily}-cobot-{型号干名}.glb`（与 public 一致） */
 export const cobotGlbModels = {
-  /** r-Core 线（FR5）首页 / 详情 hero */
-  rCoreFr5: '/models/r-core-cobot-fr5.glb',
+  /** r-Lite 线（FR3-C）首页 / 详情 hero */
+  rLiteFr3C: '/models/r-lite-cobot-fr3-c.glb',
   /** r-Max 线（FR20）首页 hero */
   rMaxFr20: '/models/r-max-cobot-fr20.glb',
 } as const;
+
+/** 变体与 3D 模型路径映射（用于按型号分发 hero 模型） */
+export const robotVariantModelPath: Partial<Record<string, string>> = {
+  'fr3-c': cobotGlbModels.rLiteFr3C,
+};
 
 export function robotFamilyForVariant(variantId: string): RobotFamily {
   const fam = rSeriesData.find((f) => f.variants.some((v) => v.id === variantId));

@@ -113,7 +113,7 @@ function buildNav(messages: MessagesFile): NavSection[] {
       url: '/',
       links: [
         { label: n.cobots.all_specs, url: '/cobots/all-cobots-specs' },
-        { label: `${navFamilyName('r-core')}${n.cobots.r_core_suffix}`, url: '/cobots/r-core' },
+        { label: `${navFamilyName('r-lite')}${n.cobots.r_core_suffix}`, url: '/cobots/r-core' },
         { label: `${navFamilyName('r-max')}${n.cobots.r_max_suffix}`, url: '/cobots/r-max' },
         { label: n.cobots.humanoid, url: '/cobots/humanoid' },
       ],
@@ -727,9 +727,10 @@ export default function ClientLayout({
                     <ul>
                       {config.nav
                         .find((i) => i.label === activeMenu)
-                        ?.links.map((link) => (
+                        ?.links.map((link, idx) => (
                           <li
                             key={navSubLabel(link)}
+                            style={{ ['--menu-item-index' as string]: idx } as React.CSSProperties}
                             onMouseDown={(event) => {
                               if (!isPrimaryPointerDown(event)) return;
                               event.preventDefault();
@@ -1007,7 +1008,23 @@ export default function ClientLayout({
           @keyframes slideDown { from { height: 0; opacity: 0; } to { height: 320px; opacity: 1; } }
           .menu-inner { align-items: flex-start !important; padding-top: 40px !important; }
           .menu-label { font-size: 12px; color: #6e6e73; margin-bottom: 15px; }
-          .menu-col li { font-size: 24px; font-weight: 600; margin-bottom: 8px; cursor: pointer; list-style: none; }
+          .menu-col li {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            cursor: pointer;
+            list-style: none;
+            opacity: 0;
+            transform: translateY(4px);
+            animation: menuItemFadeIn 260ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation-delay: calc(var(--menu-item-index, 0) * 24ms + 24ms);
+            transition: transform 180ms ease, opacity 180ms ease, color 180ms ease;
+          }
+          .menu-col li:hover { transform: translateY(0) translateX(1px); }
+          @keyframes menuItemFadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
           .search-panel-layer { position: absolute; top: 0; left: 0; width: 100%; height: 0; background: rgba(251,251,253,0.96); backdrop-filter: saturate(180%) blur(26px); -webkit-backdrop-filter: saturate(180%) blur(26px); overflow: hidden; transition: height 0.36s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.24s ease; z-index: 10000; visibility: hidden; opacity: 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
           .search-panel-layer.is-dark { background: rgba(22,22,23,0.92) !important; color: #f5f5f7; border-bottom-color: rgba(255,255,255,0.1); }
           .search-panel-layer.active { height: 460px; visibility: visible; opacity: 1; }

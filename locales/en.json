@@ -3,7 +3,7 @@
     "cobots_section": "Cobots",
     "cobots": {
       "all_specs": "All cobots & Specs",
-      "r_core_suffix": " (Agile Series)",
+      "r_core_suffix": " (Lite Integrated)",
       "r_max_suffix": " (High Payload)",
       "humanoid": "Humanoid (Embodied AI)"
     },
@@ -89,7 +89,7 @@
     "loadingSubline1": "Empowering hands",
     "loadingSubline2": "Reshaping inspiration",
     "dragHint": "Drag to view in 360°",
-    "heroRcoreSubtitle": "The new era of cobots.",
+    "heroRcoreSubtitle": "Lightweight body, integrated control.",
     "heroRmaxSubtitle": "Born for heavy duty.",
     "cardPreciseTitle": "Precise Touch",
     "cardPreciseBody": "Millisecond response.",
@@ -130,11 +130,11 @@
   ],
   "pages": {
     "r_core": {
-      "metaTitleFocus": "r-Core Agile Series",
-      "metaDescription": "r-Series r-Core Cobot platform: agile Collaborative Robot Cobot Arm with industrial reach, repeatability, and tooling options for Industrial Automation.",
+      "metaTitleFocus": "r-Lite (FR3-C) Lite Integrated",
+      "metaDescription": "r-Series r-Lite (FR3-C) Cobot platform: 3kg (peak 5kg) payload, 622mm reach, and integrated control for compact precision automation cells.",
       "inquiry": "Inquiry",
       "hero": {
-        "subtitle": "Precision of Steel. Touch of Silk."
+        "subtitle": "Light footprint. Integrated deployment."
       },
       "highlights": {
         "title": "Highlights.",
@@ -261,19 +261,19 @@
     }
   },
   "alt": {
-    "hero_rcore": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability, 922mm reach; Collaborative Robot 6-axis arm for Industrial Automation in precision assembly and labs.",
+    "hero_rcore": "Roooll R-lite (FR3-C), 3kg payload (peak 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm for Industrial Automation in precision assembly and labs.",
     "hero_rmax": "Roooll R-max (FR20), 20kg payload, ±0.1mm repeatability, 1854mm reach; Collaborative Robot 6-axis arm for Industrial Automation in handling and palletizing.",
     "acc_end_effectors": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability baseline; Collaborative Robot 6-axis arm tools for Industrial Automation gripping, vacuum, quick swap.",
     "acc_vision": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability baseline; Collaborative Robot 6-axis arm vision for Industrial Automation localization and calibration.",
     "acc_controllers": "Roooll R-max (FR20), 20kg payload, ±0.1mm repeatability baseline; Collaborative Robot 6-axis arm control for Industrial Automation safety logic, I/O, comms.",
     "ecosystem_os": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability baseline; Collaborative Robot 6-axis arm OS for Industrial Automation motion control and safety flow.",
     "ecosystem_insight": "Roooll R-max (FR20), 20kg payload, ±0.1mm repeatability baseline; Collaborative Robot 6-axis arm cloud for Industrial Automation telemetry, alarms, analytics.",
-    "r_core_detail": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability, 922mm reach; Collaborative Robot 6-axis arm detail for Industrial Automation joints and flange.",
-    "r_core_detail_flange": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability, 922mm reach; Collaborative Robot 6-axis arm flange detail for Industrial Automation mounting and setup.",
-    "r_core_detail_base": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability, 922mm reach; Collaborative Robot 6-axis arm base detail for Industrial Automation stability and setup.",
-    "r_core_detail_elbow": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability, 922mm reach; Collaborative Robot 6-axis arm elbow detail for Industrial Automation control and motion.",
-    "r_core_detail_wrist": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability, 922mm reach; Collaborative Robot 6-axis arm wrist detail for Industrial Automation orientation, pose.",
-    "selector_hero": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability, 922mm reach; Collaborative Robot 6-axis arm selector hero for Industrial Automation model matching.",
+    "r_core_detail": "Roooll R-lite (FR3-C), 3kg payload (peak 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm detail for Industrial Automation joints and flange.",
+    "r_core_detail_flange": "Roooll R-lite (FR3-C), 3kg payload (peak 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm flange detail for Industrial Automation mounting and setup.",
+    "r_core_detail_base": "Roooll R-lite (FR3-C), 3kg payload (peak 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm base detail for Industrial Automation stability and setup.",
+    "r_core_detail_elbow": "Roooll R-lite (FR3-C), 3kg payload (peak 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm elbow detail for Industrial Automation control and motion.",
+    "r_core_detail_wrist": "Roooll R-lite (FR3-C), 3kg payload (peak 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm wrist detail for Industrial Automation orientation, pose.",
+    "selector_hero": "Roooll R-lite (FR3-C), 3kg payload (peak 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm selector hero for Industrial Automation model matching.",
     "variant_images": {
       "r_lite_fr3_std": "Roooll R-lite (FR3), 3kg payload, ±0.02mm repeatability, 622mm reach; Collaborative Robot 6-axis arm for Industrial Automation in compact lab handling.",
       "r_lite_fr3_c": "Roooll R-lite (FR3-C), 3kg payload, ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm with integrated control for Industrial Automation cells.",
