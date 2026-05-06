@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { GlbPreloadLinks, GLB_PRELOAD_HOME } from '@/components/GlbPreloadLinks';
 import { pageMetadata } from '@/lib/site-seo';
 
 export const metadata: Metadata = pageMetadata(
@@ -8,5 +9,10 @@ export const metadata: Metadata = pageMetadata(
 );
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <GlbPreloadLinks hrefs={GLB_PRELOAD_HOME} />
+      {children}
+    </>
+  );
 }

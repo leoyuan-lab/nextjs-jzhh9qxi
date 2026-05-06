@@ -14,6 +14,12 @@ Apply on **every** substantive change involving **UI, assets, copy, or metadata*
 - **Alt text copy standard**: The translation value behind that key should follow `[r-series] ([fr-model]) Collaborative Robot for [Context]` (replace placeholders with real series, model, and page-specific context).
 - **3D / Canvas**: For Canvas or 3D viewers, set `aria-label` or an equivalent `description` prop so the robotic arm model is described for assistive tech.
 
+### GLB preload (Lighthouse / production parity)
+
+- **Single pattern**: Use `GlbPreloadLinks` from `@/components/GlbPreloadLinks.tsx` in the **`layout.tsx`** for any route that mounts `<model-viewer>` or otherwise loads a `.glb`. Attributes must stay aligned with `preloadGlb()` in `@/lib/glb-cache.ts` (`rel="preload"`, `as="fetch"`, `crossOrigin="anonymous"`).
+- **Paths**: Add every new hero/showcase model to `cobotGlbModels` (and related maps) in `@/data/products.ts`, then reference those same URL strings in `GlbPreloadLinks` / `GLB_PRELOAD_*` exports—**never** duplicate ad-hoc paths.
+- **Scope**: Preload only the `.glb` files actually used on that route (e.g. home: r-Lite + r-Max; Advisor / r-Lite detail: r-Lite only). When adding **R-Max** (or other) product pages with 3D, extend `GlbPreloadLinks` usage on that segment’s layout the same way.
+
 ## 2. Metadata (when editing titles or descriptions)
 
 - **Title**: Must include **Cobot** and **Robotic Arm**. Use `seoTitle()` from `@/lib/site-seo.ts` where a title is set or overridden.

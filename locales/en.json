@@ -203,6 +203,26 @@
         ]
       }
     },
+    "all_cobots_specs": {
+      "metaTitleFocus": "Full r-Lite / r-Core Cobot lineup & specs",
+      "metaDescription": "Browse every r‑Series Cobot variant matrix—r-Lite, r-Core, r-Reach, r-Max, r-Ultra—with payloads, reach, joint axes, and power in one place."
+    },
+    "r_max": {
+      "metaTitleFocus": "r-Max Heavy-Payload Cobot (FR16–FR20)",
+      "metaDescription": "r‑Max Cobot line: FR16–FR20 class heavy payloads, long reach, and stamping or palletizing ready robotic arm options."
+    },
+    "humanoid": {
+      "metaTitleFocus": "Humanoid Embodied-AI Cobot vision",
+      "metaDescription": "Humanoid Cobot roadmap: embodied AI, tactile interaction, and next‑gen collaborative robotic arm research partnerships."
+    },
+    "selector_comparison": {
+      "metaTitleFocus": "Side-by-side r-Series Cobot comparison",
+      "metaDescription": "Compare three r‑Series Cobots side by side: payload, reach, axes, and power—pick the right collaborative robotic arm."
+    },
+    "selector_advisor": {
+      "metaTitleFocus": "Product Advisor (r-Lite / r-Core match)",
+      "metaDescription": "Interactive advisor to match load, reach, and environment to r-Lite, r-Core, and other r‑Series Cobot lines."
+    },
     "contact": {
       "title": "Contact Us",
       "body": "Sales, partnerships, and follow-the-sun service—reach us by email or use the Inquiry entry point sitewide.",

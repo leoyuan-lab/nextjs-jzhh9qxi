@@ -3,6 +3,7 @@
  */
 import type { Metadata } from 'next';
 import { ArmRouteShell } from '@/components/ArmRouteShell';
+import { GlbPreloadLinks, GLB_PRELOAD_R_LITE_ONLY } from '@/components/GlbPreloadLinks';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_COBOTS } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
@@ -19,6 +20,7 @@ export default async function CobotsRCoreLayout({ children }: { children: React.
   const lang = await getSiteLang();
   return (
     <ArmRouteShell>
+      <GlbPreloadLinks hrefs={GLB_PRELOAD_R_LITE_ONLY} />
       <BreadcrumbJsonLd
         lang={lang}
         id="jsonld-bc-cobots-rcore"

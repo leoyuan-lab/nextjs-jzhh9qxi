@@ -5,13 +5,14 @@ import type { Metadata } from 'next';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_COBOTS } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
+import { getMessages } from '@/lib/messages';
 import { pageMetadata } from '@/lib/site-seo';
 
-export const metadata: Metadata = pageMetadata(
-  'All cobots & Specs',
-  'Browse every r‑Series Cobot variant matrix: payloads, robotic arm axes, repeats, reaches, and power notes in one view.',
-  '/cobots/all-cobots-specs',
-);
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getSiteLang();
+  const page = getMessages(lang).pages.all_cobots_specs;
+  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/cobots/all-cobots-specs');
+}
 
 export default async function CobotsAllSpecsLayout({ children }: { children: React.ReactNode }) {
   const lang = await getSiteLang();

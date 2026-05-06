@@ -176,6 +176,9 @@ export const SELECTOR_LINEUP_I18N = {
     hero2Subtitle: '在三个下拉框中各选一款不同的 r 系列变体。',
     hero2ChooseModel: '选择机型',
     hero2Inquiry: '咨询',
+    /** `{family}` = product line display name, e.g. r-Lite */
+    specsGridAria: '{family} 系列技术规格',
+    detailJointAxesAria: '{family} 各关节轴规格参数',
   },
   en: {
     title: 'Explore the lineup',
@@ -193,6 +196,8 @@ export const SELECTOR_LINEUP_I18N = {
     hero2Subtitle: 'Pick a different r‑Series variant in each menu below.',
     hero2ChooseModel: 'Choose models',
     hero2Inquiry: 'Inquiry',
+    specsGridAria: '{family} series technical specifications',
+    detailJointAxesAria: '{family} joint axes specifications',
   },
 } as const;
 
@@ -317,7 +322,10 @@ export function SelectorLineupCard({
             <p className="mb-5 line-clamp-3 whitespace-pre-line text-[0.9375rem] leading-relaxed text-[#424245]">
               {selectorSummarizeBody(lang === 'zh' ? item.description.zh : item.description.en)}
             </p>
-            <dl className="mb-4 grid grid-cols-2 gap-x-4 gap-y-3.5 text-[0.8125rem]">
+            <dl
+              className="mb-4 grid grid-cols-2 gap-x-4 gap-y-3.5 text-[0.8125rem]"
+              aria-label={t.specsGridAria.replace('{family}', item.family.displayName)}
+            >
               <div>
                 <dt className="mb-0.5 font-medium text-[#86868b]">{t.payload}</dt>
                 <dd className="font-semibold text-[#1d1d1f]">{item.payload}</dd>
@@ -440,7 +448,10 @@ export function VariantDetailPortal({
           <p className="mb-6 whitespace-pre-line text-[0.9375rem] leading-relaxed text-[#424245] sm:text-[1.125rem] sm:leading-relaxed">
             {selectorSummarizeBody(lang === 'zh' ? detailItem.description.zh : detailItem.description.en)}
           </p>
-          <dl className="space-y-4 text-[0.875rem] sm:space-y-5 sm:text-[1.0625rem]">
+          <dl
+            className="space-y-4 text-[0.875rem] sm:space-y-5 sm:text-[1.0625rem]"
+            aria-label={t.specsGridAria.replace('{family}', detailItem.family.displayName)}
+          >
             <SpecRow label={specLabels.payload[lang]} value={detailItem.payload} detail />
             <SpecRow label={specLabels.reach[lang]} value={detailItem.reach} detail />
             <SpecRow label={specLabels.repeatability[lang]} value={detailItem.repeatability} detail />
@@ -479,7 +490,10 @@ export function VariantDetailPortal({
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6e6e73] sm:text-xs">
               {specLabels.axes[lang]}
             </p>
-            <dl className="space-y-3 text-[0.8125rem] sm:space-y-3.5 sm:text-[0.9375rem]">
+            <dl
+              className="space-y-3 text-[0.8125rem] sm:space-y-3.5 sm:text-[0.9375rem]"
+              aria-label={t.detailJointAxesAria.replace('{family}', detailItem.family.displayName)}
+            >
               {AXIS_ORDER.map((key) => {
                 const ax = detailItem.axes[key];
                 return (
