@@ -186,6 +186,9 @@ function SelectorHero2ModelCompare({
               return (
                 <div key={slot} className={slot === 2 ? 'hidden flex-col md:flex' : 'flex flex-col'}>
                   <select
+                    id={`selector-compare-model-${slot}`}
+                    name={`selector_compare_model_${slot}`}
+                    autoComplete="off"
                     aria-label={ariaPick}
                     value={ids[slot]}
                     onChange={(e) => setSlot(slot, e.target.value)}

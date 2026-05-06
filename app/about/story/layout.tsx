@@ -4,11 +4,15 @@ import { BC_HOME, BC_NAV_ABOUT } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
 import { pageMetadata } from '@/lib/site-seo';
 
-export const metadata: Metadata = pageMetadata(
-  'Our Cobot Story',
-  'Mission, lineage, robotics arm engineering principles, roadmap transparency, Cobot stewardship from Apple Robot founders.',
-  '/about/story',
-);
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getSiteLang();
+  return pageMetadata(
+    'Our Cobot Story',
+    'Mission, lineage, robotics arm engineering principles, roadmap transparency, and Cobot stewardship from Roooll founders.',
+    '/about/story',
+    lang,
+  );
+}
 
 export default async function AboutStoryLayout({ children }: { children: React.ReactNode }) {
   const lang = await getSiteLang();

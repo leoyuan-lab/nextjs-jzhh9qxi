@@ -4,11 +4,15 @@ import { BC_HOME, BC_NAV_ABOUT } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
 import { pageMetadata } from '@/lib/site-seo';
 
-export const metadata: Metadata = pageMetadata(
-  'Contact Cobot Sales',
-  'Contact Cobot OEM sales, integrations, quoting, demos, robotics arm PoCs via Apple Robot teams worldwide.',
-  '/contact',
-);
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getSiteLang();
+  return pageMetadata(
+    'Contact Cobot Sales',
+    'Contact Cobot OEM sales, integrations, quoting, demos, robotics arm PoCs via Roooll teams worldwide.',
+    '/contact',
+    lang,
+  );
+}
 
 export default async function ContactLayout({ children }: { children: React.ReactNode }) {
   const lang = await getSiteLang();

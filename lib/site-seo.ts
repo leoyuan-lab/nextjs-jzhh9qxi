@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 
 import { getSiteOrigin } from '@/lib/site-origin';
 
-/** Visible <title> must include Cobot & Robotic Arm (product SEO). */
+/** Visible <title> — brand suffix unified for Roooll (see locales for product focus phrases). */
 export function seoTitle(focusPhrase: string): string {
   const trimmed = focusPhrase.trim();
-  return `${trimmed} Cobot · Robotic Arm · Apple Robot`;
+  return `${trimmed} | Roooll - Collaborative Robots`;
 }
 
 /** <meta description> must contain both phrases (English keyword coverage). */
@@ -20,14 +20,18 @@ export function seoDescription(body: string): string {
 }
 
 /**
- * `rel="alternate"` + hreflang for zh/en physical subdirectory routes.
+ * `rel="alternate"` + hreflang. Canonical must match **this** language URL (not always `/en/...`).
+ * Set `NEXT_PUBLIC_SITE_URL` to your production origin so Vercel preview builds still emit production canonicals.
  */
-export function languageAlternates(pathname: string): Metadata['alternates'] {
+export function languageAlternates(
+  pathname: string,
+  canonicalLang: 'zh' | 'en',
+): Metadata['alternates'] {
   const path = pathname.startsWith('/') ? pathname : `/${pathname}`;
   const origin = getSiteOrigin().replace(/\/$/, '');
   let canonical: string;
   try {
-    canonical = new URL(`/en${path}`, `${origin}/`).href;
+    canonical = new URL(`/${canonicalLang}${path}`, `${origin}/`).href;
   } catch {
     return undefined;
   }
@@ -35,25 +39,28 @@ export function languageAlternates(pathname: string): Metadata['alternates'] {
   return {
     canonical,
     languages: {
-      'x-default': new URL(path, `${origin}/`).href,
+      'x-default': withLang('en'),
       'zh-CN': withLang('zh'),
       'en-US': withLang('en'),
     },
   };
 }
 
-/** Use in route `layout.tsx` for `export const metadata`. Pass `pathname` (e.g. `/cobots/r-core`) for hreflang. */
+/**
+ * Pass `pathname` + `canonicalLang` so `<link rel="canonical">` matches the current language URL.
+ */
 export function pageMetadata(
   titleFocus: string,
   descriptionSentence: string,
   pathname?: string,
+  canonicalLang?: 'zh' | 'en',
 ): Metadata {
   const meta: Metadata = {
     title: seoTitle(titleFocus),
     description: seoDescription(descriptionSentence),
   };
-  if (pathname) {
-    const alternates = languageAlternates(pathname);
+  if (pathname && canonicalLang) {
+    const alternates = languageAlternates(pathname, canonicalLang);
     if (alternates) meta.alternates = alternates;
   }
   return meta;

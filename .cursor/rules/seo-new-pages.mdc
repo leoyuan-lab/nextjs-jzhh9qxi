@@ -8,7 +8,7 @@ alwaysApply: true
 Whenever **adding or changing** a route under `app/**` (new `page.tsx`, new segment, or `layout.tsx` for that segment):
 
 1. **Metadata** — In the segment `layout.tsx`, export `metadata` using `pageMetadata()` from `@/lib/site-seo.ts` so:
-   - **`title`** includes the literal substrings **Cobot** and **Robotic Arm** (use `seoTitle()` / `pageMetadata()` which enforces `… Cobot · Robotic Arm · Apple Robot`).
+   - **`title`**: use `seoTitle()` / `pageMetadata()` — suffix is `| Roooll - Collaborative Robots` (product focus phrase + brand).
    - **`description`** is appropriate for the page; use `seoDescription()` so missing required phrases are appended when needed.
    - **`alternates` is mandatory**: metadata must include zh/en alternates that resolve to `/zh/...` and `/en/...` variants (via `pageMetadata(..., pathname)` / `languageAlternates()`).
 

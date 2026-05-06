@@ -4,11 +4,15 @@ import { BC_HOME, BC_NAV_APPLICATIONS } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
 import { pageMetadata } from '@/lib/site-seo';
 
-export const metadata: Metadata = pageMetadata(
-  'Education Cobot Programs',
-  'University and research Cobot labs deploy curriculum bundles, LMS integration, robotics arm curriculum, embodied AI demos.',
-  '/applications/education',
-);
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getSiteLang();
+  return pageMetadata(
+    'Education Cobot Programs',
+    'University and research Cobot labs deploy curriculum bundles, LMS integration, robotics arm curriculum, embodied AI demos.',
+    '/applications/education',
+    lang,
+  );
+}
 
 export default async function EducationLayout({ children }: { children: React.ReactNode }) {
   const lang = await getSiteLang();

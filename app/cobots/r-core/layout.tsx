@@ -14,7 +14,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
   const page = getMessages(lang).pages.r_core;
-  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/cobots/r-core');
+  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/cobots/r-core', lang);
 }
 
 export default async function CobotsRCoreLayout({ children }: { children: React.ReactNode }) {

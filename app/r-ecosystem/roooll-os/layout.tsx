@@ -8,7 +8,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
   const p = getMessages(lang).pages.r_ecosystem_roooll_os;
-  return pageMetadata(p.metaTitleFocus, p.metaDescription, '/r-ecosystem/roooll-os');
+  return pageMetadata(p.metaTitleFocus, p.metaDescription, '/r-ecosystem/roooll-os', lang);
 }
 
 export default async function RooollOsLayout({ children }: { children: React.ReactNode }) {

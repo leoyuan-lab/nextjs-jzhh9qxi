@@ -8,7 +8,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
   const page = getMessages(lang).pages.r_max;
-  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/cobots/r-max');
+  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/cobots/r-max', lang);
 }
 
 export default async function CobotsRMaxLayout({ children }: { children: React.ReactNode }) {

@@ -51,7 +51,7 @@
     },
     "ui": {
       "explore": "Explore",
-      "copyright": "Copyright © 2026 Apple Robot Inc. All rights reserved.",
+      "copyright": "Copyright © 2026 Roooll. All rights reserved.",
       "langBtn": "中文",
       "mobileLang": "中"
     },
@@ -130,7 +130,7 @@
   ],
   "pages": {
     "r_core": {
-      "metaTitleFocus": "r-Lite (FR3-C) Lite Integrated",
+      "metaTitleFocus": "r-Lite Lite Integrated",
       "metaDescription": "r-Series r-Lite (FR3-C) Cobot platform: 3kg (peak 5kg) payload, 622mm reach, and integrated control for compact precision automation cells.",
       "inquiry": "Inquiry",
       "hero": {
@@ -208,7 +208,7 @@
       "metaDescription": "Browse every r‑Series Cobot variant matrix—r-Lite, r-Core, r-Reach, r-Max, r-Ultra—with payloads, reach, joint axes, and power in one place."
     },
     "r_max": {
-      "metaTitleFocus": "r-Max Heavy-Payload Cobot (FR16–FR20)",
+      "metaTitleFocus": "r-Max Heavy-Payload Cobot",
       "metaDescription": "r‑Max Cobot line: FR16–FR20 class heavy payloads, long reach, and stamping or palletizing ready robotic arm options."
     },
     "humanoid": {

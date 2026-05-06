@@ -11,7 +11,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
   const page = getMessages(lang).pages.selector_advisor;
-  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/selector/advisor');
+  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/selector/advisor', lang);
 }
 
 export default async function SelectorAdvisorLayout({ children }: { children: React.ReactNode }) {

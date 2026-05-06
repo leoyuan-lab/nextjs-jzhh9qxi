@@ -51,7 +51,7 @@
     },
     "ui": {
       "explore": "探索",
-      "copyright": "Copyright © 2026 Apple Robot Inc. 保留所有权利。",
+      "copyright": "Copyright © 2026 Roooll. 保留所有权利。",
       "langBtn": "English",
       "mobileLang": "EN"
     },
@@ -134,7 +134,7 @@
       "metaDescription": "横向浏览 r-Lite、r-Core、r-Reach、r-Max、r-Ultra 等 r 系列协作机械臂全矩阵：负载、工作半径、关节轴、接口与功率要点一站对比。"
     },
     "r_core": {
-      "metaTitleFocus": "r-Lite（FR3-C）轻量一体型",
+      "metaTitleFocus": "r-Lite 轻量一体型",
       "metaDescription": "r 系列 r-Lite（FR3-C）协作机器人平台：3kg（峰值 5kg）负载、622mm 工作半径与紧凑一体化控制，适配精密装配与实验室自动化。",
       "inquiry": "咨询",
       "hero": {
@@ -207,12 +207,8 @@
         ]
       }
     },
-    "all_cobots_specs": {
-      "metaTitleFocus": "全系列 r-Lite / r-Core 协作机器人规格",
-      "metaDescription": "横向浏览 r-Lite、r-Core、r-Reach、r-Max、r-Ultra 等 r 系列协作机械臂变体矩阵：负载、工作半径、关节轴与功率说明一站式对比。"
-    },
     "r_max": {
-      "metaTitleFocus": "r-Max 重载协作机械臂（FR16–FR20）",
+      "metaTitleFocus": "r-Max 重载协作机械臂",
       "metaDescription": "r-Max 系列重载 Cobot：涵盖 FR16、FR20 级大负载协作机械臂，适配搬运、码垛与重载协作产线。"
     },
     "humanoid": {

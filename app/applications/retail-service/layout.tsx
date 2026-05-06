@@ -4,11 +4,15 @@ import { BC_HOME, BC_NAV_APPLICATIONS } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
 import { pageMetadata } from '@/lib/site-seo';
 
-export const metadata: Metadata = pageMetadata(
-  'Retail & Service Cobot Applications',
-  'Retail and front‑house Cobots: compact robotic arms for greetings, dispensing, tending kiosks, and reliable service chores.',
-  '/applications/retail-service',
-);
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getSiteLang();
+  return pageMetadata(
+    'Retail & Service Cobot Applications',
+    'Retail and front‑house Cobots: compact robotic arms for greetings, dispensing, tending kiosks, and reliable service chores.',
+    '/applications/retail-service',
+    lang,
+  );
+}
 
 export default async function RetailServiceLayout({ children }: { children: React.ReactNode }) {
   const lang = await getSiteLang();

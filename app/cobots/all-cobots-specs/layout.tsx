@@ -11,7 +11,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
   const page = getMessages(lang).pages.all_cobots_specs;
-  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/cobots/all-cobots-specs');
+  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/cobots/all-cobots-specs', lang);
 }
 
 export default async function CobotsAllSpecsLayout({ children }: { children: React.ReactNode }) {

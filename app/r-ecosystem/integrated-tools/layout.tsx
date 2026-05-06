@@ -8,7 +8,7 @@ import { pageMetadata } from '@/lib/site-seo';
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
   const p = getMessages(lang).pages.r_ecosystem_integrated_tools;
-  return pageMetadata(p.metaTitleFocus, p.metaDescription, '/r-ecosystem/integrated-tools');
+  return pageMetadata(p.metaTitleFocus, p.metaDescription, '/r-ecosystem/integrated-tools', lang);
 }
 
 export default async function IntegratedToolsLayout({ children }: { children: React.ReactNode }) {

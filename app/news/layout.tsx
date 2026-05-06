@@ -4,11 +4,15 @@ import { BC_HOME, BC_NAV_ABOUT } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
 import { pageMetadata } from '@/lib/site-seo';
 
-export const metadata: Metadata = pageMetadata(
-  'Cobot Newsroom',
-  'Press releases for Cobots, trade show robotics arm debuts, partner wins, roadmap notes, embodied AI filings.',
-  '/news',
-);
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getSiteLang();
+  return pageMetadata(
+    'Cobot Newsroom',
+    'Press releases for Cobots, trade show robotics arm debuts, partner wins, roadmap notes, embodied AI filings.',
+    '/news',
+    lang,
+  );
+}
 
 export default async function NewsLayout({ children }: { children: React.ReactNode }) {
   const lang = await getSiteLang();
