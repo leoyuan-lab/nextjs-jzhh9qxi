@@ -1,12 +1,11 @@
 'use client';
-
-import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AXIS_ORDER,
   buildLineup,
   lineupCardVariantShortName,
   ml,
+  SubjectFillPng,
   type LineItem,
   SELECTOR_LINEUP_I18N,
   stripIndustrialModelCodes,
@@ -25,6 +24,15 @@ function hero2SelectLabel(item: LineItem): string {
   return v ? `${item.family.displayName} · ${v}` : item.family.displayName;
 }
 
+function openInquiryForModel(item: LineItem, lang: 'zh' | 'en') {
+  const modelLabel = hero2SelectLabel(item);
+  const body =
+    lang === 'zh'
+      ? `我想咨询以下机型：\n- ${modelLabel}\n\n请联系我并提供方案与报价。`
+      : `I'm interested in this model:\n- ${modelLabel}\n\nPlease contact me with recommendation and quotation.`;
+  window.dispatchEvent(new CustomEvent('apple-inquiry-open', { detail: { body } }));
+}
+
 export default function SelectorComparisonPage() {
   const lang = useSiteLang();
   const safeLang: 'zh' | 'en' = lang === 'en' ? 'en' : 'zh';
@@ -39,7 +47,7 @@ export default function SelectorComparisonPage() {
   }, []);
 
   return (
-    <section className="selector-hero2 border-t border-[#d2d2d7]/80 bg-white text-[#1d1d1f]" aria-labelledby="selector-hero2-title">
+    <section className="selector-hero2 border-t border-[#d2d2d7]/80 bg-[#f5f5f7] text-[#1d1d1f]" aria-labelledby="selector-hero2-title">
       <div className="mx-auto w-full max-w-[var(--apple-w,1024px)] px-[22px] pb-16 pt-10 md:pb-24 md:pt-12">
         <h1
           id="selector-hero2-title"
@@ -171,7 +179,7 @@ function SelectorHero2ModelCompare({
         ref={shellRef}
         className={
           pinned
-            ? 'fixed left-0 right-0 top-0 z-[10000] border-b border-black/[0.08] bg-white/92 pb-3 pt-[max(env(safe-area-inset-top),10px)] shadow-[0_2px_16px_rgba(0,0,0,0.06)] backdrop-blur-md supports-[backdrop-filter]:bg-white/80'
+            ? 'fixed left-0 right-0 top-0 z-[10000] border-b border-black/[0.08] bg-[#f5f5f7]/92 pb-3 pt-[max(env(safe-area-inset-top),10px)] shadow-[0_2px_16px_rgba(0,0,0,0.06)] backdrop-blur-md supports-[backdrop-filter]:bg-[#f5f5f7]/80'
             : 'relative z-[1]'
         }
       >
@@ -210,20 +218,19 @@ function SelectorHero2ModelCompare({
                   </select>
                   {item ? (
                     <div className="mt-5 flex flex-col items-center md:mt-6 md:items-stretch">
-                      <div className="flex h-[120px] w-full max-w-[220px] items-center justify-center md:h-[132px] md:max-w-none">
-                        <Image
+                      <div className="flex h-[152px] w-full max-w-[260px] items-center justify-center md:h-[176px] md:max-w-none">
+                        <SubjectFillPng
                           src={robotVariantImageUrl[item.id]}
                           alt={robotVariantImageAlt(item.id, lang)}
-                          loading="lazy"
-                          width={200}
-                          height={160}
-                          className="h-auto max-h-[120px] w-auto max-w-full object-contain md:max-h-[132px]"
-                          sizes="(max-width:768px) 50vw, 220px"
+                          fit="contain"
+                          autoTransparentBg
+                          cropToSubject={false}
+                          className="h-[96%] w-[96%]"
                         />
                       </div>
                       <button
                         type="button"
-                        onClick={() => window.dispatchEvent(new Event('apple-inquiry-open'))}
+                        onClick={() => openInquiryForModel(item, lang)}
                         className="mt-3 inline-flex min-w-[4.5rem] max-w-[220px] shrink-0 items-center justify-center self-center rounded-full bg-[#0071e3] px-3.5 py-1 text-center text-[11px] font-semibold text-white shadow-sm transition-[background,transform] hover:bg-[#0077ed] active:scale-[0.97] md:min-w-[5rem] md:px-4 md:py-1.5 md:text-xs md:max-w-none"
                       >
                         {t.hero2Inquiry}

@@ -345,23 +345,37 @@ function AnimatedBlueprintSvg({
   );
 }
 
-function SubjectFillPng({
+export function SubjectFillPng({
   src,
   alt,
   fit = 'contain',
+  autoTransparentBg = false,
+  cropToSubject = true,
   className,
 }: {
   src: string;
   alt: string;
   fit?: 'contain' | 'cover';
+  autoTransparentBg?: boolean;
+  cropToSubject?: boolean;
   className?: string;
 }) {
-  const [renderSrc, setRenderSrc] = useState(src);
+  const [renderSrc, setRenderSrc] = useState<string | null>(null);
   const [renderSize, setRenderSize] = useState({ w: 1, h: 1 });
+  const [ready, setReady] = useState(false);
+  const cacheRef = useRef<Map<string, { src: string; w: number; h: number }>>(new Map());
 
   useEffect(() => {
-    let revokedUrl: string | null = null;
+    const cached = cacheRef.current.get(src);
+    if (cached) {
+      setRenderSrc(cached.src);
+      setRenderSize({ w: cached.w, h: cached.h });
+      setReady(true);
+      return;
+    }
+
     let cancelled = false;
+    setReady(false);
     const img = new window.Image();
     img.decoding = 'async';
     img.src = src;
@@ -373,6 +387,7 @@ function SubjectFillPng({
       if (!w || !h) {
         setRenderSrc(src);
         setRenderSize({ w: 1, h: 1 });
+        setReady(true);
         return;
       }
 
@@ -382,9 +397,49 @@ function SubjectFillPng({
       const scanCtx = scanCanvas.getContext('2d', { willReadFrequently: true });
       if (!scanCtx) {
         setRenderSrc(src);
+        setRenderSize({ w, h });
+        setReady(true);
         return;
       }
       scanCtx.drawImage(img, 0, 0, w, h);
+      if (autoTransparentBg) {
+        const rgba = scanCtx.getImageData(0, 0, w, h);
+        const data = rgba.data;
+        const sample = [];
+        const stepX = Math.max(1, Math.floor(w / 64));
+        const stepY = Math.max(1, Math.floor(h / 64));
+        for (let x = 0; x < w; x += stepX) {
+          sample.push((0 * w + x) * 4, ((h - 1) * w + x) * 4);
+        }
+        for (let y = 0; y < h; y += stepY) {
+          sample.push((y * w + 0) * 4, (y * w + (w - 1)) * 4);
+        }
+        let r = 0;
+        let g = 0;
+        let b = 0;
+        let n = 0;
+        for (const i of sample) {
+          if (data[i + 3] < 6) continue;
+          r += data[i];
+          g += data[i + 1];
+          b += data[i + 2];
+          n += 1;
+        }
+        if (n > 0) {
+          const br = r / n;
+          const bg = g / n;
+          const bb = b / n;
+          for (let i = 0; i < data.length; i += 4) {
+            const dr = data[i] - br;
+            const dg = data[i + 1] - bg;
+            const db = data[i + 2] - bb;
+            const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+            if (dist < 26) data[i + 3] = 0;
+            else if (dist < 60) data[i + 3] = Math.min(data[i + 3], Math.round(((dist - 26) / 34) * 255));
+          }
+          scanCtx.putImageData(rgba, 0, 0);
+        }
+      }
       const data = scanCtx.getImageData(0, 0, w, h).data;
 
       let minX = w;
@@ -403,9 +458,21 @@ function SubjectFillPng({
         }
       }
 
-      if (maxX < minX || maxY < minY) {
-        setRenderSrc(src);
+      if (!cropToSubject) {
+        const dataUrl = scanCanvas.toDataURL('image/png');
+        setRenderSrc(dataUrl);
         setRenderSize({ w, h });
+        cacheRef.current.set(src, { src: dataUrl, w, h });
+        setReady(true);
+        return;
+      }
+
+      if (maxX < minX || maxY < minY) {
+        const dataUrl = scanCanvas.toDataURL('image/png');
+        setRenderSrc(dataUrl);
+        setRenderSize({ w, h });
+        cacheRef.current.set(src, { src: dataUrl, w, h });
+        setReady(true);
         return;
       }
 
@@ -417,41 +484,42 @@ function SubjectFillPng({
       const cropCtx = cropCanvas.getContext('2d');
       if (!cropCtx) {
         setRenderSrc(src);
+        setRenderSize({ w, h });
+        setReady(true);
         return;
       }
       cropCtx.drawImage(scanCanvas, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
-      cropCanvas.toBlob((blob) => {
-        if (cancelled || !blob) return;
-        const blobUrl = URL.createObjectURL(blob);
-        revokedUrl = blobUrl;
-        setRenderSize({ w: cropW, h: cropH });
-        setRenderSrc(blobUrl);
-      }, 'image/png');
+      const dataUrl = cropCanvas.toDataURL('image/png');
+      if (cancelled) return;
+      setRenderSize({ w: cropW, h: cropH });
+      setRenderSrc(dataUrl);
+      cacheRef.current.set(src, { src: dataUrl, w: cropW, h: cropH });
+      setReady(true);
     };
 
     img.onerror = () => {
       if (!cancelled) {
         setRenderSrc(src);
         setRenderSize({ w: 1, h: 1 });
+        setReady(true);
       }
     };
 
     return () => {
       cancelled = true;
-      if (revokedUrl) URL.revokeObjectURL(revokedUrl);
     };
-  }, [src]);
+  }, [src, autoTransparentBg, cropToSubject]);
 
   const fitClass = fit === 'cover' ? 'object-cover' : 'object-contain';
   return (
     <Image
-      src={renderSrc}
+      src={renderSrc ?? src}
       alt={alt}
       unoptimized
       loading="lazy"
       width={renderSize.w}
       height={renderSize.h}
-      className={`${fitClass} ${className ?? ''}`.trim()}
+      className={`${fitClass} ${className ?? ''} ${ready ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`.trim()}
     />
   );
 }
@@ -463,6 +531,7 @@ export function SelectorLineupCard({
   index,
   onOpenDetail,
   onOpenInquiry,
+  forcePlaceholderVisual = false,
   embedded = false,
 }: {
   item: LineItem;
@@ -471,6 +540,7 @@ export function SelectorLineupCard({
   index: number;
   onOpenDetail: () => void;
   onOpenInquiry?: () => void;
+  forcePlaceholderVisual?: boolean;
   embedded?: boolean;
 }) {
   const variantShort = lineupCardVariantShortName(item.name);
@@ -495,14 +565,18 @@ export function SelectorLineupCard({
               backgroundColor: '#f5f5f7',
             }}
           >
-            <div className="flex h-full w-full items-center justify-center">
-              <SubjectFillPng
-                src={robotVariantImageUrl[item.id]}
-                alt={robotVariantImageAlt(item.id, lang)}
-                fit="cover"
-                className="h-full w-full"
-              />
-            </div>
+            {forcePlaceholderVisual ? (
+              <div className="h-full w-full bg-[#96ef94]" aria-hidden />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center">
+                <SubjectFillPng
+                  src={robotVariantImageUrl[item.id]}
+                  alt={robotVariantImageAlt(item.id, lang)}
+                  fit="cover"
+                  className="h-full w-full"
+                />
+              </div>
+            )}
           </div>
           <div className="grid min-h-[336px] grid-rows-[auto_auto_auto_1fr] px-8 pb-8 pt-6 text-left">
             <h2 className="mb-3 min-h-[3.5rem] text-[1.5625rem] font-semibold leading-tight tracking-[-0.02em] text-[#1d1d1f]">

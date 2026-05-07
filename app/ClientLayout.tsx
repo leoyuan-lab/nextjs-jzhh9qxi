@@ -216,6 +216,7 @@ export default function ClientLayout({
   const [isChildSubNavVisible, setIsChildSubNavVisible] = useState(false);
   const [mainNavScrollProgress, setMainNavScrollProgress] = useState(0);
   const [navToneOverride, setNavToneOverride] = useState<'dark' | 'light' | null>(null);
+  const [isSelectorComparePinned, setIsSelectorComparePinned] = useState(false);
   const [sampledNavDark, setSampledNavDark] = useState<boolean | null>(null);
   /** True only at literal top of home — full clear bar; any scroll → whisper-glass (`home-ghost`). */
   const [homePinnedClear, setHomePinnedClear] = useState(true);
@@ -344,10 +345,15 @@ export default function ClientLayout({
       const clamped = Math.max(0, Math.min(1, raw));
       setMainNavScrollProgress(clamped);
     };
+    const handleSelectorComparePin = (event: Event) => {
+      const customEvent = event as CustomEvent<{ pinned?: boolean }>;
+      setIsSelectorComparePinned(Boolean(customEvent.detail?.pinned));
+    };
     window.addEventListener('langChange', handleLangChange);
     window.addEventListener('apple-subnav-visibility', handleSubNavVisibility as EventListener);
     window.addEventListener('apple-nav-tone', handleNavTone as EventListener);
     window.addEventListener('apple-main-nav-progress', handleMainNavProgress as EventListener);
+    window.addEventListener('selector-compare-sticky-pin', handleSelectorComparePin as EventListener);
     return () => {
       window.removeEventListener('langChange', handleLangChange);
       window.removeEventListener('keydown', handleKeyDown);
@@ -355,6 +361,7 @@ export default function ClientLayout({
       window.removeEventListener('apple-subnav-visibility', handleSubNavVisibility as EventListener);
       window.removeEventListener('apple-nav-tone', handleNavTone as EventListener);
       window.removeEventListener('apple-main-nav-progress', handleMainNavProgress as EventListener);
+      window.removeEventListener('selector-compare-sticky-pin', handleSelectorComparePin as EventListener);
       clearInterval(themeTimer);
     };
   }, []);
@@ -363,6 +370,9 @@ export default function ClientLayout({
     if (isHome || isArm || isSelector) {
       setIsChildSubNavVisible(false);
       setMainNavScrollProgress(0);
+    }
+    if (logicalPathname !== '/selector/comparison') {
+      setIsSelectorComparePinned(false);
     }
   }, [logicalPathname, isArm, isHome, isSelector]);
 
@@ -561,10 +571,24 @@ export default function ClientLayout({
                 : {
                     /* 选型页顶栏不随 progress 上滑隐藏，仅用 progress 切换透明 / 毛玻璃（与 r‑Core 首屏透底一致） */
                     transform: isSelector
-                      ? 'translate3d(0, 0, 0)'
+                      ? logicalPathname === '/selector/comparison' && isSelectorComparePinned
+                        ? 'translate3d(0, -104%, 0)'
+                        : 'translate3d(0, 0, 0)'
                       : `translate3d(0, -${(subPageNavProgress * 104).toFixed(2)}%, 0)`,
-                    opacity: isSelector ? 1 : Math.max(0, 1 - subPageNavProgress),
-                    pointerEvents: isSelector ? 'auto' : subPageNavProgress > 0.98 ? 'none' : 'auto',
+                    opacity:
+                      isSelector && logicalPathname === '/selector/comparison' && isSelectorComparePinned
+                        ? 0
+                        : isSelector
+                          ? 1
+                          : Math.max(0, 1 - subPageNavProgress),
+                    pointerEvents:
+                      isSelector && logicalPathname === '/selector/comparison' && isSelectorComparePinned
+                        ? 'none'
+                        : isSelector
+                          ? 'auto'
+                          : subPageNavProgress > 0.98
+                            ? 'none'
+                            : 'auto',
                     ...(isSelector
                       ? subPageNavProgress < 0.02
                         ? {
@@ -958,7 +982,7 @@ export default function ClientLayout({
           }
           body { margin: 0; overflow-x: hidden; }
           .nav-container { width: 100%; max-width: var(--apple-w); margin: 0 auto; padding: 0 22px; display: flex; justify-content: space-between; align-items: center; height: 100%; box-sizing: border-box; }
-          .apple-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); background: rgba(251,251,253,0.2); backdrop-filter: saturate(135%) blur(8px); z-index: var(--z-nav); border-bottom: 1px solid rgba(0,0,0,0.012); transition: background 0.38s ease, backdrop-filter 0.38s ease, -webkit-backdrop-filter 0.38s ease, transform 0.58s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.14s ease, border-color 0.2s ease, color 0.28s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
+          .apple-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); background: rgba(251,251,253,0.2); backdrop-filter: saturate(135%) blur(8px); z-index: var(--z-nav); border-bottom: 1px solid rgba(0,0,0,0.012); transition: background 0.38s ease, backdrop-filter 0.38s ease, -webkit-backdrop-filter 0.38s ease, transform 0.78s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s ease, border-color 0.24s ease, color 0.32s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
           .apple-nav.slide-up { transform: translateY(-104%); opacity: 0; pointer-events: none; }
           .apple-nav.is-dark { background: rgba(22, 22, 23, 0.16); color: #f5f5f7; border-bottom-color: rgba(255,255,255,0.02); }
           .apple-nav.is-home:not(.search-mode) {
