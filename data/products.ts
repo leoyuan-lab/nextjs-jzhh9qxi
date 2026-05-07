@@ -641,6 +641,7 @@ export const robotVariantById: Record<string, RobotVariant> = Object.fromEntries
 );
 
 export const ROBOT_IMG_BASE = '/images/robots';
+export const ROBOT_VECTOR_BASE = '/images/robots/_vectors';
 
 /** 含 3D hero 的 `.glb`，命名：`{rfamily}-cobot-{型号干名}.glb`（与 public 一致） */
 export const cobotGlbModels = {
@@ -667,6 +668,12 @@ export function robotVariantPngFilename(variantId: string): string {
   return `${fam.displayName.toLowerCase()}-cobot-${variantId}.png`;
 }
 
+/** 图纸 SVG 文件名：`{displayName 小写}-cobot-{variantId}.svg` */
+export function robotVariantBlueprintSvgFilename(variantId: string): string {
+  const fam = robotFamilyForVariant(variantId);
+  return `${fam.displayName.toLowerCase()}-cobot-${variantId}.svg`;
+}
+
 /** 样册营销型号码：FR5、FR5-C、FR10…（`-std` 后缀省略） */
 export function variantCatalogModelCode(variantId: string): string {
   const upper = variantId.toUpperCase();
@@ -686,6 +693,128 @@ function variantAltLocaleKey(variantId: string): string {
   const fam = robotFamilyForVariant(variantId).displayName.replace(/-/g, '_').toLowerCase();
   const variant = variantId.replace(/-/g, '_').toLowerCase();
   return `${fam}_${variant}`;
+}
+
+function blueprintLocaleSection(lang: 'zh' | 'en') {
+  return lang === 'zh' ? zhLocale.alt : enLocale.alt;
+}
+
+/**
+ * 蓝图对外「机型一行」：**产品线展示名（r-Lite、r-Core）+ 官网型号码（FR3、FR16）**。
+ * 绝不使用内部 variant slug（fr3-std、fr16-std 等）；型号码取自 `variantCatalogModelCode()`。
+ */
+export function robotVariantBlueprintModelName(variantId: string, lang: 'zh' | 'en'): string {
+  const fam = robotFamilyForVariant(variantId);
+  const code = variantCatalogModelCode(variantId);
+  return lang === 'zh' ? `${fam.displayName}（${code}）` : `${fam.displayName} (${code})`;
+}
+
+const BLUEPRINT_FALLBACK_ALT = {
+  zh: '{{modelName}} 协作机器人技术规格工程示意图（technical schematic）：展示工作半径与结构外形要点。',
+  en: 'Technical schematic of {{modelName}} showing arm reach and structural details.',
+} as const;
+
+const BLUEPRINT_FALLBACK_DESC = {
+  zh: '{{modelName}} 协作机器人技术图纸与技术示意图（technical drawing / schematic / blueprint），包含工作半径 {{reach}}、关节包络与外形尺寸标注（dimensions），供工程设计参考。',
+  en: 'Engineering blueprint and technical drawing of {{modelName}} collaborative robotic arm: {{reach}} working radius, schematic views with joint limits, footprint, and dimension callouts for mechanical integration.',
+} as const;
+
+function applyBlueprintTemplate(template: string, modelName: string, reach: string): string {
+  return template
+    .replace(/\{\{\s*modelName\s*\}\}/gi, modelName)
+    .replace(/\{\{\s*reach\s*\}\}/gi, reach);
+}
+
+/** 清除文案里意外出现的内部 variant id（如 URL 暴露 fr3），避免替代公开机型名 */
+function sanitizeBlueprintLeak(text: string, variantId: string, publicLabel: string): string {
+  if (!variantId.trim() || !text) return text;
+  const escaped = variantId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(escaped, 'gi'), publicLabel);
+}
+
+type AltJson = (typeof enLocale)['alt'];
+
+/**
+ * 技术图纸 `<object>` 专用短标签（与 `robotVariantImageAlt` 产品缩略图语义分离）。
+ * - `{{modelName}}` 一律解析为公开机型行（产品线 + FR 型号码），从不插入 `variantId`。
+ * - 可选 `alt.variant_blueprints`：仅允许与 `variant_images` 相同的 **locale key**（如 `r_lite_fr3_std`），字符串可含占位符。
+ */
+export function robotVariantBlueprintAlt(variantId: string, lang: 'zh' | 'en'): string {
+  const alt = blueprintLocaleSection(lang) as AltJson & {
+    variant_blueprints?: Record<string, string>;
+    blueprint_alt?: string;
+  };
+  const key = variantAltLocaleKey(variantId);
+  const override = alt.variant_blueprints?.[key];
+  const v = robotVariantById[variantId];
+  const publicModelName = v
+    ? robotVariantBlueprintModelName(variantId, lang)
+    : lang === 'zh'
+      ? '协作机器人'
+      : 'Roooll collaborative robot arm';
+  const reach = v?.reach ?? '';
+
+  const tmplRaw = typeof alt.blueprint_alt === 'string' ? alt.blueprint_alt.trim() : '';
+  const tmpl = tmplRaw || (lang === 'zh' ? BLUEPRINT_FALLBACK_ALT.zh : BLUEPRINT_FALLBACK_ALT.en);
+
+  let out: string;
+  if (typeof override === 'string' && override.trim()) {
+    out = applyBlueprintTemplate(override.trim(), publicModelName, reach);
+  } else {
+    out = applyBlueprintTemplate(tmpl, publicModelName, reach);
+  }
+
+  out = sanitizeBlueprintLeak(out, variantId, publicModelName).trim();
+
+  if (!out) {
+    out =
+      lang === 'zh'
+        ? `${publicModelName} 协作机器人技术示意图`
+        : `Technical schematic of ${publicModelName}`;
+  }
+
+  return out;
+}
+
+/**
+ * 图纸补充说明：`alt.blueprint_description`；可选 `alt.variant_blueprint_descriptions` 覆盖（同 locale key 规则）。
+ */
+export function robotVariantBlueprintDescription(variantId: string, lang: 'zh' | 'en'): string {
+  const alt = blueprintLocaleSection(lang) as AltJson & {
+    variant_blueprint_descriptions?: Record<string, string>;
+    blueprint_description?: string;
+  };
+  const key = variantAltLocaleKey(variantId);
+  const override = alt.variant_blueprint_descriptions?.[key];
+  const v = robotVariantById[variantId];
+  const publicModelName = v
+    ? robotVariantBlueprintModelName(variantId, lang)
+    : lang === 'zh'
+      ? '协作机器人'
+      : 'Roooll collaborative robot arm';
+  const reach = v?.reach ?? '';
+
+  const tmplRaw = typeof alt.blueprint_description === 'string' ? alt.blueprint_description.trim() : '';
+  const tmpl =
+    tmplRaw || (lang === 'zh' ? BLUEPRINT_FALLBACK_DESC.zh : BLUEPRINT_FALLBACK_DESC.en);
+
+  let out: string;
+  if (typeof override === 'string' && override.trim()) {
+    out = applyBlueprintTemplate(override.trim(), publicModelName, reach);
+  } else {
+    out = applyBlueprintTemplate(tmpl, publicModelName, reach);
+  }
+
+  out = sanitizeBlueprintLeak(out, variantId, publicModelName).trim();
+
+  if (!out) {
+    out =
+      lang === 'zh'
+        ? `${publicModelName} 技术图纸与尺寸说明`
+        : `Engineering schematic and dimensional drawing — ${publicModelName}`;
+  }
+
+  return out;
 }
 
 /** `<Image alt>` / 无障碍：r 系列名 + 型号 + 数据摘用途 */
@@ -712,6 +841,14 @@ export const robotVariantImageUrl: Record<string, string> = Object.fromEntries(
   Object.keys(robotVariantById).map((id) => [
     id,
     `${ROBOT_IMG_BASE}/${robotVariantPngFilename(id)}`,
+  ]),
+) as Record<string, string>;
+
+/** 与 `robotVariantById` 一一对应；SVG 图纸放在 `public/images/robots/_vectors` */
+export const robotVariantBlueprintSvgUrl: Record<string, string> = Object.fromEntries(
+  Object.keys(robotVariantById).map((id) => [
+    id,
+    `${ROBOT_VECTOR_BASE}/${robotVariantBlueprintSvgFilename(id)}`,
   ]),
 ) as Record<string, string>;
 

@@ -12,6 +12,13 @@ Apply on **every** substantive change involving **UI, assets, copy, or metadata*
 - **File names**: All **new** images and model assets use hybrid naming: `[r-series]-cobot-[fr-model].[ext]`.
 - **Alt text**: Every `<Image />` or `<img>` must include `alt` via i18n key lookup (`t('image_alt_key')` style). Do **not** hardcode Chinese or English alt strings inline.
 - **Alt text copy standard**: The translation value behind that key should follow `[r-series] ([fr-model]) Collaborative Robot for [Context]` (replace placeholders with real series, model, and page-specific context).
+- **Technical blueprint SVG (`<object type="image/svg+xml">`)** — **not** product thumbnails:
+  - **Do not reuse** `robotVariantImageAlt()` for drawing/schematic semantics; crawlers + AT expect *technical drawing / schematic / blueprint / dimensions* language, distinct from thumbnail marketing copy.
+  - **Locale**: extend `locales/en.json` & `zh.json` under `alt`:
+    - `blueprint_alt` — template string; placeholders `{{modelName}}`; optional `{{reach}}` if used in template.
+    - `blueprint_description` — richer string for `aria-description` (embedding technical drawing keywords); supports `{{modelName}}`, `{{reach}}`.
+    - Optional per-variant overrides: `variant_blueprints` and `variant_blueprint_descriptions` — use the **same locale keys as `variant_images`** (e.g. `r_lite_fr3_std`). Do **not** key by internal `variantId` slugs (`fr3-std`). Values may include `{{modelName}}` / `{{reach}}`; `{{modelName}}` always resolves to the public line **r-series + catalog code (FR3…)** via `robotVariantBlueprintModelName()`, never the raw slug.
+  - **Code**: bind `robotVariantBlueprintAlt()` → `aria-label` + **`title`** on `<object>`; bind `robotVariantBlueprintDescription()` → **`aria-description`**. Prefer `AnimatedBlueprintSvg` (`SelectorLineupUi.tsx`) for new usages.
 - **3D / Canvas**: For Canvas or 3D viewers, set `aria-label` or an equivalent `description` prop so the robotic arm model is described for assistive tech.
 
 ### GLB preload (Lighthouse / production parity)

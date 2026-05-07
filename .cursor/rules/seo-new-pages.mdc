@@ -20,4 +20,4 @@ Whenever **adding or changing** a route under `app/**` (new `page.tsx`, new segm
 
 4. **Localized linking guardrail** — Any newly added internal link in `app/**` must carry language-prefix behavior (no bare `/about`-style links that bypass `/zh` or `/en` context).
 
-**Branding, asset filenames, alt text, and routing patterns:** see `seo-branding-assets.mdc`.
+**Branding, asset filenames, alt text, and routing patterns:** see `seo-branding-assets.mdc` (**including blueprint SVG `<object>` i18n: `blueprint_alt` vs product thumbnails**).
