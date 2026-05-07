@@ -1,5 +1,4 @@
 'use client';
-
 import Image from 'next/image';
 import type { CSSProperties, HTMLAttributes, MouseEvent, RefObject } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -346,12 +345,124 @@ function AnimatedBlueprintSvg({
   );
 }
 
+function SubjectFillPng({
+  src,
+  alt,
+  fit = 'contain',
+  className,
+}: {
+  src: string;
+  alt: string;
+  fit?: 'contain' | 'cover';
+  className?: string;
+}) {
+  const [renderSrc, setRenderSrc] = useState(src);
+  const [renderSize, setRenderSize] = useState({ w: 1, h: 1 });
+
+  useEffect(() => {
+    let revokedUrl: string | null = null;
+    let cancelled = false;
+    const img = new window.Image();
+    img.decoding = 'async';
+    img.src = src;
+
+    img.onload = () => {
+      if (cancelled) return;
+      const w = img.naturalWidth;
+      const h = img.naturalHeight;
+      if (!w || !h) {
+        setRenderSrc(src);
+        setRenderSize({ w: 1, h: 1 });
+        return;
+      }
+
+      const scanCanvas = document.createElement('canvas');
+      scanCanvas.width = w;
+      scanCanvas.height = h;
+      const scanCtx = scanCanvas.getContext('2d', { willReadFrequently: true });
+      if (!scanCtx) {
+        setRenderSrc(src);
+        return;
+      }
+      scanCtx.drawImage(img, 0, 0, w, h);
+      const data = scanCtx.getImageData(0, 0, w, h).data;
+
+      let minX = w;
+      let minY = h;
+      let maxX = -1;
+      let maxY = -1;
+      for (let y = 0; y < h; y += 1) {
+        for (let x = 0; x < w; x += 1) {
+          const alpha = data[(y * w + x) * 4 + 3];
+          if (alpha > 8) {
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+          }
+        }
+      }
+
+      if (maxX < minX || maxY < minY) {
+        setRenderSrc(src);
+        setRenderSize({ w, h });
+        return;
+      }
+
+      const cropW = maxX - minX + 1;
+      const cropH = maxY - minY + 1;
+      const cropCanvas = document.createElement('canvas');
+      cropCanvas.width = cropW;
+      cropCanvas.height = cropH;
+      const cropCtx = cropCanvas.getContext('2d');
+      if (!cropCtx) {
+        setRenderSrc(src);
+        return;
+      }
+      cropCtx.drawImage(scanCanvas, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+      cropCanvas.toBlob((blob) => {
+        if (cancelled || !blob) return;
+        const blobUrl = URL.createObjectURL(blob);
+        revokedUrl = blobUrl;
+        setRenderSize({ w: cropW, h: cropH });
+        setRenderSrc(blobUrl);
+      }, 'image/png');
+    };
+
+    img.onerror = () => {
+      if (!cancelled) {
+        setRenderSrc(src);
+        setRenderSize({ w: 1, h: 1 });
+      }
+    };
+
+    return () => {
+      cancelled = true;
+      if (revokedUrl) URL.revokeObjectURL(revokedUrl);
+    };
+  }, [src]);
+
+  const fitClass = fit === 'cover' ? 'object-cover' : 'object-contain';
+  return (
+    <Image
+      src={renderSrc}
+      alt={alt}
+      unoptimized
+      loading="lazy"
+      width={renderSize.w}
+      height={renderSize.h}
+      className={`${fitClass} ${className ?? ''}`.trim()}
+    />
+  );
+}
+
 export function SelectorLineupCard({
   item,
   lang,
   t,
   index,
   onOpenDetail,
+  onOpenInquiry,
   embedded = false,
 }: {
   item: LineItem;
@@ -359,71 +470,42 @@ export function SelectorLineupCard({
   t: SelectorLineupAnyLang;
   index: number;
   onOpenDetail: () => void;
+  onOpenInquiry?: () => void;
   embedded?: boolean;
 }) {
-  const shellRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
-  const tiltEnabled = !embedded;
-
-  const onMove = useCallback((e: MouseEvent<HTMLDivElement>) => {
-    const el = shellRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
-    const maxDeg = 5.5;
-    setTilt({ rx: py * -maxDeg, ry: px * maxDeg * 1.4 });
-  }, []);
-
-  const onLeave = useCallback(() => setTilt({ rx: 0, ry: 0 }), []);
-
   const variantShort = lineupCardVariantShortName(item.name);
   const staggerMs = index * 180;
 
   return (
     <article
-      className={`selector-card-surface relative flex flex-col overflow-hidden rounded-[2rem] border border-black/[0.06] bg-white ${
+      className={`selector-card-surface relative flex flex-col overflow-hidden rounded-[2rem] border border-black/[0.06] bg-[#f5f5f7] ${
         embedded
           ? 'w-full max-w-[min(100%,428px)] shrink snap-none mx-auto'
-          : 'w-[min(92vw,408px)] shrink-0 snap-start md:w-[428px]'
+          : 'w-[min(92vw,408px)] shrink-0 snap-center md:w-[428px] md:snap-start'
       }`}
       style={{ ['--stagger' as string]: `${staggerMs}ms` }}
     >
       <div className="selector-card-scale-pulse flex min-h-0 flex-1 flex-col">
         <div
-          ref={shellRef}
-          className="selector-card-tilt flex min-h-0 flex-1 flex-col will-change-transform"
-          style={{
-            transform: tiltEnabled ? `perspective(960px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)` : 'none',
-            transition: tiltEnabled ? 'transform 0.18s ease-out' : undefined,
-          }}
-          onMouseMove={tiltEnabled ? onMove : undefined}
-          onMouseLeave={tiltEnabled ? onLeave : undefined}
+          className="flex min-h-0 flex-1 flex-col"
         >
           <div
-            className="selector-card-visual relative flex max-h-[320px] min-h-[260px] items-center justify-center md:min-h-[300px]"
+            className="selector-card-visual relative flex h-[260px] flex-none items-center justify-center md:h-[300px]"
             style={{
               backgroundColor: '#f5f5f7',
-              backgroundImage:
-                'linear-gradient(45deg, #e8e8ed 25%, transparent 25%), linear-gradient(-45deg, #e8e8ed 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e8e8ed 75%), linear-gradient(-45deg, transparent 75%, #e8e8ed 75%)',
-              backgroundSize: '12px 12px',
-              backgroundPosition: '0 0, 6px 6px, 6px -6px, -6px 0',
             }}
           >
-            <div className="flex h-full w-full items-center justify-center px-8 pb-4 pt-10">
-              <Image
+            <div className="flex h-full w-full items-center justify-center">
+              <SubjectFillPng
                 src={robotVariantImageUrl[item.id]}
                 alt={robotVariantImageAlt(item.id, lang)}
-                loading="lazy"
-                width={340}
-                height={380}
-                className="h-auto max-h-[260px] w-auto max-w-full object-contain md:max-h-[280px]"
-                sizes={embedded ? '(max-width:768px) 100vw, 428px' : '(max-width:768px) 92vw, 428px'}
+                fit="cover"
+                className="h-full w-full"
               />
             </div>
           </div>
-          <div className="flex flex-1 flex-col px-8 pb-8 pt-6 text-left">
-            <h2 className="mb-3 text-[1.5625rem] font-semibold leading-tight tracking-[-0.02em] text-[#1d1d1f]">
+          <div className="grid min-h-[336px] grid-rows-[auto_auto_auto_1fr] px-8 pb-8 pt-6 text-left">
+            <h2 className="mb-3 min-h-[3.5rem] text-[1.5625rem] font-semibold leading-tight tracking-[-0.02em] text-[#1d1d1f]">
               {item.family.displayName}
               {variantShort ? (
                 <>
@@ -432,7 +514,7 @@ export function SelectorLineupCard({
                 </>
               ) : null}
             </h2>
-            <p className="mb-5 line-clamp-3 whitespace-pre-line text-[0.9375rem] leading-relaxed text-[#424245]">
+            <p className="mb-5 min-h-[4.75rem] line-clamp-3 whitespace-pre-line text-[0.9375rem] leading-relaxed text-[#424245]">
               {selectorSummarizeBody(lang === 'zh' ? item.description.zh : item.description.en)}
             </p>
             <dl
@@ -456,7 +538,18 @@ export function SelectorLineupCard({
                 <dd className="font-semibold text-[#1d1d1f]">{item.weight}</dd>
               </div>
             </dl>
-            <div className="mt-auto flex justify-end gap-2 pt-1">
+            <div className="mt-auto flex items-center justify-between gap-2 pt-1">
+              {onOpenInquiry ? (
+                <button
+                  type="button"
+                  onClick={onOpenInquiry}
+                  className="selector-tap-clean inline-flex h-9 items-center justify-center rounded-full bg-[#0071e3] px-4 text-[0.8125rem] font-semibold text-white shadow-[0_6px_18px_rgba(0,113,227,0.35)] transition hover:bg-[#0077ed]"
+                >
+                  {t.hero2Inquiry}
+                </button>
+              ) : (
+                <span aria-hidden className="h-9" />
+              )}
               <button
                 type="button"
                 aria-label={

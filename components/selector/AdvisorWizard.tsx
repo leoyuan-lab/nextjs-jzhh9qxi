@@ -7,6 +7,7 @@ import { AdvisorHeroGlb } from '@/components/selector/AdvisorHeroGlb';
 import {
   buildLineup,
   lineItemForAdvisorFamily,
+  lineupCardVariantShortName,
   SelectorLineupCard,
   SELECTOR_LINEUP_I18N,
   VariantDetailPortal,
@@ -414,6 +415,15 @@ export function AdvisorWizard() {
                           index={idx}
                           embedded
                           onOpenDetail={() => setAdvisorDetailId(item.id)}
+                          onOpenInquiry={() => {
+                            const short = lineupCardVariantShortName(item.name);
+                            const modelLabel = `${item.family.displayName}${short ? ` · ${short}` : ''}`;
+                            const body =
+                              safeLang === 'zh'
+                                ? `我想咨询以下机型：\n- ${modelLabel}\n\n请联系我并提供方案与报价。`
+                                : `I'm interested in this model:\n- ${modelLabel}\n\nPlease contact me with recommendation and quotation.`;
+                            openInquiryWithBody(body);
+                          }}
                         />
                       </div>
                     );
