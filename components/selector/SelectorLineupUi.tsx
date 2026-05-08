@@ -352,6 +352,7 @@ export function SubjectFillPng({
   autoTransparentBg = false,
   cropToSubject = true,
   deferProcessingUntilVisible = false,
+  disablePostProcess = false,
   className,
 }: {
   src: string;
@@ -360,6 +361,7 @@ export function SubjectFillPng({
   autoTransparentBg?: boolean;
   cropToSubject?: boolean;
   deferProcessingUntilVisible?: boolean;
+  disablePostProcess?: boolean;
   className?: string;
 }) {
   const hostRef = useRef<HTMLDivElement | null>(null);
@@ -397,6 +399,12 @@ export function SubjectFillPng({
   }, [deferProcessingUntilVisible, src]);
 
   useEffect(() => {
+    if (disablePostProcess) {
+      setRenderSrc(src);
+      setRenderSize({ w: 1, h: 1 });
+      setReady(true);
+      return;
+    }
     if (!shouldProcess) {
       setRenderSrc(src);
       setReady(true);
@@ -546,7 +554,7 @@ export function SubjectFillPng({
     return () => {
       cancelled = true;
     };
-  }, [src, autoTransparentBg, cropToSubject, shouldProcess]);
+  }, [src, autoTransparentBg, cropToSubject, shouldProcess, disablePostProcess]);
 
   const fitClass = fit === 'cover' ? 'object-cover' : 'object-contain';
   return (
@@ -574,6 +582,7 @@ export function SelectorLineupCard({
   forcePlaceholderVisual = false,
   embedded = false,
   deferImageProcessingUntilVisible = false,
+  disableImagePostProcess = false,
 }: {
   item: LineItem;
   lang: 'zh' | 'en';
@@ -584,6 +593,7 @@ export function SelectorLineupCard({
   forcePlaceholderVisual?: boolean;
   embedded?: boolean;
   deferImageProcessingUntilVisible?: boolean;
+  disableImagePostProcess?: boolean;
 }) {
   const variantShort = lineupCardVariantShortName(item.name);
   const staggerMs = index * 180;
@@ -616,6 +626,7 @@ export function SelectorLineupCard({
                   alt={robotVariantImageAlt(item.id, lang)}
                   fit="cover"
                   deferProcessingUntilVisible={deferImageProcessingUntilVisible}
+                  disablePostProcess={disableImagePostProcess}
                   className="h-full w-full"
                 />
               </div>

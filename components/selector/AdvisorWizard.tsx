@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { AdvisorHeroGlb } from '@/components/selector/AdvisorHeroGlb';
 import {
@@ -50,11 +50,15 @@ type StepBlock = {
   opts: StepOpt[];
 };
 
+type StepAnim = 'idle' | 'leave-forward' | 'leave-back' | 'enter-forward' | 'enter-back';
+type TransitionDir = 'forward' | 'back';
+
 const COPY = {
   zh: {
     hero2Title: '慢慢来，我们一句一句聊',
     hero2Subtitle: '没有考试感，更像在店里试一支耳机：选最贴近您直觉的那一项就好。',
     back: '上一题',
+    confirm: '确定',
     openDrawer: '查看结果',
     reset: '重新聊一遍',
     steps: [
@@ -119,6 +123,7 @@ const COPY = {
     hero2Title: 'We’ll walk through it one beat at a time.',
     hero2Subtitle: 'Less “exam”, more like trying headphones in-store: pick what feels closest.',
     back: 'Back',
+    confirm: 'OK',
     openDrawer: 'View result',
     reset: 'Start over',
     steps: [
@@ -198,6 +203,11 @@ export function AdvisorWizard() {
   );
   const [answers, setAnswers] = useState<AdvisorAnswers>({});
   const [advisorDetailId, setAdvisorDetailId] = useState<string | null>(null);
+  const [pendingChoice, setPendingChoice] = useState<AdvisorLetter | null>(null);
+  const [stepAnim, setStepAnim] = useState<StepAnim>('idle');
+  const [isAdvancing, setIsAdvancing] = useState(false);
+  const navDirRef = useRef<TransitionDir>('forward');
+  const enterTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const p = readAdvisorPersisted();
@@ -232,6 +242,30 @@ export function AdvisorWizard() {
     if (urlStep !== 'result') setAdvisorDetailId(null);
   }, [urlStep]);
 
+  useLayoutEffect(() => {
+    if (urlStep === 'result') {
+      setStepAnim('idle');
+      setIsAdvancing(false);
+      return;
+    }
+    const key = pickKey(urlStep);
+    setPendingChoice(key ? (answers[key] ?? null) : null);
+    const enterMs = navDirRef.current === 'back' ? 300 : 320;
+    setStepAnim(navDirRef.current === 'back' ? 'enter-back' : 'enter-forward');
+    if (enterTimerRef.current) window.clearTimeout(enterTimerRef.current);
+    enterTimerRef.current = window.setTimeout(() => {
+      setStepAnim('idle');
+      setIsAdvancing(false);
+      enterTimerRef.current = null;
+    }, enterMs);
+    return () => {
+      if (enterTimerRef.current) {
+        window.clearTimeout(enterTimerRef.current);
+        enterTimerRef.current = null;
+      }
+    };
+  }, [urlStep]);
+
   useEffect(() => {
     window.dispatchEvent(new CustomEvent('apple-nav-tone', { detail: { tone: 'light' } }));
     return () => {
@@ -257,19 +291,32 @@ export function AdvisorWizard() {
   }, []);
 
   const onSelect = (letter: AdvisorLetter) => {
+    if (isAdvancing) return;
+    setPendingChoice(letter);
+  };
+
+  const onConfirm = () => {
+    if (isAdvancing || !pendingChoice) return;
     const key = pickKey(urlStep);
     if (!key || urlStep === 'result') return;
-    const next = { ...answers, [key]: letter } as AdvisorAnswers;
-    setAnswers(next);
-    persist(next);
-    if (urlStep === '5') {
-      setUrlStep('result');
-    } else {
-      setUrlStep(String(Number(urlStep) + 1));
-    }
+    const leaveMs = 260;
+    navDirRef.current = 'forward';
+    setIsAdvancing(true);
+    setStepAnim('leave-forward');
+    window.setTimeout(() => {
+      const next = { ...answers, [key]: pendingChoice } as AdvisorAnswers;
+      setAnswers(next);
+      persist(next);
+      if (urlStep === '5') {
+        setUrlStep('result');
+      } else {
+        setUrlStep(String(Number(urlStep) + 1));
+      }
+    }, leaveMs);
   };
 
   const goBack = () => {
+    if (isAdvancing) return;
     if (urlStep === 'result') {
       setAdvisorDetailId(null);
       setUrlStep('5');
@@ -277,7 +324,18 @@ export function AdvisorWizard() {
     }
     const n = Number(urlStep);
     if (n <= 1) return;
-    setUrlStep(String(n - 1));
+    const leaveMs = 240;
+    navDirRef.current = 'back';
+    setIsAdvancing(true);
+    setStepAnim('leave-back');
+    window.setTimeout(() => {
+      const prevKey = Q_KEYS[n - 2];
+      const nextAnswers = { ...answers };
+      delete nextAnswers[prevKey];
+      setAnswers(nextAnswers);
+      persist(nextAnswers);
+      setUrlStep(String(n - 1));
+    }, leaveMs);
   };
 
   const resetFlow = () => {
@@ -334,7 +392,8 @@ export function AdvisorWizard() {
     [result],
   );
 
-  const stepNum = urlStep === 'result' ? 5 : Number(urlStep);
+  const answeredCount = Q_KEYS.reduce((n, k) => (answers[k] ? n + 1 : n), 0);
+  const progressFilled = Math.min(5, answeredCount);
 
   return (
     <div className="bg-[#f5f5f7] text-[#1d1d1f] antialiased" style={{ WebkitFontSmoothing: 'antialiased' }}>
@@ -357,46 +416,102 @@ export function AdvisorWizard() {
             {urlStep !== 'result' && stepCopy ? (
               <>
                 <div className="mb-8 w-full max-w-[320px]" aria-hidden>
-                  <div className="h-1.5 w-full rounded-full bg-[#d2d2d7]">
-                    <span
-                      className="block h-full rounded-full bg-[#1d1d1f] transition-[width] duration-300 ease-out"
-                      style={{ width: `${(stepNum / 5) * 100}%` }}
-                    />
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <span
+                        key={i}
+                        className={`h-1.5 rounded-full transition-colors duration-200 ${
+                          i < progressFilled ? 'bg-[#34c759]' : 'bg-[#d2d2d7]'
+                        }`}
+                      />
+                    ))}
                   </div>
                 </div>
 
-                <h3 className="mb-3 max-w-[48rem] text-[1.5rem] font-semibold leading-tight tracking-[-0.02em] text-[#1d1d1f] md:text-[1.85rem]">
-                  {stepCopy.title}
-                </h3>
-                <p className="mb-10 max-w-[42rem] text-[1.0625rem] leading-relaxed text-[#86868b]">{stepCopy.lede}</p>
+                <div
+                  className={`transition-[transform,opacity] will-change-transform ${
+                    stepAnim === 'leave-back'
+                      ? 'translate-y-8 opacity-0 md:translate-y-10'
+                      : stepAnim === 'leave-forward'
+                        ? '-translate-y-8 opacity-0 md:-translate-y-10'
+                        : stepAnim === 'enter-back'
+                          ? '-translate-y-5 opacity-0 md:-translate-y-6'
+                          : stepAnim === 'enter-forward'
+                            ? 'translate-y-5 opacity-0 md:translate-y-6'
+                        : 'translate-y-0 opacity-100'
+                  }`}
+                  style={{
+                    transitionDuration: `${
+                      stepAnim === 'leave-back'
+                        ? 240
+                        : stepAnim === 'leave-forward'
+                          ? 260
+                          : stepAnim === 'enter-back'
+                            ? 300
+                            : stepAnim === 'enter-forward'
+                              ? 320
+                              : 220
+                    }ms`,
+                    transitionTimingFunction:
+                      stepAnim === 'leave-back' || stepAnim === 'leave-forward'
+                        ? 'cubic-bezier(0.32, 0.72, 0.45, 1)'
+                        : 'cubic-bezier(0.18, 0.82, 0.24, 1)',
+                  }}
+                >
+                  <h3 className="mb-3 max-w-[48rem] text-[1.5rem] font-semibold leading-tight tracking-[-0.02em] text-[#1d1d1f] md:text-[1.85rem]">
+                    {stepCopy.title}
+                  </h3>
+                  <p className="mb-8 max-w-[42rem] text-[1.0625rem] leading-relaxed text-[#86868b]">{stepCopy.lede}</p>
 
-                <div className="grid gap-4 md:max-w-3xl md:grid-cols-2">
-                  {stepCopy.opts.map((opt) => (
-                    <button
-                      key={opt.k}
-                      type="button"
-                      className="group flex flex-col rounded-[1.15rem] border border-[#e8e8ed] bg-[#fbfbfd] p-5 text-left shadow-[0_1px_0_rgba(0,0,0,0.04)] transition hover:border-[#0071e3]/45 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] active:scale-[0.99] md:p-6"
-                      onClick={() => onSelect(opt.k)}
-                    >
-                      <span className="mb-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-semibold text-[#6e6e73] ring-1 ring-[#0000000d] group-hover:text-[#1d1d1f]">
-                        {opt.k}
-                      </span>
-                      <span className="text-[1.0625rem] font-semibold leading-snug text-[#1d1d1f]">{opt.title}</span>
-                      <span className="mt-2 text-[0.9375rem] leading-relaxed text-[#6e6e73]">{opt.hint}</span>
-                    </button>
-                  ))}
+                  <div className="grid gap-3 md:grid-cols-2 md:gap-4">
+                    {stepCopy.opts.map((opt) => {
+                      const selected = pendingChoice === opt.k;
+                      return (
+                        <button
+                          key={opt.k}
+                          type="button"
+                          className={`group flex flex-col rounded-[1.05rem] border bg-[#fbfbfd] p-4 text-left shadow-[0_1px_0_rgba(0,0,0,0.04)] transition active:scale-[0.99] md:p-5 ${
+                            selected
+                              ? 'border-[#0071e3] ring-2 ring-[#0071e3]/25 shadow-[0_12px_40px_rgba(0,113,227,0.14)]'
+                              : 'border-[#e8e8ed] hover:border-[#0071e3]/45 hover:ring-2 hover:ring-[#0071e3]/22 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]'
+                          }`}
+                          onClick={() => onSelect(opt.k)}
+                          disabled={isAdvancing}
+                        >
+                          <div className="mb-2.5 flex items-center gap-2.5">
+                            <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[0.78rem] font-semibold text-[#6e6e73] ring-1 ring-[#0000000d] group-hover:text-[#1d1d1f]">
+                              {opt.k}
+                            </span>
+                            <span className="text-[1rem] font-semibold leading-snug text-[#1d1d1f]">{opt.title}</span>
+                          </div>
+                          <span className="text-[0.9rem] leading-relaxed text-[#6e6e73]">{opt.hint}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
                 </div>
-
-                <div className="mt-12 flex flex-wrap gap-3">
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    className="inline-flex items-center justify-center rounded-full bg-[#0071e3] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,113,227,0.35)] transition hover:bg-[#0077ed] disabled:cursor-not-allowed disabled:opacity-40"
+                    onClick={onConfirm}
+                    disabled={!pendingChoice || isAdvancing}
+                  >
+                    {t.confirm}
+                  </button>
                   {Number(urlStep) > 1 ? (
                     <button
                       type="button"
-                      className="rounded-full border border-[#d2d2d7] bg-white px-6 py-2.5 text-sm font-semibold text-[#1d1d1f] transition hover:bg-[#f5f5f7]"
+                      className="rounded-full border border-[#d2d2d7] bg-white px-6 py-2.5 text-sm font-semibold text-[#1d1d1f] transition hover:bg-[#f5f5f7] disabled:opacity-45"
                       onClick={goBack}
+                      disabled={isAdvancing}
                     >
                       {t.back}
                     </button>
-                  ) : null}
+                  ) : (
+                    <span aria-hidden className="hidden h-10 w-[84px] md:inline-block" />
+                  )}
                 </div>
               </>
             ) : result && picks.length >= 5 ? (
@@ -414,6 +529,7 @@ export function AdvisorWizard() {
                           t={lineupCardT}
                           index={idx}
                           embedded
+                          disableImagePostProcess
                           onOpenDetail={() => setAdvisorDetailId(item.id)}
                           onOpenInquiry={() => {
                             const short = lineupCardVariantShortName(item.name);
