@@ -26,7 +26,7 @@ export default async function CobotsAllSpecsLayout({ children }: { children: Rea
         items={[
           { href: BC_HOME.href, en: BC_HOME.en },
           { href: BC_NAV_COBOTS.href, en: BC_NAV_COBOTS.en },
-          { href: '/cobots/all-cobots-specs', en: 'All cobots & Specs' },
+          { href: '/cobots/all-cobots-specs', en: 'r-series cobots & Specs' },
         ]}
       />
       {children}

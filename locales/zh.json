@@ -2,7 +2,7 @@
   "nav": {
     "cobots_section": "协作机器人",
     "cobots": {
-      "all_specs": "全系列型号与规格",
+      "all_specs": "r 系列型号与规格",
       "r_core_suffix": "（轻量一体型）",
       "r_max_suffix": "（强力负载型）",
       "humanoid": "人形机器人（具身智能）"
@@ -33,7 +33,7 @@
     },
     "accessories_section": "配件",
     "accessories": {
-      "catalog": "配件"
+      "catalog": "配件生态"
     },
     "about_section": "关于我们",
     "about": {

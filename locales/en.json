@@ -2,7 +2,7 @@
   "nav": {
     "cobots_section": "Cobots",
     "cobots": {
-      "all_specs": "All cobots & Specs",
+      "all_specs": "r-series cobots & Specs",
       "r_core_suffix": " (Lite Integrated)",
       "r_max_suffix": " (High Payload)",
       "humanoid": "Humanoid (Embodied AI)"

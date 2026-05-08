@@ -362,7 +362,7 @@ export function SubjectFillPng({
 }) {
   const [renderSrc, setRenderSrc] = useState<string | null>(null);
   const [renderSize, setRenderSize] = useState({ w: 1, h: 1 });
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(true);
   const cacheRef = useRef<Map<string, { src: string; w: number; h: number }>>(new Map());
 
   useEffect(() => {
@@ -375,7 +375,9 @@ export function SubjectFillPng({
     }
 
     let cancelled = false;
-    setReady(false);
+    // Always render the original image first; post-processing swaps in later.
+    setRenderSrc(src);
+    setReady(true);
     const img = new window.Image();
     img.decoding = 'async';
     img.src = src;
@@ -516,7 +518,7 @@ export function SubjectFillPng({
       src={renderSrc ?? src}
       alt={alt}
       unoptimized
-      loading="lazy"
+      loading="eager"
       width={renderSize.w}
       height={renderSize.h}
       className={`${fitClass} ${className ?? ''} ${ready ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`.trim()}
