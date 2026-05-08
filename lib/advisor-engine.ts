@@ -441,9 +441,9 @@ export function computeAdvisorResult(answers: AdvisorAnswers): AdvisorComputedRe
   const geoZhRaw = `为产线与实验室场景匹配的 ${nameZh} 协作机器人 Cobot：六轴机械臂 Robotic Arm 兼顾负载与臂展，隶属 r 系列柔性自动化与 OEM 集成选型，便于检索「协作机器人 Cobot」「机械臂 Robotic Arm」落地部署。`;
   const geoEnRaw = `${nameEn} Cobot and six-axis Robotic Arm for factory & lab automation: r‑Series collaborative robot line, payload/reach tuned to your picks—ideal for Cobot OEM and Robotic Arm integration search intent.`;
 
-  const geoZhLongRaw = `结合你在向导里的选择，我们更倾向把「${nameZh}」作为当前最贴近节拍与空间的 Cobot 方案：六轴机械臂 Robotic Arm 在 r 系列生态里负责把工艺动作做得更顺滑，也更利于后续做夹具、快换与线体改造的渐进式升级。${zhSceneBits(
+  const geoZhLongRaw = `结合您在向导里的选择，我们更倾向把「${nameZh}」作为当前最贴近节拍与空间的 Cobot 方案：六轴机械臂 Robotic Arm 在 r 系列生态里负责把工艺动作做得更顺滑，也更利于后续做夹具、快换与线体改造的渐进式升级。${zhSceneBits(
     answers,
-  )}若你希望留一点成长空间，也可以同步关注「${upZh}」这一档：在负载、臂展或防护余量上更宽裕，适合作为下一阶段产能爬坡或场景扩张的升级路径。面向检索与落地页面，我们建议自然出现「协作机器人 Cobot」「机械臂 Robotic Arm」「r 系列」等关键词，并把节拍、半径与现场介质写清楚，便于把方案讲给工程与采购双方。`;
+  )}若您希望留一点成长空间，也可以同步关注「${upZh}」这一档：在负载、臂展或防护余量上更宽裕，适合作为下一阶段产能爬坡或场景扩张的升级路径。面向检索与落地页面，我们建议自然出现「协作机器人 Cobot」「机械臂 Robotic Arm」「r 系列」等关键词，并把节拍、半径与现场介质写清楚，便于把方案讲给工程与采购双方。`;
 
   const geoEnLongRaw = `From your picks, we’d lean toward ${nameEn} as the closest Cobot fit right now: a six-axis Robotic Arm inside the r‑Series lineup that keeps motion smooth for tooling, changeover, and line-side iteration. ${enSceneBits(
     answers,
@@ -452,11 +452,12 @@ export function computeAdvisorResult(answers: AdvisorAnswers): AdvisorComputedRe
   return {
     familyId: best,
     upgradeFamilyId: upgrade,
-    headlineZh: `我们觉得你会喜欢 ${nameZh} 这条线。`,
+    headlineZh: `我们觉得您会喜欢 ${nameZh} 这条线`,
     headlineEn: `We think you’ll like the ${nameEn} line.`,
-    detailZh: '已把草稿放进右侧咨询抽屉，你也可以顺手补两句节拍、工装与现场照片，我们再顺着你的语境往下接。',
+    detailZh:
+      '下面是我们为您推荐的最适合您愿景的机型，并已经为您把结果保存起来了，您可以点击下方“查看结果”查看，也可以顺手加上两句您最关心的问题或者您的现场照片，我们再为您提供更详尽的服务',
     detailEn:
-      'The draft is in the inquiry drawer on the right—generate the email, or tweak two lines about cycle time, tooling, and your floor.',
+      'Below are the models we recommend according to your anwsers, and we have already saved your results for you. You can click "View result" below to review them, or add a couple of your most concerned questions or on-site photos, and we will provide you with more detailed service.',
     geoSummaryZh: clipGraphemes(geoZhRaw, 150),
     geoSummaryEn: clipAscii(geoEnRaw, 150),
     geoNarrativeZh: bandGraphemes(geoZhLongRaw, 150, 200),
@@ -482,7 +483,7 @@ export function buildAdvisorInquiryDraft(
   const primaryNameEn = primaryFam?.displayName ?? 'r‑Core';
   const upgradeNameZh = upgradeFam?.displayName ?? 'r‑Core';
   const upgradeNameEn = upgradeFam?.displayName ?? 'r‑Core';
-  const leadZh = `我们更想向你引荐 ${primaryNameZh} 这条线；若你想预留升级空间，可关注 ${upgradeNameZh}。`;
+  const leadZh = `我们更想向您引荐 ${primaryNameZh} 这条线；若您想预留升级空间，可关注 ${upgradeNameZh}。`;
   const leadEn = `We think you’ll like the ${primaryNameEn} line; if you want headroom to step up, consider ${upgradeNameEn}.`;
   const recZh = `推荐组合：最适配 ${primaryNameZh}（基准负载约 ${primaryFam?.basePayload ?? ''}，臂展约 ${primaryFam?.baseReach ?? ''}）；升级备选 ${upgradeNameZh}（基准负载约 ${upgradeFam?.basePayload ?? ''}，臂展约 ${upgradeFam?.baseReach ?? ''}）。`;
   const recEn = `Pairing: best fit ${primaryNameEn} (base payload ~${primaryFam?.basePayload ?? ''}, reach ~${primaryFam?.baseReach ?? ''}); step-up ${upgradeNameEn} (base payload ~${upgradeFam?.basePayload ?? ''}, reach ~${upgradeFam?.baseReach ?? ''}).`;
@@ -493,7 +494,7 @@ export function buildAdvisorInquiryDraft(
       '',
       leadZh,
       '',
-      '你的选择',
+      '您的选择',
       '',
       picksBlock,
       '',
@@ -501,7 +502,7 @@ export function buildAdvisorInquiryDraft(
       '',
       geo,
       '',
-      '可直接生成邮件发送，或在下方补充节拍、工装与现场照片。',
+      '可直接生成邮件发送，或在下方补充您最关心的问题和现场照片等。',
     ].join('\n');
   }
 
@@ -518,6 +519,6 @@ export function buildAdvisorInquiryDraft(
     '',
     geo,
     '',
-    'Generate the email as-is, or add cycle time, tooling notes, and site photos below.',
+    'Generate the email as-is, or add a few questions that you cerconed about,  and site photos below.',
   ].join('\n');
 }

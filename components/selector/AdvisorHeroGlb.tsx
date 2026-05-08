@@ -174,7 +174,7 @@ export function AdvisorHeroGlb({ lang }: Props) {
             <div className="advisor-hero-type">
               <h1 className="advisor-loading-slogan-main advisor-slogan-shine">
                 {lang === 'zh' ? (
-                  '寻找契合你愿景的 r 系列。'
+                  '寻找契合您愿景的 r 系列'
                 ) : (
                   <>
                     <span className="advisor-slogan-line">Find the r-series that fits your</span>{' '}

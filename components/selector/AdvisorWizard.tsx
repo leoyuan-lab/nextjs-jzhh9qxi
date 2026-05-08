@@ -52,10 +52,10 @@ type StepBlock = {
 
 const COPY = {
   zh: {
-    hero2Title: '慢慢来，我们一句一句聊。',
-    hero2Subtitle: '没有考试感，更像在店里试一支耳机：选最贴近你直觉的那一项就好。',
+    hero2Title: '慢慢来，我们一句一句聊',
+    hero2Subtitle: '没有考试感，更像在店里试一支耳机：选最贴近您直觉的那一项就好。',
     back: '上一题',
-    openDrawer: '填入咨询抽屉',
+    openDrawer: '查看结果',
     reset: '重新聊一遍',
     steps: [
       {
@@ -71,8 +71,8 @@ const COPY = {
       },
       {
         eyebrow: '聊聊「力气」这件事',
-        title: '如果把它拟人化，你更希望它是哪种体型？',
-        lede: '我们在看负载区间，但用更软的说法问你。',
+        title: '如果把它拟人化，您更希望它是哪种体型？',
+        lede: '我们在看负载区间，但用更软的说法问您。',
         opts: [
           { k: 'A', title: '精瘦型，够用就好', hint: '≤5 kg 左右，紧凑、好塞进现有线体。' },
           { k: 'B', title: '匀称型，日常全能', hint: '大约 5–10 kg，多数场景都舒服。' },
@@ -82,8 +82,8 @@ const COPY = {
       },
       {
         eyebrow: '臂展：像伸手拿东西的感觉',
-        title: '它「伸手」时，你脑海里的画面更接近哪一种？',
-        lede: '半径没有标准答案，想象你最常需要够到的范围。',
+        title: '它「伸手」时，您脑海里的画面更接近哪一种？',
+        lede: '半径没有标准答案，想象您最常需要够到的范围。',
         opts: [
           { k: 'A', title: '就在手边', hint: '紧凑工位，台面附近。' },
           { k: 'B', title: '绕一台设备转一圈', hint: '中等半径，单工位内够用。' },
@@ -93,7 +93,7 @@ const COPY = {
       },
       {
         eyebrow: '节拍与手感',
-        title: '你更想先讨好哪一种「脾气」？',
+        title: '哪一种「脾气」您更喜欢呢？',
         lede: '精度、节拍、示教友好——很难全满分，先选当下最在意的一个。',
         opts: [
           { k: 'A', title: '慢一点没关系，好教、好改', hint: '示教友好、迭代快。' },
@@ -104,7 +104,7 @@ const COPY = {
       },
       {
         eyebrow: '最后一笔：现场气质',
-        title: '把它放进你的车间/实验室，你最担心哪种「意外」？',
+        title: '把它放进您的车间/实验室，您最担心哪种「意外」？',
         lede: '环境决定很多温柔的小细节，比如密封、线缆与清洗。',
         opts: [
           { k: 'A', title: '常规尘屑，正常打扫就好', hint: '一般车间。' },
@@ -119,7 +119,7 @@ const COPY = {
     hero2Title: 'We’ll walk through it one beat at a time.',
     hero2Subtitle: 'Less “exam”, more like trying headphones in-store: pick what feels closest.',
     back: 'Back',
-    openDrawer: 'Send to inquiry drawer',
+    openDrawer: 'View result',
     reset: 'Start over',
     steps: [
       {
@@ -157,7 +157,7 @@ const COPY = {
       },
       {
         eyebrow: 'Tempo & feel',
-        title: 'Which “mood” do you want to please first?',
+        title: 'Which “mood” do you like better?',
         lede: 'Accuracy, cycle, teachability—pick what matters most today.',
         opts: [
           { k: 'A', title: 'Slower is OK if it’s easy to teach', hint: 'Iteration-friendly programming.' },
