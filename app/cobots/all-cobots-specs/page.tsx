@@ -143,6 +143,7 @@ export default function ProductSelectorPage() {
                 index={index}
                 onOpenDetail={() => setDetailId(item.id)}
                 onOpenInquiry={() => openInquiryForItem(item)}
+                deferImageProcessingUntilVisible
               />
             </div>
           ))}

@@ -351,6 +351,7 @@ export function SubjectFillPng({
   fit = 'contain',
   autoTransparentBg = false,
   cropToSubject = true,
+  deferProcessingUntilVisible = false,
   className,
 }: {
   src: string;
@@ -358,14 +359,49 @@ export function SubjectFillPng({
   fit?: 'contain' | 'cover';
   autoTransparentBg?: boolean;
   cropToSubject?: boolean;
+  deferProcessingUntilVisible?: boolean;
   className?: string;
 }) {
+  const hostRef = useRef<HTMLDivElement | null>(null);
   const [renderSrc, setRenderSrc] = useState<string | null>(null);
   const [renderSize, setRenderSize] = useState({ w: 1, h: 1 });
   const [ready, setReady] = useState(true);
+  const [shouldProcess, setShouldProcess] = useState(!deferProcessingUntilVisible);
   const cacheRef = useRef<Map<string, { src: string; w: number; h: number }>>(new Map());
 
   useEffect(() => {
+    if (!deferProcessingUntilVisible) {
+      setShouldProcess(true);
+      return;
+    }
+    if (typeof IntersectionObserver === 'undefined') {
+      setShouldProcess(true);
+      return;
+    }
+    const el = hostRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting || entry.intersectionRatio > 0) {
+            setShouldProcess(true);
+            observer.disconnect();
+            return;
+          }
+        }
+      },
+      { rootMargin: '220px 0px' },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [deferProcessingUntilVisible, src]);
+
+  useEffect(() => {
+    if (!shouldProcess) {
+      setRenderSrc(src);
+      setReady(true);
+      return;
+    }
     const cached = cacheRef.current.get(src);
     if (cached) {
       setRenderSrc(cached.src);
@@ -510,19 +546,21 @@ export function SubjectFillPng({
     return () => {
       cancelled = true;
     };
-  }, [src, autoTransparentBg, cropToSubject]);
+  }, [src, autoTransparentBg, cropToSubject, shouldProcess]);
 
   const fitClass = fit === 'cover' ? 'object-cover' : 'object-contain';
   return (
-    <Image
-      src={renderSrc ?? src}
-      alt={alt}
-      unoptimized
-      loading="eager"
-      width={renderSize.w}
-      height={renderSize.h}
-      className={`${fitClass} ${className ?? ''} ${ready ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`.trim()}
-    />
+    <div ref={hostRef} className="h-full w-full">
+      <Image
+        src={renderSrc ?? src}
+        alt={alt}
+        unoptimized
+        loading="eager"
+        width={renderSize.w}
+        height={renderSize.h}
+        className={`${fitClass} ${className ?? ''} ${ready ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`.trim()}
+      />
+    </div>
   );
 }
 
@@ -535,6 +573,7 @@ export function SelectorLineupCard({
   onOpenInquiry,
   forcePlaceholderVisual = false,
   embedded = false,
+  deferImageProcessingUntilVisible = false,
 }: {
   item: LineItem;
   lang: 'zh' | 'en';
@@ -544,6 +583,7 @@ export function SelectorLineupCard({
   onOpenInquiry?: () => void;
   forcePlaceholderVisual?: boolean;
   embedded?: boolean;
+  deferImageProcessingUntilVisible?: boolean;
 }) {
   const variantShort = lineupCardVariantShortName(item.name);
   const staggerMs = index * 180;
@@ -575,6 +615,7 @@ export function SelectorLineupCard({
                   src={robotVariantImageUrl[item.id]}
                   alt={robotVariantImageAlt(item.id, lang)}
                   fit="cover"
+                  deferProcessingUntilVisible={deferImageProcessingUntilVisible}
                   className="h-full w-full"
                 />
               </div>
