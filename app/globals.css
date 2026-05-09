@@ -179,6 +179,65 @@ body {
   background: #ffffff;
 }
 
+.apple-home-wrapper .twin-hero-section {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  gap: 2vh;
+  padding: 2vh 0;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+
+.apple-home-wrapper .twin-hero-panel {
+  position: relative;
+  flex: 1 1 50%;
+  min-width: 0;
+  min-height: 90vh;
+  min-height: 90dvh;
+  overflow: hidden;
+  border-radius: 0;
+  background: #22c55e;
+}
+
+.apple-home-wrapper .twin-hero-image {
+  object-fit: cover;
+  opacity: 0.78;
+}
+
+.apple-home-wrapper .twin-hero-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(22, 163, 74, 0.46);
+  pointer-events: none;
+}
+
+.apple-home-wrapper .twin-hero-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: clamp(22px, 3vw, 42px);
+  color: #fff;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.68) 72%, rgba(0, 0, 0, 0.84) 100%);
+}
+
+.apple-home-wrapper .twin-hero-overlay h3 {
+  margin: 0;
+  font-size: clamp(24px, 2.5vw, 34px);
+  font-weight: 600;
+}
+
+.apple-home-wrapper .twin-hero-overlay p {
+  margin: 8px 0 0;
+  font-size: clamp(14px, 1.3vw, 18px);
+  color: rgba(255, 255, 255, 0.9);
+}
+
 .apple-home-wrapper .grid-container {
   display: flex;
   width: 100%;
@@ -525,6 +584,19 @@ body {
   .apple-home-wrapper > .screen-outer:nth-of-type(-n + 2) {
     height: 112dvh;
     min-height: 112dvh;
+  }
+
+  .apple-home-wrapper .twin-hero-section {
+    min-height: auto;
+    flex-direction: column;
+    gap: 2vh;
+    padding: 2vh 0;
+  }
+
+  .apple-home-wrapper .twin-hero-panel {
+    min-height: 72vh;
+    min-height: 72dvh;
+    border-radius: 0;
   }
 }
 
@@ -1259,8 +1331,19 @@ body {
   margin-bottom: 20px;
 }
 
+.fn-title {
+  margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
 .apple-footer-wrapper.is-dark .footnotes {
   border-bottom-color: #333;
+}
+
+.apple-footer-wrapper.is-dark .fn-title {
+  color: #f5f5f7;
 }
 
 .fn-list {
@@ -1328,6 +1411,22 @@ body {
 }
 
 @media (max-width: 734px) {
+  .footnotes {
+    /* Limit repaint scope for long legal copy on mobile scroll. */
+    contain: layout paint;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .fn-list {
+    contain: layout paint;
+  }
+
+  .fn-item {
+    contain: content;
+    transform: translateZ(0);
+  }
+
   .footer-grid {
     flex-direction: column;
     gap: 0;
@@ -1758,11 +1857,13 @@ body {
   }
 
   .selector-scroller:hover .selector-card-shell:hover,
+  .selector-scroller:hover .selector-card-shell.is-hovered,
   .selector-scroller:hover .selector-card-shell:focus-within {
     transform: translateZ(0) scale(1.045);
   }
 
   .selector-scroller:hover .selector-card-shell:hover .selector-card-surface,
+  .selector-scroller:hover .selector-card-shell.is-hovered .selector-card-surface,
   .selector-scroller:hover .selector-card-shell:focus-within .selector-card-surface {
     box-shadow: 0 18px 42px rgba(0, 0, 0, 0.09);
   }

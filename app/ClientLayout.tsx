@@ -456,10 +456,34 @@ export default function ClientLayout({
       return;
     }
 
+    const isMobileViewport = window.matchMedia('(max-width: 734px)').matches;
+    const HOME_NAV_TONE_SAMPLE_MIN_INTERVAL = isMobileViewport ? 240 : 120;
+    const HOME_NAV_TONE_SAMPLE_MIN_SCROLL_DELTA = isMobileViewport ? 42 : 24;
+    const HOME_NAV_TONE_ACTIVE_VIEWPORTS = isMobileViewport ? 2.7 : 2.35;
+    let rafId: number | null = null;
+    let lastToneSampleAt = 0;
+    let lastToneSampleY = -1;
     const syncHomeScrollAndTone = () => {
-      setHomePinnedClear(window.scrollY < 2);
-      const nextDark = computeHomeNavDarkFromUnderNav();
-      setSampledNavDark((prev) => (prev === nextDark ? prev : nextDark));
+      if (rafId !== null) return;
+      rafId = window.requestAnimationFrame(() => {
+        rafId = null;
+        const y = window.scrollY;
+        setHomePinnedClear(y < 2);
+        const toneActiveMaxY = window.innerHeight * HOME_NAV_TONE_ACTIVE_VIEWPORTS;
+        // Past hero zones, keep a stable light nav and stop expensive top hit-testing.
+        if (y > toneActiveMaxY) {
+          setSampledNavDark(false);
+          return;
+        }
+        const now = performance.now();
+        const shouldSampleByTime = now - lastToneSampleAt >= HOME_NAV_TONE_SAMPLE_MIN_INTERVAL;
+        const shouldSampleByDistance = lastToneSampleY < 0 || Math.abs(y - lastToneSampleY) >= HOME_NAV_TONE_SAMPLE_MIN_SCROLL_DELTA;
+        if (!shouldSampleByTime && !shouldSampleByDistance) return;
+        lastToneSampleAt = now;
+        lastToneSampleY = y;
+        const nextDark = computeHomeNavDarkFromUnderNav();
+        setSampledNavDark((prev) => (prev === nextDark ? prev : nextDark));
+      });
     };
 
     syncHomeScrollAndTone();
@@ -468,6 +492,7 @@ export default function ClientLayout({
     window.visualViewport?.addEventListener('resize', syncHomeScrollAndTone);
 
     return () => {
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
       window.removeEventListener('scroll', syncHomeScrollAndTone);
       window.removeEventListener('resize', syncHomeScrollAndTone);
       window.visualViewport?.removeEventListener('resize', syncHomeScrollAndTone);
@@ -865,6 +890,7 @@ export default function ClientLayout({
           <div className={`apple-footer-wrapper ${isDark ? 'is-dark' : ''}`}>
             <div className="nav-container footer-content-stack">
               <section className="footnotes">
+                <h3 className="fn-title">{config.ui.footnotesTitle}</h3>
                 <ol className="fn-list">
                   {config.footnotes.map((note, index) => (
                     <li key={index} className="fn-item"><span>{index + 1}. <b>{note.q}: </b>{note.a}</span></li>

@@ -31,6 +31,7 @@ export default function HomePage() {
   const hideTimerRef = useRef<number | null>(null);
   const forceHideTimerRef = useRef<number | null>(null);
   const loadingUnmountTimerRef = useRef<number | null>(null);
+  const heroRotateReadyRef = useRef(false);
   const home = getMessages(lang).homepage;
   const alt = getMessages(lang).alt;
   const ctaLearn = home.ctaLearn;
@@ -139,17 +140,23 @@ export default function HomePage() {
     };
 
     const startJointSpin = (viewer: any) => {
+      if (flangeSpinTimerRef.current) return;
       if (!viewer?.model) return;
       const flangeNode = resolveNode(viewer, ['J6_Flange', 'L6_flange']);
       const wristNode = resolveNode(viewer, ['Wrist_Roll', 'J4_Wrist_Roll', 'J5_Wrist_Pitch']);
       if (!flangeNode && !wristNode) return;
       let angle = 0;
-      if (flangeSpinTimerRef.current) window.clearInterval(flangeSpinTimerRef.current);
       flangeSpinTimerRef.current = window.setInterval(() => {
         angle += 0.04;
         if (flangeNode) applyNodeRotation(flangeNode, [0, 1, 0], angle * 1.2);
         if (wristNode) applyNodeRotation(wristNode, [1, 0, 0], Math.sin(angle * 0.8) * 0.9);
       }, 30);
+    };
+
+    const stopJointSpin = () => {
+      if (!flangeSpinTimerRef.current) return;
+      window.clearInterval(flangeSpinTimerRef.current);
+      flangeSpinTimerRef.current = null;
     };
 
     const startSimpleHeroSequence = (viewer: any) => {
@@ -172,6 +179,7 @@ export default function HomePage() {
       if (heroRotateDelayRef.current) window.clearTimeout(heroRotateDelayRef.current);
       heroRotateDelayRef.current = window.setTimeout(() => {
         /* 默认 auto-rotate 为逆时针；负的 rotation-per-second 反转方向（与默认同速用 -100%） */
+        heroRotateReadyRef.current = true;
         viewer.setAttribute('rotation-per-second', '-100%');
         viewer.setAttribute('auto-rotate', '');
         setShowDragHint(true);
@@ -210,9 +218,42 @@ export default function HomePage() {
     
     if (v20) v20.addEventListener('load', onLoad20);
 
+    let rafId: number | null = null;
+    const syncHeroMotionByScroll = () => {
+      if (rafId !== null) return;
+      rafId = window.requestAnimationFrame(() => {
+        rafId = null;
+        const y = window.scrollY;
+        const vh = Math.max(window.innerHeight, 1);
+
+        // Home section 1 near viewport: keep hero-1 joint animation alive.
+        const hero1Active = y < vh * 1.25;
+        if (hero1Active) startJointSpin(v5);
+        else stopJointSpin();
+
+        // Pause auto-rotate outside hero sections to free mobile GPU/CPU for footer scroll.
+        if (v5) {
+          const hero1AutoRotateActive = heroRotateReadyRef.current && y < vh * 1.55;
+          if (hero1AutoRotateActive) v5.setAttribute('auto-rotate', '');
+          else v5.removeAttribute('auto-rotate');
+        }
+        if (v20) {
+          const hero2AutoRotateActive = y > vh * 0.45 && y < vh * 2.5;
+          if (hero2AutoRotateActive) v20.setAttribute('auto-rotate', '');
+          else v20.removeAttribute('auto-rotate');
+        }
+      });
+    };
+    syncHeroMotionByScroll();
+    window.addEventListener('scroll', syncHeroMotionByScroll, { passive: true });
+    window.addEventListener('resize', syncHeroMotionByScroll, { passive: true });
+
     forceHideTimerRef.current = window.setTimeout(() => finishLoading(), 12000);
 
     return () => {
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', syncHeroMotionByScroll);
+      window.removeEventListener('resize', syncHeroMotionByScroll);
       if (v5) {
         v5.removeEventListener('progress', onProgress);
         v5.removeEventListener('load', onLoad5);
@@ -220,7 +261,7 @@ export default function HomePage() {
         v5.removeEventListener('touchstart', onHeroInteract);
       }
       if (v20) v20.removeEventListener('load', onLoad20);
-      if (flangeSpinTimerRef.current) window.clearInterval(flangeSpinTimerRef.current);
+      stopJointSpin();
       if (heroRotateDelayRef.current) window.clearTimeout(heroRotateDelayRef.current);
       if (hintHideTimerRef.current) window.clearTimeout(hintHideTimerRef.current);
       if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
@@ -349,54 +390,49 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 屏3: 详情屏 */}
-      <section className="screen-outer-gap">
-        <div className="grid-container">
-          <div className="sharp-card">
-            <div className="card-text">
-              <h3>{home.cardPreciseTitle}</h3>
-              <p>{home.cardPreciseBody}</p>
-              <div className="cta-row card-cta">
-                <a href={path('/cobots/r-core')} className="cta-link">
-                  {home.cardPreciseCta}
-                </a>
-                <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
-              </div>
-            </div>
-            <div className="card-image-box">
-              <Image
-                src={HOME_DETAIL_CARD_IMAGES.preciseTouch}
-                alt={alt.hero_rcore}
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain"
-              />
+      {/* 屏3+4: 双子星 5:5 占位图 */}
+      <section className="twin-hero-section">
+        <article className="twin-hero-panel">
+          <Image
+            src={HOME_DETAIL_CARD_IMAGES.preciseTouch}
+            alt={alt.hero_rcore}
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="twin-hero-image"
+          />
+          <div className="twin-hero-overlay">
+            <h3>{home.cardPreciseTitle}</h3>
+            <p>{home.cardPreciseBody}</p>
+            <div className="cta-row card-cta">
+              <a href={path('/cobots/r-core')} className="cta-link">
+                {home.cardPreciseCta}
+              </a>
+              <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
             </div>
           </div>
-          <div className="sharp-card">
-            <div className="card-text">
-              <h3>{home.cardSmartTitle}</h3>
-              <p>{home.cardSmartBody}</p>
-              <div className="cta-row card-cta">
-                <a href={path('/cobots/r-max')} className="cta-link">
-                  {home.cardSmartCta}
-                </a>
-                <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
-              </div>
-            </div>
-            <div className="card-image-box">
-              <Image
-                src={HOME_DETAIL_CARD_IMAGES.smartCore}
-                alt={alt.hero_rmax}
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain"
-              />
+        </article>
+
+        <article className="twin-hero-panel">
+          <Image
+            src={HOME_DETAIL_CARD_IMAGES.smartCore}
+            alt={alt.hero_rmax}
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="twin-hero-image"
+          />
+          <div className="twin-hero-overlay">
+            <h3>{home.cardSmartTitle}</h3>
+            <p>{home.cardSmartBody}</p>
+            <div className="cta-row card-cta">
+              <a href={path('/cobots/r-max')} className="cta-link">
+                {home.cardSmartCta}
+              </a>
+              <button type="button" className="cta-link cta-btn" onClick={openInquiry}>{ctaInquiry}</button>
             </div>
           </div>
-        </div>
+        </article>
       </section>
     </main>
   );

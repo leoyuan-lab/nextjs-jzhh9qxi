@@ -51,6 +51,7 @@
     },
     "ui": {
       "explore": "Explore",
+      "footnotesTitle": "ROOOLL Brand Commitments",
       "copyright": "Copyright © 2026 Roooll. All rights reserved.",
       "langBtn": "中文",
       "mobileLang": "中"
@@ -100,32 +101,32 @@
   },
   "footnotes": [
     {
-      "q": "Advantage",
-      "a": "Professional robot arms provider with OVER 5 years of experience. 100% quality inspection before shipment ensures top-tier reliability."
+      "q": "Core Excellence",
+      "a": "7+ Years of Proven Reliability. Beyond distributing robotic arms, we provide years of accumulated technical expertise. Every R-Series cobot undergoes a \"Zero-Defect\" quality control process before leaving the facility, ensuring peak performance right out of the box."
     },
     {
-      "q": "Ordering",
-      "a": "Sales representatives online 24/7. Send us an inquiry with your specs and expect an official email response within 12 hours."
+      "q": "Global Assistance",
+      "a": "Always Connected, 24/7. Our expert team is available across time zones to provide technical consultation. Whether it's a business inquiry or complex technical support, we guarantee a professional response within 12 hours."
     },
     {
-      "q": "Delivery",
-      "a": "Standard stock products are shipped within 3-5 business days upon payment. Lead time for bulk or custom orders is subject to contract confirmation."
+      "q": "Rapid Deployment",
+      "a": "Efficiency in Motion. Standard specifications are scheduled for shipment within 3-5 business days after payment confirmation. For large-scale deployments or bespoke orders, delivery timelines are precisely defined in the sales contract."
     },
     {
-      "q": "Performance",
-      "a": "Specs like repeatability (±0.02mm) are tested in controlled lab environments. Actual results may vary based on load, speed, and environmental humidity."
+      "q": "Precision Standards",
+      "a": "Accuracy in Every Millimeter. Our repeatability of ±0.02mm is measured under strictly controlled laboratory conditions. We provide performance evaluations tailored to your specific payload, speed, and environmental requirements."
     },
     {
-      "q": "Customization",
-      "a": "Full OEM/ODM services supported, including custom colors, Logo printing, and specialized end-effectors. Custom lead time is typically 20-30 days."
+      "q": "Bespoke Solutions",
+      "a": "Tailored to Your Ambition (OEM/ODM). We turn your vision into reality. Beyond our standard R-Series, we offer deep enterprise-level customization, brand integration, and collaborative development of industry-specific end-effectors."
     },
     {
-      "q": "Warranty",
-      "a": "Core mechanical parts (motors, reducers) come with a 2-year limited warranty. Global technical support is available to ensure minimal production downtime."
+      "q": "Peace of Mind Warranty",
+      "a": "Your Production, Protected. Core drive systems (motors, reducers) and control architectures are covered by a 2-year limited warranty. With our global response mechanism, we ensure your production line remains efficient and worry-free."
     },
     {
-      "q": "Compliance",
-      "a": "All products comply with international RoHS standards and have passed official CE safety certifications and ISO9001 quality management standards."
+      "q": "Certified Quality",
+      "a": "Global Standards, Local Trust. All R-Series products comply with international RoHS environmental standards and have obtained EU CE safety certification and ISO9001 quality management system certification. We advocate for sustainable manufacturing."
     }
   ],
   "pages": {

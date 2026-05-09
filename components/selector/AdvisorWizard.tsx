@@ -208,11 +208,10 @@ export function AdvisorWizard() {
   const [isAdvancing, setIsAdvancing] = useState(false);
   const navDirRef = useRef<TransitionDir>('forward');
   const enterTimerRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const p = readAdvisorPersisted();
-    if (p?.answers) setAnswers(p.answers);
-  }, []);
+  const ENTER_MS_FORWARD = 220;
+  const ENTER_MS_BACK = 200;
+  const LEAVE_MS_FORWARD = 180;
+  const LEAVE_MS_BACK = 170;
 
   const setUrlStep = useCallback(
     (next: string) => {
@@ -242,6 +241,16 @@ export function AdvisorWizard() {
     if (urlStep !== 'result') setAdvisorDetailId(null);
   }, [urlStep]);
 
+  useEffect(() => {
+    if (urlStep !== 'result') return;
+    if (Q_KEYS.every((k) => answers[k])) return;
+    const p = readAdvisorPersisted();
+    if (!p?.answers) return;
+    const restored = p.answers;
+    if (!Q_KEYS.every((k) => restored[k])) return;
+    setAnswers(restored);
+  }, [urlStep, answers]);
+
   useLayoutEffect(() => {
     if (urlStep === 'result') {
       setStepAnim('idle');
@@ -250,12 +259,13 @@ export function AdvisorWizard() {
     }
     const key = pickKey(urlStep);
     setPendingChoice(key ? (answers[key] ?? null) : null);
-    const enterMs = navDirRef.current === 'back' ? 300 : 320;
+    const enterMs = navDirRef.current === 'back' ? ENTER_MS_BACK : ENTER_MS_FORWARD;
     setStepAnim(navDirRef.current === 'back' ? 'enter-back' : 'enter-forward');
+    // Unlock actions as soon as the new step mounts to avoid double-tap feel.
+    setIsAdvancing(false);
     if (enterTimerRef.current) window.clearTimeout(enterTimerRef.current);
     enterTimerRef.current = window.setTimeout(() => {
       setStepAnim('idle');
-      setIsAdvancing(false);
       enterTimerRef.current = null;
     }, enterMs);
     return () => {
@@ -299,7 +309,7 @@ export function AdvisorWizard() {
     if (isAdvancing || !pendingChoice) return;
     const key = pickKey(urlStep);
     if (!key || urlStep === 'result') return;
-    const leaveMs = 260;
+    const leaveMs = LEAVE_MS_FORWARD;
     navDirRef.current = 'forward';
     setIsAdvancing(true);
     setStepAnim('leave-forward');
@@ -324,7 +334,7 @@ export function AdvisorWizard() {
     }
     const n = Number(urlStep);
     if (n <= 1) return;
-    const leaveMs = 240;
+    const leaveMs = LEAVE_MS_BACK;
     navDirRef.current = 'back';
     setIsAdvancing(true);
     setStepAnim('leave-back');
@@ -443,13 +453,13 @@ export function AdvisorWizard() {
                   style={{
                     transitionDuration: `${
                       stepAnim === 'leave-back'
-                        ? 240
+                        ? LEAVE_MS_BACK
                         : stepAnim === 'leave-forward'
-                          ? 260
+                          ? LEAVE_MS_FORWARD
                           : stepAnim === 'enter-back'
-                            ? 300
+                            ? ENTER_MS_BACK
                             : stepAnim === 'enter-forward'
-                              ? 320
+                              ? ENTER_MS_FORWARD
                               : 220
                     }ms`,
                     transitionTimingFunction:
