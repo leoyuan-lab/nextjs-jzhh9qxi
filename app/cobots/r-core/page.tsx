@@ -4,7 +4,7 @@ import { cobotGlbModels, rSeriesData, robotVariantImageAlt } from '@/data/produc
 import { getRCoreDetailCopy } from '@/lib/cobot-detail-pages';
 import { getMessages } from '@/lib/messages';
 
-const R_LITE = rSeriesData.find((f) => f.id === 'r-lite')!.displayName;
+const R_CORE = rSeriesData.find((f) => f.id === 'r-core')!.displayName;
 const R_MAX = rSeriesData.find((f) => f.id === 'r-max')!.displayName;
 
 export default function CobotsRCorePage() {
@@ -18,9 +18,9 @@ export default function CobotsRCorePage() {
   const cardSpinTimersRef = useRef<number[]>([]);
 
   const msgs = getMessages(lang);
-  const copy = getRCoreDetailCopy(lang, { rCore: R_LITE, rMax: R_MAX });
+  const copy = getRCoreDetailCopy(lang, { rCore: R_CORE, rMax: R_MAX });
   const alt = msgs.alt;
-  const fr5HeroAlt = alt.hero_rcore ?? robotVariantImageAlt('fr3-c', lang);
+  const fr5HeroAlt = alt.hero_rcore ?? robotVariantImageAlt('fr5-c', lang);
   const fr5DetailAlt = alt.r_core_detail ?? fr5HeroAlt;
   const detailAltByNode: Record<string, string> = {
     J6_Flange: alt.r_core_detail_flange ?? fr5DetailAlt,
@@ -126,7 +126,7 @@ export default function CobotsRCorePage() {
       {isSubNavShow && (
         <nav className="nav-sub nav-sub-enter">
           <div className="nav-box">
-            <span className="p-name">{R_LITE}</span>
+            <span className="p-name">{R_CORE}</span>
             <button
               type="button"
               className="p-btn-buy"
@@ -142,7 +142,7 @@ export default function CobotsRCorePage() {
       <section className="hero-section">
         <div className={`hero-3d-wrap ${heroReady ? 'reveal' : ''}`}>
            <model-viewer
-              src={cobotGlbModels.rLiteFr3C}
+              src={cobotGlbModels.rCoreFr5C}
               alt={fr5HeroAlt}
               camera-controls
               auto-rotate
@@ -188,7 +188,7 @@ export default function CobotsRCorePage() {
               <div key={i} className="h-card">
                 <div className="card-3d">
                    <model-viewer
-                      src={allowDetailModels ? cobotGlbModels.rLiteFr3C : undefined}
+                      src={allowDetailModels ? cobotGlbModels.rCoreFr5C : undefined}
                       alt={detailAltByNode[card.node] ?? fr5DetailAlt}
                       loading="lazy"
                       camera-orbit={card.orbit}

@@ -3,7 +3,7 @@
     "cobots_section": "协作机器人",
     "cobots": {
       "all_specs": "r 系列型号与规格",
-      "r_core_suffix": "（轻量一体型）",
+      "r_core_suffix": "（控制箱一体）",
       "r_max_suffix": "（强力负载型）",
       "humanoid": "人形机器人（具身智能）"
     },
@@ -135,8 +135,8 @@
       "metaDescription": "横向浏览 r-Lite、r-Core、r-Reach、r-Max、r-Ultra 等 r 系列协作机械臂全矩阵：负载、工作半径、关节轴、接口与功率要点一站对比。"
     },
     "r_core": {
-      "metaTitleFocus": "r-Lite 轻量一体型",
-      "metaDescription": "r 系列 r-Lite（FR3-C）协作机器人平台：3kg（峰值 5kg）负载、622mm 工作半径与紧凑一体化控制，适配精密装配与实验室自动化。",
+      "metaTitleFocus": "r-Core（FR5-C）一体化协作机械臂",
+      "metaDescription": "r 系列 r-Core（FR5-C）协作机器人平台：额定 4kg（峰值 5kg）负载、922mm 工作半径、±0.05mm 重复定位精度，底座一体式控制箱，适配产线与实验室紧凑部署。",
       "inquiry": "咨询",
       "hero": {
         "subtitle": "轻巧机身，一体部署。"
@@ -282,19 +282,19 @@
     }
   },
   "alt": {
-    "hero_rcore": "Roooll R-lite（FR3-C）协作机器人 - 轻量一体与灵活部署并重，3kg（峰值 5kg）负载、622mm 工作半径、±0.05mm 重复定位精度，工业级品质并符合 CE 等认证口径，适配实验室与精密装配。",
+    "hero_rcore": "Roooll R-core（FR5-C）协作机器人 - 控制箱一体紧凑部署，额定 4kg（峰值 5kg）负载、922mm 工作半径、±0.05mm 重复定位精度，工业级品质并符合 CE 等认证口径，适配产线与精密装配。",
     "hero_rmax": "Roooll R-max（FR20）协作机器人 - 协作之巅的重载方案，20kg 额定负载（最大 25kg）、1854mm 工作半径、±0.1mm 重复定位精度，工业级品质并符合 CE 等认证口径，适配重载搬运与码垛。",
     "acc_end_effectors": "Roooll 协作机器人末端执行器方案 - 以精密、安全、灵活为核心，工业级品质并符合 CE 等认证口径，适配抓取、吸附与快速换装工艺。",
     "acc_vision": "Roooll 工业级 3D 视觉系统 - 面向协作机器人高精度定位与标定，兼顾精密识别与灵活部署，支持复杂产线检测与引导作业。",
     "acc_controllers": "Roooll 机器人控制柜与扩展模块 - 工业级品质并符合 CE 等认证口径，突出安全联动、稳定通信与灵活扩展，适配多行业自动化产线。",
     "ecosystem_os": "Roooll OS 系统界面展示 - 协作机器人运动与安全策略的核心中枢，强调工业级稳定性与灵活部署能力。",
     "ecosystem_insight": "Roooll Insight 云端监控仪表盘 - 面向协作机器人全生命周期数据洞察，强化安全追溯与运维效率。",
-    "r_core_detail": "Roooll R-lite（FR3-C）结构细节展示 - 3kg（峰值 5kg）负载、622mm 工作半径、±0.05mm 重复定位精度，体现轻量一体与工业级品质。",
-    "r_core_detail_flange": "Roooll R-lite（FR3-C）法兰细节 - 强调紧凑末端工具安装与灵活换装能力，适配轻量精密制造场景。",
-    "r_core_detail_base": "Roooll R-lite（FR3-C）底座结构细节 - 一体化控制设计兼顾紧凑部署与稳定运行。",
-    "r_core_detail_elbow": "Roooll R-lite（FR3-C）中段关节细节 - 突出轻量臂体的轨迹控制与灵活协同能力。",
-    "r_core_detail_wrist": "Roooll R-lite（FR3-C）腕部关节细节 - 强调小空间姿态控制与安全协作。",
-    "selector_hero": "Roooll 选型向导主视觉（FR3-C）- 3kg（峰值 5kg）负载、622mm 工作半径、±0.05mm 重复定位精度，工业级品质并符合 CE 等认证口径，支持高效选型决策。",
+    "r_core_detail": "Roooll R-core（FR5-C）结构细节展示 - 额定 4kg（峰值 5kg）负载、922mm 工作半径、±0.05mm 重复定位精度，底座一体式控制与工业级品质。",
+    "r_core_detail_flange": "Roooll R-core（FR5-C）法兰细节 - 强调末端工具快换与精密装配场景下的稳定对接。",
+    "r_core_detail_base": "Roooll R-core（FR5-C）底座结构细节 - 一体式控制箱集成，兼顾紧凑部署与稳定运行。",
+    "r_core_detail_elbow": "Roooll R-core（FR5-C）中段关节细节 - 突出 5kg 级臂体的负载轨迹与协同控制能力。",
+    "r_core_detail_wrist": "Roooll R-core（FR5-C）腕部关节细节 - 强调姿态精度与安全协作。",
+    "selector_hero": "Roooll 选型向导主视觉（r-Core FR5-C）- 额定 4kg（峰值 5kg）负载、922mm 工作半径、±0.05mm 重复定位精度，工业级品质并符合 CE 等认证口径，支持高效选型决策。",
     "blueprint_alt": "{{modelName}} 协作机器人技术规格工程示意图（technical schematic）：展示工作半径与结构外形要点。",
     "blueprint_description": "{{modelName}} 协作机器人技术图纸与技术示意图（technical drawing / schematic / blueprint），包含工作半径 {{reach}}、关节包络示意与外形尺寸标注（dimensions），供工程设计参考。",
     "variant_images": {

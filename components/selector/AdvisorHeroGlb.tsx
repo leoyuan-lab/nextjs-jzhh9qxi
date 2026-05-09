@@ -115,7 +115,7 @@ export function AdvisorHeroGlb({ lang }: Props) {
     };
   }, [isMobileViewport]);
 
-  const alt = getMessages(lang).alt.selector_hero ?? robotVariantImageAlt('fr5-std', lang);
+  const alt = getMessages(lang).alt.selector_hero ?? robotVariantImageAlt('fr5-c', lang);
   const initialCameraTarget = isMobileViewport ? 'auto 118% auto' : '46% 158% auto';
   const initialCameraOrbit = isMobileViewport ? '29deg 80deg 320m' : '33deg 78deg 360m';
   const initialFov = isMobileViewport ? '24deg' : '10.5deg';
@@ -139,7 +139,7 @@ export function AdvisorHeroGlb({ lang }: Props) {
         <div className="advisor-hero-model-shift" style={{ transform: modelShiftTransform }}>
           <model-viewer
             ref={ref}
-            src={cobotGlbModels.rLiteFr3C}
+            src={cobotGlbModels.rCoreFr5C}
             alt={alt}
             disable-zoom
             camera-orbit={initialCameraOrbit}

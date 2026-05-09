@@ -112,7 +112,7 @@ function buildNav(messages: MessagesFile): NavSection[] {
       url: '/',
       links: [
         { label: n.cobots.all_specs, url: '/cobots/all-cobots-specs' },
-        { label: `${navFamilyName('r-lite')}${n.cobots.r_core_suffix}`, url: '/cobots/r-core' },
+        { label: `${navFamilyName('r-core')}${n.cobots.r_core_suffix}`, url: '/cobots/r-core' },
         { label: `${navFamilyName('r-max')}${n.cobots.r_max_suffix}`, url: '/cobots/r-max' },
         { label: n.cobots.humanoid, url: '/cobots/humanoid' },
       ],

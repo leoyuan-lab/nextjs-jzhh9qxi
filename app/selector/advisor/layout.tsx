@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { GlbPreloadLinks, GLB_PRELOAD_R_LITE_ONLY } from '@/components/GlbPreloadLinks';
+import { GlbPreloadLinks, GLB_PRELOAD_R_CORE_HERO } from '@/components/GlbPreloadLinks';
 import { ModelViewerScript } from '@/components/ModelViewerScript';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_SELECTOR } from '@/lib/nav-breadcrumbs';
@@ -21,7 +21,7 @@ export default async function SelectorAdvisorLayout({ children }: { children: Re
   return (
     <>
       <ModelViewerScript />
-      <GlbPreloadLinks hrefs={GLB_PRELOAD_R_LITE_ONLY} />
+      <GlbPreloadLinks hrefs={GLB_PRELOAD_R_CORE_HERO} />
       <BreadcrumbJsonLd
         lang={lang}
         id="jsonld-bc-selector-advisor"

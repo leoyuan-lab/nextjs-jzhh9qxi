@@ -1,9 +1,9 @@
 /**
- * r‑Lite 详情路由（原 `app/arm`）：首帧黑底壳层 + 仅爬虫可见面包屑 Schema。
+ * `/cobots/r-core`：r‑Core（FR5‑C）详情；首帧黑底壳层 + 仅爬虫可见面包屑 Schema。
  */
 import type { Metadata } from 'next';
 import { ArmRouteShell } from '@/components/ArmRouteShell';
-import { GlbPreloadLinks, GLB_PRELOAD_R_LITE_ONLY } from '@/components/GlbPreloadLinks';
+import { GlbPreloadLinks, GLB_PRELOAD_R_CORE_HERO } from '@/components/GlbPreloadLinks';
 import { ModelViewerScript } from '@/components/ModelViewerScript';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_COBOTS } from '@/lib/nav-breadcrumbs';
@@ -24,14 +24,14 @@ export default async function CobotsRCoreLayout({ children }: { children: React.
   return (
     <ArmRouteShell>
       <ModelViewerScript />
-      <GlbPreloadLinks hrefs={GLB_PRELOAD_R_LITE_ONLY} />
+      <GlbPreloadLinks hrefs={GLB_PRELOAD_R_CORE_HERO} />
       <BreadcrumbJsonLd
         lang={lang}
         id="jsonld-bc-cobots-rcore"
         items={[
           { href: BC_HOME.href, en: BC_HOME.en },
           { href: BC_NAV_COBOTS.href, en: BC_NAV_COBOTS.en },
-          { href: '/cobots/r-core', en: 'r-Lite (FR3-C)' },
+          { href: '/cobots/r-core', en: 'r-Core (FR5-C)' },
         ]}
       />
       {children}

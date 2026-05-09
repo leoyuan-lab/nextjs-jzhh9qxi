@@ -21,7 +21,7 @@ export default function HomePage() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [showDragHint, setShowDragHint] = useState(false);
-  const [isRliteLoaded, setIsRliteLoaded] = useState(false);
+  const [isRcoreHeroGlbLoaded, setIsRcoreHeroGlbLoaded] = useState(false);
   const [enableRmaxModel, setEnableRmaxModel] = useState(false);
   const viewerRef5 = useRef<any>(null);
   const viewerRef20 = useRef<any>(null);
@@ -39,15 +39,15 @@ export default function HomePage() {
   const openInquiry = () => window.dispatchEvent(new Event('apple-inquiry-open'));
   const path = (p: string) => `/${lang}${p.startsWith('/') ? p : `/${p}`}`;
 
-  const titleRlite = useMemo(() => familyTitle('r-lite'), []);
+  const titleRcore = useMemo(() => familyTitle('r-core'), []);
   const titleRmax = useMemo(() => familyTitle('r-max'), []);
-  const altHeroRcoreGlb = useMemo(() => alt.hero_rcore ?? robotVariantImageAlt('fr3-c', lang), [alt.hero_rcore, lang]);
+  const altHeroRcoreGlb = useMemo(() => alt.hero_rcore ?? robotVariantImageAlt('fr5-c', lang), [alt.hero_rcore, lang]);
   const altHeroRmaxGlb = useMemo(() => alt.hero_rmax ?? robotVariantImageAlt('fr20-std', lang), [alt.hero_rmax, lang]);
 
   useEffect(() => {
-    if (!isRliteLoaded) return;
+    if (!isRcoreHeroGlbLoaded) return;
     setEnableRmaxModel(true);
-  }, [isRliteLoaded]);
+  }, [isRcoreHeroGlbLoaded]);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -192,7 +192,7 @@ export default function HomePage() {
       applyPerfectMaterial(v5.model);
       startJointSpin(v5);
       startSimpleHeroSequence(v5);
-      setIsRliteLoaded(true);
+      setIsRcoreHeroGlbLoaded(true);
       finishLoading();
     };
 
@@ -303,12 +303,12 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* 屏1: r-lite（r-lite-cobot-fr3-c.glb） */}
+      {/* 屏1: r-core（FR5-C，`r-core-cobot-fr5-c.glb`） */}
       <section className="screen-outer screen-outer--hero" style={{ backgroundColor: '#ffffff', color: '#1d1d1f' }}>
         <div className={`hero-3d-wrap ${isLoaded ? 'r-core-cobot-fr5-entry-animation' : 'hidden-init'}`}>
           <model-viewer 
             ref={viewerRef5} 
-            src={cobotGlbModels.rLiteFr3C}
+            src={cobotGlbModels.rCoreFr5C}
             alt={altHeroRcoreGlb}
             disable-zoom 
             camera-orbit="45deg 85deg 1900m" 
@@ -335,7 +335,7 @@ export default function HomePage() {
         <div className={`drag-hint ${showDragHint ? 'show' : ''}`}>{home.dragHint}</div>
         <div className="content-limit">
           <div className="text-box dark-copy">
-            <h2 className="title">{titleRlite}</h2>
+            <h2 className="title">{titleRcore}</h2>
             <p className="subtitle">{home.heroRcoreSubtitle}</p>
             <div className="cta-row">
               <a href={path('/cobots/r-core')} className="cta-link">
