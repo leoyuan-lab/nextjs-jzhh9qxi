@@ -13,7 +13,7 @@ export function SeoBriefLanding({ copy }: { copy: CopyBlock }) {
   const lang = useSiteLang();
   const t = lang === 'en' ? copy.en : copy.zh;
   const inquiryDefault = getMessages(lang).chrome.seoBrief.ctaInquiryDefault;
-  const openInquiry = () => window.dispatchEvent(new Event('apple-inquiry-open'));
+  const openInquiry = () => window.dispatchEvent(new Event('roooll-inquiry-open'));
   const homeHref = `/${lang}/`;
 
   return (

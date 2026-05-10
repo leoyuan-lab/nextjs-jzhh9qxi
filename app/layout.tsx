@@ -2,6 +2,8 @@ import { cookies } from 'next/headers';
 import { headers } from 'next/headers';
 import './globals.css';
 import ClientLayout from './ClientLayout';
+import { OrganizationJsonLd } from '@/components/OrganizationJsonLd';
+import { getRequestSiteOrigin } from '@/lib/site-origin';
 import { rootMetadata } from '@/lib/site-seo';
 
 export const metadata = rootMetadata;
@@ -22,9 +24,12 @@ export default async function RootLayout({
         ? 'en'
         : 'zh';
 
+  const siteOrigin = await getRequestSiteOrigin();
+
   return (
     <html lang={initialLang} suppressHydrationWarning>
       <body style={{ margin: 0 }}>
+        <OrganizationJsonLd origin={siteOrigin} />
         <ClientLayout initialLang={initialLang}>{children}</ClientLayout>
       </body>
     </html>

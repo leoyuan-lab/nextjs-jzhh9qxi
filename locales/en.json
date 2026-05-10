@@ -1,5 +1,6 @@
 {
   "nav": {
+    "brandLogoAria": "Roooll brand mark, navigate to homepage Collaborative Robot Cobot lineup.",
     "cobots_section": "Cobots",
     "cobots": {
       "all_specs": "r-series cobots & Specs",
@@ -86,7 +87,11 @@
   "homepage": {
     "ctaLearn": "Learn more",
     "ctaInquiry": "Inquiry",
-    "loadingSloganMain": "Let's get rolling.",
+    "loadingSloganBefore": "Let's get r",
+    "loadingSloganMark": "o",
+    "loadingSloganAfter": "lling.",
+    "loadingLogoAlt": "Roooll brand emblem with planetary ring displayed while the homepage Collaborative Robot Cobot hero loads.",
+    "loadingProgressAria": "Loading homepage hero 3D model, {{percent}} percent complete.",
     "loadingSubline1": "Empowering hands",
     "loadingSubline2": "Reshaping inspiration",
     "dragHint": "Drag to view in 360°",

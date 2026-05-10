@@ -1,6 +1,7 @@
 'use client';
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, type CSSProperties } from 'react';
 import Image from 'next/image';
+import { LoadingBrandLogo } from '@/components/LoadingBrandLogo';
 import { cobotGlbModels, rSeriesData, robotVariantImageAlt } from '@/data/products';
 import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
@@ -36,7 +37,7 @@ export default function HomePage() {
   const alt = getMessages(lang).alt;
   const ctaLearn = home.ctaLearn;
   const ctaInquiry = home.ctaInquiry;
-  const openInquiry = () => window.dispatchEvent(new Event('apple-inquiry-open'));
+  const openInquiry = () => window.dispatchEvent(new Event('roooll-inquiry-open'));
   const path = (p: string) => `/${lang}${p.startsWith('/') ? p : `/${p}`}`;
 
   const titleRcore = useMemo(() => familyTitle('r-core'), []);
@@ -271,7 +272,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className="apple-home-wrapper">
+    <main className="roooll-home-wrapper">
       {/* Loading Screen */}
       {showLoadingScreen && (
         <div
@@ -287,16 +288,36 @@ export default function HomePage() {
         >
           <div className="loading-scale-shell">
             <div className="loading-content">
-              <div className="loading-hero-type">
-                <h1 className="loading-slogan-main">{home.loadingSloganMain}</h1>
+              <div
+                className="loading-hero-type"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={loadingProgress}
+                aria-label={home.loadingProgressAria.replace(/\{\{percent\}\}/g, String(loadingProgress))}
+                style={{ ['--loading-p' as string]: String(loadingProgress) } as CSSProperties}
+              >
+                <h1 className="loading-slogan-main">
+                  {home.loadingSloganBefore}
+                  <span className="loading-slogan-mark">
+                    <span className="loading-slogan-logo-over-mark">
+                      <LoadingBrandLogo
+                        logoAlt={home.loadingLogoAlt}
+                        frameClassName="loading-brand-plain-frame--over-letter"
+                      />
+                    </span>
+                    {home.loadingSloganMark}
+                  </span>
+                  {home.loadingSloganAfter}
+                </h1>
                 <p className="loading-subline">{home.loadingSubline1}</p>
                 <p className="loading-subline">{home.loadingSubline2}</p>
-              </div>
-              <div className="loading-progress-wrap">
-                <div className="progress-container">
-                  <div className="progress-bar" style={{ width: `${loadingProgress}%` }} />
+                <div className="loading-hero-progress-slot" aria-hidden="true">
+                  <div className="loading-hero-progress-bar">
+                    <div className="loading-hero-progress-fill" />
+                  </div>
+                  <span className="loading-hero-progress-thumb" />
                 </div>
-                <span className="progress-text">{loadingProgress}%</span>
               </div>
             </div>
           </div>

@@ -1,5 +1,6 @@
 {
   "nav": {
+    "brandLogoAria": "Roooll 品牌标识，前往首页协作机器人 Cobot 产品线。",
     "cobots_section": "协作机器人",
     "cobots": {
       "all_specs": "r 系列型号与规格",
@@ -86,7 +87,11 @@
   "homepage": {
     "ctaLearn": "进一步了解",
     "ctaInquiry": "咨询",
-    "loadingSloganMain": "让我们大干一场",
+    "loadingSloganBefore": "让我们大",
+    "loadingSloganMark": "干",
+    "loadingSloganAfter": "一场",
+    "loadingLogoAlt": "Roooll 品牌土星环标识，首页协作机器人 Cobot 首屏加载过程中显示。",
+    "loadingProgressAria": "正在加载首页首屏三维模型，已完成 {{percent}}%。",
     "loadingSubline1": "赋能双手",
     "loadingSubline2": "重塑灵感",
     "dragHint": "按住鼠标拖动，可 360° 查看",

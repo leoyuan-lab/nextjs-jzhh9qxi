@@ -30,7 +30,7 @@ function openInquiryForModel(item: LineItem, lang: 'zh' | 'en') {
     lang === 'zh'
       ? `我想咨询以下机型：\n- ${modelLabel}\n\n请联系我并提供方案与报价。`
       : `I'm interested in this model:\n- ${modelLabel}\n\nPlease contact me with recommendation and quotation.`;
-  window.dispatchEvent(new CustomEvent('apple-inquiry-open', { detail: { body } }));
+  window.dispatchEvent(new CustomEvent('roooll-inquiry-open', { detail: { body } }));
 }
 
 export default function SelectorComparisonPage() {
@@ -40,15 +40,15 @@ export default function SelectorComparisonPage() {
   const lineup = useMemo(() => buildLineup(), []);
 
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent('apple-main-nav-progress', { detail: { progress: 0 } }));
+    window.dispatchEvent(new CustomEvent('roooll-main-nav-progress', { detail: { progress: 0 } }));
     return () => {
-      window.dispatchEvent(new CustomEvent('apple-main-nav-progress', { detail: { progress: 0 } }));
+      window.dispatchEvent(new CustomEvent('roooll-main-nav-progress', { detail: { progress: 0 } }));
     };
   }, []);
 
   return (
     <section className="selector-hero2 border-t border-[#d2d2d7]/80 bg-[#f5f5f7] text-[#1d1d1f]" aria-labelledby="selector-hero2-title">
-      <div className="mx-auto w-full max-w-[var(--apple-w,1024px)] px-[22px] pb-16 pt-10 md:pb-24 md:pt-12">
+      <div className="mx-auto w-full max-w-[var(--roooll-w,1024px)] px-[22px] pb-16 pt-10 md:pb-24 md:pt-12">
         <h1
           id="selector-hero2-title"
           className="mb-3 max-w-[52rem] text-[2rem] font-semibold leading-[1.07] tracking-[-0.03em] text-[#1d1d1f] md:text-[2.75rem]"
@@ -183,7 +183,7 @@ function SelectorHero2ModelCompare({
             : 'relative z-[1]'
         }
       >
-        <div ref={measureRef} className="mx-auto w-full max-w-[var(--apple-w,1024px)] px-[22px]">
+        <div ref={measureRef} className="mx-auto w-full max-w-[var(--roooll-w,1024px)] px-[22px]">
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6e6e73] md:text-xs">
             {t.hero2ChooseModel}
           </p>

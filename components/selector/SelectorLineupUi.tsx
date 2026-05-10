@@ -219,8 +219,8 @@ export type SelectorLineupCopy = (typeof SELECTOR_LINEUP_I18N)['zh'];
 /** 中/英文案对象联合（用于卡片 `t`，避免 `as const` 与 Pick 的 readonly 冲突） */
 export type SelectorLineupAnyLang = (typeof SELECTOR_LINEUP_I18N)[keyof typeof SELECTOR_LINEUP_I18N];
 
-/** 苹果风圆形按钮内图标：黑底上用 currentColor（白） */
-function AppleCirclePlusIcon({ className }: { className?: string }) {
+/** Roooll UI 圆形按钮内图标：黑底上用 currentColor（白） */
+function RooollCirclePlusIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
       <rect x="11" y="5" width="2" height="14" rx="1" fill="currentColor" />
@@ -229,7 +229,7 @@ function AppleCirclePlusIcon({ className }: { className?: string }) {
   );
 }
 
-function AppleCircleCloseIcon({ className }: { className?: string }) {
+function RooollCircleCloseIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
       <path
@@ -688,7 +688,7 @@ export function SelectorLineupCard({
                 onClick={onOpenDetail}
                 className="selector-tap-clean flex h-10 w-10 items-center justify-center rounded-full bg-[#000] text-white shadow-[0_4px_14px_rgba(0,0,0,0.35)]"
               >
-                <AppleCirclePlusIcon className="h-[18px] w-[18px]" />
+                <RooollCirclePlusIcon className="h-[18px] w-[18px]" />
               </button>
             </div>
           </div>
@@ -835,7 +835,7 @@ export function VariantDetailPortal({
               className="selector-tap-clean absolute right-5 top-5 z-[10050] flex h-10 w-10 items-center justify-center rounded-full bg-[#000] text-white shadow-[0_4px_14px_rgba(0,0,0,0.35)] sm:right-6 sm:top-6"
               aria-label={t.close}
             >
-              <AppleCircleCloseIcon className="h-5 w-5" />
+              <RooollCircleCloseIcon className="h-5 w-5" />
             </button>
             <div className="relative z-0 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden sm:min-h-0 sm:rounded-br-[1.35rem] sm:rounded-tr-[1.35rem]">
               <AnimatedBlueprintSvg
@@ -984,7 +984,7 @@ export function VariantDetailPortal({
               className="selector-tap-clean flex h-10 w-10 items-center justify-center rounded-full bg-[#000] text-white shadow-[0_4px_14px_rgba(0,0,0,0.35)]"
               aria-label={t.close}
             >
-              <AppleCircleCloseIcon className="h-[18px] w-[18px]" />
+              <RooollCircleCloseIcon className="h-[18px] w-[18px]" />
             </button>
           </div>
         </div>

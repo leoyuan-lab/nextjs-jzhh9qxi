@@ -2,6 +2,13 @@ import type { Metadata } from 'next';
 
 import { getSiteOrigin } from '@/lib/site-origin';
 
+/** Public URL path — Roooll orbit mark: favicon, OG/Twitter, Organization `logo` (see `OrganizationJsonLd`). */
+export const SITE_BRAND_ORBIT_LOGO_PATH = '/images/brand/roooll-orbit-logo.png';
+
+const ROOT_TITLE_FOCUS = 'Collaborative Cobot Lineup';
+const ROOT_DESCRIPTION_BODY =
+  'Collaborative Cobot models and robotic arm specifications for factories, labs, retail, and OEM deployment.';
+
 /** Visible <title> — brand suffix unified for Roooll (see locales for product focus phrases). */
 export function seoTitle(focusPhrase: string): string {
   const trimmed = focusPhrase.trim();
@@ -68,14 +75,38 @@ export function pageMetadata(
   return meta;
 }
 
+const rootTitle = seoTitle(ROOT_TITLE_FOCUS);
+const rootDescription = seoDescription(ROOT_DESCRIPTION_BODY);
+
 export const rootMetadata: Metadata = {
   ...(typeof process.env.NEXT_PUBLIC_SITE_URL === 'string' &&
   process.env.NEXT_PUBLIC_SITE_URL.length > 0
     ? { metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL) }
     : {}),
-  title: seoTitle('Collaborative Cobot Lineup'),
-  description: seoDescription(
-    'Collaborative Cobot models and robotic arm specifications for factories, labs, retail, and OEM deployment.',
-  ),
+  title: rootTitle,
+  description: rootDescription,
+  applicationName: 'Roooll',
   robots: { index: true, follow: true },
+  icons: {
+    icon: [{ url: SITE_BRAND_ORBIT_LOGO_PATH, type: 'image/png' }],
+    apple: [{ url: SITE_BRAND_ORBIT_LOGO_PATH }],
+  },
+  openGraph: {
+    type: 'website',
+    siteName: 'Roooll',
+    title: rootTitle,
+    description: rootDescription,
+    images: [
+      {
+        url: SITE_BRAND_ORBIT_LOGO_PATH,
+        alt: 'Roooll collaborative robots Cobot brand emblem with planetary ring.',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: rootTitle,
+    description: rootDescription,
+    images: [SITE_BRAND_ORBIT_LOGO_PATH],
+  },
 };

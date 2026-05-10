@@ -65,13 +65,13 @@ export default function CobotsRCorePage() {
     const navHideStart = 24;
     const navHideRange = 86;
     const progress = Math.max(0, Math.min(1, (scrollVal - navHideStart) / navHideRange));
-    window.dispatchEvent(new CustomEvent('apple-main-nav-progress', { detail: { progress } }));
+    window.dispatchEvent(new CustomEvent('roooll-main-nav-progress', { detail: { progress } }));
     return () => {
-      window.dispatchEvent(new CustomEvent('apple-main-nav-progress', { detail: { progress: 0 } }));
+      window.dispatchEvent(new CustomEvent('roooll-main-nav-progress', { detail: { progress: 0 } }));
     };
   }, [scrollVal]);
 
-  const applyAppleStyle = (model: any) => {
+  const applyRooollStyle = (model: any) => {
     if (!model) return;
     model.materials.forEach((m: any) => {
       const name = m.name || '';
@@ -121,7 +121,7 @@ export default function CobotsRCorePage() {
   const isSubNavShow = hasScrolled && scrollVal > 620 && isNavHidden;
 
   return (
-    <div className="apple-wrapper arm-page-root">
+    <div className="roooll-wrapper arm-page-root">
       {/* 🍎 二级导航：主导航飞出后再接管位置 */}
       {isSubNavShow && (
         <nav className="nav-sub nav-sub-enter">
@@ -130,7 +130,7 @@ export default function CobotsRCorePage() {
             <button
               type="button"
               className="p-btn-buy"
-              onClick={() => window.dispatchEvent(new Event('apple-inquiry-open'))}
+              onClick={() => window.dispatchEvent(new Event('roooll-inquiry-open'))}
             >
               {copy.inquiry}
             </button>
@@ -158,7 +158,7 @@ export default function CobotsRCorePage() {
               environment-intensity="0.72"
               exposure="0.92"
               onLoad={(e: any) => {
-                applyAppleStyle(e.target.model);
+                applyRooollStyle(e.target.model);
                 setAllowDetailModels(true);
               }}
               onProgress={(e: any) => {
@@ -197,7 +197,7 @@ export default function CobotsRCorePage() {
                       auto-rotate touch-action="pan-y" interaction-prompt="none"
                       environment-image="neutral" exposure="1.1"
                       onLoad={(e: any) => {
-                        applyAppleStyle(e.target.model);
+                        applyRooollStyle(e.target.model);
                         startCardNodeMotion(e.target, card.node, i === 0 || i === 3 ? 0.028 : 0.018);
                       }}
                       style={{ width: '100%', height: '100%' } as any}

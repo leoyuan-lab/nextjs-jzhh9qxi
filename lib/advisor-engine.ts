@@ -1,6 +1,6 @@
 import { rSeriesData } from '@/data/products';
 
-export const ADVISOR_STORAGE_KEY = 'apple-robot-advisor-v2';
+export const ADVISOR_STORAGE_KEY = 'roooll-robot-advisor-v2';
 export const ADVISOR_LAST_STEP_KEY = 'lastAdvisorStep';
 
 export type AdvisorLetter = 'A' | 'B' | 'C' | 'D';

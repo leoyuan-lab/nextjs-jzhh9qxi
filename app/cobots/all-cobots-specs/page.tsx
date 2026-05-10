@@ -37,7 +37,7 @@ export default function ProductSelectorPage() {
       safeLang === 'zh'
         ? `我想咨询以下机型：\n- ${modelLabel}\n\n请联系我并提供方案与报价。`
         : `I'm interested in this model:\n- ${modelLabel}\n\nPlease contact me with recommendation and quotation.`;
-    window.dispatchEvent(new CustomEvent('apple-inquiry-open', { detail: { body } }));
+    window.dispatchEvent(new CustomEvent('roooll-inquiry-open', { detail: { body } }));
   };
 
   useEffect(() => {
@@ -149,7 +149,7 @@ export default function ProductSelectorPage() {
 
   return (
     <div className="selector-root min-h-screen bg-[#f5f5f7] text-[#1d1d1f] antialiased" style={{ WebkitFontSmoothing: 'antialiased' }}>
-      <section className="hero-copy mx-auto w-full max-w-[var(--apple-w,1024px)] bg-transparent px-[22px] pb-8 pt-7 text-left md:pb-10 md:pt-8">
+      <section className="hero-copy mx-auto w-full max-w-[var(--roooll-w,1024px)] bg-transparent px-[22px] pb-8 pt-7 text-left md:pb-10 md:pt-8">
         <div className="mb-3 h-[11px] shrink-0 md:h-3" aria-hidden />
         <h1 className="mb-4 text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.03em] text-[#1d1d1f] md:text-[3.25rem]">
           {t.title}
@@ -226,7 +226,7 @@ export default function ProductSelectorPage() {
           />
           <div className="hidden w-8 shrink-0 snap-none md:block" aria-hidden />
         </div>
-        <p className="mx-auto mt-3 w-full max-w-[var(--apple-w,1024px)] px-[22px] text-left text-[12px] text-[#aeaeb2]">
+        <p className="mx-auto mt-3 w-full max-w-[var(--roooll-w,1024px)] px-[22px] text-left text-[12px] text-[#aeaeb2]">
           {safeLang === 'zh' ? '← 在触控板或触摸屏上左右滑动 →' : '← Swipe or scroll horizontally →'}
         </p>
       </div>

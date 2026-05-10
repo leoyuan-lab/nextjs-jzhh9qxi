@@ -187,7 +187,7 @@ const COPY = {
 } as const;
 
 function openInquiryWithBody(body: string) {
-  window.dispatchEvent(new CustomEvent('apple-inquiry-open', { detail: { body } }));
+  window.dispatchEvent(new CustomEvent('roooll-inquiry-open', { detail: { body } }));
 }
 
 export function AdvisorWizard() {
@@ -277,15 +277,15 @@ export function AdvisorWizard() {
   }, [urlStep]);
 
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent('apple-nav-tone', { detail: { tone: 'light' } }));
+    window.dispatchEvent(new CustomEvent('roooll-nav-tone', { detail: { tone: 'light' } }));
     return () => {
-      window.dispatchEvent(new CustomEvent('apple-nav-tone', { detail: { tone: null } }));
+      window.dispatchEvent(new CustomEvent('roooll-nav-tone', { detail: { tone: null } }));
     };
   }, []);
 
   useEffect(() => {
     const emit = (progress: number) => {
-      window.dispatchEvent(new CustomEvent('apple-main-nav-progress', { detail: { progress } }));
+      window.dispatchEvent(new CustomEvent('roooll-main-nav-progress', { detail: { progress } }));
     };
     const onScroll = () => {
       emit(Math.min(1, window.scrollY / 36));
@@ -414,7 +414,7 @@ export function AdvisorWizard() {
           className="border-t border-[#d2d2d7]/80 bg-white text-[#1d1d1f]"
           aria-labelledby="advisor-hero2-title"
         >
-          <div className="mx-auto w-full max-w-[var(--apple-w,1024px)] px-[22px] pb-16 pt-10 md:pb-24 md:pt-12">
+          <div className="mx-auto w-full max-w-[var(--roooll-w,1024px)] px-[22px] pb-16 pt-10 md:pb-24 md:pt-12">
             <h2
               id="advisor-hero2-title"
               className="mb-3 max-w-[52rem] text-[2rem] font-semibold leading-[1.07] tracking-[-0.03em] text-[#0071e3] md:text-[2.75rem]"

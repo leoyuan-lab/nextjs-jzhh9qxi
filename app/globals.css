@@ -121,12 +121,12 @@
 @tailwind utilities;
 
 /*
- * Apple 顶栏 FOUC 壳层：与 app/layout.tsx 中 styled-jsx 规则对齐，
+ * Roooll 顶栏 FOUC 壳层：与 app/layout.tsx 中 styled-jsx 规则对齐，
  * 随本文件打包尽早下发，避免首帧「竖排链接 + 巨大 SVG」。
  */
 :root {
   --nav-h: 44px;
-  --apple-w: 1024px;
+  --roooll-w: 1024px;
   --z-nav: 9999;
   --z-ui: 10001;
   --bg-grey: #f5f5f7;
@@ -146,17 +146,17 @@ body {
 }
 
 /*
- * 首页首屏关键样式（与 app/page.tsx styled-jsx 对齐，随本文件尽早下发）：
+ * 首页首屏关键样式（与 app/(marketing)/page.tsx styled-jsx 对齐，随本文件尽早下发）：
  * 避免首帧竖条/无高度/加载层乱版；减轻 dev 冷启动时「无样式须刷新」。
  */
-.apple-home-wrapper {
+.roooll-home-wrapper {
   width: 100%;
   background: transparent;
   overflow-x: hidden;
   display: block;
 }
 
-.apple-home-wrapper .screen-outer {
+.roooll-home-wrapper .screen-outer {
   position: relative;
   width: 100%;
   height: 100vh;
@@ -169,7 +169,7 @@ body {
   padding: 0;
 }
 
-.apple-home-wrapper .screen-outer-gap {
+.roooll-home-wrapper .screen-outer-gap {
   position: relative;
   width: 100%;
   height: 100vh;
@@ -179,7 +179,7 @@ body {
   background: #ffffff;
 }
 
-.apple-home-wrapper .twin-hero-section {
+.roooll-home-wrapper .twin-hero-section {
   width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
@@ -190,7 +190,7 @@ body {
   background: #ffffff;
 }
 
-.apple-home-wrapper .twin-hero-panel {
+.roooll-home-wrapper .twin-hero-panel {
   position: relative;
   flex: 1 1 50%;
   min-width: 0;
@@ -201,12 +201,12 @@ body {
   background: #22c55e;
 }
 
-.apple-home-wrapper .twin-hero-image {
+.roooll-home-wrapper .twin-hero-image {
   object-fit: cover;
   opacity: 0.78;
 }
 
-.apple-home-wrapper .twin-hero-panel::before {
+.roooll-home-wrapper .twin-hero-panel::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -215,7 +215,7 @@ body {
   pointer-events: none;
 }
 
-.apple-home-wrapper .twin-hero-overlay {
+.roooll-home-wrapper .twin-hero-overlay {
   position: absolute;
   left: 0;
   right: 0;
@@ -226,26 +226,26 @@ body {
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.68) 72%, rgba(0, 0, 0, 0.84) 100%);
 }
 
-.apple-home-wrapper .twin-hero-overlay h3 {
+.roooll-home-wrapper .twin-hero-overlay h3 {
   margin: 0;
   font-size: clamp(24px, 2.5vw, 34px);
   font-weight: 600;
 }
 
-.apple-home-wrapper .twin-hero-overlay p {
+.roooll-home-wrapper .twin-hero-overlay p {
   margin: 8px 0 0;
   font-size: clamp(14px, 1.3vw, 18px);
   color: rgba(255, 255, 255, 0.9);
 }
 
-.apple-home-wrapper .grid-container {
+.roooll-home-wrapper .grid-container {
   display: flex;
   width: 100%;
   height: 100%;
   gap: 10px;
 }
 
-.apple-home-wrapper .sharp-card {
+.roooll-home-wrapper .sharp-card {
   flex: 1;
   background: #f5f5f7;
   display: flex;
@@ -253,35 +253,35 @@ body {
   overflow: hidden;
 }
 
-.apple-home-wrapper .card-text {
+.roooll-home-wrapper .card-text {
   padding: 40px;
 }
 
-.apple-home-wrapper .card-text h3 {
+.roooll-home-wrapper .card-text h3 {
   font-size: 24px;
   font-weight: 600;
   color: #1d1d1f;
   margin: 0;
 }
 
-.apple-home-wrapper .card-text p {
+.roooll-home-wrapper .card-text p {
   font-size: 16px;
   color: #86868b;
   margin-top: 6px;
 }
 
-.apple-home-wrapper .card-cta {
+.roooll-home-wrapper .card-cta {
   margin-top: 14px;
 }
 
-.apple-home-wrapper .card-image-box {
+.roooll-home-wrapper .card-image-box {
   flex: 1;
   background-size: cover;
   background-position: center;
   margin: 0 40px 40px 40px;
 }
 
-.apple-home-wrapper .loading-screen {
+.roooll-home-wrapper .loading-screen {
   position: fixed;
   top: 0;
   left: 0;
@@ -301,38 +301,178 @@ body {
     transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
-.apple-home-wrapper .loading-screen.exit {
+.roooll-home-wrapper .loading-screen.exit {
   opacity: 0;
   pointer-events: none;
   transform: scale(1.04);
 }
 
-.apple-home-wrapper .loading-scale-shell {
+.roooll-home-wrapper .loading-scale-shell {
   transform: scale(1.5);
   transform-origin: center center;
   will-change: transform;
   backface-visibility: hidden;
 }
 
-.apple-home-wrapper .loading-content {
+@media (max-width: 767px) {
+  .roooll-home-wrapper .loading-scale-shell {
+    margin-top: clamp(24px, 6.5vh, 80px);
+  }
+}
+
+.roooll-home-wrapper .loading-content {
   text-align: left;
-  width: max-content;
+  width: 100%;
   max-width: min(960px, calc(100vw - 40px));
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: clamp(28px, 5vh, 48px);
+  box-sizing: border-box;
 }
 
-.apple-home-wrapper .loading-hero-type {
+@media (max-width: 767px) {
+  .roooll-home-wrapper .loading-content {
+    align-items: flex-start;
+    text-align: left;
+    gap: clamp(10px, 2.4vh, 22px);
+  }
+}
+
+@media (min-width: 768px) {
+  .roooll-home-wrapper .loading-scale-shell {
+    margin-top: 10vh;
+  }
+
+  .roooll-home-wrapper .loading-content {
+    max-width: min(920px, calc(100vw - 40px));
+    gap: clamp(18px, 3vh, 36px);
+  }
+}
+
+.roooll-home-wrapper .loading-brand-plain-root {
+  flex-shrink: 0;
+}
+
+.roooll-home-wrapper .loading-brand-plain-frame {
+  position: relative;
+  width: clamp(140px, 36vmin, 260px);
+  height: clamp(140px, 36vmin, 260px);
+  flex-shrink: 0;
+}
+
+.roooll-home-wrapper .loading-brand-plain-frame--over-letter {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.roooll-home-wrapper .loading-brand-plain-img {
+  object-fit: contain;
+  object-position: center;
+  pointer-events: none;
+}
+
+/** Slogan：加载过程无位移 / 透明度变化；整屏退场见 `.loading-screen.exit` */
+.roooll-home-wrapper .loading-hero-type {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 0;
   margin: 0;
+  flex: 1;
+  min-width: 0;
 }
 
-.apple-home-wrapper .loading-slogan-main {
+@media (max-width: 767px) {
+  .roooll-home-wrapper .loading-hero-type {
+    align-items: flex-start;
+    width: 100%;
+    max-width: calc(100vw - 32px);
+  }
+}
+
+/** Logo above marked letter (en “o” in rolling / zh “干”) — mobile + desktop same slot */
+.roooll-home-wrapper .loading-slogan-mark {
+  position: relative;
+  display: inline-block;
+}
+
+.roooll-home-wrapper .loading-slogan-logo-over-mark {
+  display: block;
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .roooll-home-wrapper .loading-slogan-logo-over-mark {
+    width: clamp(84px, 28vmin, 104px);
+    height: clamp(84px, 28vmin, 104px);
+    margin-bottom: clamp(-8px, -1.8vmin, -2px);
+    transform: translate(-50%, clamp(2px, 0.8vmin, 8px));
+  }
+}
+
+.roooll-home-wrapper .loading-slogan-logo-over-mark .loading-brand-plain-root {
+  width: 100%;
+  height: 100%;
+}
+
+.roooll-home-wrapper .loading-hero-progress-slot {
+  position: relative;
+  width: min(200px, 72%);
+  margin-top: clamp(20px, 3.8vh, 40px);
+  padding: 14px 0;
+  box-sizing: border-box;
+}
+
+.roooll-home-wrapper .loading-hero-progress-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: #e3eaf5;
+  overflow: hidden;
+}
+
+.roooll-home-wrapper .loading-hero-progress-fill {
+  height: 100%;
+  width: calc(var(--loading-p, 0) * 1%);
+  border-radius: inherit;
+  background: #0071e3;
+  transition: width 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.roooll-home-wrapper .loading-hero-progress-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 25px;
+  height: 25px;
+  /* 0% 略留边；100% 时中心对齐轨道右端 */
+  left: clamp(12.5px, calc(var(--loading-p, 0) * 1%), 100%);
+  background: url('/images/brand/roooll-loading-logo.png') center / contain no-repeat;
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  transition: left 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roooll-home-wrapper .loading-hero-progress-fill {
+    transition: width 0.15s linear;
+  }
+
+  .roooll-home-wrapper .loading-hero-progress-thumb {
+    transition: left 0.15s linear;
+  }
+}
+
+.roooll-home-wrapper .loading-slogan-main {
   margin: 0;
   padding: 0;
   font-family:
@@ -351,7 +491,7 @@ body {
   text-wrap: balance;
 }
 
-.apple-home-wrapper .loading-slogan-main + .loading-subline {
+.roooll-home-wrapper .loading-slogan-main + .loading-subline {
   margin: 0.38em 0 0;
   padding: 0;
   font-family:
@@ -369,7 +509,7 @@ body {
   color: #2b2b2e;
 }
 
-.apple-home-wrapper .loading-subline + .loading-subline {
+.roooll-home-wrapper .loading-subline + .loading-subline {
   margin: 0.2em 0 0;
   padding: 0;
   font-family:
@@ -387,40 +527,26 @@ body {
   color: #6e6e73;
 }
 
-.apple-home-wrapper .loading-progress-wrap {
-  margin-top: clamp(28px, 5vh, 48px);
-  width: min(6cm, calc(100vw - 48px));
-  min-width: min(6cm, calc(100vw - 48px));
-  max-width: min(6cm, calc(100vw - 48px));
-  flex-shrink: 0;
-  box-sizing: border-box;
+@media (min-width: 768px) {
+  .roooll-home-wrapper .loading-slogan-main {
+    font-size: clamp(34px, 7.6vw, 80px);
+  }
+
+  .roooll-home-wrapper .loading-slogan-main + .loading-subline,
+  .roooll-home-wrapper .loading-subline + .loading-subline {
+    font-size: clamp(20px, 4.55vw, 48px);
+  }
+
+  .roooll-home-wrapper .loading-slogan-logo-over-mark {
+    width: clamp(160px, 18vw, 296px);
+    height: clamp(160px, 18vw, 296px);
+    /* em 相对主标题字号，与标记字母字盒同步缩放 */
+    margin-bottom: calc(-0.2em - 6px);
+    transform: translate(-50%, calc(6vh + 0.1em));
+  }
 }
 
-.apple-home-wrapper .progress-container {
-  width: 100%;
-  min-width: 0;
-  height: 3px;
-  background: #f0f0f0;
-  overflow: hidden;
-  border-radius: 2px;
-}
-
-.apple-home-wrapper .progress-bar {
-  height: 100%;
-  background: #000;
-  transition: width 0.3s ease;
-}
-
-.apple-home-wrapper .progress-text {
-  display: block;
-  margin-top: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: #aeaeb2;
-}
-
-.apple-home-wrapper .hero-3d-wrap {
+.roooll-home-wrapper .hero-3d-wrap {
   position: absolute;
   top: 0;
   left: 0;
@@ -431,31 +557,31 @@ body {
   transform: translateZ(0);
 }
 
-.apple-home-wrapper .hero-3d-wrap model-viewer {
+.roooll-home-wrapper .hero-3d-wrap model-viewer {
   display: block;
   width: 100%;
   height: 100%;
 }
 
-.apple-home-wrapper .hero-3d-wrap--dark {
+.roooll-home-wrapper .hero-3d-wrap--dark {
   background: #000000;
 }
 
-.apple-home-wrapper .hidden-init {
+.roooll-home-wrapper .hidden-init {
   opacity: 0 !important;
   visibility: hidden;
 }
 
-.apple-home-wrapper .ready-visible {
+.roooll-home-wrapper .ready-visible {
   opacity: 1;
   visibility: visible;
 }
 
-.apple-home-wrapper .r-core-cobot-fr5-entry-animation {
-  animation: apple-home-r-core-cobot-fr5-entry 1.4s cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
+.roooll-home-wrapper .r-core-cobot-fr5-entry-animation {
+  animation: roooll-home-r-core-cobot-fr5-entry 1.4s cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
 }
 
-@keyframes apple-home-r-core-cobot-fr5-entry {
+@keyframes roooll-home-r-core-cobot-fr5-entry {
   0% {
     opacity: 0;
     transform: scale(1.05) translate3d(0, 5%, 0);
@@ -468,7 +594,7 @@ body {
   }
 }
 
-.apple-home-wrapper .drag-hint {
+.roooll-home-wrapper .drag-hint {
   position: absolute;
   left: 50%;
   bottom: 8vh;
@@ -487,48 +613,48 @@ body {
   white-space: nowrap;
 }
 
-.apple-home-wrapper .drag-hint.show {
+.roooll-home-wrapper .drag-hint.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
 
 /* 文案/链接叠在 model-viewer 之上，减轻首击落在 3D 上需点两次 */
-.apple-home-wrapper .content-limit,
-.apple-home-wrapper .cta-row {
+.roooll-home-wrapper .content-limit,
+.roooll-home-wrapper .cta-row {
   position: relative;
   z-index: 30;
   isolation: isolate;
 }
 
-.apple-home-wrapper .content-limit {
+.roooll-home-wrapper .content-limit {
   margin-top: 10vh;
   text-align: center;
 }
 
-.apple-home-wrapper .text-box {
+.roooll-home-wrapper .text-box {
   pointer-events: auto;
 }
 
-.apple-home-wrapper .title {
+.roooll-home-wrapper .title {
   font-size: clamp(40px, 8vw, 56px);
   font-weight: 600;
   margin: 0;
 }
 
-.apple-home-wrapper .subtitle {
+.roooll-home-wrapper .subtitle {
   font-size: clamp(20px, 3vw, 26px);
   margin-top: 12px;
   opacity: 0.8;
 }
 
-.apple-home-wrapper .cta-row {
+.roooll-home-wrapper .cta-row {
   display: inline-flex;
   align-items: center;
   gap: 18px;
   margin-top: 14px;
 }
 
-.apple-home-wrapper a.cta-link {
+.roooll-home-wrapper a.cta-link {
   position: relative;
   z-index: 31;
   touch-action: manipulation;
@@ -539,7 +665,7 @@ body {
   text-decoration: none;
 }
 
-.apple-home-wrapper .cta-link {
+.roooll-home-wrapper .cta-link {
   color: #06c;
   font-size: 18px;
   font-weight: 500;
@@ -551,49 +677,49 @@ body {
   cursor: pointer;
 }
 
-.apple-home-wrapper .cta-link:hover {
+.roooll-home-wrapper .cta-link:hover {
   text-decoration: underline;
 }
 
-.apple-home-wrapper .cta-btn {
+.roooll-home-wrapper .cta-btn {
   font-family: inherit;
 }
 
-.apple-home-wrapper .dark-copy .cta-link {
+.roooll-home-wrapper .dark-copy .cta-link {
   color: #2997ff;
 }
 
 @media (max-width: 768px) {
-  .apple-home-wrapper .grid-container {
+  .roooll-home-wrapper .grid-container {
     flex-direction: column;
   }
 
-  .apple-home-wrapper .screen-outer-gap {
+  .roooll-home-wrapper .screen-outer-gap {
     height: auto;
     min-height: 100dvh;
   }
 
-  .apple-home-wrapper .sharp-card {
+  .roooll-home-wrapper .sharp-card {
     min-height: 50dvh;
   }
 
-  .apple-home-wrapper .cta-link {
+  .roooll-home-wrapper .cta-link {
     font-size: 17px;
   }
 
-  .apple-home-wrapper > .screen-outer:nth-of-type(-n + 2) {
+  .roooll-home-wrapper > .screen-outer:nth-of-type(-n + 2) {
     height: 112dvh;
     min-height: 112dvh;
   }
 
-  .apple-home-wrapper .twin-hero-section {
+  .roooll-home-wrapper .twin-hero-section {
     min-height: auto;
     flex-direction: column;
     gap: 2vh;
     padding: 2vh 0;
   }
 
-  .apple-home-wrapper .twin-hero-panel {
+  .roooll-home-wrapper .twin-hero-panel {
     min-height: 72vh;
     min-height: 72dvh;
     border-radius: 0;
@@ -915,36 +1041,36 @@ body {
 }
 
 /* r‑Core `/cobots/r-core` 顶栏：透明顶 ↔ 下滑毛玻璃（与 ClientLayout `subPageNavProgress < 0.02` 分支一致；!important 避免其它规则抢样式） */
-.apple-nav.is-dark.arm-nav-top-clear:not(.search-mode) {
+.roooll-nav.is-dark.arm-nav-top-clear:not(.search-mode) {
   background: transparent !important;
   border-bottom-color: transparent !important;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }
 
-.apple-nav.is-dark.arm-nav-scroll-glass:not(.search-mode) {
+.roooll-nav.is-dark.arm-nav-scroll-glass:not(.search-mode) {
   background: rgba(22, 22, 23, 0.34) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   -webkit-backdrop-filter: saturate(160%) blur(12px) !important;
   backdrop-filter: saturate(160%) blur(12px) !important;
 }
 
-/* 选型页 `/selector/*`：首屏顶栏全透明，避免默认 `.apple-nav` 浅色底在浅色 hero 上像「白条」 */
-.apple-nav.selector-nav-top-clear:not(.search-mode) {
+/* 选型页 `/selector/*`：首屏顶栏全透明，避免默认 `.roooll-nav` 浅色底在浅色 hero 上像「白条」 */
+.roooll-nav.selector-nav-top-clear:not(.search-mode) {
   background: transparent !important;
   border-bottom-color: transparent !important;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }
 
-.apple-nav.selector-nav-scroll-glass:not(.search-mode) {
+.roooll-nav.selector-nav-scroll-glass:not(.search-mode) {
   background: rgba(251, 251, 253, 0.76) !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
   -webkit-backdrop-filter: saturate(180%) blur(18px) !important;
   backdrop-filter: saturate(180%) blur(18px) !important;
 }
 
-.apple-nav {
+.roooll-nav {
   --logo-cutout: #ffffff;
   position: fixed;
   top: 0;
@@ -959,19 +1085,19 @@ body {
   backdrop-filter: saturate(135%) blur(8px);
 }
 
-.apple-nav.is-dark {
+.roooll-nav.is-dark {
   --logo-cutout: #161617;
   background: rgba(22, 22, 23, 0.16);
   color: #f5f5f7;
   border-bottom-color: rgba(255, 255, 255, 0.02);
 }
 
-.apple-nav.is-home:not(.search-mode) {
+.roooll-nav.is-home:not(.search-mode) {
   border-bottom: none;
   box-shadow: none;
 }
 
-.apple-nav.home-clear {
+.roooll-nav.home-clear {
   background: transparent !important;
   border-bottom: none !important;
   box-shadow: none !important;
@@ -979,27 +1105,27 @@ body {
   backdrop-filter: none !important;
 }
 
-.apple-nav.home-ghost:not(.search-mode) {
+.roooll-nav.home-ghost:not(.search-mode) {
   background: rgba(251, 251, 253, 0.026) !important;
   -webkit-backdrop-filter: saturate(165%) blur(4px) !important;
   backdrop-filter: saturate(165%) blur(4px) !important;
 }
 
-.apple-nav.home-ghost.is-dark:not(.search-mode) {
+.roooll-nav.home-ghost.is-dark:not(.search-mode) {
   background: rgba(22, 22, 23, 0.038) !important;
   color: #f5f5f7;
   -webkit-backdrop-filter: saturate(155%) blur(5px) !important;
   backdrop-filter: saturate(155%) blur(5px) !important;
 }
 
-.apple-nav.search-mode {
+.roooll-nav.search-mode {
   background: #fff !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
 }
 
 .nav-container {
   width: 100%;
-  max-width: var(--apple-w);
+  max-width: var(--roooll-w);
   margin: 0 auto;
   padding: 0 22px;
   display: flex;
@@ -1171,17 +1297,17 @@ body {
     height: 26px;
   }
 
-  .apple-nav .mobile-utility .lang-cap-pill {
+  .roooll-nav .mobile-utility .lang-cap-pill {
     transition:
       background 0.2s ease,
       opacity 0.2s ease;
   }
 
   /* 顶栏与移动菜单：去掉系统灰色点击蒙层 */
-  .apple-nav .logo-box,
-  .apple-nav .mobile-utility .hamburger,
-  .apple-nav .mobile-nav-search-hit,
-  .apple-nav .mobile-utility .lang-cap-pill {
+  .roooll-nav .logo-box,
+  .roooll-nav .mobile-utility .hamburger,
+  .roooll-nav .mobile-nav-search-hit,
+  .roooll-nav .mobile-utility .lang-cap-pill {
     -webkit-tap-highlight-color: transparent;
     tap-highlight-color: transparent;
   }
@@ -1192,7 +1318,7 @@ body {
     tap-highlight-color: transparent;
   }
 
-  .apple-nav .mobile-utility .hamburger {
+  .roooll-nav .mobile-utility .hamburger {
     display: flex !important;
     flex-shrink: 0;
     flex-direction: column;
@@ -1207,7 +1333,7 @@ body {
   }
 
   /* 横条样式跟 layout 的 globals 一起走，避免仅依赖 ClientLayout styled-jsx 晚注入 → 全站手机「汉堡晚于搜索/语言」 */
-  .apple-nav .mobile-utility .hamburger .line {
+  .roooll-nav .mobile-utility .hamburger .line {
     display: block;
     width: 100%;
     height: 1.5px;
@@ -1220,16 +1346,16 @@ body {
       opacity 0.26s ease;
   }
 
-  .apple-nav .mobile-utility .hamburger.active .line:nth-child(1) {
+  .roooll-nav .mobile-utility .hamburger.active .line:nth-child(1) {
     transform: translateY(3.25px) rotate(45deg) scaleX(1.02);
   }
 
-  .apple-nav .mobile-utility .hamburger.active .line:nth-child(2) {
+  .roooll-nav .mobile-utility .hamburger.active .line:nth-child(2) {
     transform: translateY(-3.25px) rotate(-45deg) scaleX(1.02);
   }
 
   /* 手机顶栏右侧：固定占位，避免「中/EN」或首帧与 localStorage 对齐后宽度变化导致三键整体位移 */
-  .apple-nav .mobile-utility .mobile-nav-search-hit {
+  .roooll-nav .mobile-utility .mobile-nav-search-hit {
     box-sizing: border-box;
     display: inline-flex;
     align-items: center;
@@ -1245,7 +1371,7 @@ body {
     -webkit-tap-highlight-color: transparent;
   }
 
-  .apple-nav .mobile-utility .lang-cap-pill {
+  .roooll-nav .mobile-utility .lang-cap-pill {
     box-sizing: border-box;
     display: inline-flex;
     align-items: center;
@@ -1273,12 +1399,12 @@ body {
     -webkit-tap-highlight-color: transparent;
   }
 
-  .apple-nav .mobile-utility .lang-cap-pill:hover {
+  .roooll-nav .mobile-utility .lang-cap-pill:hover {
     background: rgba(0, 0, 0, 0.08);
     opacity: 1;
   }
 
-  .apple-nav.is-dark .mobile-utility .lang-cap-pill:hover {
+  .roooll-nav.is-dark .mobile-utility .lang-cap-pill:hover {
     background: rgba(255, 255, 255, 0.14);
   }
 
@@ -1303,7 +1429,7 @@ body {
  * 页脚与移动端全屏导航（侧滑/全屏菜单）：随本文件尽早下发，
  * 避免 ClientLayout styled-jsx 晚注入 → 首帧散版或菜单壳层缺失。
  */
-.apple-footer-wrapper {
+.roooll-footer-wrapper {
   background: var(--bg-grey);
   color: #6e6e73;
   padding: 40px 0;
@@ -1311,7 +1437,7 @@ body {
   border-top: 1px solid #d2d2d7;
 }
 
-.apple-footer-wrapper.is-dark {
+.roooll-footer-wrapper.is-dark {
   background: #000;
   border-top-color: #333;
   color: #86868b;
@@ -1338,11 +1464,11 @@ body {
   color: #1d1d1f;
 }
 
-.apple-footer-wrapper.is-dark .footnotes {
+.roooll-footer-wrapper.is-dark .footnotes {
   border-bottom-color: #333;
 }
 
-.apple-footer-wrapper.is-dark .fn-title {
+.roooll-footer-wrapper.is-dark .fn-title {
   color: #f5f5f7;
 }
 
@@ -1375,7 +1501,7 @@ body {
   cursor: default;
 }
 
-.apple-footer-wrapper.is-dark .f-col h4 {
+.roooll-footer-wrapper.is-dark .f-col h4 {
   color: #f5f5f7;
 }
 
@@ -1406,7 +1532,7 @@ body {
   font-size: 11px;
 }
 
-.apple-footer-wrapper.is-dark .f-bottom {
+.roooll-footer-wrapper.is-dark .f-bottom {
   border-top-color: #333;
 }
 
@@ -1438,7 +1564,7 @@ body {
     box-sizing: border-box;
   }
 
-  .apple-footer-wrapper.is-dark .f-col {
+  .roooll-footer-wrapper.is-dark .f-col {
     border-bottom-color: #333;
   }
 
@@ -1452,7 +1578,7 @@ body {
     align-items: center;
   }
 
-  .f-chevron-apple {
+  .f-chevron-roooll {
     display: block;
     width: 8px;
     height: 8px;
@@ -1463,7 +1589,7 @@ body {
     opacity: 0.6;
   }
 
-  .f-col.is-open .f-chevron-apple {
+  .f-col.is-open .f-chevron-roooll {
     transform: rotate(-135deg);
   }
 
@@ -1593,7 +1719,7 @@ body {
     color: #f5f5f7;
   }
 
-  .apple-nav.mobile-menu-open .logo-box {
+  .roooll-nav.mobile-menu-open .logo-box {
     opacity: 0;
     pointer-events: none;
     transform: translateY(-6px);
@@ -1602,7 +1728,7 @@ body {
       transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .apple-nav.mobile-menu-open .mobile-utility > :not(.hamburger) {
+  .roooll-nav.mobile-menu-open .mobile-utility > :not(.hamburger) {
     opacity: 0;
     pointer-events: none;
     transform: translateY(-6px);
@@ -1611,7 +1737,7 @@ body {
       transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .apple-nav.mobile-menu-open .action-area {
+  .roooll-nav.mobile-menu-open .action-area {
     gap: 0;
   }
 
@@ -1619,7 +1745,7 @@ body {
     background: transparent;
   }
 
-  .apple-nav.mobile-menu-open {
+  .roooll-nav.mobile-menu-open {
     background: transparent !important;
     border-bottom-color: transparent !important;
     -webkit-backdrop-filter: none !important;
