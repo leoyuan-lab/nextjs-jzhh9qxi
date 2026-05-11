@@ -675,6 +675,7 @@ export default function ClientLayout({
                 tabIndex={0}
                 role="link"
               >
+                {/* Geometry matches `app/icon.svg` (favicon); keep both in sync if the mark changes. */}
                 <svg width={26} height={26} viewBox="0 0 128 128" aria-label={config.brandLogoAria} role="img">
                   <circle cx="64" cy="66" r="34" fill="currentColor" />
                   <path d="M18 67C18 58 37 51 63 51C89 51 110 58 110 67C110 76 89 83 63 83C37 83 18 76 18 67Z" stroke="currentColor" strokeWidth="9" fill="none" strokeLinecap="round" />
