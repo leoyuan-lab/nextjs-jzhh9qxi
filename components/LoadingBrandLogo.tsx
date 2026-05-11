@@ -23,8 +23,9 @@ export function LoadingBrandLogo({ logoAlt, decorative, className, frameClassNam
         <Image
           src={LOADING_LOGO_SRC}
           alt={alt}
-          fill
-          sizes={decorative ? '112px' : '288px'}
+          width={1024}
+          height={745}
+          sizes={decorative ? '112px' : '(max-width: 767px) 30vw, 20vw'}
           className="loading-brand-plain-img"
           priority={!decorative}
         />
