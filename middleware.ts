@@ -72,7 +72,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Exclude Next metadata routes (`app/icon.png` → `/icon`, `app/apple-icon.png` → `/apple-icon`) so locale redirect does not break favicons on localhost and previews.
-    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|icon$|apple-icon$|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|js|map|glb|gltf)$).*)',
+    // Exclude bare `/icon` (no extension) and static assets so locale redirect does not break favicon / icon.svg on localhost and previews.
+    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|icon$|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|js|map|glb|gltf)$).*)',
   ],
 };

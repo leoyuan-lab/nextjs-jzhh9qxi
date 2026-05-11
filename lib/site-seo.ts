@@ -2,8 +2,11 @@ import type { Metadata } from 'next';
 
 import { getSiteOrigin } from '@/lib/site-origin';
 
-/** Public URL path — Roooll orbit mark: OG/Twitter + Organization `logo` (see `OrganizationJsonLd`); tab favicon via `app/icon.png`. */
+/** Public URL path — Roooll orbit mark: OG/Twitter + Organization `logo` (see `OrganizationJsonLd`). */
 export const SITE_BRAND_ORBIT_LOGO_PATH = '/images/brand/roooll-orbit-logo.png';
+
+/** iOS / PWA “add to home screen” tile — Roooll-named asset. `rel` must stay `apple-touch-icon` for Safari (platform string, not our brand). */
+export const SITE_BRAND_TOUCH_ICON_PATH = '/images/brand/roooll-touch-icon.png';
 
 const ROOT_TITLE_FOCUS = 'Collaborative Cobot Lineup';
 const ROOT_DESCRIPTION_BODY =
@@ -87,7 +90,17 @@ export const rootMetadata: Metadata = {
   description: rootDescription,
   applicationName: 'Roooll',
   robots: { index: true, follow: true },
-  /** Favicon / Apple touch: use `app/icon.png` + `app/apple-icon.png` so preview (`*.vercel.app`) and `roooll.com` share same-origin icon URLs (avoid resolving `icons` against `metadataBase` → wrong host on previews). */
+  /** Tab favicon: `app/icon.svg`. Home-screen tile: `icons.other` avoids a misleading `apple` key; `rel` is still the required platform value. */
+  icons: {
+    other: [
+      {
+        rel: 'apple-touch-icon',
+        url: SITE_BRAND_TOUCH_ICON_PATH,
+        sizes: '180x180',
+        type: 'image/png',
+      },
+    ],
+  },
   openGraph: {
     type: 'website',
     siteName: 'Roooll',
