@@ -28,6 +28,8 @@ export function LoadingBrandLogo({ logoAlt, decorative, className, frameClassNam
           sizes={decorative ? '112px' : '(max-width: 767px) 30vw, 20vw'}
           className="loading-brand-plain-img"
           priority={!decorative}
+          /* 直连静态 PNG，避免刷新时 _next/image 缓存命中与父级 scale 叠在一帧里栅格化闪一下 */
+          unoptimized
         />
       </div>
     </div>
