@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 import { getSiteOrigin } from '@/lib/site-origin';
 
-/** Public URL path — Roooll orbit mark: favicon, OG/Twitter, Organization `logo` (see `OrganizationJsonLd`). */
+/** Public URL path — Roooll orbit mark: OG/Twitter + Organization `logo` (see `OrganizationJsonLd`); tab favicon via `app/icon.png`. */
 export const SITE_BRAND_ORBIT_LOGO_PATH = '/images/brand/roooll-orbit-logo.png';
 
 const ROOT_TITLE_FOCUS = 'Collaborative Cobot Lineup';
@@ -87,10 +87,7 @@ export const rootMetadata: Metadata = {
   description: rootDescription,
   applicationName: 'Roooll',
   robots: { index: true, follow: true },
-  icons: {
-    icon: [{ url: SITE_BRAND_ORBIT_LOGO_PATH, type: 'image/png' }],
-    apple: [{ url: SITE_BRAND_ORBIT_LOGO_PATH }],
-  },
+  /** Favicon / Apple touch: use `app/icon.png` + `app/apple-icon.png` so preview (`*.vercel.app`) and `roooll.com` share same-origin icon URLs (avoid resolving `icons` against `metadataBase` → wrong host on previews). */
   openGraph: {
     type: 'website',
     siteName: 'Roooll',
