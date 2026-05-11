@@ -1,6 +1,6 @@
 'use client';
 
-const LOADING_LOGO_SRC = '/images/brand/roooll-loading-logo.png';
+const LOADING_LOGO_SRC = '/images/brand/roooll-loading-logo.webp';
 
 type Props = {
   /** Ignored when `decorative` (alt becomes empty). */

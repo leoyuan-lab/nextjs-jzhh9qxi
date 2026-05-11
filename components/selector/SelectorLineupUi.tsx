@@ -345,6 +345,100 @@ function AnimatedBlueprintSvg({
   );
 }
 
+/** 与原先 `SubjectFillPng` 内联逻辑一致：抠白底 + 可选裁剪，失败返回 `null`。 */
+function processListingImageOnload(
+  img: HTMLImageElement,
+  autoTransparentBg: boolean,
+  cropToSubject: boolean,
+): { src: string; w: number; h: number } | null {
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  if (!w || !h) return null;
+
+  const scanCanvas = document.createElement('canvas');
+  scanCanvas.width = w;
+  scanCanvas.height = h;
+  const scanCtx = scanCanvas.getContext('2d', { willReadFrequently: true });
+  if (!scanCtx) return null;
+  scanCtx.drawImage(img, 0, 0, w, h);
+  if (autoTransparentBg) {
+    const rgba = scanCtx.getImageData(0, 0, w, h);
+    const data = rgba.data;
+    const sample = [];
+    const stepX = Math.max(1, Math.floor(w / 64));
+    const stepY = Math.max(1, Math.floor(h / 64));
+    for (let x = 0; x < w; x += stepX) {
+      sample.push((0 * w + x) * 4, ((h - 1) * w + x) * 4);
+    }
+    for (let y = 0; y < h; y += stepY) {
+      sample.push((y * w + 0) * 4, (y * w + (w - 1)) * 4);
+    }
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    let n = 0;
+    for (const i of sample) {
+      if (data[i + 3] < 6) continue;
+      r += data[i];
+      g += data[i + 1];
+      b += data[i + 2];
+      n += 1;
+    }
+    if (n > 0) {
+      const br = r / n;
+      const bg = g / n;
+      const bb = b / n;
+      for (let i = 0; i < data.length; i += 4) {
+        const dr = data[i] - br;
+        const dg = data[i + 1] - bg;
+        const db = data[i + 2] - bb;
+        const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+        if (dist < 26) data[i + 3] = 0;
+        else if (dist < 60) data[i + 3] = Math.min(data[i + 3], Math.round(((dist - 26) / 34) * 255));
+      }
+      scanCtx.putImageData(rgba, 0, 0);
+    }
+  }
+  const data = scanCtx.getImageData(0, 0, w, h).data;
+
+  let minX = w;
+  let minY = h;
+  let maxX = -1;
+  let maxY = -1;
+  for (let y = 0; y < h; y += 1) {
+    for (let x = 0; x < w; x += 1) {
+      const alpha = data[(y * w + x) * 4 + 3];
+      if (alpha > 8) {
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+
+  if (!cropToSubject) {
+    const dataUrl = scanCanvas.toDataURL('image/png');
+    return { src: dataUrl, w, h };
+  }
+
+  if (maxX < minX || maxY < minY) {
+    const dataUrl = scanCanvas.toDataURL('image/png');
+    return { src: dataUrl, w, h };
+  }
+
+  const cropW = maxX - minX + 1;
+  const cropH = maxY - minY + 1;
+  const cropCanvas = document.createElement('canvas');
+  cropCanvas.width = cropW;
+  cropCanvas.height = cropH;
+  const cropCtx = cropCanvas.getContext('2d');
+  if (!cropCtx) return null;
+  cropCtx.drawImage(scanCanvas, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+  const dataUrl = cropCanvas.toDataURL('image/png');
+  return { src: dataUrl, w: cropW, h: cropH };
+}
+
 export function SubjectFillPng({
   src,
   alt,
@@ -353,6 +447,8 @@ export function SubjectFillPng({
   cropToSubject = true,
   deferProcessingUntilVisible = false,
   disablePostProcess = false,
+  /** 仅机型对比页：处理完白底前不显示原图（避免首屏三张闪白底）；其它页面保持原先「先原图再替换」行为。 */
+  hideUntilProcessed = false,
   className,
 }: {
   src: string;
@@ -362,6 +458,7 @@ export function SubjectFillPng({
   cropToSubject?: boolean;
   deferProcessingUntilVisible?: boolean;
   disablePostProcess?: boolean;
+  hideUntilProcessed?: boolean;
   className?: string;
 }) {
   const hostRef = useRef<HTMLDivElement | null>(null);
@@ -406,7 +503,7 @@ export function SubjectFillPng({
       return;
     }
     if (!shouldProcess) {
-      setRenderSrc(src);
+      setRenderSrc(hideUntilProcessed ? null : src);
       setReady(true);
       return;
     }
@@ -419,9 +516,15 @@ export function SubjectFillPng({
     }
 
     let cancelled = false;
-    // Always render the original image first; post-processing swaps in later.
-    setRenderSrc(src);
-    setReady(true);
+    const showRawFirst = !hideUntilProcessed;
+    if (showRawFirst) {
+      setRenderSrc(src);
+      setReady(true);
+    } else {
+      setRenderSrc(null);
+      setReady(false);
+    }
+
     const img = new window.Image();
     img.decoding = 'async';
     img.src = src;
@@ -437,109 +540,16 @@ export function SubjectFillPng({
         return;
       }
 
-      const scanCanvas = document.createElement('canvas');
-      scanCanvas.width = w;
-      scanCanvas.height = h;
-      const scanCtx = scanCanvas.getContext('2d', { willReadFrequently: true });
-      if (!scanCtx) {
+      const out = processListingImageOnload(img, autoTransparentBg, cropToSubject);
+      if (!out) {
         setRenderSrc(src);
         setRenderSize({ w, h });
         setReady(true);
         return;
       }
-      scanCtx.drawImage(img, 0, 0, w, h);
-      if (autoTransparentBg) {
-        const rgba = scanCtx.getImageData(0, 0, w, h);
-        const data = rgba.data;
-        const sample = [];
-        const stepX = Math.max(1, Math.floor(w / 64));
-        const stepY = Math.max(1, Math.floor(h / 64));
-        for (let x = 0; x < w; x += stepX) {
-          sample.push((0 * w + x) * 4, ((h - 1) * w + x) * 4);
-        }
-        for (let y = 0; y < h; y += stepY) {
-          sample.push((y * w + 0) * 4, (y * w + (w - 1)) * 4);
-        }
-        let r = 0;
-        let g = 0;
-        let b = 0;
-        let n = 0;
-        for (const i of sample) {
-          if (data[i + 3] < 6) continue;
-          r += data[i];
-          g += data[i + 1];
-          b += data[i + 2];
-          n += 1;
-        }
-        if (n > 0) {
-          const br = r / n;
-          const bg = g / n;
-          const bb = b / n;
-          for (let i = 0; i < data.length; i += 4) {
-            const dr = data[i] - br;
-            const dg = data[i + 1] - bg;
-            const db = data[i + 2] - bb;
-            const dist = Math.sqrt(dr * dr + dg * dg + db * db);
-            if (dist < 26) data[i + 3] = 0;
-            else if (dist < 60) data[i + 3] = Math.min(data[i + 3], Math.round(((dist - 26) / 34) * 255));
-          }
-          scanCtx.putImageData(rgba, 0, 0);
-        }
-      }
-      const data = scanCtx.getImageData(0, 0, w, h).data;
-
-      let minX = w;
-      let minY = h;
-      let maxX = -1;
-      let maxY = -1;
-      for (let y = 0; y < h; y += 1) {
-        for (let x = 0; x < w; x += 1) {
-          const alpha = data[(y * w + x) * 4 + 3];
-          if (alpha > 8) {
-            if (x < minX) minX = x;
-            if (y < minY) minY = y;
-            if (x > maxX) maxX = x;
-            if (y > maxY) maxY = y;
-          }
-        }
-      }
-
-      if (!cropToSubject) {
-        const dataUrl = scanCanvas.toDataURL('image/png');
-        setRenderSrc(dataUrl);
-        setRenderSize({ w, h });
-        cacheRef.current.set(src, { src: dataUrl, w, h });
-        setReady(true);
-        return;
-      }
-
-      if (maxX < minX || maxY < minY) {
-        const dataUrl = scanCanvas.toDataURL('image/png');
-        setRenderSrc(dataUrl);
-        setRenderSize({ w, h });
-        cacheRef.current.set(src, { src: dataUrl, w, h });
-        setReady(true);
-        return;
-      }
-
-      const cropW = maxX - minX + 1;
-      const cropH = maxY - minY + 1;
-      const cropCanvas = document.createElement('canvas');
-      cropCanvas.width = cropW;
-      cropCanvas.height = cropH;
-      const cropCtx = cropCanvas.getContext('2d');
-      if (!cropCtx) {
-        setRenderSrc(src);
-        setRenderSize({ w, h });
-        setReady(true);
-        return;
-      }
-      cropCtx.drawImage(scanCanvas, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
-      const dataUrl = cropCanvas.toDataURL('image/png');
-      if (cancelled) return;
-      setRenderSize({ w: cropW, h: cropH });
-      setRenderSrc(dataUrl);
-      cacheRef.current.set(src, { src: dataUrl, w: cropW, h: cropH });
+      cacheRef.current.set(src, out);
+      setRenderSize({ w: out.w, h: out.h });
+      setRenderSrc(out.src);
       setReady(true);
     };
 
@@ -554,20 +564,34 @@ export function SubjectFillPng({
     return () => {
       cancelled = true;
     };
-  }, [src, autoTransparentBg, cropToSubject, shouldProcess, disablePostProcess]);
+  }, [src, autoTransparentBg, cropToSubject, shouldProcess, disablePostProcess, hideUntilProcessed]);
 
   const fitClass = fit === 'cover' ? 'object-cover' : 'object-contain';
+  const displaySrc = disablePostProcess ? src : hideUntilProcessed ? renderSrc : (renderSrc ?? src);
+
   return (
     <div ref={hostRef} className="h-full w-full">
-      <Image
-        src={renderSrc ?? src}
-        alt={alt}
-        unoptimized
-        loading="eager"
-        width={renderSize.w}
-        height={renderSize.h}
-        className={`${fitClass} ${className ?? ''} ${ready ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`.trim()}
-      />
+      {disablePostProcess ? (
+        <Image
+          src={src}
+          alt={alt}
+          unoptimized
+          loading="eager"
+          width={renderSize.w}
+          height={renderSize.h}
+          className={`${fitClass} ${className ?? ''}`.trim()}
+        />
+      ) : displaySrc ? (
+        <Image
+          src={displaySrc}
+          alt={alt}
+          unoptimized
+          loading="eager"
+          width={renderSize.w}
+          height={renderSize.h}
+          className={`${fitClass} ${className ?? ''} ${ready ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`.trim()}
+        />
+      ) : null}
     </div>
   );
 }

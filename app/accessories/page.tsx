@@ -4,9 +4,9 @@ import { AccessoriesCategoryCards } from './AccessoriesCategoryCards';
 
 const CATEGORY_ORDER = ['end_effectors', 'vision', 'controllers'] as const;
 const CATEGORY_IMAGES = {
-  end_effectors: '/images/robots/r-core-cobot-fr5-std.png',
-  vision: '/images/robots/r-lite-cobot-fr3-std.png',
-  controllers: '/images/robots/r-max-cobot-fr16-std.png',
+  end_effectors: '/images/robots/r-core-cobot-fr5-std.webp',
+  vision: '/images/robots/r-lite-cobot-fr3-std.webp',
+  controllers: '/images/robots/r-max-cobot-fr16-std.webp',
 } as const;
 const CATEGORY_ALT_KEY = {
   end_effectors: 'acc_end_effectors',

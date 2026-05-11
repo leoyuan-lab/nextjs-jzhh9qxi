@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-从法奥 / FAIRINO 产品手册 PDF 提取嵌入图，按 mapping 处理为透明底 PNG，
-输出到 public/images/robots/{rfamily}-cobot-{variant_id}.png，
-与 data/products.ts 中 `robotVariantPngFilename()` 一致（例：r-core-cobot-fr5-std.png）。
+从法奥 / FAIRINO 产品手册 PDF 提取嵌入图，按 mapping 处理为透明底 WebP，
+输出到 public/images/robots/{rfamily}-cobot-{variant_id}.webp，
+与 data/products.ts 中 `robotVariantWebpFilename()` 一致（例：r-core-cobot-fr5-std.webp）。
 
 依赖: pip install pymupdf pillow numpy
 
@@ -23,15 +23,9 @@
 from __future__ import annotations
 
 import argparse
-import base64
 import json
 import sys
 from pathlib import Path
-
-# 1×1 透明 PNG（无 Pillow 也可写占位）
-_PLACEHOLDER_PNG = base64.b64decode(
-    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
-)
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = ROOT / "public" / "images" / "robots"
@@ -52,8 +46,8 @@ VARIANT_IDS = [
 ]
 
 
-def variant_public_png_name(variant_id: str) -> str:
-    """与 TS `robotVariantPngFilename()` 对齐：{r-family}-cobot-{variant_id}.png"""
+def variant_public_webp_name(variant_id: str) -> str:
+    """与 TS `robotVariantWebpFilename()` 对齐：{r-family}-cobot-{variant_id}.webp"""
     if variant_id.startswith("fr3-"):
         fam = "r-lite"
     elif variant_id.startswith("fr5-"):
@@ -66,7 +60,7 @@ def variant_public_png_name(variant_id: str) -> str:
         fam = "r-max"
     else:
         raise ValueError(f"未知 variant id: {variant_id}")
-    return f"{fam}-cobot-{variant_id}.png"
+    return f"{fam}-cobot-{variant_id}.webp"
 
 
 def ensure_deps() -> None:
@@ -188,7 +182,13 @@ def process_one(src: Path, dst: Path, upscale: int) -> None:
     arr = np.array(im)
     out = orange_to_gray_transparent(arr, upscale=upscale)
     dst.parent.mkdir(parents=True, exist_ok=True)
-    Image.fromarray(out, "RGBA").save(dst, "PNG", optimize=True)
+    Image.fromarray(out, "RGBA").save(
+        dst,
+        "WEBP",
+        quality=92,
+        method=6,
+        lossless=False,
+    )
     print(f"OK {dst.relative_to(ROOT)}")
 
 
@@ -198,7 +198,7 @@ def process_mapping(mapping_path: Path, upscale: int) -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for vid, rel in mapping.items():
         src = resolve_source(rel)
-        process_one(src, OUT_DIR / variant_public_png_name(vid), upscale)
+        process_one(src, OUT_DIR / variant_public_webp_name(vid), upscale)
 
 
 def run(pdf: Path, mapping_path: Path, upscale: int) -> None:
@@ -207,18 +207,21 @@ def run(pdf: Path, mapping_path: Path, upscale: int) -> None:
     process_mapping(mapping_path, upscale)
 
 
-def write_placeholder_pngs() -> None:
+def write_placeholder_webps() -> None:
+    from PIL import Image
+
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    tiny = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
     for vid in VARIANT_IDS:
-        p = OUT_DIR / variant_public_png_name(vid)
+        p = OUT_DIR / variant_public_webp_name(vid)
         if p.is_file() and p.stat().st_size > 800:
             continue
-        p.write_bytes(_PLACEHOLDER_PNG)
-    print(f"占位 PNG: {OUT_DIR}（已存在且 >800B 的文件不会覆盖）")
+        tiny.save(p, "WEBP", quality=80, method=6)
+    print(f"占位 WebP: {OUT_DIR}（已存在且 >800B 的文件不会覆盖）")
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="法奥手册 → public/images/robots/{family}-cobot-{id}.png")
+    ap = argparse.ArgumentParser(description="法奥手册 → public/images/robots/{family}-cobot-{id}.webp")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p1 = sub.add_parser("extract", help="从 PDF 导出嵌入图到 _raw/")
@@ -233,7 +236,7 @@ def main() -> None:
     p3.add_argument("--mapping", type=Path, required=True)
     p3.add_argument("--upscale", type=int, default=2)
 
-    sub.add_parser("placeholders", help="写入 11 个透明占位 PNG")
+    sub.add_parser("placeholders", help="写入 11 个透明占位 WebP")
 
     args = ap.parse_args()
     if args.cmd == "extract":
@@ -244,7 +247,7 @@ def main() -> None:
     elif args.cmd == "run":
         run(args.pdf, args.mapping, args.upscale)
     elif args.cmd == "placeholders":
-        write_placeholder_pngs()
+        write_placeholder_webps()
 
 
 if __name__ == "__main__":

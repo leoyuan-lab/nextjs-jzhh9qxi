@@ -225,6 +225,7 @@ function SelectorHero2ModelCompare({
                           fit="contain"
                           autoTransparentBg
                           cropToSubject={false}
+                          hideUntilProcessed
                           className="h-[96%] w-[96%]"
                         />
                       </div>

@@ -462,7 +462,7 @@ body {
   height: 25px;
   /* 0% 略留边；100% 时中心对齐轨道右端 */
   left: clamp(12.5px, calc(var(--loading-p, 0) * 1%), 100%);
-  background: url('/images/brand/roooll-loading-logo.png') center / contain no-repeat;
+  background: url('/images/brand/roooll-loading-logo.webp') center / contain no-repeat;
   background-color: transparent;
   border-radius: 0;
   box-shadow: none;

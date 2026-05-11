@@ -12,8 +12,8 @@ function familyTitle(familyId: string) {
 
 /** 屏3 详情卡背景（旧 `/images/detail1.jpg`、`detail2.jpg` 已移除；与 `public/images/robots` 资产一致） */
 const HOME_DETAIL_CARD_IMAGES = {
-  preciseTouch: '/images/robots/r-core-cobot-fr5-std.png',
-  smartCore: '/images/robots/r-max-cobot-fr20-std.png',
+  preciseTouch: '/images/robots/r-core-cobot-fr5-std.webp',
+  smartCore: '/images/robots/r-max-cobot-fr20-std.webp',
 } as const;
 
 export default function HomePage() {

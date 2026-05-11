@@ -662,10 +662,10 @@ export function robotFamilyForVariant(variantId: string): RobotFamily {
   return fam;
 }
 
-/** 公台文件名：`{displayName 小写}-cobot-{variantId}.png`，如 `r-core-cobot-fr5-std.png` */
-export function robotVariantPngFilename(variantId: string): string {
+/** 公台文件名：`{displayName 小写}-cobot-{variantId}.webp`，如 `r-core-cobot-fr5-std.webp` */
+export function robotVariantWebpFilename(variantId: string): string {
   const fam = robotFamilyForVariant(variantId);
-  return `${fam.displayName.toLowerCase()}-cobot-${variantId}.png`;
+  return `${fam.displayName.toLowerCase()}-cobot-${variantId}.webp`;
 }
 
 /** 图纸 SVG 文件名：`{displayName 小写}-cobot-{variantId}.svg` */
@@ -836,11 +836,11 @@ export function robotVariantImageAlt(variantId: string, lang: 'zh' | 'en'): stri
   return `${fam.displayName} (${code}) Collaborative Robot Arm for ${purpose}`;
 }
 
-/** 与 `robotVariantById` 的 id 一一对应；PNG 由 `scripts/robot_pdf_pipeline.py` 从样册生成 */
+/** 与 `robotVariantById` 的 id 一一对应；WebP 由 `scripts/robot_pdf_pipeline.py` 从样册生成 */
 export const robotVariantImageUrl: Record<string, string> = Object.fromEntries(
   Object.keys(robotVariantById).map((id) => [
     id,
-    `${ROBOT_IMG_BASE}/${robotVariantPngFilename(id)}`,
+    `${ROBOT_IMG_BASE}/${robotVariantWebpFilename(id)}`,
   ]),
 ) as Record<string, string>;
 
