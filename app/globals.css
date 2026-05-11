@@ -296,19 +296,21 @@ body {
   padding: clamp(16px, 4vh, 40px) clamp(20px, 5vw, 48px);
   box-sizing: border-box;
   overflow: visible;
-  transition:
-    opacity 1.2s cubic-bezier(0.645, 0.045, 0.355, 1),
-    transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  /* 首屏不要对 transform 做过渡声明，减少 Chrome 刷新时与内部位图合成的一帧抖动 */
+  transition: opacity 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 .roooll-home-wrapper .loading-screen.exit {
   opacity: 0;
   pointer-events: none;
   transform: scale(1.04);
+  transition:
+    opacity 1.2s cubic-bezier(0.645, 0.045, 0.355, 1),
+    transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 .roooll-home-wrapper .loading-scale-shell {
-  /* 仅 scale，避免 will-change / translateZ / backface 在「刷新且资源已缓存」时触发 Chrome 每帧重复提升层 → 闪一下 */
+  /* 仅用 transform:scale（不用 zoom）：Safari 对 zoom 的布局/度量与 Chrome 不一致，会改 slogan 与 logo 的相对尺寸与位置 */
   transform: scale(1.5);
   transform-origin: center center;
 }

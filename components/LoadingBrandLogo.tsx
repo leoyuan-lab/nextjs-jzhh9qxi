@@ -1,7 +1,5 @@
 'use client';
 
-import Image from 'next/image';
-
 const LOADING_LOGO_SRC = '/images/brand/roooll-loading-logo.png';
 
 type Props = {
@@ -14,22 +12,20 @@ type Props = {
   frameClassName?: string;
 };
 
-/** Static raster logo — hero column or small mark above slogan letter (mobile). */
+/** Static raster logo — 原生 img 避免 Next/Image 包装层在父级 zoom/scale 下刷新时多一帧合成。 */
 export function LoadingBrandLogo({ logoAlt, decorative, className, frameClassName }: Props) {
-  const alt = decorative ? '' : (logoAlt ?? '');
+  const a11yAlt = decorative ? '' : (logoAlt ?? '');
   return (
     <div className={`loading-brand-plain-root ${className ?? ''}`.trim()}>
       <div className={`loading-brand-plain-frame ${frameClassName ?? ''}`.trim()}>
-        <Image
+        <img
           src={LOADING_LOGO_SRC}
-          alt={alt}
+          alt={a11yAlt}
           width={1024}
           height={745}
-          sizes={decorative ? '112px' : '(max-width: 767px) 30vw, 20vw'}
           className="loading-brand-plain-img"
-          priority={!decorative}
-          /* 直连静态 PNG，避免刷新时 _next/image 缓存命中与父级 scale 叠在一帧里栅格化闪一下 */
-          unoptimized
+          decoding="async"
+          fetchPriority={decorative ? 'auto' : 'high'}
         />
       </div>
     </div>

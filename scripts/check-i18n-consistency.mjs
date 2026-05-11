@@ -35,10 +35,19 @@ function collectAddedLines(diffText) {
 
 function hasHardcodedAltOnImage(line) {
   if (!/(<Image\b|<img\b)/.test(line) || !/\balt=/.test(line)) return false;
-  return !/alt=\{[^}]*\bt\(/.test(line);
+  if (/alt=\{[^}]*\bt\(/.test(line)) return false;
+  const braced = line.match(/alt=\{\s*([^}]+?)\s*\}/);
+  if (braced) {
+    const inner = braced[1].trim();
+    // Prop / message object access only (no string literals in JSX alt)
+    if (/^[A-Za-z_$][\w$.]*$/.test(inner)) return false;
+  }
+  return true;
 }
 
 function hasBareLocalizedLink(line) {
+  // `<link rel="preload" href="/…">` is not user-facing navigation; same-origin asset paths stay unprefixed.
+  if (/\brel=["']preload["']/.test(line)) return false;
   return (
     /\bhref=["']\/(?!zh(?:\/|$)|en(?:\/|$)|["'])/.test(line) ||
     /window\.location\.(?:assign|href)\(\s*["']\/(?!zh(?:\/|$)|en(?:\/|$))/.test(line) ||
