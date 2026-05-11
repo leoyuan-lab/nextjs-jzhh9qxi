@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      // Browsers request `/favicon.ico` by default; `app/icon.png` is served at `/icon.png` only.
+      { source: '/favicon.ico', destination: '/icon.png' },
+    ];
+  },
   async redirects() {
     return [
       {
