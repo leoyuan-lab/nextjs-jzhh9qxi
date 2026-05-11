@@ -44,11 +44,22 @@ const applyPerfectMaterial = (model: { materials: unknown[] }) => {
   });
 };
 
+type WobbleParams = {
+  baseAz: number;
+  polar: string;
+  orbitDist: string;
+  amplitude: number;
+  speed: number;
+};
+
 type Props = { lang: Lang };
 
 export function AdvisorHeroGlb({ lang }: Props) {
   const ref = useRef<any>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const rafRef = useRef<number | null>(null);
+  const heroInViewRef = useRef(true);
+  const wobbleParamsRef = useRef<WobbleParams | null>(null);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [modelReady, setModelReady] = useState(false);
 
@@ -61,57 +72,101 @@ export function AdvisorHeroGlb({ lang }: Props) {
 
   useEffect(() => {
     setModelReady(false);
-    const el = ref.current;
-    if (!el) return;
+    wobbleParamsRef.current = null;
+    const modelEl = ref.current;
+    const sectionEl = sectionRef.current;
+    if (!modelEl) return;
+
+    const stopWobble = () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
+
+    const startWobble = () => {
+      const params = wobbleParamsRef.current;
+      if (!params) return;
+      if (!heroInViewRef.current) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      stopWobble();
+      const { baseAz, polar, orbitDist, amplitude, speed } = params;
+      const t0 = performance.now();
+      const tick = (now: number) => {
+        if (!heroInViewRef.current) {
+          stopWobble();
+          return;
+        }
+        const t = (now - t0) / 1000;
+        const wobble = Math.sin(t * speed) * amplitude;
+        modelEl.setAttribute('camera-orbit', `${baseAz + wobble}deg ${polar} ${orbitDist}`);
+        rafRef.current = requestAnimationFrame(tick);
+      };
+      rafRef.current = requestAnimationFrame(tick);
+    };
 
     const onLoad = () => {
       try {
-        applyPerfectMaterial(el.model);
+        applyPerfectMaterial(modelEl.model);
       } catch {
         /* ignore */
       }
 
       const isMobile = detectMobileViewport();
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      /* 配合缩小+回收位移：轻微回调 target，减少顶部留白感 */
       const target = isMobile ? 'auto 118% auto' : '46% 158% auto';
       const orbitDist = isMobile ? '320m' : '360m';
       const polar = isMobile ? '80deg' : '78deg';
       const az = isMobile ? '29deg' : '33deg';
-      el.setAttribute('camera-target', target);
-      el.setAttribute('camera-orbit', `${az} ${polar} ${orbitDist}`);
-      el.setAttribute('field-of-view', isMobile ? '24deg' : '10.5deg');
-      el.removeAttribute('auto-rotate');
-      el.removeAttribute('camera-controls');
+      modelEl.setAttribute('camera-target', target);
+      modelEl.setAttribute('camera-orbit', `${az} ${polar} ${orbitDist}`);
+      modelEl.setAttribute('field-of-view', isMobile ? '24deg' : '10.5deg');
+      modelEl.removeAttribute('auto-rotate');
+      modelEl.removeAttribute('camera-controls');
 
       if (!reduced) {
         const baseAz = isMobile ? 29 : 33;
-        const amplitude = isMobile ? 1.0 : 1.4;
-        const speed = 0.55;
-        const t0 = performance.now();
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        const tick = (now: number) => {
-          const t = (now - t0) / 1000;
-          const wobble = Math.sin(t * speed) * amplitude;
-          el.setAttribute('camera-orbit', `${baseAz + wobble}deg ${polar} ${orbitDist}`);
-          rafRef.current = requestAnimationFrame(tick);
+        wobbleParamsRef.current = {
+          baseAz,
+          polar,
+          orbitDist,
+          amplitude: isMobile ? 1.0 : 1.4,
+          speed: 0.55,
         };
-        rafRef.current = requestAnimationFrame(tick);
+        if (heroInViewRef.current) startWobble();
+      } else {
+        wobbleParamsRef.current = null;
       }
 
       requestAnimationFrame(() => setModelReady(true));
     };
 
-    el.addEventListener('load', onLoad);
+    modelEl.addEventListener('load', onLoad);
     try {
-      if ((el as { loaded?: boolean }).loaded) onLoad();
+      if ((modelEl as { loaded?: boolean }).loaded) onLoad();
     } catch {
       /* ignore */
     }
 
+    let io: IntersectionObserver | null = null;
+    if (sectionEl && typeof IntersectionObserver !== 'undefined') {
+      io = new IntersectionObserver(
+        (entries) => {
+          const vis = Boolean(entries[0]?.isIntersecting);
+          heroInViewRef.current = vis;
+          if (vis) startWobble();
+          else stopWobble();
+        },
+        { root: null, threshold: 0, rootMargin: '0px' },
+      );
+      io.observe(sectionEl);
+    }
+
     return () => {
-      el.removeEventListener('load', onLoad);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      modelEl.removeEventListener('load', onLoad);
+      stopWobble();
+      wobbleParamsRef.current = null;
+      io?.disconnect();
     };
   }, [isMobileViewport]);
 
@@ -134,7 +189,12 @@ export function AdvisorHeroGlb({ lang }: Props) {
     : { width: '240vw', left: '-70vw', right: 'auto', overflow: 'visible' as const };
 
   return (
-    <section className="advisor-hero-glb" aria-label={alt} style={{ width: '100vw', overflow: 'hidden' }}>
+    <section
+      ref={sectionRef}
+      className="advisor-hero-glb"
+      aria-label={alt}
+      style={{ width: '100vw', overflow: 'hidden' }}
+    >
       <div className="advisor-hero-model-layer" style={modelLayerStyle}>
         <div className="advisor-hero-model-shift" style={{ transform: modelShiftTransform }}>
           <model-viewer

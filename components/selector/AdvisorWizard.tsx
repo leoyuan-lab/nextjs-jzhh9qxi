@@ -1,17 +1,10 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { AdvisorHeroGlb } from '@/components/selector/AdvisorHeroGlb';
-import {
-  buildLineup,
-  lineItemForAdvisorFamily,
-  lineupCardVariantShortName,
-  SelectorLineupCard,
-  SELECTOR_LINEUP_I18N,
-  VariantDetailPortal,
-} from '@/components/selector/SelectorLineupUi';
 import {
   type AdvisorAnswers,
   type AdvisorLetter,
@@ -22,6 +15,15 @@ import {
   writeAdvisorPersisted,
 } from '@/lib/advisor-engine';
 import { useSiteLang } from '@/lib/site-lang-context';
+
+const AdvisorResultPanel = dynamic(() => import('@/components/selector/AdvisorResultPanel'), {
+  loading: () => (
+    <div
+      className="min-h-[240px] rounded-[1.25rem] border border-[#e8e8ed] bg-[#fbfbfd]"
+      aria-busy="true"
+    />
+  ),
+});
 
 function normalizeStep(raw: string | null): string {
   if (!raw) return '1';
@@ -186,10 +188,6 @@ const COPY = {
   },
 } as const;
 
-function openInquiryWithBody(body: string) {
-  window.dispatchEvent(new CustomEvent('roooll-inquiry-open', { detail: { body } }));
-}
-
 export function AdvisorWizard() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -202,7 +200,6 @@ export function AdvisorWizard() {
     [searchParams],
   );
   const [answers, setAnswers] = useState<AdvisorAnswers>({});
-  const [advisorDetailId, setAdvisorDetailId] = useState<string | null>(null);
   const [pendingChoice, setPendingChoice] = useState<AdvisorLetter | null>(null);
   const [stepAnim, setStepAnim] = useState<StepAnim>('idle');
   const [isAdvancing, setIsAdvancing] = useState(false);
@@ -235,10 +232,6 @@ export function AdvisorWizard() {
 
   useEffect(() => {
     touchAdvisorStep(urlStep);
-  }, [urlStep]);
-
-  useEffect(() => {
-    if (urlStep !== 'result') setAdvisorDetailId(null);
   }, [urlStep]);
 
   useEffect(() => {
@@ -328,7 +321,6 @@ export function AdvisorWizard() {
   const goBack = () => {
     if (isAdvancing) return;
     if (urlStep === 'result') {
-      setAdvisorDetailId(null);
       setUrlStep('5');
       return;
     }
@@ -349,7 +341,6 @@ export function AdvisorWizard() {
   };
 
   const resetFlow = () => {
-    setAdvisorDetailId(null);
     const blank: AdvisorAnswers = {};
     setAnswers(blank);
     persist(blank);
@@ -387,20 +378,6 @@ export function AdvisorWizard() {
     if (!result) return '';
     return (safeLang === 'zh' ? result.detailZh : result.detailEn).trim();
   }, [result, safeLang]);
-
-  const lineup = useMemo(() => buildLineup(), []);
-
-  const lineupCardT = SELECTOR_LINEUP_I18N[safeLang];
-
-  const primaryItem = useMemo(
-    () => (result ? lineItemForAdvisorFamily(result.familyId) : undefined),
-    [result],
-  );
-
-  const upgradeItem = useMemo(
-    () => (result ? lineItemForAdvisorFamily(result.upgradeFamilyId) : undefined),
-    [result],
-  );
 
   const answeredCount = Q_KEYS.reduce((n, k) => (answers[k] ? n + 1 : n), 0);
   const progressFilled = Math.min(5, answeredCount);
@@ -525,67 +502,16 @@ export function AdvisorWizard() {
                 </div>
               </>
             ) : result && picks.length >= 5 ? (
-              <div className="space-y-10">
-                <p className="max-w-[46rem] text-[1.0625rem] leading-relaxed text-[#6e6e73] md:text-[1.1875rem]">{resultIntro}</p>
-
-                <div className="grid gap-8 md:grid-cols-2 md:gap-10">
-                  {[primaryItem, upgradeItem].map((item, idx) => {
-                    if (!item) return null;
-                    return (
-                      <div key={`${item.id}-${idx}`} className="flex min-w-0">
-                        <SelectorLineupCard
-                          item={item}
-                          lang={safeLang}
-                          t={lineupCardT}
-                          index={idx}
-                          embedded
-                          disableImagePostProcess
-                          onOpenDetail={() => setAdvisorDetailId(item.id)}
-                          onOpenInquiry={() => {
-                            const short = lineupCardVariantShortName(item.name);
-                            const modelLabel = `${item.family.displayName}${short ? ` · ${short}` : ''}`;
-                            const body =
-                              safeLang === 'zh'
-                                ? `我想咨询以下机型：\n- ${modelLabel}\n\n请联系我并提供方案与报价。`
-                                : `I'm interested in this model:\n- ${modelLabel}\n\nPlease contact me with recommendation and quotation.`;
-                            openInquiryWithBody(body);
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <VariantDetailPortal
-                  lineup={lineup}
-                  detailId={advisorDetailId}
-                  onClose={() => setAdvisorDetailId(null)}
-                  lang={safeLang}
-                />
-
-                <div className="rounded-[1.25rem] border border-[#e8e8ed] bg-[#fbfbfd] p-6 shadow-inner md:p-8">
-                  <p className="whitespace-pre-wrap text-[1.05rem] leading-relaxed text-[#1d1d1f] md:text-[1.125rem]">
-                    {safeLang === 'zh' ? result.geoNarrativeZh : result.geoNarrativeEn}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-3 pt-2">
-                  <button
-                    type="button"
-                    className="inline-flex items-center justify-center rounded-full bg-[#0071e3] px-6 py-3 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,113,227,0.35)] transition hover:bg-[#0077ed]"
-                    onClick={() => openInquiryWithBody(inquiryDraft)}
-                  >
-                    {t.openDrawer}
-                  </button>
-                  <button
-                    type="button"
-                    className="inline-flex items-center justify-center rounded-full px-4 py-3 text-sm font-semibold text-[#0071e3] hover:underline"
-                    onClick={resetFlow}
-                  >
-                    {t.reset}
-                  </button>
-                </div>
-              </div>
+              <AdvisorResultPanel
+                safeLang={safeLang}
+                result={result}
+                picks={picks}
+                resultIntro={resultIntro}
+                inquiryDraft={inquiryDraft}
+                openDrawerLabel={t.openDrawer}
+                resetLabel={t.reset}
+                onReset={resetFlow}
+              />
             ) : urlStep === 'result' ? (
               <p className="text-[#6e6e73]">
                 {safeLang === 'zh' ? '选项不完整，请从第 1 步重新选择。' : 'Answers incomplete—please restart from step 1.'}
