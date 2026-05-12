@@ -27,7 +27,6 @@ export default function AllCobotsSpecsClient() {
   const activeIdRef = useRef<string | null>(null);
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
   const magnetScrollRafRef = useRef<number | null>(null);
-  const desktopHoverRafRef = useRef<number | null>(null);
 
   const safeLang: 'zh' | 'en' = lang === 'en' ? 'en' : 'zh';
   const t = SELECTOR_I18N[safeLang];
@@ -103,11 +102,15 @@ export default function AllCobotsSpecsClient() {
     }
   }, [enableMagnetActive, lineup]);
 
+  /** Desktop: which card (if any) contains the last known pointer — scroll-safe, no CSS :hover. */
   const updateDesktopHoverFromPointer = useCallback(() => {
     if (enableMagnetActive) return;
     const scroller = scrollerRef.current;
     const pos = lastPointerRef.current;
-    if (!scroller || !pos) return;
+    if (!scroller || !pos) {
+      setDesktopHoverId((prev) => (prev !== null ? null : prev));
+      return;
+    }
     const scrollerRect = scroller.getBoundingClientRect();
     const inside =
       pos.x >= scrollerRect.left &&
@@ -115,17 +118,20 @@ export default function AllCobotsSpecsClient() {
       pos.y >= scrollerRect.top &&
       pos.y <= scrollerRect.bottom;
     if (!inside) {
-      setDesktopHoverId(null);
+      setDesktopHoverId((prev) => (prev !== null ? null : prev));
       return;
     }
-    const hit = document.elementFromPoint(pos.x, pos.y);
-    const shell = hit instanceof Element ? hit.closest('.selector-card-shell') : null;
-    if (!(shell instanceof HTMLDivElement)) {
-      setDesktopHoverId(null);
-      return;
+    let foundId: string | null = null;
+    for (const item of lineup) {
+      const el = cardRefs.current[item.id];
+      if (!el) continue;
+      const r = el.getBoundingClientRect();
+      if (pos.x >= r.left && pos.x <= r.right && pos.y >= r.top && pos.y <= r.bottom) {
+        foundId = item.id;
+        break;
+      }
     }
-    const found = lineup.find((item) => cardRefs.current[item.id] === shell);
-    setDesktopHoverId((prev) => (prev === (found?.id ?? null) ? prev : (found?.id ?? null)));
+    setDesktopHoverId((prev) => (prev === foundId ? prev : foundId));
   }, [enableMagnetActive, lineup]);
 
   const scheduleMagnetScrollUpdate = useCallback(() => {
@@ -135,14 +141,6 @@ export default function AllCobotsSpecsClient() {
       updateActiveFromCenter();
     });
   }, [updateActiveFromCenter]);
-
-  const scheduleDesktopHoverUpdate = useCallback(() => {
-    if (desktopHoverRafRef.current !== null) return;
-    desktopHoverRafRef.current = window.requestAnimationFrame(() => {
-      desktopHoverRafRef.current = null;
-      updateDesktopHoverFromPointer();
-    });
-  }, [updateDesktopHoverFromPointer]);
 
   const markInteracting = () => {
     if (!enableMagnetActive) return;
@@ -155,6 +153,17 @@ export default function AllCobotsSpecsClient() {
     }, 220);
   };
 
+  /** Track pointer anywhere while on this page so drag-scroll / wheel still updates card-under-cursor. */
+  useEffect(() => {
+    if (enableMagnetActive) return undefined;
+    const onMove = (e: PointerEvent) => {
+      lastPointerRef.current = { x: e.clientX, y: e.clientY };
+      updateDesktopHoverFromPointer();
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => window.removeEventListener('pointermove', onMove);
+  }, [enableMagnetActive, updateDesktopHoverFromPointer]);
+
   useEffect(() => {
     updateActiveFromCenter();
     const onResize = () => updateActiveFromCenter();
@@ -165,10 +174,6 @@ export default function AllCobotsSpecsClient() {
       if (magnetScrollRafRef.current !== null) {
         window.cancelAnimationFrame(magnetScrollRafRef.current);
         magnetScrollRafRef.current = null;
-      }
-      if (desktopHoverRafRef.current !== null) {
-        window.cancelAnimationFrame(desktopHoverRafRef.current);
-        desktopHoverRafRef.current = null;
       }
     };
   }, [enableMagnetActive, updateActiveFromCenter]);
@@ -193,28 +198,28 @@ export default function AllCobotsSpecsClient() {
           }`}
           style={{ WebkitOverflowScrolling: 'touch', scrollPaddingLeft: 22, scrollPaddingRight: 22 }}
           aria-label={safeLang === 'zh' ? '机型横向列表' : 'Model lineup'}
+          onPointerEnter={(e) => {
+            if (enableMagnetActive) return;
+            lastPointerRef.current = { x: e.clientX, y: e.clientY };
+            updateDesktopHoverFromPointer();
+          }}
+          onPointerLeave={() => {
+            if (enableMagnetActive) return;
+            lastPointerRef.current = null;
+            setDesktopHoverId(null);
+          }}
           onScroll={() => {
             if (enableMagnetActive) {
               markInteracting();
               scheduleMagnetScrollUpdate();
               return;
             }
-            scheduleDesktopHoverUpdate();
+            updateDesktopHoverFromPointer();
           }}
           onPointerDown={() => {
             if (!enableMagnetActive) return;
             markInteracting();
             updateActiveFromCenter();
-          }}
-          onMouseMove={(e) => {
-            if (enableMagnetActive) return;
-            lastPointerRef.current = { x: e.clientX, y: e.clientY };
-            scheduleDesktopHoverUpdate();
-          }}
-          onMouseLeave={() => {
-            if (enableMagnetActive) return;
-            lastPointerRef.current = null;
-            setDesktopHoverId(null);
           }}
           onPointerUp={markInteracting}
           onPointerCancel={markInteracting}
