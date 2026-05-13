@@ -53,11 +53,14 @@ type WobbleParams = {
 };
 
 type Props = { lang: Lang };
+const INITIAL_WOBBLE_DELAY_MS = 2200;
 
 export function AdvisorHeroGlb({ lang }: Props) {
   const ref = useRef<any>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
   const rafRef = useRef<number | null>(null);
+  const wobbleStartTimerRef = useRef<number | null>(null);
+  const initialWobbleDelayDoneRef = useRef(false);
   const heroInViewRef = useRef(true);
   const wobbleParamsRef = useRef<WobbleParams | null>(null);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
@@ -73,11 +76,20 @@ export function AdvisorHeroGlb({ lang }: Props) {
   useEffect(() => {
     setModelReady(false);
     wobbleParamsRef.current = null;
+    initialWobbleDelayDoneRef.current = false;
     const modelEl = ref.current;
     const sectionEl = sectionRef.current;
     if (!modelEl) return;
 
+    const clearScheduledWobble = () => {
+      if (wobbleStartTimerRef.current !== null) {
+        window.clearTimeout(wobbleStartTimerRef.current);
+        wobbleStartTimerRef.current = null;
+      }
+    };
+
     const stopWobble = () => {
+      clearScheduledWobble();
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
@@ -103,6 +115,26 @@ export function AdvisorHeroGlb({ lang }: Props) {
         rafRef.current = requestAnimationFrame(tick);
       };
       rafRef.current = requestAnimationFrame(tick);
+    };
+
+    const scheduleWobbleStart = (delayMs = 0) => {
+      const params = wobbleParamsRef.current;
+      if (!params) return;
+      if (!heroInViewRef.current) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      // Keep an already-scheduled initial delay. IntersectionObserver can fire after load
+      // and should not collapse the delayed start back to an immediate rAF loop.
+      if (wobbleStartTimerRef.current !== null && delayMs <= 0) return;
+      clearScheduledWobble();
+      if (delayMs <= 0) {
+        startWobble();
+        return;
+      }
+      wobbleStartTimerRef.current = window.setTimeout(() => {
+        wobbleStartTimerRef.current = null;
+        initialWobbleDelayDoneRef.current = true;
+        startWobble();
+      }, delayMs);
     };
 
     const onLoad = () => {
@@ -133,7 +165,9 @@ export function AdvisorHeroGlb({ lang }: Props) {
           amplitude: isMobile ? 1.0 : 1.4,
           speed: 0.55,
         };
-        if (heroInViewRef.current) startWobble();
+        // Keep the hero visually identical at first paint; start the subtle camera wobble
+        // after Lighthouse's early rendering window has settled.
+        scheduleWobbleStart(INITIAL_WOBBLE_DELAY_MS);
       } else {
         wobbleParamsRef.current = null;
       }
@@ -154,7 +188,7 @@ export function AdvisorHeroGlb({ lang }: Props) {
         (entries) => {
           const vis = Boolean(entries[0]?.isIntersecting);
           heroInViewRef.current = vis;
-          if (vis) startWobble();
+          if (vis) scheduleWobbleStart(initialWobbleDelayDoneRef.current ? 0 : INITIAL_WOBBLE_DELAY_MS);
           else stopWobble();
         },
         { root: null, threshold: 0, rootMargin: '0px' },
@@ -174,19 +208,6 @@ export function AdvisorHeroGlb({ lang }: Props) {
   const initialCameraTarget = isMobileViewport ? 'auto 118% auto' : '46% 158% auto';
   const initialCameraOrbit = isMobileViewport ? '29deg 80deg 320m' : '33deg 78deg 360m';
   const initialFov = isMobileViewport ? '24deg' : '10.5deg';
-  const modelShiftTransform = isMobileViewport
-    ? 'translate(12vw, 10vh) scale(1)'
-    : 'translate(calc(2% + 55vw), calc(12% + 42vh)) scale(1)';
-  const modelLayerStyle = isMobileViewport
-    ? {
-        top: '-12vh',
-        right: '-28vw',
-        bottom: '-8vh',
-        left: '-28vw',
-        width: 'auto',
-        overflow: 'visible' as const,
-      }
-    : { width: '240vw', left: '-70vw', right: 'auto', overflow: 'visible' as const };
 
   return (
     <section
@@ -195,8 +216,8 @@ export function AdvisorHeroGlb({ lang }: Props) {
       aria-label={alt}
       style={{ width: '100vw', overflow: 'hidden' }}
     >
-      <div className="advisor-hero-model-layer" style={modelLayerStyle}>
-        <div className="advisor-hero-model-shift" style={{ transform: modelShiftTransform }}>
+      <div className="advisor-hero-model-layer">
+        <div className="advisor-hero-model-shift">
           <model-viewer
             ref={ref}
             src={cobotGlbModels.rCoreFr5C}
