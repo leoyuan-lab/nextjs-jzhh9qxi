@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<!--
+  r-Core FR5-C GLB — 纯黑底预览（录屏）
+
+  效果：巨物剪影（强模糊 + 放大）从画面外「压入」视窗中心，再收束变清晰；
+  机位全程固定为「法兰头 + 少半截上臂」居中（不用相机平移，避免从侧边滑入）。
+
+  http://localhost:3000/tools/rcore-fr5-glb-black-preview.html
+
+  ?glb=/models/xxx.glb
+  ?controls=0       全程不开启拖拽
+  ?fly=0            不要入场动画
+  ?duration=5500    毫秒，默认 4800
+  ?loose=1          落位改为标准 Advisor 法兰机位（略远、全身更多）
+  ?hint=1
+-->
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>FR5-C GLB · black preview</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #000000;
+        overflow: hidden;
+      }
+      #stage {
+        width: 100vw;
+        height: 100vh;
+        background: #000000;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* 整层缩放 + 模糊：像远处巨物逼近画面中心，无左右平移主导 */
+      .fly-shell {
+        --fly-ms: 4800ms;
+        width: 100%;
+        height: 100%;
+        max-width: 100vw;
+        max-height: 100vh;
+        transform-origin: 50% 52%;
+        will-change: auto;
+      }
+
+      .fly-shell--go {
+        will-change: transform, filter, opacity;
+        /* both：开始前即套用 0% 剪影，避免先闪一帧清晰再变形 */
+        animation: giant-silhouette-in var(--fly-ms) cubic-bezier(0.14, 0.9, 0.22, 1) both;
+      }
+
+      @keyframes giant-silhouette-in {
+        0% {
+          transform: scale(5.1) translate3d(0, 0, 0);
+          filter: blur(42px) brightness(0.32) contrast(1.08);
+          opacity: 0.92;
+        }
+        22% {
+          transform: scale(3.35) translate3d(0, 0, 0);
+          filter: blur(28px) brightness(0.48) contrast(1.04);
+          opacity: 0.96;
+        }
+        52% {
+          transform: scale(1.65) translate3d(0, 0, 0);
+          filter: blur(11px) brightness(0.78) contrast(1.02);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1) translate3d(0, 0, 0);
+          filter: blur(0) brightness(1) contrast(1);
+          opacity: 1;
+        }
+      }
+
+      model-viewer {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-color: #000000;
+        --poster-color: #000000;
+      }
+
+      #hint {
+        position: fixed;
+        right: 12px;
+        bottom: 12px;
+        max-width: min(440px, 92vw);
+        padding: 10px 12px;
+        border-radius: 8px;
+        font: 12px/1.45 system-ui, sans-serif;
+        color: rgba(255, 255, 255, 0.72);
+        background: rgba(20, 20, 22, 0.72);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        pointer-events: none;
+        display: none;
+      }
+      #hint[data-on='1'] {
+        display: block;
+      }
+    </style>
+    <script type="module" src="/model-viewer.min.js"></script>
+  </head>
+  <body>
+    <div id="stage">
+      <div id="flyShell" class="fly-shell">
+        <model-viewer
+          id="mv"
+          alt=""
+          shadow-intensity="0.9"
+          shadow-softness="1.15"
+          environment-image="neutral"
+          environment-intensity="0.82"
+          exposure="0.98"
+          interaction-prompt="none"
+          touch-action="none"
+          disable-zoom
+        ></model-viewer>
+      </div>
+    </div>
+    <div id="hint" aria-hidden="true">
+      默认：巨物模糊剪影从中心外「压入」→ 清晰定格在法兰头附近（机位固定）。?loose=1
+      略远；?duration=6000 放慢；?fly=0 跳过。
+    </div>
+
+    <script type="module">
+      await customElements.whenDefined('model-viewer');
+      const mv = document.getElementById('mv');
+      const flyShell = document.getElementById('flyShell');
+      const qs = new URLSearchParams(location.search);
+      const glb = qs.get('glb') || '/models/r-core-cobot-fr5-c.glb';
+      const wantControls = qs.get('controls') !== '0';
+      const wantFly = qs.get('fly') !== '0';
+      const loose = qs.get('loose') === '1';
+      const durationMs = Math.max(1600, Math.min(22000, Number(qs.get('duration')) || 4800));
+      const hint = document.getElementById('hint');
+      if (qs.get('hint') === '1' && hint) hint.dataset.on = '1';
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let flyDone = !wantFly || reducedMotion;
+
+      flyShell.style.setProperty('--fly-ms', `${durationMs}ms`);
+
+      function coarseViewport() {
+        return (
+          window.matchMedia('(max-width: 1024px)').matches ||
+          window.matchMedia('(pointer: coarse)').matches
+        );
+      }
+
+      /** 默认：法兰头 + 少半截上臂大致在画面垂直中心附近 */
+      function flangeCenterTightCam() {
+        const coarse = coarseViewport();
+        if (coarse) {
+          if (loose) {
+            return {
+              orbit: '29deg 80deg 320m',
+              target: 'auto 118% auto',
+              fov: '24deg',
+            };
+          }
+          return {
+            orbit: '29deg 81deg 252m',
+            target: 'auto 102% auto',
+            fov: '21deg',
+          };
+        }
+        if (loose) {
+          return {
+            orbit: '33deg 78deg 360m',
+            target: '46% 158% auto',
+            fov: '10.5deg',
+          };
+        }
+        return {
+          orbit: '33deg 79.5deg 262m',
+          target: '46% 128% auto',
+          fov: '8.4deg',
+        };
+      }
+
+      function applyCam(cam) {
+        mv.setAttribute('camera-orbit', cam.orbit);
+        mv.setAttribute('camera-target', cam.target);
+        mv.setAttribute('field-of-view', cam.fov);
+      }
+
+      function applyAdvisorMaterials() {
+        try {
+          const model = mv.model;
+          if (!model || typeof model !== 'object' || !('materials' in model)) return;
+          const materials = model.materials;
+          if (!Array.isArray(materials)) return;
+          materials.forEach((material) => {
+            const name = material.name ?? '';
+            const lowerName = name.toLowerCase();
+            const isMetalPart =
+              lowerName.includes('metal') ||
+              lowerName.includes('steel') ||
+              lowerName.includes('iron') ||
+              lowerName.includes('joint') ||
+              name === 'Material.001' ||
+              name === 'Material.003';
+            if (isMetalPart) {
+              material.pbrMetallicRoughness.setMetallicFactor(1.0);
+              material.pbrMetallicRoughness.setRoughnessFactor(0.2);
+              material.pbrMetallicRoughness.setBaseColorFactor([0.8, 0.8, 0.8, 1]);
+            } else {
+              material.pbrMetallicRoughness.setMetallicFactor(0.0);
+              material.pbrMetallicRoughness.setRoughnessFactor(0.38);
+              material.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]);
+            }
+          });
+        } catch (_) {}
+      }
+
+      function finishControls() {
+        if (wantControls) mv.setAttribute('camera-controls', '');
+        else mv.removeAttribute('camera-controls');
+      }
+
+      function onFlyEnd() {
+        flyShell.classList.remove('fly-shell--go');
+        flyShell.style.willChange = 'auto';
+        finishControls();
+        flyDone = true;
+      }
+
+      function startFlyMotion() {
+        if (wantControls) mv.removeAttribute('camera-controls');
+
+        if (!wantFly || reducedMotion) {
+          onFlyEnd();
+          return;
+        }
+
+        const onEnd = (e) => {
+          if (e.animationName !== 'giant-silhouette-in') return;
+          flyShell.removeEventListener('animationend', onEnd);
+          onFlyEnd();
+        };
+        flyShell.addEventListener('animationend', onEnd);
+        flyShell.classList.add('fly-shell--go');
+      }
+
+      mv.setAttribute('src', glb);
+
+      mv.addEventListener(
+        'load',
+        () => {
+          applyCam(flangeCenterTightCam());
+          applyAdvisorMaterials();
+          startFlyMotion();
+        },
+        { once: true },
+      );
+
+      applyCam(flangeCenterTightCam());
+
+      window.addEventListener('resize', () => {
+        if (!mv.loaded || !flyDone) return;
+        applyCam(flangeCenterTightCam());
+      });
+    </script>
+  </body>
+</html>

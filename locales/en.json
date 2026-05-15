@@ -136,9 +136,15 @@
   ],
   "pages": {
     "r_core": {
-      "metaTitleFocus": "r-Core FR5-C Integrated Cobot Robotic Arm",
-      "metaDescription": "r-Series r-Core (FR5-C) Cobot platform: 4kg nominal (5kg peak) payload, 922mm reach, ±0.05mm repeatability, and a base-integrated controller for compact production and lab cells.",
+      "metaTitleFocus": "r-Core Integrated Cobot Robotic Arm",
+      "metaDescription": "r-Series r-Core cobot platform: 4kg nominal (5kg peak) payload, 922mm reach, ±0.05mm repeatability, and a base-integrated controller for compact production and lab cells.",
+      "immersive_glb_alt": "Roooll r-Core integrated collaborative robot cobot for immersive product page; 6-axis collaborative robotic arm with integrated control for precision assembly and lab automation.",
       "inquiry": "Inquiry",
+      "scenario_subnav": {
+        "brand_top_aria": "Roooll brand strip on r-Core immersive page",
+        "slogan": "From blueprint to bench — roll into your next cell.",
+        "tagline": "Let's get rolling"
+      },
       "hero": {
         "subtitle": "Light footprint. Integrated deployment."
       },
@@ -177,6 +183,90 @@
       },
       "closer": {
         "title": "Take a closer look."
+      },
+      "scroll_film": {
+        "section_aria": "Immersive r-Core cobot story: advantages, detail views, blueprint, and applications",
+        "advantages": [
+          {
+            "kicker": "Deployment should feel like plugging something in.",
+            "title": "Plug. Teach. Go.",
+            "body": "{{description}}. Keep calibration at the factory; keep your floor simple—power, connect, and start lead-through with the Web App, a 10.1\" pendant, or a mobile terminal. Fewer pages in the binder, more shifts in production.",
+            "badge": "{{reach}} reach · {{voltage}} · {{tcpSpeed}} TCP · {{dof}} axes"
+          },
+          {
+            "kicker": "Built on Faoro-class FR cobot control heritage—precision you can explain in a stand-up.",
+            "title": "Precision you can cite",
+            "body": "Under controlled payload and motion, {{repeatability}} repeatability and {{payload}} nominal payload give inspection and assembly a number to stand on—not a hunch. Cobot traceability starts when the arm can tell the same story shift after shift.",
+            "badge": "Nominal {{payload}} · {{repeatability}} · {{footprint}} base footprint"
+          },
+          {
+            "kicker": "Small cells still deserve dignity.",
+            "title": "Brain in the base",
+            "body": "About {{weight}} total mass and a compact base let this collaborative robotic arm sit closer to people—lines, labs, and mobile medical carts gain a little floor back and a little breathing room for safety.",
+            "badge": "~{{weight}} · {{footprint}} base · {{avgPower}} avg power"
+          }
+        ],
+        "flange": {
+          "title": "Flange: where tooling meets the process",
+          "kicker": "End-of-arm detail",
+          "body": "A precision end flange gives fixtures, quick changers, and process modules a stable handshake—one less re-teach per changeover."
+        },
+        "base": {
+          "title": "Base: low center, integrated \"heart\"",
+          "body": "Controller and structure as one improve damping and rigidity, with fewer cables and cleaner installs—ideal for compact cobot cells and mobile platforms."
+        },
+        "svg_kicker": "Blueprint language, revealed on scroll",
+        "svg_caption": "The official vector technical drawing wipes in as you scroll—envelope, joint relationships, and integration cues for mechanical and controls teams to align fast.",
+        "scenario_caption": "From drawing to duty: r-Core cobot arms in manufacturing, lab automation, and medical-assist workcells.",
+        "scenario_image_alt": "r-Core collaborative robot cobot product scene, showing integrated collaborative robotic arm form factor in a typical deployment.",
+        "flange_strip": [
+          {
+            "title": "Alloy-tough build.",
+            "body": "Die-cast and extruded aluminum alloys—validated across millions of motion cycles—keep links stiff when payloads spike and floor temps swing.",
+            "highlight": "Cycle hard. Stay calibrated."
+          },
+          {
+            "title": "2-year confidence.",
+            "body": "Core drives, gearing, and control electronics are covered where it matters—less downtime drama, more predictable throughput across shifts.",
+            "highlight": "Production-protected."
+          },
+          {
+            "title": "Light on the floor.",
+            "body": "A compact arm and integrated controller footprint frees aisle space, eases redeploys on carts or tight cells, and keeps teach paths short.",
+            "highlight": "Move it. Re-teach it. Ship it."
+          }
+        ],
+        "blueprint_intro_title": "Blueprint-first integration.",
+        "blueprint_intro_body": "Envelope, joint limits, and integration callouts track the product—so mechanical and controls teams align before metal is cut.",
+        "application_kicker": "Application",
+        "application_title": "Built for how you actually deploy.",
+        "application_body": "From bench validation to steady-state production, the same control vocabulary, safety model, and teach flows travel with you—so operators learn once, then scale with confidence.",
+        "application_cards": [
+          {
+            "caption": "r-Lite class entry cell: light reach for bench fixtures, teaching kiosks, and quick proof runs."
+          },
+          {
+            "caption": "r-Core integrated cobot: the balanced default for inspection, assembly, and mixed human–robot lanes."
+          },
+          {
+            "caption": "Mid-payload line: more inertia for dispensing, machine tending, and steadier path under nominal load."
+          },
+          {
+            "caption": "FR16-class reach: wider work envelopes for pallet-adjacent tasks without replatforming your safety story."
+          },
+          {
+            "caption": "FR20-class arm: heavier nominal payload for end-of-line packing, CNC doors, and dense tool changers."
+          }
+        ],
+        "r_family_kicker": "All in r family.",
+        "r_family_title": "Every reach. Every load.",
+        "r_family_body": "r-Lite through r-Max share one safety story, one tooling mindset, and one upgrade path—pick the arm that fits today’s cell, keep your integration tomorrow.",
+        "tail_title": "Bring it to your next line—or your next lab bench.",
+        "links": {
+          "specs": "Full r-Series cobot specs",
+          "advisor": "Find your match",
+          "side_by_side": "Side-by-side comparison"
+        }
       },
       "narrative": {
         "title": "R3 Chip",
@@ -295,7 +385,7 @@
     "ecosystem_os": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability baseline; Collaborative Robot 6-axis arm OS for Industrial Automation motion control and safety flow.",
     "ecosystem_insight": "Roooll R-max (FR20), 20kg payload, ±0.1mm repeatability baseline; Collaborative Robot 6-axis arm cloud for Industrial Automation telemetry, alarms, analytics.",
     "r_core_detail": "Roooll R-core (FR5-C), 4kg payload (peak 5kg), ±0.05mm repeatability, 922mm reach; Collaborative Robot 6-axis arm detail for Industrial Automation joints and flange.",
-    "r_core_detail_flange": "Roooll R-core (FR5-C), 4kg payload (peak 5kg), ±0.05mm repeatability, 922mm reach; Collaborative Robot 6-axis arm flange detail for Industrial Automation mounting and setup.",
+    "r_core_detail_flange": "Roooll R-core (FR5-C), 4kg payload (peak 5kg), ±0.05mm repeatability, 922mm reach; Collaborative Robot 6-axis arm close-up of the white end flange and upper arm on a solid black background for Industrial Automation end-effector mounting and quick change.",
     "r_core_detail_base": "Roooll R-core (FR5-C), 4kg payload (peak 5kg), ±0.05mm repeatability, 922mm reach; Collaborative Robot 6-axis arm base detail for Industrial Automation stability and setup.",
     "r_core_detail_elbow": "Roooll R-core (FR5-C), 4kg payload (peak 5kg), ±0.05mm repeatability, 922mm reach; Collaborative Robot 6-axis arm elbow detail for Industrial Automation control and motion.",
     "r_core_detail_wrist": "Roooll R-core (FR5-C), 4kg payload (peak 5kg), ±0.05mm repeatability, 922mm reach; Collaborative Robot 6-axis arm wrist detail for Industrial Automation orientation, pose.",

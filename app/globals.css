@@ -694,7 +694,7 @@ body {
 }
 
 .roooll-home-wrapper .dark-copy .cta-link {
-  color: #2997ff;
+  color: #f56300;
 }
 
 @media (max-width: 768px) {
@@ -742,7 +742,8 @@ body {
   background: #000;
   color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  overflow-x: hidden;
+  /* 不要用 `overflow-x: hidden`：在 Chromium / WebKit 下会破坏子元素 `position: sticky`，中段 GLB 会整段跟页滚动 */
+  overflow-x: visible;
 }
 
 .arm-page-root .nav-sub {
@@ -764,6 +765,141 @@ body {
   animation: arm-subnav-drop-in 0.34s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.arm-page-root .rcore-app-sticky-subnav {
+  --rcore-app-sticky-logo-cutout: rgba(10, 10, 12, 0.94);
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-app-sticky-subnav .nav-box,
+.arm-page-root .rcore-app-sticky-subnav a,
+.arm-page-root .rcore-app-sticky-subnav button {
+  pointer-events: auto;
+}
+
+.arm-page-root .rcore-app-sticky-subnav__box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(12px, 2vw, 24px);
+  width: 100%;
+}
+
+.arm-page-root .rcore-app-sticky-subnav__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.arm-page-root .rcore-app-sticky-subnav__logo-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #f5f5f7;
+  text-decoration: none;
+  border-radius: 10px;
+  outline-offset: 3px;
+}
+
+.arm-page-root .rcore-app-sticky-subnav__logo-link:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.55);
+}
+
+.arm-page-root .rcore-app-sticky-subnav__logo {
+  display: block;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.45));
+}
+
+.arm-page-root .rcore-app-sticky-subnav__tag {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(245, 245, 247, 0.78);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arm-page-root .rcore-app-sticky-subnav__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.arm-page-root .rcore-app-sticky-subnav__product {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #f5f5f7;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .arm-page-root .rcore-app-sticky-subnav__tag {
+    display: none;
+  }
+
+  .arm-page-root .rcore-app-sticky-subnav__product {
+    font-size: 13px;
+  }
+}
+
+.arm-page-root .nav-sub.rcore-brand-top {
+  height: auto;
+  min-height: 0;
+  padding: 10px 16px 12px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  background: transparent;
+  border-bottom: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  --logo-cutout: rgba(10, 10, 12, 0.94);
+}
+
+.arm-page-root .rcore-brand-top__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.arm-page-root .rcore-brand-top__logo-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f5f5f7;
+  text-decoration: none;
+  border-radius: 10px;
+  outline-offset: 3px;
+  pointer-events: auto;
+}
+
+.arm-page-root .rcore-brand-top__logo-link:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.55);
+}
+
+.arm-page-root .rcore-brand-top__logo {
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.55));
+}
+
+.arm-page-root .rcore-brand-top__tagline {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(245, 245, 247, 0.78);
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.75);
+}
+
 @keyframes arm-subnav-drop-in {
   from {
     opacity: 0;
@@ -783,6 +919,10 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.arm-page-root .nav-box.nav-box--inquiry-only {
+  justify-content: flex-end;
 }
 
 .arm-page-root .p-name {
@@ -811,6 +951,77 @@ body {
   justify-content: center;
   overflow: hidden;
   background: #000;
+}
+
+/* r‑Core 沉浸页：GLB 固定在视口底层；首段 sticky 文案在上，其后 `rcore-ln-root` 长叙事 */
+.arm-page-root .rcore-fixed-model-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 法兰 / 蓝图：必须高于 `.rcore-ln-root`（z-index:4），否则被不透明黑底挡住 */
+.arm-page-root .rcore-fixed-model-stage.rcore-fixed-model-stage--foreground {
+  z-index: 5;
+}
+
+.arm-page-root .rcore-fixed-model-stage.rcore-fixed-model-stage--hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-fixed-model-stage.is-interactive {
+  pointer-events: auto;
+}
+
+.arm-page-root .rcore-fixed-model-inner {
+  position: absolute;
+  inset: 0;
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.arm-page-root .rcore-fixed-model-inner model-viewer {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 法兰三列：与 Advisor 首屏同相机 + model-layer / model-shift 构图（右移 ~60vw） */
+.arm-page-root .rcore-fixed-model-stage--advisor-framing .rcore-fixed-model-inner {
+  position: absolute;
+  top: calc(-64px - 64vh);
+  right: auto;
+  bottom: -28vh;
+  left: -70vw;
+  width: 240vw;
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
+  transform: translate(calc(2% + 60vw), calc(12% + 42vh)) scale(1);
+  transform-origin: 50% 58%;
+  filter: none;
+}
+
+.arm-page-root .rcore-fixed-model-stage--advisor-framing .rcore-fixed-model-inner model-viewer {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@media (max-width: 1024px), (pointer: coarse) {
+  .arm-page-root .rcore-fixed-model-stage--advisor-framing .rcore-fixed-model-inner {
+    top: -12vh;
+    right: -28vw;
+    bottom: -8vh;
+    left: -28vw;
+    width: auto;
+    transform: translate(12vw, 10vh) scale(1);
+  }
 }
 
 .arm-page-root .hero-3d-wrap {
@@ -1046,6 +1257,1095 @@ body {
   position: absolute;
   height: 100%;
   background: #fff;
+}
+
+/* ── r‑Core 叙事卷轴（`RCoreScrollFilm`）：叠在固定 GLB 之上 */
+.arm-page-root .rcore-narrative-root {
+  position: relative;
+  z-index: 4;
+  background: transparent;
+  color: #f5f5f7;
+}
+
+.arm-page-root .rcore-scroll-slab-hero {
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-hero-copy-fixed {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  padding: 0 24px;
+  opacity: 1;
+}
+
+.arm-page-root .rcore-hero-copy-fixed__title {
+  font-size: clamp(58px, 9.5vw, 104px);
+  font-weight: 700;
+  margin: 0;
+  color: #f5f5f7;
+  letter-spacing: -0.02em;
+}
+
+.arm-page-root .rcore-hero-copy-fixed__sub {
+  margin: 14px 0 0;
+  font-size: clamp(20px, 2.6vw, 28px);
+  font-weight: 500;
+  color: #f5f5f7;
+  max-width: 28ch;
+  line-height: 1.35;
+}
+
+.arm-page-root .rcore-film-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: transparent;
+  isolation: isolate;
+  --rfilm-flange-strip: 0;
+  --rfilm-bp-intro: 0;
+  --rfilm-bp-stack: 0;
+  --rfilm-app: 0;
+  --rfilm-family: 0;
+  --rfilm-fan: 0;
+}
+
+.arm-page-root .rcore-film-scenario {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.arm-page-root .rcore-film-scenario__img {
+  object-fit: cover;
+  object-position: 50% 42%;
+}
+
+.arm-page-root .rcore-film-scroll-spacer {
+  width: 100%;
+  pointer-events: none;
+}
+
+/* ── r‑Core 长滚动叙事（法兰 → 蓝图 → Application → r family），`RCoreLongNarrative` */
+.arm-page-root .rcore-ln-root {
+  position: relative;
+  z-index: 4;
+  background: transparent;
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-ln-copy-front {
+  position: relative;
+  z-index: 8;
+  pointer-events: auto;
+}
+
+
+.arm-page-root .rcore-ln-section {
+  position: relative;
+  min-height: 150vh;
+  box-sizing: border-box;
+  padding: clamp(48px, 9vh, 96px) clamp(18px, 4vw, 48px) clamp(72px, 12vh, 120px);
+  display: flex;
+  flex-direction: column;
+}
+
+.arm-page-root .rcore-ln-section--bp {
+  min-height: 170vh;
+  background: transparent;
+}
+
+.arm-page-root .rcore-ln-section--flange {
+  min-height: 128vh;
+  /* 比通用 `rcore-ln-section` 更小的上内边距：与卷轴末帧文案更贴近 */
+  padding: clamp(12px, 2.4vh, 32px) clamp(18px, 4vw, 48px) clamp(48px, 8vh, 96px);
+  background: transparent;
+  color: #f5f5f7;
+  overflow-x: hidden;
+}
+
+.arm-page-root .rcore-ln-section--app,
+.arm-page-root .rcore-ln-section--family {
+  background: #000000;
+  color: #f5f5f7;
+}
+
+.arm-page-root .rcore-ln-sticky-title {
+  position: sticky;
+  top: max(12px, 18vh);
+  z-index: 2;
+  margin: 0 0 clamp(20px, 3vh, 32px);
+  max-width: 18ch;
+  font-size: clamp(30px, 4.8vw, 52px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.arm-page-root .rcore-ln-eyebrow {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.arm-page-root .rcore-ln-eyebrow--blue {
+  color: #2997ff;
+}
+
+.arm-page-root .rcore-ln-lead,
+.arm-page-root .rcore-ln-body {
+  margin: 0;
+  max-width: min(52ch, 94vw);
+  font-size: clamp(16px, 1.65vw, 21px);
+  line-height: 1.55;
+  color: #fff;
+}
+
+.arm-page-root .rcore-ln-sub {
+  margin: 16px 0 0;
+  max-width: min(52ch, 94vw);
+  font-size: 15px;
+  line-height: 1.5;
+  color: #86868b;
+}
+
+/* 法兰段：sticky 章节约束 GLB 与三列同步上移滚出 */
+.arm-page-root .rcore-ln-flange-chapter {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-ln-flange-exit {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 0;
+  height: 100%;
+  will-change: transform;
+}
+
+.arm-page-root .rcore-ln-flange-chapter .rcore-ln-flange-strip {
+  pointer-events: auto;
+}
+
+/* 法兰段：大特写铺满视区（左/下顶满），少停留 */
+.arm-page-root .rcore-ln-flange-hero-visual {
+  flex: 1 1 auto;
+  position: relative;
+  width: 100vw;
+  max-width: none;
+  left: 50%;
+  right: auto;
+  margin-left: -50vw;
+  margin-right: 0;
+  min-height: min(58vh, 640px);
+  overflow: hidden;
+  background: #000;
+}
+
+.arm-page-root .rcore-ln-flange-hero-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: min(58vh, 640px);
+  object-fit: contain;
+  object-position: center 42%;
+  transform: translateY(-5vh) scale(1.1);
+  transform-origin: center 44%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.arm-page-root .rcore-ln-flange-hero-fill {
+  object-fit: contain;
+  object-position: center 42%;
+  transform: translateY(-5vh) scale(1.1);
+  transform-origin: center 44%;
+}
+
+.arm-page-root .rcore-ln-flange-hero-capture {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-ln-flange-hero-capture-layer {
+  position: absolute;
+  top: calc(-64px - 64vh);
+  bottom: -28vh;
+  left: -70vw;
+  width: 240vw;
+  min-height: 100%;
+}
+
+.arm-page-root .rcore-ln-flange-hero-capture-shift {
+  position: absolute;
+  inset: 0;
+  transform: translate(calc(2% + 60vw), calc(12% + 42vh)) scale(1);
+  transform-origin: 50% 58%;
+}
+
+.arm-page-root .rcore-ln-flange-hero-capture model-viewer {
+  display: block;
+  width: 1920px;
+  height: 1200px;
+  max-width: none;
+  background: #000;
+}
+
+.arm-page-root .rcore-ln-flange-strip {
+  position: relative;
+  z-index: 10;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: min(1180px, 94vw);
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: clamp(16px, 3vw, 40px);
+  padding-top: clamp(12px, 2vh, 28px);
+  padding-bottom: clamp(12px, 2vh, 24px);
+  padding-inline: clamp(2px, 0.8vw, 10px);
+  background: #000000;
+}
+
+.arm-page-root .rcore-ln-flange-col__title {
+  margin: 0;
+  font-size: clamp(16px, 1.8vw, 21px);
+  font-weight: 700;
+  color: #fff;
+}
+
+.arm-page-root .rcore-ln-flange-col__rule {
+  border: 0;
+  height: 1px;
+  margin: 12px 0 14px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.arm-page-root .rcore-ln-flange-col__body {
+  margin: 0;
+  font-size: clamp(13px, 1.25vw, 16px);
+  line-height: 1.55;
+  color: rgba(245, 245, 247, 0.62);
+}
+
+.arm-page-root .rcore-ln-flange-col__hi {
+  display: block;
+  margin-top: 10px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* 蓝图长叙事：居中标题 + 左文案 / 右下矢量（无 GLB 中缝） */
+.arm-page-root .rcore-ln-bp-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: clamp(20px, 3.5vh, 44px);
+}
+
+.arm-page-root .rcore-ln-bp-main-title {
+  margin: 0 auto;
+  max-width: 20ch;
+  text-align: center;
+  font-size: clamp(30px, 4.8vw, 52px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-shadow: 0 2px 28px rgba(0, 0, 0, 0.65);
+}
+
+.arm-page-root .rcore-ln-bp-stage {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, min(96vw, 720px));
+  grid-template-rows: auto auto;
+  gap: clamp(10px, 1.6vw, 20px);
+  align-items: start;
+  overflow: visible;
+  min-height: clamp(62vh, 100vh, 130vh);
+}
+
+.arm-page-root .rcore-ln-bp-copy-col {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  padding-top: calc(10vh + clamp(0vh, 2vh, 4vh));
+  max-width: min(42ch, 94vw);
+}
+
+.arm-page-root .rcore-ln-bp-svg-corner {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  justify-self: end;
+  align-self: end;
+  width: min(96vw, 720px);
+  max-width: 100%;
+  margin-right: 0;
+  margin-top: clamp(0px, 1vh, 12px);
+  padding-top: 10px;
+  overflow: visible;
+}
+
+.arm-page-root .rcore-ln-bp-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(100vh, 1100px);
+  border: 0;
+  pointer-events: none;
+  object-fit: contain;
+  object-position: center top;
+  transform: translateY(-20vh) scale(1.2);
+  transform-origin: center top;
+  filter: invert(1) brightness(1.05) contrast(1.05);
+  opacity: 0.92;
+}
+
+.arm-page-root .rcore-ln-app-stack {
+  padding-top: clamp(40px, 12vh, 160px);
+  margin-bottom: clamp(40px, 10vh, 120px);
+  margin-left: auto;
+  margin-right: auto;
+  max-width: min(56ch, 94vw);
+  text-align: center;
+}
+
+.arm-page-root .rcore-ln-app-heading {
+  margin: 10px 0 0;
+  font-size: clamp(28px, 4.2vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.arm-page-root .rcore-ln-app-body {
+  margin: 18px 0 0;
+  color: #f5f5f7;
+}
+
+.arm-page-root .rcore-ln-app-spacer {
+  min-height: clamp(20vh, 28vh, 36vh);
+}
+
+.arm-page-root .rcore-ln-cards {
+  margin-top: -10vh;
+  margin-bottom: clamp(48px, 10vh, 100px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.arm-page-root .rcore-ln-cards__track {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: clamp(22px, 3vw, 36px);
+  padding: 8px clamp(16px, 4vw, 48px) 36px;
+  width: max-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.arm-page-root .rcore-ln-cards__item {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  scroll-snap-align: center;
+  max-width: min(760px, 88vw);
+}
+
+.arm-page-root .rcore-ln-cards__card {
+  width: min(760px, 88vw);
+  border-radius: 22px;
+  overflow: hidden;
+  background: #161617;
+}
+
+.arm-page-root .rcore-ln-cards__caption {
+  margin: 14px 0 0;
+  width: 100%;
+  max-width: min(52ch, 92vw);
+  text-align: left;
+  font-size: clamp(14px, 1.35vw, 17px);
+  line-height: 1.5;
+  color: #86868b;
+}
+
+.arm-page-root .rcore-ln-cards__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.arm-page-root .rcore-ln-family-head {
+  padding-top: clamp(32px, 8vh, 100px);
+  margin-bottom: clamp(24px, 5vh, 48px);
+  text-align: center;
+}
+
+.arm-page-root .rcore-ln-family-title {
+  margin: 0;
+  font-size: clamp(30px, 5vw, 52px);
+  font-weight: 700;
+  line-height: 1.08;
+  color: #fff;
+}
+
+.arm-page-root .rcore-ln-family-spacer {
+  min-height: clamp(16vh, 22vh, 28vh);
+}
+
+.arm-page-root .rcore-ln-fan {
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1040px;
+}
+
+.arm-page-root .rcore-ln-fan--flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+  gap: clamp(0px, 1vw, 12px);
+  height: min(560px, 64vh);
+  padding: 0 clamp(8px, 2vw, 20px);
+}
+
+.arm-page-root .rcore-ln-fan--flex .rcore-ln-fan__card {
+  position: relative;
+  left: auto;
+  bottom: auto;
+  flex: 0 0 auto;
+  width: min(300px, 30vw);
+  transform-origin: 50% 100%;
+}
+
+/* 收拢后：左右叠在中央背后，中央在上层 */
+.arm-page-root .rcore-ln-fan--flex.rcore-ln-fan--assembled {
+  gap: 0;
+}
+
+.arm-page-root .rcore-ln-fan--assembled .rcore-ln-fan__card--l {
+  z-index: 1;
+  margin-right: clamp(-52px, -7vw, -24px);
+}
+
+.arm-page-root .rcore-ln-fan--assembled .rcore-ln-fan__card--c {
+  z-index: 3;
+}
+
+.arm-page-root .rcore-ln-fan--assembled .rcore-ln-fan__card--r {
+  z-index: 1;
+  margin-left: clamp(-52px, -7vw, -24px);
+}
+
+.arm-page-root .rcore-ln-fan__portrait {
+  aspect-ratio: 9 / 16;
+  width: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.55);
+  background: #111;
+}
+
+.arm-page-root .rcore-ln-fan__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.arm-page-root .rcore-ln-family-body {
+  margin: clamp(28px, 6vh, 72px) auto 0;
+  max-width: min(52ch, 94vw);
+  text-align: center;
+  font-size: clamp(15px, 1.55vw, 19px);
+  line-height: 1.55;
+  color: #86868b;
+}
+
+@media (max-width: 900px) {
+  .arm-page-root .rcore-ln-flange-strip {
+    grid-template-columns: 1fr;
+    row-gap: 20px;
+  }
+
+  .arm-page-root .rcore-ln-bp-stage {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    min-height: 0;
+    gap: clamp(8px, 2vh, 16px);
+  }
+
+  .arm-page-root .rcore-ln-bp-copy-col {
+    grid-column: 1 / -1;
+    grid-row: 1 / 2;
+    padding-top: calc(6vh + clamp(0vh, 1.5vh, 3vh));
+  }
+
+  .arm-page-root .rcore-ln-bp-svg-corner {
+    grid-column: 1 / -1;
+    grid-row: 2 / 3;
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .arm-page-root .rcore-ln-bp-svg {
+    max-height: min(74vh, 700px);
+    transform: translateY(-10vh) scale(1.12);
+  }
+
+  .arm-page-root .rcore-ln-fan--flex .rcore-ln-fan__card {
+    width: min(260px, 42vw);
+  }
+
+  .arm-page-root .rcore-ln-fan--assembled .rcore-ln-fan__card--l {
+    margin-right: clamp(-36px, -9vw, -14px);
+  }
+
+  .arm-page-root .rcore-ln-fan--assembled .rcore-ln-fan__card--r {
+    margin-left: clamp(-36px, -9vw, -14px);
+  }
+}
+
+.arm-page-root .rcore-film-adv-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-film-adv {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  padding: clamp(80px, 14vh, 120px) clamp(20px, 5vw, 56px) clamp(48px, 8vh, 72px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 100%;
+}
+
+.arm-page-root .rcore-film-adv--pos-left {
+  align-items: flex-start;
+}
+
+.arm-page-root .rcore-film-adv--pos-right {
+  align-items: flex-end;
+}
+
+.arm-page-root .rcore-film-adv--pos-center {
+  align-items: center;
+}
+
+.arm-page-root .rcore-film-adv__col {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.8vh, 22px);
+  text-align: left;
+  max-width: min(520px, 90vw);
+}
+
+.arm-page-root .rcore-film-adv__title {
+  margin: 0;
+  font-size: clamp(34px, 5.4vw, 64px);
+  font-weight: 700;
+  line-height: 1.08;
+  max-width: 16ch;
+  color: #f5f5f7;
+}
+
+.arm-page-root .rcore-film-adv__body {
+  margin: 0;
+  max-width: 42ch;
+  font-size: clamp(18px, 2.15vw, 24px);
+  line-height: 1.55;
+  color: rgba(245, 245, 247, 0.78);
+}
+
+.arm-page-root .rcore-film-flange-beat {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  grid-template-rows: 7fr 3fr;
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-film-flange-beat__glb {
+  min-height: 0;
+}
+
+.arm-page-root .rcore-film-flange-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: clamp(20px, 4vw, 56px);
+  align-content: start;
+  padding: clamp(18px, 2.8vh, 32px) clamp(20px, 5vw, 64px) clamp(22px, 3.2vh, 40px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.12));
+  opacity: var(--rfilm-flange-strip, 0);
+}
+
+.arm-page-root .rcore-film-flange-strip__title {
+  margin: 0;
+  font-size: clamp(17px, 1.9vw, 22px);
+  font-weight: 700;
+  color: #f5f5f7;
+  letter-spacing: -0.01em;
+}
+
+.arm-page-root .rcore-film-flange-strip__rule {
+  border: 0;
+  height: 1px;
+  margin: 12px 0 14px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.arm-page-root .rcore-film-flange-strip__body {
+  margin: 0;
+  font-size: clamp(14px, 1.35vw, 16px);
+  line-height: 1.55;
+  color: rgba(245, 245, 247, 0.62);
+}
+
+.arm-page-root .rcore-film-flange-strip__hi {
+  display: block;
+  margin-top: 10px;
+  font-weight: 700;
+  color: #f5f5f7;
+}
+
+.arm-page-root .rcore-film-bp-stack {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  opacity: var(--rfilm-bp-stack);
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-film-bp-intro {
+  position: absolute;
+  top: clamp(64px, 11vh, 112px);
+  left: clamp(18px, 4.5vw, 52px);
+  max-width: min(520px, 90vw);
+  min-height: clamp(120px, 28vh, 280px);
+  opacity: var(--rfilm-bp-intro);
+}
+
+.arm-page-root .rcore-film-bp-intro__eyebrow {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #2997ff;
+}
+
+.arm-page-root .rcore-film-bp-intro__title {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 3.6vw, 40px);
+  font-weight: 700;
+  line-height: 1.12;
+  color: #f5f5f7;
+}
+
+.arm-page-root .rcore-film-bp-intro__body {
+  margin: 0 0 12px;
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 1.55;
+  color: rgba(245, 245, 247, 0.72);
+}
+
+.arm-page-root .rcore-film-bp-intro__note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(245, 245, 247, 0.55);
+}
+
+.arm-page-root .rcore-film-app {
+  position: absolute;
+  inset: 0;
+  z-index: 24;
+  opacity: var(--rfilm-app);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(48px, 10vh, 120px) clamp(20px, 5vw, 40px);
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-film-app__kicker {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #2997ff;
+}
+
+.arm-page-root .rcore-film-app__title {
+  margin: 0 0 clamp(14px, 2vh, 22px);
+  max-width: 18ch;
+  font-size: clamp(36px, 6.2vw, 76px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #f5f5f7;
+}
+
+.arm-page-root .rcore-film-app__body {
+  margin: 0;
+  max-width: min(52ch, 92vw);
+  font-size: clamp(16px, 1.75vw, 21px);
+  line-height: 1.55;
+  color: rgba(245, 245, 247, 0.74);
+}
+
+.arm-page-root .rcore-film-family {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  opacity: var(--rfilm-family);
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: clamp(40px, 7vh, 88px) clamp(16px, 4vw, 32px) clamp(24px, 4vh, 48px);
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-film-family__head {
+  text-align: center;
+  max-width: min(920px, 96vw);
+}
+
+.arm-page-root .rcore-film-family__kicker {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #2997ff;
+}
+
+.arm-page-root .rcore-film-family__title {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #f5f5f7;
+}
+
+.arm-page-root .rcore-film-family__fan {
+  position: relative;
+  width: min(920px, 96vw);
+  height: min(48vh, 480px);
+  margin-top: clamp(12px, 2.5vh, 28px);
+  flex: 0 0 auto;
+}
+
+.arm-page-root .rcore-film-family__card {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(260px, 30vw);
+  transform-origin: 50% 100%;
+}
+
+.arm-page-root .rcore-film-family__card--l {
+  z-index: 1;
+  transform: translateX(-50%)
+    rotate(calc(-24deg * var(--rfilm-fan, 0)))
+    translateX(calc(-30% * var(--rfilm-fan, 0)));
+}
+
+.arm-page-root .rcore-film-family__card--c {
+  z-index: 3;
+  transform: translateX(-50%) translateY(calc(-14px * var(--rfilm-fan, 0)));
+}
+
+.arm-page-root .rcore-film-family__card--r {
+  z-index: 2;
+  transform: translateX(-50%)
+    rotate(calc(24deg * var(--rfilm-fan, 0)))
+    translateX(calc(30% * var(--rfilm-fan, 0)));
+}
+
+.arm-page-root .rcore-film-family__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.55);
+}
+
+.arm-page-root .rcore-film-family__body {
+  margin-top: auto;
+  margin-bottom: 0;
+  max-width: min(52ch, 94vw);
+  text-align: center;
+  font-size: clamp(15px, 1.55vw, 19px);
+  line-height: 1.55;
+  color: rgba(245, 245, 247, 0.72);
+}
+
+.arm-page-root .rcore-film-glass {
+  position: absolute;
+  z-index: 11;
+  opacity: 0;
+  max-width: min(420px, 86vw);
+  padding: 22px 24px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(22, 22, 23, 0.42);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  pointer-events: none;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.arm-page-root .rcore-film-glass--flange {
+  top: 14%;
+  right: 6%;
+}
+
+.arm-page-root .rcore-film-glass--base {
+  bottom: 12%;
+  left: 6%;
+}
+
+.arm-page-root .rcore-film-glass h3 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.arm-page-root .rcore-film-glass p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(245, 245, 247, 0.78);
+}
+
+.arm-page-root .rcore-film-svg-clip {
+  position: absolute;
+  right: clamp(8px, 2vw, 28px);
+  bottom: clamp(8px, 2vh, 32px);
+  width: min(56vw, 680px);
+  height: min(62vh, 620px);
+  z-index: 2;
+  box-sizing: border-box;
+  pointer-events: none;
+  --rfilm-svg-reveal: 0;
+}
+
+.arm-page-root .rcore-film-svg-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  transform: translateY(0);
+  /* 自下而上展开，右下角放置时更易看全图 */
+  clip-path: inset(0 0 calc((1 - var(--rfilm-svg-reveal)) * (100% - 2px)) 0);
+  filter: invert(1) brightness(1.05) contrast(1.05);
+  opacity: 0.92;
+}
+
+.arm-page-root .rcore-film-vector-obj {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  border: 0;
+  pointer-events: none;
+  object-fit: contain;
+  object-position: 96% 98%;
+}
+
+.arm-page-root .rcore-film-scenario-cap {
+  position: absolute;
+  left: 50%;
+  bottom: 9%;
+  transform: translateX(-50%);
+  z-index: 48;
+  margin: 0;
+  max-width: min(520px, 90vw);
+  text-align: center;
+  font-size: 17px;
+  line-height: 1.45;
+  color: #f5f5f7;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.65);
+  pointer-events: none;
+  opacity: 0;
+}
+
+@media (max-width: 900px) {
+  .arm-page-root .rcore-film-adv {
+    padding: clamp(72px, 12vh, 100px) clamp(16px, 4vw, 28px) clamp(40px, 7vh, 64px);
+  }
+
+  .arm-page-root .rcore-film-adv__col {
+    max-width: min(520px, 94vw);
+  }
+
+  .arm-page-root .rcore-film-adv__body {
+    max-width: none;
+  }
+
+  .arm-page-root .rcore-film-flange-strip {
+    grid-template-columns: 1fr;
+    row-gap: 20px;
+    padding-bottom: clamp(24px, 4vh, 40px);
+  }
+
+  .arm-page-root .rcore-film-bp-intro {
+    top: clamp(56px, 10vh, 96px);
+    max-width: min(480px, 94vw);
+    min-height: 0;
+  }
+
+  .arm-page-root .rcore-film-svg-clip {
+    width: min(92vw, 480px);
+    height: min(48vh, 440px);
+    right: clamp(6px, 2vw, 14px);
+    bottom: clamp(6px, 2vh, 18px);
+  }
+
+  .arm-page-root .rcore-film-glass--flange {
+    top: 10%;
+    right: 4%;
+    left: 4%;
+    max-width: none;
+  }
+
+  .arm-page-root .rcore-film-glass--base {
+    bottom: 8%;
+  }
+}
+
+.arm-page-root .rcore-film-tail {
+  position: relative;
+  z-index: 6;
+  min-height: 88vh;
+  color: #f5f5f7;
+  background: #000;
+}
+
+.arm-page-root .rcore-film-tail__bg {
+  position: absolute;
+  inset: 0;
+}
+
+.arm-page-root .rcore-film-tail__bg-img {
+  object-fit: cover;
+  object-position: 50% 38%;
+}
+
+.arm-page-root .rcore-film-tail__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.72) 100%);
+}
+
+.arm-page-root .rcore-film-tail__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(72px, 14vh, 120px) 24px 100px;
+  text-align: center;
+}
+
+.arm-page-root .rcore-film-tail__inner h2 {
+  margin: 0 auto 32px;
+  max-width: min(22em, 96vw);
+  font-size: clamp(32px, 6vw, 52px);
+  font-weight: 700;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.arm-page-root .rcore-film-tail__inner > p {
+  margin: 0 0 36px;
+  font-size: 18px;
+  line-height: 1.55;
+  color: rgba(245, 245, 247, 0.82);
+}
+
+.arm-page-root .rcore-film-tail__links {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.arm-page-root .rcore-film-tail__links a {
+  color: #2997ff;
+  font-size: clamp(16px, 2.1vw, 18px);
+  font-weight: 500;
+  line-height: 1.35;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(41, 151, 255, 0.45);
+  padding-bottom: 3px;
+  transition: color 0.2s ease, border-bottom-color 0.2s ease;
+}
+
+.arm-page-root .rcore-film-tail__links a:hover {
+  color: #5ac8fa;
+  border-bottom-color: rgba(90, 200, 250, 0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arm-page-root .rcore-film-glb-wrap,
+  .arm-page-root .rcore-film-scenario,
+  .arm-page-root .rcore-film-svg-inner {
+    transition: none;
+  }
 }
 
 /* r‑Core `/cobots/r-core` 顶栏：透明顶 ↔ 下滑毛玻璃（与 ClientLayout `subPageNavProgress < 0.02` 分支一致；!important 避免其它规则抢样式） */

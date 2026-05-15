@@ -140,9 +140,15 @@
       "metaDescription": "横向浏览 r-Lite、r-Core、r-Reach、r-Max、r-Ultra 等 r 系列协作机械臂全矩阵：负载、工作半径、关节轴、接口与功率要点一站对比。"
     },
     "r_core": {
-      "metaTitleFocus": "r-Core（FR5-C）一体化协作机械臂",
-      "metaDescription": "r 系列 r-Core（FR5-C）协作机器人平台：额定 4kg（峰值 5kg）负载、922mm 工作半径、±0.05mm 重复定位精度，底座一体式控制箱，适配产线与实验室紧凑部署。",
+      "metaTitleFocus": "r-Core 一体化协作机械臂",
+      "metaDescription": "r 系列 r-Core 协作机器人平台：额定 4kg（峰值 5kg）负载、922mm 工作半径、±0.05mm 重复定位精度，底座一体式控制箱，适配产线与实验室紧凑部署。",
+      "immersive_glb_alt": "Roooll r-Core 一体化协作机器人 Cobot 沉浸页主视觉：六轴协作机械臂与一体式控制，适配产线与精密装配场景。",
       "inquiry": "咨询",
+      "scenario_subnav": {
+        "brand_top_aria": "r-Core 沉浸页顶部品牌展示",
+        "slogan": "从图纸到产线，让下一台协作臂先转起来。",
+        "tagline": "Let's get rolling"
+      },
       "hero": {
         "subtitle": "轻巧机身，一体部署。"
       },
@@ -181,6 +187,80 @@
       },
       "closer": {
         "title": "近距离观察。"
+      },
+      "scroll_film": {
+        "section_aria": "r-Core 协作机械臂中段沉浸叙事与规格要点",
+        "advantages": [
+          {
+            "kicker": "部署，本该像插电一样自然。",
+            "title": "即插即用",
+            "body": "{{description}}。把复杂留给出厂标定，把简单留给现场：一根线缆、一次上电，Web App、10.1 英寸示教器或移动终端即可开始拖拽示教。少一页说明书，多一天产能。",
+            "badge": "{{reach}} 工作半径 · {{voltage}} · {{tcpSpeed}} TCP · {{dof}} 轴"
+          },
+          {
+            "kicker": "法奥 FR 系协作控制积淀之上，精度也要讲人话。",
+            "title": "毫厘可信",
+            "body": "在受控负载与轨迹下，{{repeatability}} 的重复定位与 {{payload}} 额定负载，让抽检与装配不再靠「手感」。数据能复述，良率才站得住。",
+            "badge": "额定 {{payload}} · 重复定位 {{repeatability}} · 底座占地 {{footprint}}"
+          },
+          {
+            "kicker": "空间越小，越要体面。",
+            "title": "一箱到底",
+            "body": "约 {{weight}} 整机重量与紧凑底座，让协作机器人 Cobot 能贴近人工作——产线、实验室、医疗辅助台车都能少占一寸地，多留一寸安全边界。",
+            "badge": "整机约 {{weight}} · 底座 {{footprint}} · 平均功耗 {{avgPower}}"
+          }
+        ],
+        "flange": {
+          "title": "法兰端：工具与工艺的握手点",
+          "kicker": "末端执行细节",
+          "body": "高精度末端法兰，为夹具、快换与工艺模组留出稳定接口——换型少一次对心，就少一次停线。"
+        },
+        "base": {
+          "title": "底座：低重心的一体化「心脏」",
+          "body": "控制箱与结构一体化，抑振与刚性更好，线缆更少、部署更干净——适合紧凑协作单元与移动场景。"
+        },
+        "svg_kicker": "工程图纸，一眼读懂结构语言",
+        "svg_caption": "官方矢量工程视图随卷轴揭示：外形包络、关节关系与集成要点，便于机械与电气同事对齐方案。",
+        "scenario_caption": "从图纸走进场景：r-Core 协作机械臂进入制造、实验室与医疗辅助等 Cobot 应用单元。",
+        "scenario_image_alt": "r-Core 协作机器人 Cobot 产品场景图，展示一体化协作机械臂外观与典型部署环境。",
+        "flange_strip": [
+          {
+            "title": "合金耐用",
+            "body": "压铸与挤压铝合金结构，在数百万次运动循环下仍保持关节刚性——负载尖峰与温度波动时，形变更可控。",
+            "highlight": "硬磨工况，依旧稳。"
+          },
+          {
+            "title": "2 年质保",
+            "body": "核心动力、传动与控制链路在关键部件上提供可预期保障——减少停线拉扯，让班次产能更可复述。",
+            "highlight": "产线少意外，运维更笃定。"
+          },
+          {
+            "title": "轻便",
+            "body": "紧凑臂体与一体式控制占用更少地面与通道，便于台车二次部署与窄单元排布，示教路径也更短。",
+            "highlight": "好搬、好教、好上线。"
+          }
+        ],
+        "blueprint_intro_title": "先对齐图纸，再对齐现场。",
+        "blueprint_intro_body": "包络、关节行程与集成标注随产品迭代同步——机械与电气在开工前就能用同一套语言对齐方案。",
+        "application_kicker": "Application",
+        "application_title": "为真实部署方式而设计。",
+        "application_body": "从样机验证到稳定量产，同一套安全叙事、控制逻辑与示教体验贯穿始终——团队学会一次，就能带着信心横向扩展。",
+        "application_cards": [
+          { "caption": "r-Lite 入门单元：轻负载、短示教路径，适合台面试制与教学岛。" },
+          { "caption": "r-Core 一体协作臂：产线巡检、装配与人机混线的均衡默认项。" },
+          { "caption": "中段载荷：点胶、上下料等工况下更稳的惯量与轨迹余量。" },
+          { "caption": "FR16 级臂展：托盘周边与机床门区更宽的可达，而不必重写安全故事。" },
+          { "caption": "FR20 级负载：后道装箱、重型治具与快换工具站的高扭矩日常。" }
+        ],
+        "r_family_kicker": "All in r family.",
+        "r_family_title": "臂展与负载，一次选对。",
+        "r_family_body": "从 r-Lite 到 r-Max，同一套安全哲学、同一套工具思维、同一条升级路径——今天选贴合工位的那一支，明天仍沿用熟悉的集成故事。",
+        "tail_title": "把它放进你的下一条产线、下一间实验室。",
+        "links": {
+          "specs": "全系列 Cobot 规格总览",
+          "advisor": "找到你的匹配",
+          "side_by_side": "并排对比选型"
+        }
       },
       "narrative": {
         "title": "R3 芯片",
@@ -295,7 +375,7 @@
     "ecosystem_os": "Roooll OS 系统界面展示 - 协作机器人运动与安全策略的核心中枢，强调工业级稳定性与灵活部署能力。",
     "ecosystem_insight": "Roooll Insight 云端监控仪表盘 - 面向协作机器人全生命周期数据洞察，强化安全追溯与运维效率。",
     "r_core_detail": "Roooll R-core（FR5-C）结构细节展示 - 额定 4kg（峰值 5kg）负载、922mm 工作半径、±0.05mm 重复定位精度，底座一体式控制与工业级品质。",
-    "r_core_detail_flange": "Roooll R-core（FR5-C）法兰细节 - 强调末端工具快换与精密装配场景下的稳定对接。",
+    "r_core_detail_flange": "Roooll R-core（FR5-C）协作机器人 - 纯黑背景下白色末端法兰与上臂大特写，额定 4kg（峰值 5kg）负载、922mm 工作半径、±0.05mm 重复定位精度；突出工业机械臂安装面与工具快换在精密装配场景下的稳定对接。",
     "r_core_detail_base": "Roooll R-core（FR5-C）底座结构细节 - 一体式控制箱集成，兼顾紧凑部署与稳定运行。",
     "r_core_detail_elbow": "Roooll R-core（FR5-C）中段关节细节 - 突出 5kg 级臂体的负载轨迹与协同控制能力。",
     "r_core_detail_wrist": "Roooll R-core（FR5-C）腕部关节细节 - 强调姿态精度与安全协作。",

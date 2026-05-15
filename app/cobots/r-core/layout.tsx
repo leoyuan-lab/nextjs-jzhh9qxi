@@ -1,5 +1,5 @@
 /**
- * `/cobots/r-core`：r‑Core（FR5‑C）详情；首帧黑底壳层 + 仅爬虫可见面包屑 Schema。
+ * `/cobots/r-core`：r‑Core 沉浸产品页；首帧黑底壳层 + 仅爬虫可见面包屑 Schema。
  */
 import type { Metadata } from 'next';
 import { ArmRouteShell } from '@/components/ArmRouteShell';
@@ -31,7 +31,7 @@ export default async function CobotsRCoreLayout({ children }: { children: React.
         items={[
           { href: BC_HOME.href, en: BC_HOME.en },
           { href: BC_NAV_COBOTS.href, en: BC_NAV_COBOTS.en },
-          { href: '/cobots/r-core', en: 'r-Core (FR5-C)' },
+          { href: '/cobots/r-core', en: 'r-Core' },
         ]}
       />
       {children}

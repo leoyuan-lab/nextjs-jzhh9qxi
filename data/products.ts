@@ -651,6 +651,9 @@ export const cobotGlbModels = {
   rMaxFr20: '/models/r-max-cobot-fr20.glb',
 } as const;
 
+/** r-Core 法兰三特征段静态主视觉（WebP，与 `public/images/robots/` 命名一致） */
+export const RCORE_ADVISOR_FLANGE_HERO_IMG = '/images/robots/r-core-cobot-fr5-c-advisor-hero-flange.webp';
+
 /** 变体与 3D 模型路径映射（用于按型号分发 hero 模型） */
 export const robotVariantModelPath: Partial<Record<string, string>> = {
   'fr5-c': cobotGlbModels.rCoreFr5C,
