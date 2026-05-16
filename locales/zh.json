@@ -246,11 +246,21 @@
         "application_title": "为真实部署方式而设计。",
         "application_body": "从样机验证到稳定量产，同一套安全叙事、控制逻辑与示教体验贯穿始终——团队学会一次，就能带着信心横向扩展。",
         "application_cards": [
-          { "caption": "r-Lite 入门单元：轻负载、短示教路径，适合台面试制与教学岛。" },
-          { "caption": "r-Core 一体协作臂：产线巡检、装配与人机混线的均衡默认项。" },
-          { "caption": "中段载荷：点胶、上下料等工况下更稳的惯量与轨迹余量。" },
-          { "caption": "FR16 级臂展：托盘周边与机床门区更宽的可达，而不必重写安全故事。" },
-          { "caption": "FR20 级负载：后道装箱、重型治具与快换工具站的高扭矩日常。" }
+          {
+            "caption": "r-Lite 入门单元：轻负载、短示教路径，适合台面试制与教学岛。"
+          },
+          {
+            "caption": "r-Core 一体协作臂：产线巡检、装配与人机混线的均衡默认项。"
+          },
+          {
+            "caption": "中段载荷：点胶、上下料等工况下更稳的惯量与轨迹余量。"
+          },
+          {
+            "caption": "FR16 级臂展：托盘周边与机床门区更宽的可达，而不必重写安全故事。"
+          },
+          {
+            "caption": "FR20 级负载：后道装箱、重型治具与快换工具站的高扭矩日常。"
+          }
         ],
         "r_family_kicker": "All in r family.",
         "r_family_title": "臂展与负载，一次选对。",
@@ -296,7 +306,102 @@
     },
     "r_max": {
       "metaTitleFocus": "r-Max 重载协作机械臂",
-      "metaDescription": "r-Max 系列重载 Cobot：涵盖 FR16、FR20 级大负载协作机械臂，适配搬运、码垛与重载协作产线。"
+      "metaDescription": "r-Max 系列重载 Cobot：涵盖 FR16、FR20 级大负载协作机械臂，适配搬运、码垛与重载协作产线。",
+      "immersive_glb_alt": "Roooll R-max（FR20）协作机器人 - 协作之巅的重载方案，20kg 额定负载（最大 25kg）、1854mm 工作半径、±0.1mm 重复定位精度，工业级品质并符合 CE 等认证口径，适配重载搬运与码垛。",
+      "inquiry": "咨询",
+      "scenario_subnav": {
+        "brand_top_aria": "r-Max 沉浸页顶部品牌展示",
+        "slogan": "从图纸到重载工位，让下一支协作臂先扛起来。",
+        "tagline": "Let's get rolling"
+      },
+      "hero": {
+        "subtitle": "重载、长臂展，同一套安全叙事。"
+      },
+      "scroll_film": {
+        "section_aria": "r-Max 协作机械臂中段沉浸叙事与规格要点",
+        "advantages": [
+          {
+            "kicker": "部署，本该像插电一样自然。",
+            "title": "即插即用",
+            "body": "{{description}}。把复杂留给出厂标定，把简单留给现场：一根线缆、一次上电，Web App、10.1 英寸示教器或移动终端即可开始拖拽示教。少一页说明书，多一天产能。",
+            "badge": "{{reach}} 工作半径 · {{voltage}} · {{tcpSpeed}} TCP · {{dof}} 轴"
+          },
+          {
+            "kicker": "法奥 FR 系协作控制积淀之上，精度也要讲人话。",
+            "title": "毫厘可信",
+            "body": "在受控负载与轨迹下，{{repeatability}} 的重复定位与 {{payload}} 额定负载，让抽检与装配不再靠「手感」。数据能复述，良率才站得住。",
+            "badge": "额定 {{payload}} · 重复定位 {{repeatability}} · 底座占地 {{footprint}}"
+          },
+          {
+            "kicker": "空间越小，越要体面。",
+            "title": "一箱到底",
+            "body": "约 {{weight}} 整机重量与紧凑底座，让协作机器人 Cobot 能贴近人工作——产线、实验室、医疗辅助台车都能少占一寸地，多留一寸安全边界。",
+            "badge": "整机约 {{weight}} · 底座 {{footprint}} · 平均功耗 {{avgPower}}"
+          }
+        ],
+        "flange": {
+          "title": "法兰端：工具与工艺的握手点",
+          "kicker": "末端执行细节",
+          "body": "高精度末端法兰，为夹具、快换与工艺模组留出稳定接口——换型少一次对心，就少一次停线。"
+        },
+        "base": {
+          "title": "底座：低重心的一体化「心脏」",
+          "body": "控制箱与结构一体化，抑振与刚性更好，线缆更少、部署更干净——适合紧凑协作单元与移动场景。"
+        },
+        "svg_kicker": "工程图纸，一眼读懂结构语言",
+        "svg_caption": "官方矢量工程视图随卷轴揭示：外形包络、关节关系与集成要点，便于机械与电气同事对齐方案。",
+        "scenario_caption": "从图纸走进场景：r-Max 重载协作机械臂进入制造、冲压、码垛与重载装配等 Cobot 应用单元。",
+        "scenario_image_alt": "r-Max 协作机器人 Cobot 产品场景图，展示高负载协作机械臂外观与典型部署环境。",
+        "flange_strip": [
+          {
+            "title": "合金耐用",
+            "body": "压铸与挤压铝合金结构，在数百万次运动循环下仍保持关节刚性——负载尖峰与温度波动时，形变更可控。",
+            "highlight": "硬磨工况，依旧稳。"
+          },
+          {
+            "title": "2 年质保",
+            "body": "核心动力、传动与控制链路在关键部件上提供可预期保障——减少停线拉扯，让班次产能更可复述。",
+            "highlight": "产线少意外，运维更笃定。"
+          },
+          {
+            "title": "轻便",
+            "body": "紧凑臂体与一体式控制占用更少地面与通道，便于台车二次部署与窄单元排布，示教路径也更短。",
+            "highlight": "好搬、好教、好上线。"
+          }
+        ],
+        "blueprint_intro_title": "先对齐图纸，再对齐重载现场。",
+        "blueprint_intro_body": "包络、关节行程与集成标注随产品迭代同步——机械与电气在开工前就能用同一套语言对齐方案。",
+        "application_kicker": "Application",
+        "application_title": "为真实部署方式而设计。",
+        "application_body": "从样机验证到稳定量产，同一套安全叙事、控制逻辑与示教体验贯穿始终——团队学会一次，就能带着信心横向扩展。",
+        "application_cards": [
+          {
+            "caption": "r-Lite 入门单元：轻负载、短示教路径，适合台面试制与教学岛。"
+          },
+          {
+            "caption": "r-Core 一体协作臂：产线巡检、装配与人机混线的均衡默认项。"
+          },
+          {
+            "caption": "中段载荷：点胶、上下料等工况下更稳的惯量与轨迹余量。"
+          },
+          {
+            "caption": "FR16 级臂展：托盘周边与机床门区更宽的可达，而不必重写安全故事。"
+          },
+          {
+            "caption": "FR20 级负载：后道装箱、重型治具与快换工具站的高扭矩日常。"
+          }
+        ],
+        "r_family_kicker": "All in r family.",
+        "r_family_title": "臂展与负载，一次选对。",
+        "r_family_subtitle": "全系 r‑series。",
+        "r_family_body": "从 r-Lite 到 r-Max，同一套安全哲学、同一套工具思维、同一条升级路径——今天选贴合工位的那一支，明天仍沿用熟悉的集成故事。",
+        "tail_title": "把 r-Max 带进下一条产线、下一间重载或码垛单元。",
+        "links": {
+          "specs": "全系列 Cobot 规格总览",
+          "advisor": "找到你的匹配",
+          "side_by_side": "并排对比选型"
+        }
+      }
     },
     "humanoid": {
       "metaTitleFocus": "人形具身智能协作机器人愿景",

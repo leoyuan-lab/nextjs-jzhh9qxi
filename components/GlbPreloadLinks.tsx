@@ -23,3 +23,5 @@ export function GlbPreloadLinks({ hrefs }: { hrefs: readonly string[] }) {
 export const GLB_PRELOAD_HOME = [cobotGlbModels.rCoreFr5C] as const;
 /** `/cobots/r-core`、`/selector/advisor` 等与 FR5‑C hero 模型同路的预加载 */
 export const GLB_PRELOAD_R_CORE_HERO = [cobotGlbModels.rCoreFr5C] as const;
+/** `/cobots/r-max` 沉浸首屏 hero */
+export const GLB_PRELOAD_R_MAX_HERO = [cobotGlbModels.rMaxFr20] as const;

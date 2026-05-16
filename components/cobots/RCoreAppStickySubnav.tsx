@@ -2,16 +2,18 @@
 
 import { getMessages } from '@/lib/messages';
 import type { AppLocale } from '@/lib/messages';
+import type { ImmersiveMessagesPageKey } from '@/lib/immersive-series-messages';
 
 type Props = {
   lang: AppLocale;
   productLineLabel: string;
+  messagesPageKey?: ImmersiveMessagesPageKey;
 };
 
 /** Application 段起：顶栏左侧产品线名，右侧咨询（与主站顶栏毛玻璃一致） */
-export function RCoreAppStickySubnav({ lang, productLineLabel }: Props) {
+export function RCoreAppStickySubnav({ lang, productLineLabel, messagesPageKey = 'r_core' }: Props) {
   const msgs = getMessages(lang);
-  const page = msgs.pages.r_core;
+  const page = msgs.pages[messagesPageKey];
   const copy = page.scenario_subnav;
 
   return (

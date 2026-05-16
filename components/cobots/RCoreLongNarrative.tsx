@@ -1,9 +1,8 @@
 'use client';
 
 /**
- * Long narrative blocks after the scroll film. Copy is hard-wired to `pages.r_core` today.
- * r-max: mirror locale keys (see `lib/cobot-immersive-page-config.ts`) then add a `pageKey` prop or
- * duplicate component if namespaces diverge.
+ * Long narrative blocks after the scroll film. Copy from `pages.*.scroll_film`
+ * (`messagesPageKey`: `r_core` | `r_max`). See `lib/cobot-immersive-page-config.ts`.
  */
 import Image from 'next/image';
 import Link from 'next/link';
@@ -23,9 +22,13 @@ import {
 } from '@/data/products';
 import { getMessages } from '@/lib/messages';
 import type { AppLocale } from '@/lib/messages';
-import { readScrollFilmNamespace, type ImmersiveMessagesPageKey } from '@/lib/immersive-series-messages';
+import {
+  immersiveFlangeHeroAlt,
+  immersivePrimaryCatalogVariantId,
+  readScrollFilmNamespace,
+  type ImmersiveMessagesPageKey,
+} from '@/lib/immersive-series-messages';
 
-const VARIANT_ID = 'fr5-c' as const;
 const FAMILY_VARIANT_IDS = ['fr3-c', 'fr5-wml', 'fr20-std'] as const;
 const APP_CARD_IDS = ['fr3-std', 'fr5-c', 'fr10-std', 'fr16-std', 'fr20-std'] as const;
 
@@ -85,6 +88,7 @@ export function RCoreLongNarrative({
     [lang, messagesPageKey],
   );
   const prefersReducedMotion = useReducedMotion();
+  const primaryVariantId = immersivePrimaryCatalogVariantId(messagesPageKey);
 
   const rootRef = useRef<HTMLDivElement | null>(null);
   const flangeRef = useRef<HTMLElement | null>(null);
@@ -169,10 +173,10 @@ export function RCoreLongNarrative({
     };
   }, [reduceMotion, syncFanProgress]);
 
-  const blueprintSrc = `${ROBOT_VECTOR_BASE}/${robotVariantBlueprintSvgFilename(VARIANT_ID)}`;
-  const blueprintAlt = robotVariantBlueprintAlt(VARIANT_ID, lang);
-  const blueprintDesc = robotVariantBlueprintDescription(VARIANT_ID, lang);
-  const scenarioWebp = `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename(VARIANT_ID)}`;
+  const blueprintSrc = `${ROBOT_VECTOR_BASE}/${robotVariantBlueprintSvgFilename(primaryVariantId)}`;
+  const blueprintAlt = robotVariantBlueprintAlt(primaryVariantId, lang);
+  const blueprintDesc = robotVariantBlueprintDescription(primaryVariantId, lang);
+  const scenarioWebp = `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename(primaryVariantId)}`;
 
   const familyAssets = useMemo(
     () =>
@@ -198,7 +202,7 @@ export function RCoreLongNarrative({
   const fanDur = 0.14;
   const fanEase = [0.22, 1, 0.36, 1] as const;
   const fanOpen = reduceMotion ? 0 : 1 - fanProgress;
-  const flangeHeroAlt = getMessages(lang).alt.r_core_detail_flange;
+  const flangeHeroAlt = immersiveFlangeHeroAlt(lang, messagesPageKey);
 
   return (
     <div ref={setRootNode} className="rcore-ln-root" aria-label={film.section_aria}>

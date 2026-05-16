@@ -4,7 +4,11 @@ import type { RefObject, MutableRefObject } from 'react';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { robotVariantById } from '@/data/products';
 import type { AppLocale } from '@/lib/messages';
-import { readScrollFilmNamespace, type ImmersiveMessagesPageKey } from '@/lib/immersive-series-messages';
+import {
+  immersiveScrollFilmCatalogVariantId,
+  readScrollFilmNamespace,
+  type ImmersiveMessagesPageKey,
+} from '@/lib/immersive-series-messages';
 import { RCORE_FILM_SLICE_COUNT } from '@/lib/rcore-scroll-cameras';
 
 type ScrollFilmCopy = {
@@ -86,7 +90,8 @@ export function RCoreScrollFilm({
     [lang, messagesPageKey],
   );
 
-  const v = robotVariantById['fr5-c'];
+  const catalogId = immersiveScrollFilmCatalogVariantId(messagesPageKey);
+  const v = robotVariantById[catalogId];
   const vars = useMemo(
     () => ({
       reach: v.reach,

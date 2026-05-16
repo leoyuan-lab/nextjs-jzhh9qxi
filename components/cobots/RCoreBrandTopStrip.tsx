@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { getMessages } from '@/lib/messages';
 import type { AppLocale } from '@/lib/messages';
+import type { ImmersiveMessagesPageKey } from '@/lib/immersive-series-messages';
 
-type Props = { lang: AppLocale };
+type Props = { lang: AppLocale; messagesPageKey?: ImmersiveMessagesPageKey };
 
-export function RCoreBrandTopStrip({ lang }: Props) {
+export function RCoreBrandTopStrip({ lang, messagesPageKey = 'r_core' }: Props) {
   const msgs = getMessages(lang);
-  const copy = msgs.pages.r_core.scenario_subnav;
+  const copy = msgs.pages[messagesPageKey].scenario_subnav;
   const brandAria = msgs.nav.brandLogoAria;
   const home = `/${lang}`;
 

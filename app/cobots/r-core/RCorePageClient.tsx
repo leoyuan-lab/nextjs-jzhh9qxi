@@ -300,8 +300,14 @@ export function RCorePageClient({ initialLang, immersiveProductId = 'r-core' }: 
         </div>
       </div>
 
-      {showBrandStrip && <RCoreBrandTopStrip lang={lang} />}
-      {showConsultNav && <RCoreAppStickySubnav lang={lang} productLineLabel={productLineLabel} />}
+      {showBrandStrip && <RCoreBrandTopStrip lang={lang} messagesPageKey={messagesPageKey} />}
+      {showConsultNav && (
+        <RCoreAppStickySubnav
+          lang={lang}
+          productLineLabel={productLineLabel}
+          messagesPageKey={messagesPageKey}
+        />
+      )}
 
       <RCoreScrollFilm
         lang={lang}

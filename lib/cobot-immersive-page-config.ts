@@ -16,7 +16,7 @@
  * 3. **`app/cobots/r-max/layout.tsx`** — 对齐 r‑core：`ArmRouteShell`、`ModelViewerScript`、`GlbPreloadLinks`（r‑max hero GLB）、`productSocialMetadata` + `rMaxOgProductImagePath()`。
  * 4. **`data/products.ts` + 材质/相机** — GLB 已可用 `rMaxHeroGlbSrc()`；机位与 `applyAdvisorFlangeMaterial` 仅 r‑core 默认开启，r‑max 另调时改 `RCorePageClient`。
  *
- * 之后在 **r‑core** 做的结构性/样式调整：只改上述共享路径 + `locales` 的 `r_core` 块即可；r‑max 同步靠同一组件与同一 CSS，无需再手动抄一版。
+ * 之后在 **r‑core** 做的结构性/样式调整：优先改共享路径（`globals.css`、`RCorePageClient`、`RCoreLongNarrative`、`RCoreScrollFilm` 等）与 `locales` 的 `r_core`。`pages.r_max.scroll_film` 需与 `r_core` 同结构时，可运行 `node scripts/sync-r-max-immersive-locales.mjs` 从 r_core 深拷贝后再改 r‑Max 专用文案。
  *
  * OG product stills should use `robotVariantWebpHdFilename(catalogVariantId)` where possible.
  */
