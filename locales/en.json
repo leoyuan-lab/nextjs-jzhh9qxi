@@ -104,6 +104,25 @@
     "cardSmartBody": "Smart path planning.",
     "cardSmartCta": "Explore r-Max cobot"
   },
+  "FAQ": {
+    "title": "Questions? Answers.",
+    "expandItemAria": "Show answer",
+    "collapseItemAria": "Hide answer",
+    "items": {
+      "q1": "We already run PLCs and vision—no dedicated robotics team. How long from unboxing a Roooll R-core for pick-and-place to a running first path?",
+      "a1": "R-core (FR5-C) integrates the controller in the base—about 11.8 kg total, φ125 mm footprint. Tune via Web App, 10.1″ teach pendant, or mobile. Host interfaces: standard TCP/IP, digital I/O, and Modbus TCP/RTU. On a typical single station, from mechanical install and calibration to the first program—usually 1–3 business days (fixture and vision integration may vary).",
+      "q2": "We need ~3 kg precision assembly and ~20 kg palletizing—how do we choose between R-core and r-Max without buying overlapping capability?",
+      "a2": "Spec by payload and reach—no over-buying. R-core targets light, precision cells: 4 kg rated (5 kg peak), 922 mm reach, up to ±0.02 mm repeatability for inspection, fastening, and lab work. r-Max (FR20) is built for heavy duty: 20 kg rated (25 kg peak), 1854 mm reach, ±0.1 mm repeatability for handling and palletizing. Both share the Roooll R-Series platform—control logic and accessories align, lowering lifecycle cost.",
+      "q3": "The site runs Siemens PLC + MES with quick-change grippers—can Roooll join the existing bus, or is a full rip-and-replace required?",
+      "a3": "Native integration—no system rebuild. Roooll ships with TCP/IP, I/O, and Modbus TCP/RTU for mainstream PLC and MES stacks. On r-Max heavy-duty cabinets, optional Profinet, EtherNet/IP, EtherCAT, and CC-Link IE Field Basic are available (per order configuration). The tool flange follows ISO 9409-1; Roooll EOAT (grippers, vacuum, quick change, 3D vision) and third-party tools are supported.",
+      "q4": "Three shifts, 6,000+ hours per year—will R-Series joints and reducers last, or do we replace the whole arm in two years?",
+      "a4": "Roooll is engineered for demanding industrial duty. Industrial servos and precision reducers; rigorous QC before shipment. Core drive systems (motors, reducers) and control architecture carry a 2-year limited warranty. Roooll Insight enables live monitoring and alarm traceability. Under standard duty, the arm is designed for continuous long-run operation.",
+      "q5": "We need white-label export—custom housing and teach UI. What is MOQ, and will lead time kill our milestone?",
+      "a5": "Roooll offers flexible OEM/ODM: branding, colorways, and industry-specific end-effector co-development. Small-batch R-core / r-Max programs are negotiable—often from a few dozen units for exterior and UI customization (flexible MOQ). Standard specs ship within 3–5 business days after payment confirmation; bespoke builds run on a dedicated line with timelines locked in contract.",
+      "q6": "We ship to Europe and Southeast Asia—is CE in place, and can spares and remote support keep up overseas?",
+      "a6": "Roooll R-Series meets RoHS, EU CE safety requirements, and ISO9001. Global support: experts online across time zones, professional response within 12 hours. Overseas spares cover core joint modules, control components, and common EOAT; remote diagnostics and on-site coordination via the Roooll service network (per regional agreement)."
+    }
+  },
   "footnotes": [
     {
       "q": "Core Excellence",

@@ -1,17 +1,7 @@
 import { headers } from 'next/headers';
+import { getSiteOrigin } from '@/lib/site-origin-fallback';
 
-/**
- * Build-time / fallback origin: sitemap, `robots.txt`, CLI scripts.
- * Do **not** rely on this alone for per-request `<link rel="canonical">` on Vercel —
- * use `getRequestSiteOrigin()` so preview host (`*.vercel.app`) matches the document URL in Lighthouse.
- */
-export function getSiteOrigin(): string {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, '');
-  if (explicit) return explicit;
-  const vercel = process.env.VERCEL_URL?.replace(/^https?:\/\//, '').replace(/\/$/, '');
-  if (vercel) return `https://${vercel}`;
-  return 'http://localhost:3000';
-}
+export { getSiteOrigin, getSiteOriginForClient } from '@/lib/site-origin-fallback';
 
 /**
  * Origin for the **current HTTP request** (host/proto from `x-forwarded-*`).

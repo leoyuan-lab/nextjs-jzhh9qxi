@@ -7,6 +7,7 @@
  */
 import React, { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import { RCoreLongNarrative } from '@/components/cobots/RCoreLongNarrative';
+import { RooollFaqSection } from '@/components/cobots/RooollFaqSection';
 import { RCoreScrollFilm } from '@/components/cobots/RCoreScrollFilm';
 import { RCoreAppStickySubnav } from '@/components/cobots/RCoreAppStickySubnav';
 import { RCoreBrandTopStrip } from '@/components/cobots/RCoreBrandTopStrip';
@@ -325,6 +326,10 @@ export function RCorePageClient({ initialLang, immersiveProductId = 'r-core' }: 
         bpSectionRef={bpSectionRef}
         appSectionRef={appSectionRef}
         narrativeRootRef={narrativeRootRef}
+      />
+      <RooollFaqSection
+        lang={lang}
+        pagePath={immersiveProductId === 'r-max' ? '/cobots/r-max' : '/cobots/r-core'}
       />
     </div>
   );

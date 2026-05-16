@@ -199,9 +199,6 @@ export function RCoreLongNarrative({
     [lang, film.application_cards],
   );
 
-  const fanDur = 0.14;
-  const fanEase = [0.22, 1, 0.36, 1] as const;
-  const fanOpen = reduceMotion ? 0 : 1 - fanProgress;
   const flangeHeroAlt = immersiveFlangeHeroAlt(lang, messagesPageKey);
 
   return (
@@ -318,25 +315,13 @@ export function RCoreLongNarrative({
         <div className="rcore-ln-family-spacer" />
         <motion.div
           ref={fanRef}
-          className="rcore-ln-fan rcore-ln-fan--flex rcore-ln-copy-front"
+          className="rcore-ln-fan rcore-ln-fan--deck rcore-ln-copy-front"
           style={{ '--fan-stack': fanProgress } as CSSProperties}
         >
-          {familyAssets.map((fa, idx) => {
-            /* 散开幅度略收；scroll 驱动 fanOpen，与 --fan-stack 同步叠放 */
-            const rotScatter = idx === 0 ? -22 : idx === 2 ? 22 : 0;
-            const xScatter = idx === 0 ? -38 : idx === 2 ? 38 : 0;
-            const yScatter = idx === 0 ? 10 : idx === 2 ? 10 : idx === 1 ? -12 : 0;
-            return (
-              <motion.div
+          {familyAssets.map((fa, idx) => (
+              <div
                 key={fa.id}
                 className={`rcore-ln-fan__card rcore-ln-fan__card--${idx === 0 ? 'l' : idx === 1 ? 'c' : 'r'}`}
-                initial={false}
-                animate={{
-                  rotate: rotScatter * fanOpen,
-                  x: xScatter * fanOpen,
-                  y: yScatter * fanOpen,
-                }}
-                transition={{ duration: fanDur, ease: fanEase }}
               >
                 <div className="rcore-ln-fan__portrait">
                   <Image
@@ -344,14 +329,13 @@ export function RCoreLongNarrative({
                     alt={fa.alt}
                     width={960}
                     height={1708}
-                    sizes="(max-width: 900px) 50vw, min(360px, 28vw)"
+                    sizes="(max-width: 900px) 42vw, min(340px, 26vw)"
                     quality={92}
                     className="rcore-ln-fan__img"
                   />
                 </div>
-              </motion.div>
-            );
-          })}
+              </div>
+          ))}
         </motion.div>
         <motion.p className="rcore-ln-family-body rcore-ln-copy-front" {...fadeUp}>
           {film.r_family_body}
