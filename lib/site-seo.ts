@@ -78,6 +78,53 @@ export function pageMetadata(
   return meta;
 }
 
+/**
+ * Open Graph + Twitter cards for product routes that share a hero / product still.
+ * Use `imagePathname` as a site-root path (e.g. `/images/robots/...webp`) so `siteOrigin` from
+ * `getRequestSiteOrigin()` keeps preview deployments and production aligned.
+ */
+export function productSocialMetadata(
+  titleFocus: string,
+  descriptionSentence: string,
+  siteOrigin: string,
+  imagePathname: string,
+  imageAlt: string,
+  imageSize: { width: number; height: number },
+): Pick<Metadata, 'openGraph' | 'twitter'> {
+  const origin = siteOrigin.replace(/\/$/, '');
+  const path = imagePathname.startsWith('/') ? imagePathname : `/${imagePathname}`;
+  let imageUrl: string;
+  try {
+    imageUrl = new URL(path, `${origin}/`).href;
+  } catch {
+    imageUrl = `${origin}${path}`;
+  }
+  const title = seoTitle(titleFocus);
+  const description = seoDescription(descriptionSentence);
+  return {
+    openGraph: {
+      type: 'website',
+      siteName: 'Roooll',
+      title,
+      description,
+      images: [
+        {
+          url: imageUrl,
+          width: imageSize.width,
+          height: imageSize.height,
+          alt: imageAlt,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
+    },
+  };
+}
+
 const rootTitle = seoTitle(ROOT_TITLE_FOCUS);
 const rootDescription = seoDescription(ROOT_DESCRIPTION_BODY);
 

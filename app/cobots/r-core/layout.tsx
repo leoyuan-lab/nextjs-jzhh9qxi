@@ -9,14 +9,31 @@ import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_COBOTS } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
 import { getMessages } from '@/lib/messages';
+import {
+  R_CORE_OG_IMAGE_SIZE,
+  R_CORE_OG_VARIANT_ID,
+  rCoreOgProductImagePath,
+} from '@/lib/cobot-immersive-page-config';
 import { getRequestSiteOrigin } from '@/lib/site-origin';
-import { pageMetadata } from '@/lib/site-seo';
+import { pageMetadata, productSocialMetadata } from '@/lib/site-seo';
+import { robotVariantImageAlt } from '@/data/products';
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
   const siteOrigin = await getRequestSiteOrigin();
   const page = getMessages(lang).pages.r_core;
-  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/cobots/r-core', lang, siteOrigin);
+  const ogAlt = robotVariantImageAlt(R_CORE_OG_VARIANT_ID, lang);
+  return {
+    ...pageMetadata(page.metaTitleFocus, page.metaDescription, '/cobots/r-core', lang, siteOrigin),
+    ...productSocialMetadata(
+      page.metaTitleFocus,
+      page.metaDescription,
+      siteOrigin,
+      rCoreOgProductImagePath(),
+      ogAlt,
+      R_CORE_OG_IMAGE_SIZE,
+    ),
+  };
 }
 
 export default async function CobotsRCoreLayout({ children }: { children: React.ReactNode }) {

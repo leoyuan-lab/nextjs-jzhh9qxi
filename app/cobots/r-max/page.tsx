@@ -1,3 +1,10 @@
+/**
+ * r‑Max 占位落地页。沉浸详情与 r‑Core 共用同一套实现时：
+ * - `page.tsx`：`getSiteLang` + `RCorePageClient` from `app/cobots/r-core/RCorePageClient`，传入 `immersiveProductId="r-max"`。
+ * - 先将 `locales` 的 `pages.r_max` 补全为与 `r_core` 同结构（至少含 `scroll_film`）。
+ * - `layout.tsx` 对齐 r‑core：`ArmRouteShell`、`ModelViewerScript`、`GlbPreloadLinks`、OG。
+ * 详见 `lib/cobot-immersive-page-config.ts`。
+ */
 import { SeoBriefLanding } from '@/components/SeoBriefLanding';
 
 export default function CobotsRMaxPage() {

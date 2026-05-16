@@ -654,6 +654,9 @@ export const cobotGlbModels = {
 /** r-Core 法兰三特征段静态主视觉（WebP，与 `public/images/robots/` 命名一致） */
 export const RCORE_ADVISOR_FLANGE_HERO_IMG = '/images/robots/r-core-cobot-fr5-c-advisor-hero-flange.webp';
 
+/** 与 `RCORE_ADVISOR_FLANGE_HERO_IMG` 源文件像素一致（换图时请同步更新，供 hero 容器 aspect-ratio） */
+export const RCORE_ADVISOR_FLANGE_HERO_DIM = { width: 2828, height: 1430 } as const;
+
 /** 变体与 3D 模型路径映射（用于按型号分发 hero 模型） */
 export const robotVariantModelPath: Partial<Record<string, string>> = {
   'fr5-c': cobotGlbModels.rCoreFr5C,
@@ -669,6 +672,11 @@ export function robotFamilyForVariant(variantId: string): RobotFamily {
 export function robotVariantWebpFilename(variantId: string): string {
   const fam = robotFamilyForVariant(variantId);
   return `${fam.displayName.toLowerCase()}-cobot-${variantId}.webp`;
+}
+
+/** 营销高清实拍 WebP：与 `robotVariantWebpFilename` 同源，文件名后缀 `-hd.webp` */
+export function robotVariantWebpHdFilename(variantId: string): string {
+  return robotVariantWebpFilename(variantId).replace(/\.webp$/i, '-hd.webp');
 }
 
 /** 图纸 SVG 文件名：`{displayName 小写}-cobot-{variantId}.svg` */

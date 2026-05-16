@@ -1,31 +1,39 @@
 'use client';
 
+/**
+ * Long narrative blocks after the scroll film. Copy is hard-wired to `pages.r_core` today.
+ * r-max: mirror locale keys (see `lib/cobot-immersive-page-config.ts`) then add a `pageKey` prop or
+ * duplicate component if namespaces diverge.
+ */
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
-import type { RefObject, MutableRefObject } from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import type { CSSProperties, RefObject, MutableRefObject } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { RCoreFlangeHeroStill } from '@/components/cobots/RCoreFlangeHeroStill';
 import {
   ROBOT_IMG_BASE,
   ROBOT_VECTOR_BASE,
+  RCORE_ADVISOR_FLANGE_HERO_DIM,
   robotVariantBlueprintAlt,
   robotVariantBlueprintDescription,
   robotVariantBlueprintSvgFilename,
   robotVariantImageAlt,
-  robotVariantWebpFilename,
+  robotVariantWebpHdFilename,
 } from '@/data/products';
 import { getMessages } from '@/lib/messages';
 import type { AppLocale } from '@/lib/messages';
+import { readScrollFilmNamespace, type ImmersiveMessagesPageKey } from '@/lib/immersive-series-messages';
 
 const VARIANT_ID = 'fr5-c' as const;
-const FAMILY_VARIANT_IDS = ['fr3-std', 'fr5-c', 'fr20-std'] as const;
+const FAMILY_VARIANT_IDS = ['fr3-c', 'fr5-wml', 'fr20-std'] as const;
 const APP_CARD_IDS = ['fr3-std', 'fr5-c', 'fr10-std', 'fr16-std', 'fr20-std'] as const;
 
 const fadeUp = {
   initial: { opacity: 0, y: 50 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: false, amount: 0.3 },
+  /* once：避免上滑时块从顶部离开视口又被 whileInView 打回 initial，造成文案「卡在顶端抖动」 */
+  viewport: { once: true, amount: 0.28 },
   transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const },
 };
 
@@ -43,6 +51,7 @@ type FilmCopy = {
   application_cards: { caption: string }[];
   r_family_kicker: string;
   r_family_title: string;
+  r_family_subtitle: string;
   r_family_body: string;
   tail_title: string;
   links: { specs: string; advisor: string; side_by_side: string };
@@ -50,6 +59,8 @@ type FilmCopy = {
 
 export type RCoreLongNarrativeProps = {
   lang: AppLocale;
+  /** @default 'r_core' — r‑max 沉浸页传 `r_max`（须已有 `pages.r_max.scroll_film`） */
+  messagesPageKey?: ImmersiveMessagesPageKey;
   flangeSectionRef?: RefObject<HTMLElement | null>;
   bpSectionRef?: RefObject<HTMLElement | null>;
   appSectionRef?: RefObject<HTMLElement | null>;
@@ -62,13 +73,17 @@ function assignRef(ref: RefObject<HTMLElement | null> | undefined, node: HTMLEle
 
 export function RCoreLongNarrative({
   lang,
+  messagesPageKey = 'r_core',
   flangeSectionRef,
   bpSectionRef,
   appSectionRef,
   narrativeRootRef,
 }: RCoreLongNarrativeProps) {
   const base = `/${lang}`;
-  const film = useMemo(() => getMessages(lang).pages.r_core.scroll_film as FilmCopy, [lang]);
+  const film = useMemo(
+    () => readScrollFilmNamespace(lang, messagesPageKey) as FilmCopy,
+    [lang, messagesPageKey],
+  );
   const prefersReducedMotion = useReducedMotion();
 
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -110,31 +125,60 @@ export function RCoreLongNarrative({
     [appSectionRef],
   );
 
-  const fanInView = useInView(fanRef, { amount: 0.3, once: false });
-  const [fanPlayed, setFanPlayed] = useState(false);
+  const reduceMotion = prefersReducedMotion === true;
+  const [fanProgress, setFanProgress] = useState(0);
 
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      setFanPlayed(true);
+  const syncFanProgress = useCallback(() => {
+    if (reduceMotion) {
+      setFanProgress(1);
       return;
     }
-    if (fanInView) {
-      const id = window.requestAnimationFrame(() => setFanPlayed(true));
-      return () => cancelAnimationFrame(id);
+    const el = fanRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight || 1;
+    /* 向下滚（内容上移、rect.top 变小）→ progress 增大 → 收拢；向上则展开 */
+    const start = vh * 0.88;
+    const end = vh * 0.32;
+    const span = Math.max(1, start - end);
+    const t = Math.max(0, Math.min(1, (start - rect.top) / span));
+    setFanProgress(t);
+  }, [reduceMotion]);
+
+  useLayoutEffect(() => {
+    if (reduceMotion) {
+      setFanProgress(1);
+      return;
     }
-    setFanPlayed(false);
-  }, [fanInView, prefersReducedMotion]);
+    syncFanProgress();
+  }, [reduceMotion, syncFanProgress]);
+
+  useEffect(() => {
+    if (reduceMotion) return;
+    let raf = 0;
+    const onScrollOrResize = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(syncFanProgress);
+    };
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('resize', onScrollOrResize);
+    };
+  }, [reduceMotion, syncFanProgress]);
 
   const blueprintSrc = `${ROBOT_VECTOR_BASE}/${robotVariantBlueprintSvgFilename(VARIANT_ID)}`;
   const blueprintAlt = robotVariantBlueprintAlt(VARIANT_ID, lang);
   const blueprintDesc = robotVariantBlueprintDescription(VARIANT_ID, lang);
-  const scenarioWebp = `${ROBOT_IMG_BASE}/${robotVariantWebpFilename(VARIANT_ID)}`;
+  const scenarioWebp = `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename(VARIANT_ID)}`;
 
   const familyAssets = useMemo(
     () =>
       FAMILY_VARIANT_IDS.map((id) => ({
         id,
-        src: `${ROBOT_IMG_BASE}/${robotVariantWebpFilename(id)}`,
+        src: `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename(id)}`,
         alt: robotVariantImageAlt(id, lang),
       })),
     [lang],
@@ -144,15 +188,16 @@ export function RCoreLongNarrative({
     () =>
       APP_CARD_IDS.map((id, i) => ({
         id,
-        src: `${ROBOT_IMG_BASE}/${robotVariantWebpFilename(id)}`,
+        src: `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename(id)}`,
         alt: robotVariantImageAlt(id, lang),
         caption: film.application_cards[i]?.caption ?? '',
       })),
     [lang, film.application_cards],
   );
 
-  const fanDur = 0.85;
-  const fanEase = [0.2, 0.9, 0.2, 1] as const;
+  const fanDur = 0.14;
+  const fanEase = [0.22, 1, 0.36, 1] as const;
+  const fanOpen = reduceMotion ? 0 : 1 - fanProgress;
   const flangeHeroAlt = getMessages(lang).alt.r_core_detail_flange;
 
   return (
@@ -164,7 +209,12 @@ export function RCoreLongNarrative({
       >
         <div className="rcore-ln-flange-chapter" data-rcore-flange-chapter>
           <div className="rcore-ln-flange-exit" data-rcore-flange-exit>
-            <div className="rcore-ln-flange-hero-visual">
+            <div
+              className="rcore-ln-flange-hero-visual"
+              style={{
+                aspectRatio: `${RCORE_ADVISOR_FLANGE_HERO_DIM.width} / ${RCORE_ADVISOR_FLANGE_HERO_DIM.height}`,
+              }}
+            >
               <RCoreFlangeHeroStill alt={flangeHeroAlt} />
             </div>
             <div className="rcore-ln-flange-strip rcore-ln-copy-front">
@@ -259,40 +309,39 @@ export function RCoreLongNarrative({
         <motion.div className="rcore-ln-family-head rcore-ln-copy-front" {...fadeUp}>
           <p className="rcore-ln-eyebrow rcore-ln-eyebrow--blue">{film.r_family_kicker}</p>
           <h2 className="rcore-ln-family-title">{film.r_family_title}</h2>
+          <p className="rcore-ln-family-subtitle">{film.r_family_subtitle}</p>
         </motion.div>
         <div className="rcore-ln-family-spacer" />
         <motion.div
           ref={fanRef}
-          className={`rcore-ln-fan rcore-ln-fan--flex rcore-ln-copy-front${fanPlayed ? ' rcore-ln-fan--assembled' : ''}`}
+          className="rcore-ln-fan rcore-ln-fan--flex rcore-ln-copy-front"
+          style={{ '--fan-stack': fanProgress } as CSSProperties}
         >
           {familyAssets.map((fa, idx) => {
-            /* 初始：三张散开；滚入视区后：收拢并排 */
-            const rotScatter = idx === 0 ? -34 : idx === 2 ? 34 : 0;
-            const xScatter = idx === 0 ? -54 : idx === 2 ? 54 : 0;
-            const yScatter = idx === 0 ? 16 : idx === 2 ? 16 : idx === 1 ? -20 : 0;
-            const lineup = { rotate: 0, x: 0, y: 0 };
-            const scatter = { rotate: rotScatter, x: xScatter, y: yScatter };
+            /* 散开幅度略收；scroll 驱动 fanOpen，与 --fan-stack 同步叠放 */
+            const rotScatter = idx === 0 ? -22 : idx === 2 ? 22 : 0;
+            const xScatter = idx === 0 ? -38 : idx === 2 ? 38 : 0;
+            const yScatter = idx === 0 ? 10 : idx === 2 ? 10 : idx === 1 ? -12 : 0;
             return (
               <motion.div
                 key={fa.id}
                 className={`rcore-ln-fan__card rcore-ln-fan__card--${idx === 0 ? 'l' : idx === 1 ? 'c' : 'r'}`}
                 initial={false}
-                animate={
-                  prefersReducedMotion
-                    ? lineup
-                    : fanPlayed
-                      ? lineup
-                      : scatter
-                }
+                animate={{
+                  rotate: rotScatter * fanOpen,
+                  x: xScatter * fanOpen,
+                  y: yScatter * fanOpen,
+                }}
                 transition={{ duration: fanDur, ease: fanEase }}
               >
                 <div className="rcore-ln-fan__portrait">
                   <Image
                     src={fa.src}
                     alt={fa.alt}
-                    width={480}
-                    height={854}
-                    sizes="(max-width: 900px) 40vw, 280px"
+                    width={960}
+                    height={1708}
+                    sizes="(max-width: 900px) 50vw, min(360px, 28vw)"
+                    quality={92}
                     className="rcore-ln-fan__img"
                   />
                 </div>

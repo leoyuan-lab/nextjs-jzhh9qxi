@@ -3,8 +3,8 @@
 import type { RefObject, MutableRefObject } from 'react';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { robotVariantById } from '@/data/products';
-import { getMessages } from '@/lib/messages';
 import type { AppLocale } from '@/lib/messages';
+import { readScrollFilmNamespace, type ImmersiveMessagesPageKey } from '@/lib/immersive-series-messages';
 import { RCORE_FILM_SLICE_COUNT } from '@/lib/rcore-scroll-cameras';
 
 type ScrollFilmCopy = {
@@ -14,6 +14,8 @@ type ScrollFilmCopy = {
 
 export type RCoreScrollFilmProps = {
   lang: AppLocale;
+  /** @default 'r_core' */
+  messagesPageKey?: ImmersiveMessagesPageKey;
   modelViewerRef: RefObject<HTMLElement | null>;
   fixedStageRef: RefObject<HTMLDivElement | null>;
   filmRootRef?: RefObject<HTMLElement | null>;
@@ -72,12 +74,17 @@ function applyAdvLineReveal(
 /** 文案卷轴动画；GLB 机位由 RCorePageClient 统一驱动 */
 export function RCoreScrollFilm({
   lang,
+  messagesPageKey = 'r_core',
+  modelViewerRef: _modelViewerRef,
   fixedStageRef,
   filmRootRef,
   heroTitle,
   heroSubtitle,
 }: RCoreScrollFilmProps) {
-  const film = useMemo(() => getMessages(lang).pages.r_core.scroll_film as ScrollFilmCopy, [lang]);
+  const film = useMemo(
+    () => readScrollFilmNamespace(lang, messagesPageKey) as ScrollFilmCopy,
+    [lang, messagesPageKey],
+  );
 
   const v = robotVariantById['fr5-c'];
   const vars = useMemo(

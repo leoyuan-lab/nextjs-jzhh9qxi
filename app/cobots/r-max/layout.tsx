@@ -1,3 +1,7 @@
+/**
+ * `/cobots/r-max` — placeholder product shell. When the immersive page matches r-core, reuse
+ * `productSocialMetadata` + `rMaxOgProductImagePath()` from `lib/cobot-immersive-page-config.ts`.
+ */
 import type { Metadata } from 'next';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_COBOTS } from '@/lib/nav-breadcrumbs';

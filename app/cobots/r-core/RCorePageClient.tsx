@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * Immersive r‑Series 详情壳（卷轴 + GLB + 长叙事）。默认 `immersiveProductId="r-core"`；
+ * r‑max 传 `immersiveProductId="r-max"` 前须在 locales 补齐 `pages.r_max.scroll_film`（与 r_core 同结构）。
+ * 详见 `lib/cobot-immersive-page-config.ts`。
+ */
 import React, { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import { RCoreLongNarrative } from '@/components/cobots/RCoreLongNarrative';
 import { RCoreScrollFilm } from '@/components/cobots/RCoreScrollFilm';
@@ -16,8 +21,13 @@ import {
 } from '@/lib/rcore-scroll-cameras';
 import { getMessages } from '@/lib/messages';
 import type { AppLocale } from '@/lib/messages';
+import {
+  immersiveProductRouteToPageKey,
+  type ImmersiveProductRouteId,
+} from '@/lib/immersive-series-messages';
 
-const R_CORE = rSeriesData.find((f) => f.id === 'r-core')!.displayName;
+const R_CORE_LINE = rSeriesData.find((f) => f.id === 'r-core')!.displayName;
+const R_MAX_LINE = rSeriesData.find((f) => f.id === 'r-max')!.displayName;
 
 function clamp01(x: number): number {
   return Math.max(0, Math.min(1, x));
@@ -34,9 +44,14 @@ function intersectsViewport(rect: DOMRect, vh: number): boolean {
 
 export type RCorePageClientProps = {
   initialLang: AppLocale;
+  /** @default 'r-core' — r‑max 须已有 `pages.r_max.scroll_film` 等（见 `lib/cobot-immersive-page-config.ts`） */
+  immersiveProductId?: ImmersiveProductRouteId;
 };
 
-export function RCorePageClient({ initialLang }: RCorePageClientProps) {
+export function RCorePageClient({ initialLang, immersiveProductId = 'r-core' }: RCorePageClientProps) {
+  const messagesPageKey = immersiveProductRouteToPageKey(immersiveProductId);
+  const productLineLabel = immersiveProductId === 'r-max' ? R_MAX_LINE : R_CORE_LINE;
+  const glbSrc = immersiveProductId === 'r-max' ? cobotGlbModels.rMaxFr20 : cobotGlbModels.rCoreFr5C;
   const [lang, setLang] = useState<AppLocale>(initialLang);
   const [scrollVal, setScrollVal] = useState(0);
   const mvRef = useRef<HTMLElement>(null);
@@ -51,8 +66,20 @@ export function RCorePageClient({ initialLang }: RCorePageClientProps) {
   const materialAppliedRef = useRef(false);
 
   const msgs = getMessages(lang);
-  const page = msgs.pages.r_core;
-  const heroModelAlt = page.immersive_glb_alt;
+  const pagePack = msgs.pages[messagesPageKey] as Record<string, unknown>;
+  const heroSubtitle =
+    pagePack &&
+    typeof pagePack.hero === 'object' &&
+    pagePack.hero &&
+    'subtitle' in pagePack.hero
+      ? String((pagePack.hero as { subtitle: unknown }).subtitle)
+      : '';
+  const heroModelAlt =
+    typeof pagePack.immersive_glb_alt === 'string'
+      ? pagePack.immersive_glb_alt
+      : immersiveProductId === 'r-max'
+        ? msgs.alt.hero_rmax
+        : msgs.alt.hero_rcore;
 
   useLayoutEffect(() => {
     if ('scrollRestoration' in window.history) {
@@ -241,7 +268,7 @@ export function RCorePageClient({ initialLang }: RCorePageClientProps) {
         <div ref={modelInnerRef} className="rcore-fixed-model-inner">
           <model-viewer
             ref={mvRef}
-            src={cobotGlbModels.rCoreFr5C}
+            src={glbSrc}
             alt={heroModelAlt}
             camera-controls
             auto-rotate
@@ -259,7 +286,11 @@ export function RCorePageClient({ initialLang }: RCorePageClientProps) {
             onLoad={(e) => {
               const el = e.target as HTMLElement;
               applyRcoreViewerLighting(el);
-              if (!materialAppliedRef.current) {
+              if (
+                immersiveProductId === 'r-core' &&
+                !materialAppliedRef.current &&
+                (el as { model?: unknown }).model
+              ) {
                 applyAdvisorFlangeMaterial((el as { model?: unknown }).model);
                 materialAppliedRef.current = true;
               }
@@ -270,18 +301,20 @@ export function RCorePageClient({ initialLang }: RCorePageClientProps) {
       </div>
 
       {showBrandStrip && <RCoreBrandTopStrip lang={lang} />}
-      {showConsultNav && <RCoreAppStickySubnav lang={lang} productLineLabel={R_CORE} />}
+      {showConsultNav && <RCoreAppStickySubnav lang={lang} productLineLabel={productLineLabel} />}
 
       <RCoreScrollFilm
         lang={lang}
+        messagesPageKey={messagesPageKey}
         modelViewerRef={mvRef}
         fixedStageRef={fixedStageRef}
         filmRootRef={filmRootRef}
-        heroTitle={R_CORE}
-        heroSubtitle={page.hero.subtitle}
+        heroTitle={productLineLabel}
+        heroSubtitle={heroSubtitle}
       />
       <RCoreLongNarrative
         lang={lang}
+        messagesPageKey={messagesPageKey}
         flangeSectionRef={flangeSectionRef}
         bpSectionRef={bpSectionRef}
         appSectionRef={appSectionRef}
