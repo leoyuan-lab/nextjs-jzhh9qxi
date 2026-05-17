@@ -2,7 +2,7 @@
 
 /**
  * Long narrative blocks after the scroll film. Copy from `pages.*.scroll_film`
- * (`messagesPageKey`: `r_core` | `r_max`). See `lib/cobot-immersive-page-config.ts`.
+ * (`messagesPageKey`: `r_lite` | `r_ultra`). See `lib/cobot-immersive-page-config.ts`.
  */
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,10 +13,11 @@ import { RCoreFlangeHeroStill } from '@/components/cobots/RCoreFlangeHeroStill';
 import {
   ROBOT_IMG_BASE,
   ROBOT_VECTOR_BASE,
-  RCORE_ADVISOR_FLANGE_HERO_DIM,
+  R_LITE_ADVISOR_FLANGE_HERO_DIM,
   robotVariantBlueprintAlt,
   robotVariantBlueprintDescription,
   robotVariantBlueprintSvgFilename,
+  robotVariantById,
   robotVariantImageAlt,
   robotVariantWebpHdFilename,
 } from '@/data/products';
@@ -25,12 +26,38 @@ import type { AppLocale } from '@/lib/messages';
 import {
   immersiveFlangeHeroAlt,
   immersivePrimaryCatalogVariantId,
+  immersiveScrollFilmCatalogVariantId,
   readScrollFilmNamespace,
   type ImmersiveMessagesPageKey,
 } from '@/lib/immersive-series-messages';
 
+function fillTemplate(template: string, vars: Record<string, string>): string {
+  return template.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key: string) => vars[key] ?? '');
+}
+
+function variantTemplateVars(variantId: string, lang: AppLocale): Record<string, string> {
+  const v = robotVariantById[variantId];
+  if (!v) return {};
+  return {
+    reach: v.reach,
+    repeatability: v.repeatability,
+    payload: v.payload,
+    weight: v.weight,
+    footprint: v.footprint,
+    voltage: v.voltage,
+    tcpSpeed: v.tcpSpeed,
+    dof: v.dof,
+    avgPower: v.avgPower,
+    description: v.description[lang],
+  };
+}
+
 const FAMILY_VARIANT_IDS = ['fr3-c', 'fr5-wml', 'fr20-std'] as const;
-const APP_CARD_IDS = ['fr3-std', 'fr5-c', 'fr10-std', 'fr16-std', 'fr20-std'] as const;
+
+const APP_CARD_IDS_BY_PAGE: Record<ImmersiveMessagesPageKey, readonly string[]> = {
+  r_lite: ['fr3-c', 'fr5-c', 'fr3-std'],
+  r_ultra: ['fr30-std', 'fr20-std', 'fr16-std'],
+};
 
 const fadeUp = {
   initial: { opacity: 0, y: 50 },
@@ -57,12 +84,13 @@ type FilmCopy = {
   r_family_subtitle: string;
   r_family_body: string;
   tail_title: string;
+  tail_subtitle?: string;
   links: { specs: string; advisor: string; side_by_side: string };
 };
 
 export type RCoreLongNarrativeProps = {
   lang: AppLocale;
-  /** @default 'r_core' — r‑max 沉浸页传 `r_max`（须已有 `pages.r_max.scroll_film`） */
+  /** @default 'r_lite' — r‑ultra 沉浸页传 `r_ultra` */
   messagesPageKey?: ImmersiveMessagesPageKey;
   flangeSectionRef?: RefObject<HTMLElement | null>;
   bpSectionRef?: RefObject<HTMLElement | null>;
@@ -76,7 +104,7 @@ function assignRef(ref: RefObject<HTMLElement | null> | undefined, node: HTMLEle
 
 export function RCoreLongNarrative({
   lang,
-  messagesPageKey = 'r_core',
+  messagesPageKey = 'r_lite',
   flangeSectionRef,
   bpSectionRef,
   appSectionRef,
@@ -89,6 +117,8 @@ export function RCoreLongNarrative({
   );
   const prefersReducedMotion = useReducedMotion();
   const primaryVariantId = immersivePrimaryCatalogVariantId(messagesPageKey);
+  const heroVariantId = immersiveScrollFilmCatalogVariantId(messagesPageKey);
+  const heroVars = useMemo(() => variantTemplateVars(heroVariantId, lang), [heroVariantId, lang]);
 
   const rootRef = useRef<HTMLDivElement | null>(null);
   const flangeRef = useRef<HTMLElement | null>(null);
@@ -188,15 +218,20 @@ export function RCoreLongNarrative({
     [lang],
   );
 
+  const appCardIds = APP_CARD_IDS_BY_PAGE[messagesPageKey];
+
   const appCards = useMemo(
     () =>
-      APP_CARD_IDS.map((id, i) => ({
+      appCardIds.map((id, i) => ({
         id,
         src: `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename(id)}`,
         alt: robotVariantImageAlt(id, lang),
-        caption: film.application_cards[i]?.caption ?? '',
+        caption: fillTemplate(
+          film.application_cards[i]?.caption ?? '',
+          variantTemplateVars(id, lang),
+        ),
       })),
-    [lang, film.application_cards],
+    [lang, film.application_cards, appCardIds],
   );
 
   const flangeHeroAlt = immersiveFlangeHeroAlt(lang, messagesPageKey);
@@ -213,7 +248,7 @@ export function RCoreLongNarrative({
             <div
               className="rcore-ln-flange-hero-visual"
               style={{
-                aspectRatio: `${RCORE_ADVISOR_FLANGE_HERO_DIM.width} / ${RCORE_ADVISOR_FLANGE_HERO_DIM.height}`,
+                aspectRatio: `${R_LITE_ADVISOR_FLANGE_HERO_DIM.width} / ${R_LITE_ADVISOR_FLANGE_HERO_DIM.height}`,
               }}
             >
               <RCoreFlangeHeroStill alt={flangeHeroAlt} />
@@ -232,11 +267,12 @@ export function RCoreLongNarrative({
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 >
-                  <h3 className="rcore-ln-flange-col__title">{col.title}</h3>
-                  <hr className="rcore-ln-flange-col__rule" />
-                  <p className="rcore-ln-flange-col__body">
-                    {col.body} <strong className="rcore-ln-flange-col__hi">{col.highlight}</strong>
-                  </p>
+                  <div className="rcore-ln-flange-col__head">
+                    <h3 className="rcore-ln-flange-col__title">{col.title}</h3>
+                    <hr className="rcore-ln-flange-col__rule" />
+                  </div>
+                  <p className="rcore-ln-flange-col__body">{fillTemplate(col.body, heroVars)}</p>
+                  <strong className="rcore-ln-flange-col__hi">{col.highlight}</strong>
                 </motion.div>
               ))}
             </div>
@@ -257,7 +293,7 @@ export function RCoreLongNarrative({
               <object
                 type="image/svg+xml"
                 data={blueprintSrc}
-                className="rcore-ln-bp-svg"
+                className={`rcore-ln-bp-svg${primaryVariantId === 'fr30-std' ? ' rcore-ln-bp-svg--tall' : ''}`}
                 aria-label={blueprintAlt}
                 aria-description={blueprintDesc}
                 title={blueprintAlt}
@@ -355,9 +391,18 @@ export function RCoreLongNarrative({
         </div>
         <div className="rcore-film-tail__inner rcore-ln-copy-front">
           <h2 id="rcore-film-tail-heading">{film.tail_title}</h2>
+          {film.tail_subtitle?.trim() ? (
+            <p className="rcore-film-tail__subtitle">{film.tail_subtitle}</p>
+          ) : null}
           <nav className="rcore-film-tail__links" aria-label={film.section_aria}>
             <Link href={`${base}/cobots/all-cobots-specs`}>{film.links.specs}</Link>
+            <span className="rcore-film-tail__sep" aria-hidden>
+              ·
+            </span>
             <Link href={`${base}/selector/advisor`}>{film.links.advisor}</Link>
+            <span className="rcore-film-tail__sep" aria-hidden>
+              ·
+            </span>
             <Link href={`${base}/selector/comparison`}>{film.links.side_by_side}</Link>
           </nav>
         </div>

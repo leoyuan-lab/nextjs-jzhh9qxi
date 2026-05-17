@@ -11,7 +11,7 @@ type Props = {
 };
 
 /** Application 段起：顶栏左侧产品线名，右侧咨询（与主站顶栏毛玻璃一致） */
-export function RCoreAppStickySubnav({ lang, productLineLabel, messagesPageKey = 'r_core' }: Props) {
+export function RCoreAppStickySubnav({ lang, productLineLabel, messagesPageKey = 'r_lite' }: Props) {
   const msgs = getMessages(lang);
   const page = msgs.pages[messagesPageKey];
   const copy = page.scenario_subnav;

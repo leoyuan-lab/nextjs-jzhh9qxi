@@ -1,8 +1,7 @@
 'use client';
 
 /**
- * Immersive r‑Series 详情壳（卷轴 + GLB + 长叙事）。默认 `immersiveProductId="r-core"`；
- * r‑max 传 `immersiveProductId="r-max"` 前须在 locales 补齐 `pages.r_max.scroll_film`（与 r_core 同结构）。
+ * Immersive r‑Series 详情壳（卷轴 + GLB + 长叙事）。`immersiveProductId`：`r-lite` | `r-ultra`。
  * 详见 `lib/cobot-immersive-page-config.ts`。
  */
 import React, { useRef, useState, useEffect, useLayoutEffect } from 'react';
@@ -27,8 +26,13 @@ import {
   type ImmersiveProductRouteId,
 } from '@/lib/immersive-series-messages';
 
-const R_CORE_LINE = rSeriesData.find((f) => f.id === 'r-core')!.displayName;
-const R_MAX_LINE = rSeriesData.find((f) => f.id === 'r-max')!.displayName;
+const R_LITE_LINE = rSeriesData.find((f) => f.id === 'r-lite')!.displayName;
+const R_ULTRA_LINE = rSeriesData.find((f) => f.id === 'r-ultra')!.displayName;
+
+const IMMERSIVE_PAGE_PATH: Record<ImmersiveProductRouteId, '/cobots/r-lite' | '/cobots/r-ultra'> = {
+  'r-lite': '/cobots/r-lite',
+  'r-ultra': '/cobots/r-ultra',
+};
 
 function clamp01(x: number): number {
   return Math.max(0, Math.min(1, x));
@@ -43,16 +47,19 @@ function intersectsViewport(rect: DOMRect, vh: number): boolean {
   return rect.bottom > 0 && rect.top < vh;
 }
 
-export type RCorePageClientProps = {
+export type CobotImmersivePageClientProps = {
   initialLang: AppLocale;
-  /** @default 'r-core' — r‑max 须已有 `pages.r_max.scroll_film` 等（见 `lib/cobot-immersive-page-config.ts`） */
-  immersiveProductId?: ImmersiveProductRouteId;
+  immersiveProductId: ImmersiveProductRouteId;
 };
 
-export function RCorePageClient({ initialLang, immersiveProductId = 'r-core' }: RCorePageClientProps) {
+export function CobotImmersivePageClient({
+  initialLang,
+  immersiveProductId,
+}: CobotImmersivePageClientProps) {
   const messagesPageKey = immersiveProductRouteToPageKey(immersiveProductId);
-  const productLineLabel = immersiveProductId === 'r-max' ? R_MAX_LINE : R_CORE_LINE;
-  const glbSrc = immersiveProductId === 'r-max' ? cobotGlbModels.rMaxFr20 : cobotGlbModels.rCoreFr5C;
+  const productLineLabel = immersiveProductId === 'r-ultra' ? R_ULTRA_LINE : R_LITE_LINE;
+  const glbSrc =
+    immersiveProductId === 'r-ultra' ? cobotGlbModels.rUltraFr30 : cobotGlbModels.rLiteFr3C;
   const [lang, setLang] = useState<AppLocale>(initialLang);
   const [scrollVal, setScrollVal] = useState(0);
   const mvRef = useRef<HTMLElement>(null);
@@ -78,9 +85,9 @@ export function RCorePageClient({ initialLang, immersiveProductId = 'r-core' }: 
   const heroModelAlt =
     typeof pagePack.immersive_glb_alt === 'string'
       ? pagePack.immersive_glb_alt
-      : immersiveProductId === 'r-max'
-        ? msgs.alt.hero_rmax
-        : msgs.alt.hero_rcore;
+      : immersiveProductId === 'r-ultra'
+        ? msgs.alt.hero_rultra
+        : msgs.alt.hero_rlite;
 
   useLayoutEffect(() => {
     if ('scrollRestoration' in window.history) {
@@ -177,7 +184,6 @@ export function RCorePageClient({ initialLang, immersiveProductId = 'r-core' }: 
         return;
       }
 
-      /* 法兰 + 蓝图及之后：不再挂载固定 GLB（蓝图段无闪现） */
       if (flangeInView) {
         setStageVisible(false, false);
         stage.style.transform = '';
@@ -186,7 +192,6 @@ export function RCorePageClient({ initialLang, immersiveProductId = 'r-core' }: 
         return;
       }
 
-      /* 卷轴：hero + 三优点；第三优点 slice 内与文案同步上飞出屏 */
       if (filmVisible && film && filmSlice) {
         const exitT =
           filmSlice.si === 3 ? smoothstep(0.72, 0.995, filmSlice.local) : 0;
@@ -288,7 +293,7 @@ export function RCorePageClient({ initialLang, immersiveProductId = 'r-core' }: 
               const el = e.target as HTMLElement;
               applyRcoreViewerLighting(el);
               if (
-                immersiveProductId === 'r-core' &&
+                immersiveProductId === 'r-lite' &&
                 !materialAppliedRef.current &&
                 (el as { model?: unknown }).model
               ) {
@@ -327,10 +332,7 @@ export function RCorePageClient({ initialLang, immersiveProductId = 'r-core' }: 
         appSectionRef={appSectionRef}
         narrativeRootRef={narrativeRootRef}
       />
-      <RooollFaqSection
-        lang={lang}
-        pagePath={immersiveProductId === 'r-max' ? '/cobots/r-max' : '/cobots/r-core'}
-      />
+      <RooollFaqSection lang={lang} pagePath={IMMERSIVE_PAGE_PATH[immersiveProductId]} />
     </div>
   );
 }

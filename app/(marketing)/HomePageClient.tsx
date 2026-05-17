@@ -12,8 +12,8 @@ function familyTitle(familyId: string) {
 
 /** 屏3 详情卡背景（旧 `/images/detail1.jpg`、`detail2.jpg` 已移除；与 `public/images/robots` 资产一致） */
 const HOME_DETAIL_CARD_IMAGES = {
-  preciseTouch: '/images/robots/r-core-cobot-fr5-std.webp',
-  smartCore: '/images/robots/r-max-cobot-fr20-std.webp',
+  preciseTouch: '/images/robots/r-lite-cobot-fr3-std.webp',
+  smartCore: '/images/robots/r-ultra-cobot-fr30-std.webp',
 } as const;
 
 export default function HomePageClient() {
@@ -22,8 +22,8 @@ export default function HomePageClient() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [showDragHint, setShowDragHint] = useState(false);
-  const [isRcoreHeroGlbLoaded, setIsRcoreHeroGlbLoaded] = useState(false);
-  const [enableRmaxModel, setEnableRmaxModel] = useState(false);
+  const [isRliteHeroGlbLoaded, setIsRliteHeroGlbLoaded] = useState(false);
+  const [enableRultraModel, setEnableRultraModel] = useState(false);
   const viewerRef5 = useRef<any>(null);
   const viewerRef20 = useRef<any>(null);
   /** Joint spin loop id (`requestAnimationFrame`); cleared with `cancelAnimationFrame`. */
@@ -42,15 +42,21 @@ export default function HomePageClient() {
   const openInquiry = () => window.dispatchEvent(new Event('roooll-inquiry-open'));
   const path = (p: string) => `/${lang}${p.startsWith('/') ? p : `/${p}`}`;
 
-  const titleRcore = useMemo(() => familyTitle('r-core'), []);
-  const titleRmax = useMemo(() => familyTitle('r-max'), []);
-  const altHeroRcoreGlb = useMemo(() => alt.hero_rcore ?? robotVariantImageAlt('fr5-c', lang), [alt.hero_rcore, lang]);
-  const altHeroRmaxGlb = useMemo(() => alt.hero_rmax ?? robotVariantImageAlt('fr20-std', lang), [alt.hero_rmax, lang]);
+  const titleRlite = useMemo(() => familyTitle('r-lite'), []);
+  const titleRultra = useMemo(() => familyTitle('r-ultra'), []);
+  const altHeroRliteGlb = useMemo(
+    () => alt.hero_rlite ?? robotVariantImageAlt('fr3-c', lang),
+    [alt.hero_rlite, lang],
+  );
+  const altHeroRultraGlb = useMemo(
+    () => alt.hero_rultra ?? robotVariantImageAlt('fr30-std', lang),
+    [alt.hero_rultra, lang],
+  );
 
   useEffect(() => {
-    if (!isRcoreHeroGlbLoaded) return;
-    setEnableRmaxModel(true);
-  }, [isRcoreHeroGlbLoaded]);
+    if (!isRliteHeroGlbLoaded) return;
+    setEnableRultraModel(true);
+  }, [isRliteHeroGlbLoaded]);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -207,7 +213,7 @@ export default function HomePageClient() {
       applyPerfectMaterial(v5.model);
       startJointSpin(v5);
       startSimpleHeroSequence(v5);
-      setIsRcoreHeroGlbLoaded(true);
+      setIsRliteHeroGlbLoaded(true);
       finishLoading();
     };
 
@@ -338,13 +344,13 @@ export default function HomePageClient() {
         </div>
       )}
 
-      {/* 屏1: r-core（FR5-C，`r-core-cobot-fr5-c.glb`） */}
+      {/* 屏1: r-lite（FR3-C，`r-lite-cobot-fr3-c.glb`） */}
       <section className="screen-outer screen-outer--hero" style={{ backgroundColor: '#ffffff', color: '#1d1d1f' }}>
-        <div className={`hero-3d-wrap ${isLoaded ? 'r-core-cobot-fr5-entry-animation' : 'hidden-init'}`}>
+        <div className={`hero-3d-wrap ${isLoaded ? 'r-lite-cobot-fr3-entry-animation' : 'hidden-init'}`}>
           <model-viewer
             ref={viewerRef5}
-            src={cobotGlbModels.rCoreFr5C}
-            alt={altHeroRcoreGlb}
+            src={cobotGlbModels.rLiteFr3C}
+            alt={altHeroRliteGlb}
             disable-zoom
             camera-orbit="45deg 85deg 1900m"
             camera-target="auto 110% auto"
@@ -372,10 +378,10 @@ export default function HomePageClient() {
         <div className={`drag-hint ${showDragHint ? 'show' : ''}`}>{home.dragHint}</div>
         <div className="content-limit">
           <div className="text-box dark-copy">
-            <h2 className="title">{titleRcore}</h2>
-            <p className="subtitle">{home.heroRcoreSubtitle}</p>
+            <h2 className="title">{titleRlite}</h2>
+            <p className="subtitle">{home.heroRliteSubtitle}</p>
             <div className="cta-row">
-              <a href={path('/cobots/r-core')} className="cta-link">
+              <a href={path('/cobots/r-lite')} className="cta-link">
                 {ctaLearn}
               </a>
               <button type="button" className="cta-link cta-btn" onClick={openInquiry}>
@@ -386,13 +392,13 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* 屏2: r-max（r-max-cobot-fr20.glb） */}
+      {/* 屏2: r-ultra（r-ultra-cobot-fr30.glb） */}
       <section className="screen-outer screen-outer--hero-dark" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
         <div className={`hero-3d-wrap hero-3d-wrap--dark ${isLoaded ? 'ready-visible' : 'hidden-init'}`}>
           <model-viewer
             ref={viewerRef20}
-            src={enableRmaxModel ? cobotGlbModels.rMaxFr20 : undefined}
-            alt={altHeroRmaxGlb}
+            src={enableRultraModel ? cobotGlbModels.rUltraFr30 : undefined}
+            alt={altHeroRultraGlb}
             loading="lazy"
             auto-rotate
             disable-zoom
@@ -419,10 +425,10 @@ export default function HomePageClient() {
         </div>
         <div className="content-limit">
           <div className="text-box">
-            <h2 className="title">{titleRmax}</h2>
-            <p className="subtitle">{home.heroRmaxSubtitle}</p>
+            <h2 className="title">{titleRultra}</h2>
+            <p className="subtitle">{home.heroRultraSubtitle}</p>
             <div className="cta-row">
-              <a href={path('/cobots/r-max')} className="cta-link">
+              <a href={path('/cobots/r-ultra')} className="cta-link">
                 {ctaLearn}
               </a>
               <button type="button" className="cta-link cta-btn" onClick={openInquiry}>
@@ -438,7 +444,7 @@ export default function HomePageClient() {
         <article className="twin-hero-panel">
           <Image
             src={HOME_DETAIL_CARD_IMAGES.preciseTouch}
-            alt={alt.hero_rcore}
+            alt={alt.hero_rlite}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="twin-hero-image"
@@ -447,7 +453,7 @@ export default function HomePageClient() {
             <h3>{home.cardPreciseTitle}</h3>
             <p>{home.cardPreciseBody}</p>
             <div className="cta-row card-cta">
-              <a href={path('/cobots/r-core')} className="cta-link">
+              <a href={path('/cobots/r-lite')} className="cta-link">
                 {home.cardPreciseCta}
               </a>
               <button type="button" className="cta-link cta-btn" onClick={openInquiry}>
@@ -460,7 +466,7 @@ export default function HomePageClient() {
         <article className="twin-hero-panel">
           <Image
             src={HOME_DETAIL_CARD_IMAGES.smartCore}
-            alt={alt.hero_rmax}
+            alt={alt.hero_rultra}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="twin-hero-image"
@@ -469,7 +475,7 @@ export default function HomePageClient() {
             <h3>{home.cardSmartTitle}</h3>
             <p>{home.cardSmartBody}</p>
             <div className="cta-row card-cta">
-              <a href={path('/cobots/r-max')} className="cta-link">
+              <a href={path('/cobots/r-ultra')} className="cta-link">
                 {home.cardSmartCta}
               </a>
               <button type="button" className="cta-link cta-btn" onClick={openInquiry}>

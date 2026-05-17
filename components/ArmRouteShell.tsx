@@ -1,5 +1,5 @@
 /**
- * Shared chrome for r‑Core detail route (`/cobots/r-core`).
+ * Shared chrome for immersive cobot detail routes (`/cobots/r-lite`, `/cobots/r-ultra`).
  */
 export function ArmRouteShell({
   children,

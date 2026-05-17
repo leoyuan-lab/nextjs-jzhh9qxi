@@ -20,7 +20,7 @@ const nextConfig = {
       },
       {
         source: '/arm',
-        destination: '/cobots/r-core',
+        destination: '/cobots/r-lite',
         permanent: true,
       },
       {

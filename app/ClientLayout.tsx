@@ -58,11 +58,11 @@ const InquiryContext = createContext({
 type NavSubLink = { label: string; url: string };
 type NavSection = { label: string; url: string; links: NavSubLink[] };
 
-const ARM_NAV_PATHS = new Set(['/cobots/r-core']);
+const ARM_NAV_PATHS = new Set(['/cobots/r-lite', '/cobots/r-ultra']);
 
 const SELECTOR_NAV_PATHS = new Set(['/selector/advisor', '/selector/comparison']);
 
-/** 与 `/cobots/r-core` 相同：`main` 顶内边距为 0，首屏 3D 从视口顶铺满至透明导航下沿。 */
+/** 与 `/cobots/r-lite` 相同：`main` 顶内边距为 0，首屏 3D 从视口顶铺满至透明导航下沿。 */
 const ADVISOR_HERO_PEEK_PATH = '/selector/advisor';
 
 /** Same chrome behavior as homepage (immersive hero, clear nav baseline). */
@@ -112,8 +112,8 @@ function buildNav(messages: MessagesFile): NavSection[] {
       url: '/',
       links: [
         { label: n.cobots.all_specs, url: '/cobots/all-cobots-specs' },
-        { label: `${navFamilyName('r-core')}${n.cobots.r_core_suffix}`, url: '/cobots/r-core' },
-        { label: `${navFamilyName('r-max')}${n.cobots.r_max_suffix}`, url: '/cobots/r-max' },
+        { label: `${navFamilyName('r-lite')}${n.cobots.r_lite_suffix}`, url: '/cobots/r-lite' },
+        { label: `${navFamilyName('r-ultra')}${n.cobots.r_ultra_suffix}`, url: '/cobots/r-ultra' },
         { label: n.cobots.humanoid, url: '/cobots/humanoid' },
       ],
     },

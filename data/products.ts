@@ -645,21 +645,29 @@ export const ROBOT_VECTOR_BASE = '/images/robots/_vectors';
 
 /** 含 3D hero 的 `.glb`，命名：`{rfamily}-cobot-{型号干名}.glb`（与 public 一致） */
 export const cobotGlbModels = {
-  /** r-Core 线（FR5-C）首页 / `/cobots/r-core` / 选型向导 hero */
-  rCoreFr5C: '/models/r-core-cobot-fr5-c.glb',
-  /** r-Max 线（FR20）首页 hero */
-  rMaxFr20: '/models/r-max-cobot-fr20.glb',
+  /** r-Lite 线（FR3-C）首页 / `/cobots/r-lite` / 选型向导 hero */
+  rLiteFr3C: '/models/r-lite-cobot-fr3-c.glb',
+  /** r-Ultra 线（FR30）首页 / `/cobots/r-ultra` hero */
+  rUltraFr30: '/models/r-ultra-cobot-fr30.glb',
 } as const;
 
-/** r-Core 法兰三特征段静态主视觉（WebP，与 `public/images/robots/` 命名一致） */
-export const RCORE_ADVISOR_FLANGE_HERO_IMG = '/images/robots/r-core-cobot-fr5-c-advisor-hero-flange.webp';
+/** r-Lite 法兰三特征段静态主视觉（WebP，与 `public/images/robots/` 命名一致） */
+export const R_LITE_ADVISOR_FLANGE_HERO_IMG =
+  '/images/robots/r-lite-cobot-fr3-c-advisor-hero-flange.webp';
 
-/** 与 `RCORE_ADVISOR_FLANGE_HERO_IMG` 源文件像素一致（换图时请同步更新，供 hero 容器 aspect-ratio） */
-export const RCORE_ADVISOR_FLANGE_HERO_DIM = { width: 2828, height: 1430 } as const;
+/** 与 `R_LITE_ADVISOR_FLANGE_HERO_IMG` 源文件像素一致（换图时请同步更新，供 hero 容器 aspect-ratio） */
+export const R_LITE_ADVISOR_FLANGE_HERO_DIM = { width: 2828, height: 1430 } as const;
+
+/** @deprecated Use `R_LITE_ADVISOR_FLANGE_HERO_IMG` */
+export const RCORE_ADVISOR_FLANGE_HERO_IMG = R_LITE_ADVISOR_FLANGE_HERO_IMG;
+
+/** @deprecated Use `R_LITE_ADVISOR_FLANGE_HERO_DIM` */
+export const RCORE_ADVISOR_FLANGE_HERO_DIM = R_LITE_ADVISOR_FLANGE_HERO_DIM;
 
 /** 变体与 3D 模型路径映射（用于按型号分发 hero 模型） */
 export const robotVariantModelPath: Partial<Record<string, string>> = {
-  'fr5-c': cobotGlbModels.rCoreFr5C,
+  'fr3-c': cobotGlbModels.rLiteFr3C,
+  'fr30-std': cobotGlbModels.rUltraFr30,
 };
 
 export function robotFamilyForVariant(variantId: string): RobotFamily {

@@ -27,14 +27,14 @@ export type CobotDetailCopy = {
   compareRightName: string;
 };
 
-export function getRCoreDetailCopy(
+export function getRLiteDetailCopy(
   lang: Lang,
-  names: { rCore: string; rMax: string },
+  names: { rLite: string; rUltra: string },
 ): CobotDetailCopy {
-  const page = getMessages(lang).pages.r_core;
+  const page = getMessages(lang).pages.r_lite;
   return {
     inquiry: page.inquiry,
-    heroTitle: names.rCore,
+    heroTitle: names.rLite,
     heroSubtitle: page.hero.subtitle,
     highlightsTitle: page.highlights.title,
     highlights: page.highlights.cards,
@@ -44,7 +44,15 @@ export function getRCoreDetailCopy(
     narrativeSubtitle: page.narrative.subtitle,
     specsTitle: page.specs.title,
     specs: page.specs.items,
-    compareLeftName: names.rCore,
-    compareRightName: names.rMax,
+    compareLeftName: names.rLite,
+    compareRightName: names.rUltra,
   };
+}
+
+/** @deprecated Use `getRLiteDetailCopy` */
+export function getRCoreDetailCopy(
+  lang: Lang,
+  names: { rCore: string; rMax: string },
+): CobotDetailCopy {
+  return getRLiteDetailCopy(lang, { rLite: names.rCore, rUltra: names.rMax });
 }

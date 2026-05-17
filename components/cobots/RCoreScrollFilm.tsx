@@ -13,12 +13,18 @@ import { RCORE_FILM_SLICE_COUNT } from '@/lib/rcore-scroll-cameras';
 
 type ScrollFilmCopy = {
   section_aria: string;
-  advantages: { kicker: string; title: string; body: string; badge: string }[];
+  advantages: {
+    kicker: string;
+    title: string;
+    subtitle?: string;
+    body: string;
+    badge: string;
+  }[];
 };
 
 export type RCoreScrollFilmProps = {
   lang: AppLocale;
-  /** @default 'r_core' */
+  /** @default 'r_lite' */
   messagesPageKey?: ImmersiveMessagesPageKey;
   modelViewerRef: RefObject<HTMLElement | null>;
   fixedStageRef: RefObject<HTMLDivElement | null>;
@@ -78,7 +84,7 @@ function applyAdvLineReveal(
 /** 文案卷轴动画；GLB 机位由 RCorePageClient 统一驱动 */
 export function RCoreScrollFilm({
   lang,
-  messagesPageKey = 'r_core',
+  messagesPageKey = 'r_lite',
   modelViewerRef: _modelViewerRef,
   fixedStageRef,
   filmRootRef,
@@ -159,12 +165,16 @@ export function RCoreScrollFilm({
     advEls.forEach((node) => {
       const idx = Number(node.dataset.rfilmAdv);
       if (!Number.isFinite(idx)) return;
+      const kickerEl = node.querySelector<HTMLElement>('.rcore-film-adv__kicker');
       const titleEl = node.querySelector<HTMLElement>('.rcore-film-adv__title');
+      const subtitleEl = node.querySelector<HTMLElement>('.rcore-film-adv__subtitle');
       const bodyEl = node.querySelector<HTMLElement>('.rcore-film-adv__body');
       if (advIndex !== idx) {
         node.style.opacity = '0';
         node.style.transform = 'translate3d(0, 12%, 0)';
+        resetAdvLineStyles(kickerEl);
         resetAdvLineStyles(titleEl);
+        resetAdvLineStyles(subtitleEl);
         resetAdvLineStyles(bodyEl);
         return;
       }
@@ -175,8 +185,10 @@ export function RCoreScrollFilm({
 
       const revealStart = advRevealT0Ref.current ?? performance.now();
       const elapsed = performance.now() - revealStart;
-      applyAdvLineReveal(titleEl, elapsed, 0, lineDuration, reduce);
-      applyAdvLineReveal(bodyEl, elapsed, 120, lineDuration, reduce);
+      applyAdvLineReveal(kickerEl, elapsed, 0, lineDuration, reduce);
+      applyAdvLineReveal(titleEl, elapsed, 80, lineDuration, reduce);
+      applyAdvLineReveal(subtitleEl, elapsed, 160, lineDuration, reduce);
+      applyAdvLineReveal(bodyEl, elapsed, 240, lineDuration, reduce);
     });
   }, [fixedStageRef]);
 
@@ -243,7 +255,13 @@ export function RCoreScrollFilm({
               return (
                 <div key={i} className={`rcore-film-adv rcore-film-adv--pos-${pos}`} data-rfilm-adv={i}>
                   <div className="rcore-film-adv__col">
+                    {adv.kicker.trim() ? (
+                      <p className="rcore-film-adv__kicker">{fillTemplate(adv.kicker, vars)}</p>
+                    ) : null}
                     <h2 className="rcore-film-adv__title">{fillTemplate(adv.title, vars)}</h2>
+                    {adv.subtitle?.trim() ? (
+                      <p className="rcore-film-adv__subtitle">{fillTemplate(adv.subtitle, vars)}</p>
+                    ) : null}
                     <p className="rcore-film-adv__body">{fillTemplate(adv.body, vars)}</p>
                   </div>
                 </div>

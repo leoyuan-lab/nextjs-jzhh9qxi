@@ -41,7 +41,7 @@ export default async function REcosystemHubPage() {
       <section className="ecosystem-visual-grid" aria-label="ecosystem visuals">
         <div className="ecosystem-visual-card">
           <Image
-            src="/images/robots/r-core-cobot-fr5-c.webp"
+            src="/images/robots/r-lite-cobot-fr3-c.webp"
             alt={activeAlt.ecosystem_os}
             fill
             loading="lazy"
@@ -51,7 +51,7 @@ export default async function REcosystemHubPage() {
         </div>
         <div className="ecosystem-visual-card">
           <Image
-            src="/images/robots/r-max-cobot-fr20-std.webp"
+            src="/images/robots/r-ultra-cobot-fr30-std.webp"
             alt={activeAlt.ecosystem_insight}
             fill
             loading="lazy"

@@ -10,8 +10,8 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 type RooollFaqSectionProps = {
   lang: AppLocale;
-  /** Logical path without locale, e.g. `/cobots/r-core` — used in FAQPage JSON-LD. */
-  pagePath: '/cobots/r-core' | '/cobots/r-max';
+  /** Logical path without locale, e.g. `/cobots/r-lite` — used in FAQPage JSON-LD. */
+  pagePath: '/cobots/r-lite' | '/cobots/r-ultra';
 };
 
 function absolutePageUrl(origin: string, lang: AppLocale, pagePath: string): string {
@@ -50,7 +50,7 @@ export function RooollFaqSection({ lang, pagePath }: RooollFaqSectionProps) {
   }, [lang, pagePath, pairs]);
 
   const jsonLdId =
-    pagePath === '/cobots/r-max' ? 'jsonld-faq-cobots-r-max' : 'jsonld-faq-cobots-r-core';
+    pagePath === '/cobots/r-ultra' ? 'jsonld-faq-cobots-r-ultra' : 'jsonld-faq-cobots-r-lite';
 
   const panelTransition = prefersReducedMotion
     ? { duration: 0 }
