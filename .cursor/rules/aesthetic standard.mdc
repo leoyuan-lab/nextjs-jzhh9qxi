@@ -1,3 +1,21 @@
+# Roooll Project - AI Programming Guidelines
+
+## Core Principles
+1. **代码完整性**：在我没有明确提出要变更原本已有的功能和代码之前，绝对不要丢三落四。每次新增加或优化功能时，必须保证原本未要求修改部分的完整性，严禁擅自删减或简化周围的代码。
+2. **视觉与设计风格**：本项目严格追求【Apple 风格】的高端、极简美学。
+   - 保持优雅的呼吸感与大面积的留白。
+   - 所有的动效和交互必须追求细腻、平滑的动态质感。
+   - 优先使用精致的材质（如细腻的磨砂玻璃效果等）。
+
+## Tech Stack & Standards
+- Framework: Next.js (App Router)
+- Styling: Tailwind CSS
+- Components: TypeScript / React components
+- 3D Assets: Optimizing for GLB/3D interactive models
+
+## Response Strategy
+- 直接给出最优雅、规范、没有缺失的代码实现。
+- 如果涉及 UI 变动，主动考虑响应式布局（Desktop & Mobile）。
 ---
 alwaysApply: true
 ---
