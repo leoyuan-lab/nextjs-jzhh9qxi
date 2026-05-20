@@ -13,6 +13,7 @@ import zhLocale from '@/locales/zh.json';
 import { SiteLangContext } from '@/lib/site-lang-context';
 import { CookieSettingsButton } from '@/components/CookieConsent';
 import { trackEvent } from '@/lib/analytics';
+import { applyMobileMenuScrollLock, syncRouteDocumentChrome } from '@/lib/route-document-chrome';
 
 function navFamilyName(familyId: string) {
   return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
@@ -257,11 +258,7 @@ export default function ClientLayout({
     document.body.style.margin = '0';
     document.documentElement.style.width = '100%';
     document.body.style.width = '100%';
-    /* `overflow-x: hidden` on html/body breaks `position: sticky` in the film scroll (r-lite / r-ultra). */
-    const overflowX = isArm ? 'clip' : 'hidden';
-    document.documentElement.style.overflowX = overflowX;
-    document.body.style.overflowX = overflowX;
-    document.body.style.backgroundColor = isHome ? 'transparent' : isArm ? '#000' : '#fff';
+    syncRouteDocumentChrome({ isArm, isHome });
   }, [isArm, isHome, pathname]);
 
   useEffect(() => {
@@ -448,14 +445,7 @@ export default function ClientLayout({
   useEffect(() => {
     if (!isMobileMenuOpen) return;
 
-    const body = document.body;
-    const html = document.documentElement;
-    const prevBodyOverflow = body.style.overflow;
-    const prevBodyOverscroll = body.style.overscrollBehavior;
-    const prevHtmlOverscroll = html.style.overscrollBehavior;
-    body.style.overflow = 'hidden';
-    body.style.overscrollBehavior = 'none';
-    html.style.overscrollBehavior = 'none';
+    const { restore } = applyMobileMenuScrollLock(isArm, isHome);
 
     const blockBackgroundTouchMove = (event: TouchEvent) => {
       const target = event.target as HTMLElement | null;
@@ -482,11 +472,27 @@ export default function ClientLayout({
       document.removeEventListener('touchmove', blockBackgroundTouchMove);
       document.removeEventListener('wheel', blockBackgroundWheel);
       document.removeEventListener('keydown', blockBackgroundScrollKeys);
-      body.style.overflow = prevBodyOverflow;
-      body.style.overscrollBehavior = prevBodyOverscroll;
-      html.style.overscrollBehavior = prevHtmlOverscroll;
+      restore();
     };
-  }, [isMobileMenuOpen]);
+  }, [isMobileMenuOpen, isArm, isHome]);
+
+  /* 沉浸详情页：菜单曾用 overflow:hidden 会破坏 sticky；关菜单后恢复 clip 并重算卷轴 */
+  useLayoutEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('roooll-mobile-menu', { detail: { open: isMobileMenuOpen } }),
+    );
+    if (isMobileMenuOpen) return;
+    if (isArm) {
+      syncRouteDocumentChrome({ isArm, isHome });
+      const y = window.scrollY;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.scrollTo(0, y);
+          window.dispatchEvent(new Event('resize'));
+        });
+      });
+    }
+  }, [isMobileMenuOpen, isArm, isHome]);
 
   useEffect(() => {
     if (!HOME_CHROME_PATHS.has(logicalPathname)) {
@@ -1081,6 +1087,7 @@ export default function ClientLayout({
             min-height: 100%;
           }
           body { margin: 0; overflow-x: hidden; }
+          html.is-arm-immersive-route, body.is-arm-immersive-route { overflow-x: clip; }
           .nav-container { width: 100%; max-width: var(--roooll-w); margin: 0 auto; padding: 0 22px; display: flex; justify-content: space-between; align-items: center; height: 100%; box-sizing: border-box; }
           .roooll-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); background: rgba(251,251,253,0.2); backdrop-filter: saturate(135%) blur(8px); z-index: var(--z-nav); border-bottom: 1px solid rgba(0,0,0,0.012); transition: background 0.38s ease, backdrop-filter 0.38s ease, -webkit-backdrop-filter 0.38s ease, transform 0.78s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s ease, border-color 0.24s ease, color 0.32s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
           .roooll-nav.slide-up { transform: translateY(-104%); opacity: 0; pointer-events: none; }

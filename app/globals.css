@@ -145,6 +145,12 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+/* r-lite / r-ultra: clip (not hidden) so sticky film scroll is not broken — see ClientLayout + route-document-chrome */
+html.is-arm-immersive-route,
+body.is-arm-immersive-route {
+  overflow-x: clip;
+}
+
 /*
  * 首页首屏关键样式（与 app/(marketing)/page.tsx styled-jsx 对齐，随本文件尽早下发）：
  * 避免首帧竖条/无高度/加载层乱版；减轻 dev 冷启动时「无样式须刷新」。

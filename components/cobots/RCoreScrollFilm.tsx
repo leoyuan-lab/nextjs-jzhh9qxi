@@ -9,6 +9,7 @@ import {
   readScrollFilmNamespace,
   type ImmersiveMessagesPageKey,
 } from '@/lib/immersive-series-messages';
+import { isMobileNavScrollLocked } from '@/lib/mobile-nav-scroll-lock';
 import {
   advPanelScrollMotion,
   computeFilmScrollSlice,
@@ -48,6 +49,22 @@ function resetAdvLineStyles(el: HTMLElement | null) {
   el.style.opacity = '';
   el.style.transform = '';
   el.style.filter = '';
+}
+
+/** Drop JS-driven visibility so the next tick can re-apply from scroll geometry (after menu / overflow glitches). */
+function resetAdvPanelsBaseline(sticky: HTMLElement) {
+  sticky.style.transform = '';
+  sticky.querySelectorAll<HTMLElement>('[data-rfilm-adv]').forEach((node) => {
+    node.style.opacity = '';
+    node.style.visibility = '';
+    node.style.pointerEvents = '';
+    node.style.transform = '';
+    node
+      .querySelectorAll<HTMLElement>(
+        '.rcore-film-adv__kicker, .rcore-film-adv__title, .rcore-film-adv__subtitle, .rcore-film-adv__body',
+      )
+      .forEach(resetAdvLineStyles);
+  });
 }
 
 /** 文案卷轴动画；GLB 机位由 CobotImmersivePageClient 统一驱动 */
@@ -91,9 +108,12 @@ export function RCoreScrollFilm({
   const stickyRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
   const reduceMotionRef = useRef(false);
+  const mobileMenuOpenRef = useRef(false);
 
   const tick = useCallback(() => {
     rafRef.current = null;
+    if (mobileMenuOpenRef.current || isMobileNavScrollLocked()) return;
+
     const root = scrollportRef.current;
     const sticky = stickyRef.current;
     if (!root || !sticky) return;
@@ -200,6 +220,24 @@ export function RCoreScrollFilm({
   }, [schedule]);
 
   useEffect(() => {
+    const onMobileMenu = (event: Event) => {
+      const open = Boolean((event as CustomEvent<{ open?: boolean }>).detail?.open);
+      mobileMenuOpenRef.current = open;
+      if (open) {
+        if (rafRef.current != null) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = null;
+        }
+        return;
+      }
+      const sticky = stickyRef.current;
+      if (sticky) resetAdvPanelsBaseline(sticky);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => schedule());
+      });
+    };
+    window.addEventListener('roooll-mobile-menu', onMobileMenu);
+
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
     const syncReduce = () => {
       reduceMotionRef.current = mq.matches;
@@ -212,6 +250,7 @@ export function RCoreScrollFilm({
     window.addEventListener('resize', schedule, { passive: true });
     schedule();
     return () => {
+      window.removeEventListener('roooll-mobile-menu', onMobileMenu);
       mq.removeEventListener('change', syncReduce);
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);

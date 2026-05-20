@@ -30,6 +30,7 @@ import {
   immersiveProductRouteToPageKey,
   type ImmersiveProductRouteId,
 } from '@/lib/immersive-series-messages';
+import { isMobileNavScrollLocked } from '@/lib/mobile-nav-scroll-lock';
 
 const R_LITE_LINE = rSeriesData.find((f) => f.id === 'r-lite')!.displayName;
 const R_ULTRA_LINE = rSeriesData.find((f) => f.id === 'r-ultra')!.displayName;
@@ -156,6 +157,8 @@ export function CobotImmersivePageClient({
     };
 
     const syncStage = () => {
+      if (isMobileNavScrollLocked()) return;
+
       const stage = fixedStageRef.current;
       const inner = modelInnerRef.current;
       const mv = mvRef.current;
@@ -218,7 +221,17 @@ export function CobotImmersivePageClient({
       resetInner();
     };
 
+    const onMobileMenu = (event: Event) => {
+      const open = Boolean((event as CustomEvent<{ open?: boolean }>).detail?.open);
+      if (!open) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => syncStage());
+        });
+      }
+    };
+
     syncStage();
+    window.addEventListener('roooll-mobile-menu', onMobileMenu);
     window.addEventListener('scroll', syncStage, { passive: true });
     window.addEventListener('resize', syncStage, { passive: true });
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(syncStage) : null;
@@ -227,6 +240,7 @@ export function CobotImmersivePageClient({
     });
     mq.addEventListener('change', syncStage);
     return () => {
+      window.removeEventListener('roooll-mobile-menu', onMobileMenu);
       window.removeEventListener('scroll', syncStage);
       window.removeEventListener('resize', syncStage);
       mq.removeEventListener('change', syncStage);
