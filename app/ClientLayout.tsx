@@ -11,6 +11,7 @@ import { rSeriesData } from '@/data/products';
 import enLocale from '@/locales/en.json';
 import zhLocale from '@/locales/zh.json';
 import { SiteLangContext } from '@/lib/site-lang-context';
+import { trackEvent } from '@/lib/analytics';
 
 function navFamilyName(familyId: string) {
   return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
@@ -87,7 +88,9 @@ function navSubUrl(section: NavSection, link: NavSubLink | string): string {
 function followNavUrl(url: string, closeUi?: () => void) {
   if (url === '__inquiry__') {
     closeUi?.();
-    window.dispatchEvent(new Event('roooll-inquiry-open'));
+    window.dispatchEvent(
+      new CustomEvent('roooll-inquiry-open', { detail: { source: 'nav' } }),
+    );
     return;
   }
   /**
@@ -204,6 +207,8 @@ export default function ClientLayout({
   const [footerExpandedSection, setFooterExpandedSection] = useState<string | null>(null);
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
   const [inquiryPrefillBody, setInquiryPrefillBody] = useState<string | undefined>(undefined);
+  const [inquirySource, setInquirySource] = useState('unknown');
+  const [inquiryStatus, setInquiryStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [inquiryFormKey, setInquiryFormKey] = useState(0);
   const [isChildSubNavVisible, setIsChildSubNavVisible] = useState(false);
   const [mainNavScrollProgress, setMainNavScrollProgress] = useState(0);
@@ -261,21 +266,50 @@ export default function ClientLayout({
     document.documentElement.setAttribute('lang', resolvedLang);
   }, [resolvedLang]);
 
-  const handleInquirySubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleInquirySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (inquiryStatus === 'submitting') return;
+
     const formData = new FormData(e.currentTarget);
-    const name = formData.get('Name');
-    const email = formData.get('Email');
-    const industry = formData.get('Industry');
-    const msg = formData.get('Body');
-    const tpl = config.drawer.mailSubjectTemplate;
-    const subject = encodeURIComponent(
-      String(tpl)
-        .replace(/{name}/g, String(name ?? ''))
-        .replace(/{industry}/g, String(industry ?? '')),
-    );
-    const body = encodeURIComponent(`Name: ${name}\r\nEmail: ${email}\r\nIndustry: ${industry}\r\n\r\nMessage:\r\n${msg}`);
-    window.location.href = `mailto:info@roooll.com?subject=${subject}&body=${body}`;
+    const honeypot = String(formData.get('company') ?? '').trim();
+    if (honeypot) return;
+
+    const name = String(formData.get('Name') ?? '').trim();
+    const email = String(formData.get('Email') ?? '').trim();
+    const industry = String(formData.get('Industry') ?? '').trim();
+    const msg = String(formData.get('Body') ?? '').trim();
+
+    setInquiryStatus('submitting');
+
+    try {
+      const res = await fetch('/api/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          industry,
+          body: msg,
+          locale: resolvedLang,
+          source: inquirySource,
+          pagePath: logicalPathname,
+        }),
+      });
+
+      if (!res.ok) {
+        setInquiryStatus('error');
+        return;
+      }
+
+      setInquiryStatus('success');
+      trackEvent('inquiry_submit', {
+        source: inquirySource,
+        page_path: logicalPathname,
+        locale: resolvedLang,
+      });
+    } catch {
+      setInquiryStatus('error');
+    }
   };
 
   const handleCloseInquiry = (e?: React.SyntheticEvent) => {
@@ -287,20 +321,35 @@ export default function ClientLayout({
     const active = document.activeElement as HTMLElement | null;
     active?.blur?.();
     setIsInquiryOpen(false);
-    window.setTimeout(() => setInquiryPrefillBody(undefined), 420);
+    window.setTimeout(() => {
+      setInquiryPrefillBody(undefined);
+      setInquiryStatus('idle');
+      setInquirySource('unknown');
+    }, 420);
   };
 
   useEffect(() => {
     const handleInquirySignal = (ev: Event) => {
       if (Date.now() - lastInquiryCloseAtRef.current < 360) return;
-      const detail = (ev as CustomEvent<{ body?: string }>).detail;
+      const detail = (ev as CustomEvent<{ body?: string; source?: string }>).detail;
       if (detail && typeof detail.body === 'string') {
         setInquiryPrefillBody(detail.body);
       } else {
         setInquiryPrefillBody(undefined);
       }
+      const source =
+        detail && typeof detail.source === 'string' && detail.source.trim()
+          ? detail.source.trim()
+          : logicalPathname;
+      setInquirySource(source);
+      setInquiryStatus('idle');
       setInquiryFormKey((k) => k + 1);
       setIsInquiryOpen(true);
+      trackEvent('inquiry_open', {
+        source,
+        page_path: logicalPathname,
+        locale: resolvedLang,
+      });
     };
     window.addEventListener('roooll-inquiry-open', handleInquirySignal as EventListener);
     const checkTheme = () => {
@@ -361,7 +410,7 @@ export default function ClientLayout({
       window.removeEventListener('selector-compare-sticky-pin', handleSelectorComparePin as EventListener);
       clearInterval(themeTimer);
     };
-  }, []);
+  }, [logicalPathname, resolvedLang]);
 
   useLayoutEffect(() => {
     if (isHome || isArm || isSelector) {
@@ -985,14 +1034,27 @@ export default function ClientLayout({
               WebkitOverflowScrolling: 'touch',
             }}>
               <h2 style={{ fontSize: '42px', fontWeight: 700, margin: '0 0 12px 0', letterSpacing: '-1.5px' }}>{config.drawer.title}</h2>
-              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '17px', lineHeight: 1.4, marginBottom: '40px' }}>{config.drawer.subtitle}</p>
-              <form key={inquiryFormKey} onSubmit={handleInquirySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', boxSizing: 'border-box' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-name-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{config.drawer.nameLabel}</label><input name="Name" id="client-name-final" autoComplete="name" placeholder={config.drawer.namePlaceholder} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-email-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{config.drawer.emailLabel}</label><input name="Email" id="client-email-final" type="email" autoComplete="email" placeholder={config.drawer.emailPlaceholder} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required /></div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-industry-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{config.drawer.industryLabel}</label><div style={{ position: 'relative' }}><select name="Industry" id="client-industry-final" autoComplete="off" required defaultValue="" style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', appearance: 'none', cursor: 'pointer' }}><option value="" disabled>{config.drawer.industryPlaceholder}</option>{industries.map((item) => (<option key={item} value={item} style={{ background: '#1c1c1e' }}>{item}</option>))}</select><span style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none', fontSize: '12px' }}>▼</span></div></div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-body-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{config.drawer.bodyLabel}</label><textarea name="Body" id="client-body-final" key={`body-${inquiryFormKey}`} autoComplete="off" defaultValue={inquiryPrefillBody ?? ''} placeholder={config.drawer.bodyPlaceholder} rows={10} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', resize: 'vertical', minHeight: '140px' }} required /></div>
-                <div style={{ paddingBottom: '60px' }}><button type="submit" style={{ background: '#0071e3', color: '#fff', border: 'none', borderRadius: '16px', padding: '20px', width: '100%', fontSize: '18px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,113,227,0.3)' }}>{config.drawer.submit}</button></div>
-              </form>
+              {inquiryStatus === 'success' ? (
+                <div style={{ paddingBottom: '60px' }}>
+                  <p style={{ fontSize: '22px', fontWeight: 600, margin: '0 0 12px 0' }}>{config.drawer.successTitle}</p>
+                  <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '17px', lineHeight: 1.5, margin: 0 }}>{config.drawer.successMessage}</p>
+                </div>
+              ) : (
+                <>
+                  <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '17px', lineHeight: 1.4, marginBottom: '40px' }}>{config.drawer.subtitle}</p>
+                  <form key={inquiryFormKey} onSubmit={handleInquirySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', boxSizing: 'border-box' }}>
+                    <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-name-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{config.drawer.nameLabel}</label><input name="Name" id="client-name-final" autoComplete="name" placeholder={config.drawer.namePlaceholder} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required disabled={inquiryStatus === 'submitting'} /></div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-email-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{config.drawer.emailLabel}</label><input name="Email" id="client-email-final" type="email" autoComplete="email" placeholder={config.drawer.emailPlaceholder} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none' }} required disabled={inquiryStatus === 'submitting'} /></div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-industry-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{config.drawer.industryLabel}</label><div style={{ position: 'relative' }}><select name="Industry" id="client-industry-final" autoComplete="off" required defaultValue="" disabled={inquiryStatus === 'submitting'} style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', appearance: 'none', cursor: 'pointer' }}><option value="" disabled>{config.drawer.industryPlaceholder}</option>{industries.map((item) => (<option key={item} value={item} style={{ background: '#1c1c1e' }}>{item}</option>))}</select><span style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none', fontSize: '12px' }}>▼</span></div></div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}><label htmlFor="client-body-final" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{config.drawer.bodyLabel}</label><textarea name="Body" id="client-body-final" key={`body-${inquiryFormKey}`} autoComplete="off" defaultValue={inquiryPrefillBody ?? ''} placeholder={config.drawer.bodyPlaceholder} rows={10} required disabled={inquiryStatus === 'submitting'} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px', color: '#fff', fontSize: '16px', outline: 'none', resize: 'vertical', minHeight: '140px' }} /></div>
+                    {inquiryStatus === 'error' ? (
+                      <p role="alert" style={{ color: '#ff6b6b', fontSize: '14px', margin: 0 }}>{config.drawer.errorMessage}</p>
+                    ) : null}
+                    <div style={{ paddingBottom: '60px' }}><button type="submit" disabled={inquiryStatus === 'submitting'} style={{ background: '#0071e3', color: '#fff', border: 'none', borderRadius: '16px', padding: '20px', width: '100%', fontSize: '18px', fontWeight: 600, cursor: inquiryStatus === 'submitting' ? 'wait' : 'pointer', opacity: inquiryStatus === 'submitting' ? 0.7 : 1, boxShadow: '0 4px 15px rgba(0,113,227,0.3)' }}>{inquiryStatus === 'submitting' ? config.drawer.submitting : config.drawer.submit}</button></div>
+                  </form>
+                </>
+              )}
             </div>
           </div>
         </InquiryContext.Provider>

@@ -11,6 +11,7 @@ import {
   stripIndustrialModelCodes,
 } from '@/components/selector/SelectorLineupUi';
 import { robotVariantImageAlt, robotVariantImageUrl, specLabels } from '@/data/products';
+import { openInquiry } from '@/lib/open-inquiry';
 import { useSiteLang } from '@/lib/site-lang-context';
 
 type SelectorPageCopy = (typeof SELECTOR_LINEUP_I18N)[keyof typeof SELECTOR_LINEUP_I18N];
@@ -30,7 +31,7 @@ function openInquiryForModel(item: LineItem, lang: 'zh' | 'en') {
     lang === 'zh'
       ? `我想咨询以下机型：\n- ${modelLabel}\n\n请联系我并提供方案与报价。`
       : `I'm interested in this model:\n- ${modelLabel}\n\nPlease contact me with recommendation and quotation.`;
-  window.dispatchEvent(new CustomEvent('roooll-inquiry-open', { detail: { body } }));
+  openInquiry({ body, source: 'comparison' });
 }
 
 export default function SelectorComparisonPage() {

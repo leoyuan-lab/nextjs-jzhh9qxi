@@ -8,6 +8,7 @@ import {
   SELECTOR_LINEUP_I18N,
   VariantDetailPortal,
 } from '@/components/selector/SelectorLineupUi';
+import { openInquiry } from '@/lib/open-inquiry';
 import { useSiteLang } from '@/lib/site-lang-context';
 
 const SELECTOR_I18N = SELECTOR_LINEUP_I18N;
@@ -38,7 +39,7 @@ export default function AllCobotsSpecsClient() {
       safeLang === 'zh'
         ? `我想咨询以下机型：\n- ${modelLabel}\n\n请联系我并提供方案与报价。`
         : `I'm interested in this model:\n- ${modelLabel}\n\nPlease contact me with recommendation and quotation.`;
-    window.dispatchEvent(new CustomEvent('roooll-inquiry-open', { detail: { body } }));
+    openInquiry({ body, source: 'all_cobots_specs' });
   };
 
   useEffect(() => {

@@ -12,8 +12,10 @@ import {
 } from '@/components/selector/SelectorLineupUi';
 import type { AdvisorComputedResult, AdvisorPickLine } from '@/lib/advisor-engine';
 
+import { openInquiry } from '@/lib/open-inquiry';
+
 function openInquiryWithBody(body: string) {
-  window.dispatchEvent(new CustomEvent('roooll-inquiry-open', { detail: { body } }));
+  openInquiry({ body, source: 'advisor_result' });
 }
 
 export type AdvisorResultPanelProps = {

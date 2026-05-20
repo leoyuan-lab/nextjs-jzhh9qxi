@@ -5,6 +5,7 @@ import { LoadingBrandLogo } from '@/components/LoadingBrandLogo';
 import { cobotGlbModels, rSeriesData, robotVariantImageAlt } from '@/data/products';
 import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
+import { openInquiry } from '@/lib/open-inquiry';
 
 function familyTitle(familyId: string) {
   return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
@@ -39,7 +40,7 @@ export default function HomePageClient() {
   const alt = getMessages(lang).alt;
   const ctaLearn = home.ctaLearn;
   const ctaInquiry = home.ctaInquiry;
-  const openInquiry = () => window.dispatchEvent(new Event('roooll-inquiry-open'));
+  const openHomeInquiry = () => openInquiry({ source: 'home_cta' });
   const path = (p: string) => `/${lang}${p.startsWith('/') ? p : `/${p}`}`;
 
   const titleRlite = useMemo(() => familyTitle('r-lite'), []);
@@ -384,7 +385,7 @@ export default function HomePageClient() {
               <a href={path('/cobots/r-lite')} className="cta-link">
                 {ctaLearn}
               </a>
-              <button type="button" className="cta-link cta-btn" onClick={openInquiry}>
+              <button type="button" className="cta-link cta-btn" onClick={openHomeInquiry}>
                 {ctaInquiry}
               </button>
             </div>
@@ -431,7 +432,7 @@ export default function HomePageClient() {
               <a href={path('/cobots/r-ultra')} className="cta-link">
                 {ctaLearn}
               </a>
-              <button type="button" className="cta-link cta-btn" onClick={openInquiry}>
+              <button type="button" className="cta-link cta-btn" onClick={openHomeInquiry}>
                 {ctaInquiry}
               </button>
             </div>
@@ -456,7 +457,7 @@ export default function HomePageClient() {
               <a href={path('/cobots/r-lite')} className="cta-link">
                 {home.cardPreciseCta}
               </a>
-              <button type="button" className="cta-link cta-btn" onClick={openInquiry}>
+              <button type="button" className="cta-link cta-btn" onClick={openHomeInquiry}>
                 {ctaInquiry}
               </button>
             </div>
@@ -478,7 +479,7 @@ export default function HomePageClient() {
               <a href={path('/cobots/r-ultra')} className="cta-link">
                 {home.cardSmartCta}
               </a>
-              <button type="button" className="cta-link cta-btn" onClick={openInquiry}>
+              <button type="button" className="cta-link cta-btn" onClick={openHomeInquiry}>
                 {ctaInquiry}
               </button>
             </div>

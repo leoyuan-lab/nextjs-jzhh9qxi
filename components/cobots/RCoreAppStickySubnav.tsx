@@ -1,6 +1,7 @@
 'use client';
 
 import { getMessages } from '@/lib/messages';
+import { openInquiry } from '@/lib/open-inquiry';
 import type { AppLocale } from '@/lib/messages';
 import type { ImmersiveMessagesPageKey } from '@/lib/immersive-series-messages';
 
@@ -23,7 +24,7 @@ export function RCoreAppStickySubnav({ lang, productLineLabel, messagesPageKey =
         <button
           type="button"
           className="p-btn-buy"
-          onClick={() => window.dispatchEvent(new Event('roooll-inquiry-open'))}
+          onClick={() => openInquiry({ source: 'immersive_subnav' })}
         >
           {page.inquiry}
         </button>

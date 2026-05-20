@@ -71,7 +71,11 @@
     "industryPlaceholder": "Industry",
     "bodyLabel": "Message",
     "bodyPlaceholder": "Message...",
-    "submit": "Generate Email",
+    "submit": "Submit inquiry",
+    "submitting": "Sending…",
+    "successTitle": "Thank you",
+    "successMessage": "We received your inquiry and will respond within 12 hours.",
+    "errorMessage": "Could not send. Please email info@roooll.com or try again.",
     "mailSubjectTemplate": "AX-1 Inquiry from {name} ({industry})",
     "industries": [
       "Medical & Bio",
