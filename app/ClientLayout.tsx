@@ -118,15 +118,6 @@ function buildNav(messages: MessagesFile): NavSection[] {
       ],
     },
     {
-      label: n.r_ecosystem_section,
-      url: '/',
-      links: [
-        { label: n.r_ecosystem.roooll_os, url: '/r-ecosystem/roooll-os' },
-        { label: n.r_ecosystem.roooll_insight, url: '/r-ecosystem/roooll-insight' },
-        { label: n.r_ecosystem.integrated_tools, url: '/r-ecosystem/integrated-tools' },
-      ],
-    },
-    {
       label: n.selector_section,
       url: '/',
       links: [
@@ -149,7 +140,6 @@ function buildNav(messages: MessagesFile): NavSection[] {
       url: '/',
       links: [
         { label: n.support.resources, url: '/support/resources' },
-        { label: n.support.academy, url: '/support/academy' },
         { label: n.support.service, url: '/support/service' },
       ],
     },
