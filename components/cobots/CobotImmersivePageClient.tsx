@@ -15,9 +15,14 @@ import {
   applyAdvisorFlangeMaterial,
   applyRcoreCamera,
   applyRcoreViewerLighting,
+  advPanelScrollMotion,
+  armMainNavProgressFromScrollY,
   cameraForFilmSlice,
   clearViewerMotion,
   computeFilmScrollSlice,
+  filmAdv3RollOutMetrics,
+  filmAdv3RollOutOffsetPx,
+  isFilmAdv3RollOutActive,
 } from '@/lib/rcore-scroll-cameras';
 import { getMessages } from '@/lib/messages';
 import type { AppLocale } from '@/lib/messages';
@@ -143,7 +148,7 @@ export function CobotImmersivePageClient({
       const el = mvRef.current;
       if (!el) return;
       const wantControls = si === 0 && !reduced;
-      const wantRotate = si < 3 && !reduced;
+      const wantRotate = si <= 3 && !reduced;
       if (wantControls) el.setAttribute('camera-controls', '');
       else el.removeAttribute('camera-controls');
       if (wantRotate) el.setAttribute('auto-rotate', '');
@@ -155,7 +160,6 @@ export function CobotImmersivePageClient({
       const inner = modelInnerRef.current;
       const mv = mvRef.current;
       const film = filmRootRef.current;
-      const flange = flangeSectionRef.current;
       const app = appSectionRef.current;
       const lnRoot = narrativeRootRef.current;
       if (!stage || !mv) return;
@@ -164,13 +168,13 @@ export function CobotImmersivePageClient({
       const reduced = mq.matches;
 
       const filmRect = film?.getBoundingClientRect();
-      const flangeRect = flange?.getBoundingClientRect();
       const appRect = app?.getBoundingClientRect();
       const rootRect = lnRoot?.getBoundingClientRect();
 
+      const scrollY = window.scrollY;
       const filmVisible = filmRect ? intersectsViewport(filmRect, vh) : false;
       const filmSlice = film ? computeFilmScrollSlice(film, reduced) : null;
-      const flangeInView = Boolean(flangeRect && flangeRect.bottom > 0 && flangeRect.top < vh);
+      const adv3RollOut = film ? isFilmAdv3RollOutActive(film, scrollY, reduced) : false;
 
       const pastNarrative = rootRect ? rootRect.bottom < vh * 0.18 : false;
       const appEntered = appRect ? appRect.top < vh * 0.5 && appRect.bottom > 0 : false;
@@ -184,36 +188,24 @@ export function CobotImmersivePageClient({
         return;
       }
 
-      if (flangeInView) {
-        setStageVisible(false, false);
-        stage.style.transform = '';
-        resetInner();
-        clearViewerMotion(mv);
-        return;
-      }
-
-      if (filmVisible && film && filmSlice) {
-        const exitT =
-          filmSlice.si === 3 ? smoothstep(0.72, 0.995, filmSlice.local) : 0;
-
-        if (exitT >= 0.999) {
-          setStageVisible(false, false);
-          stage.style.transform = '';
-          resetInner();
-          clearViewerMotion(mv);
-          return;
-        }
-
+      if ((filmVisible && film && filmSlice) || (film && filmSlice && adv3RollOut)) {
         setStageVisible(true, false);
         applyRcoreViewerLighting(mv);
 
-        if (filmSlice.inView) {
+        if (filmSlice.inView || adv3RollOut) {
           applyRcoreCamera(mv, cameraForFilmSlice(filmSlice.si), lastCamKeyRef);
           setViewerMotionForFilm(filmSlice.si, reduced);
         }
 
-        if (exitT > 0 && !reduced) {
-          stage.style.transform = `translate3d(0, ${(-exitT * 1.12 * vh).toFixed(1)}px, 0)`;
+        /* 优点 1–2：只切机位；优点 3：与卷轴 sticky 同距 1:1 跟手上移滚出 */
+        if (filmSlice.si === 3 && !reduced) {
+          const { exitStartY } = filmAdv3RollOutMetrics(film);
+          if (scrollY > exitStartY) {
+            const offPx = filmAdv3RollOutOffsetPx(film, scrollY);
+            stage.style.transform = `translate3d(0, ${offPx.toFixed(1)}px, 0)`;
+          } else {
+            stage.style.transform = '';
+          }
         } else {
           stage.style.transform = '';
         }
@@ -247,25 +239,29 @@ export function CobotImmersivePageClient({
   }, []);
 
   useEffect(() => {
-    const navHideStart = 24;
-    const navHideRange = 86;
-    const progress = Math.max(0, Math.min(1, (scrollVal - navHideStart) / navHideRange));
+    const progress = armMainNavProgressFromScrollY(filmRootRef.current, scrollVal);
     window.dispatchEvent(new CustomEvent('roooll-main-nav-progress', { detail: { progress } }));
     return () => {
       window.dispatchEvent(new CustomEvent('roooll-main-nav-progress', { detail: { progress: 0 } }));
     };
   }, [scrollVal]);
 
-  const navHideStart = 24;
-  const navHideRange = 86;
-  const navProgress = Math.max(0, Math.min(1, (scrollVal - navHideStart) / navHideRange));
+  const filmEl = filmRootRef.current;
+  const filmSlice = filmEl ? computeFilmScrollSlice(filmEl, false) : null;
+  const navProgress = armMainNavProgressFromScrollY(filmEl, scrollVal);
   const isNavHidden = navProgress > 0.98;
   const vh = typeof window !== 'undefined' ? window.innerHeight : 900;
   const appEl = appSectionRef.current;
   const appReached = Boolean(
     isNavHidden && appEl && appEl.getBoundingClientRect().top < vh * 0.92,
   );
-  const showBrandStrip = isNavHidden && scrollVal > 620 && !appReached;
+  const brandStripOpacity =
+    filmSlice && filmSlice.si >= 1
+      ? filmSlice.si === 1
+        ? advPanelScrollMotion(filmSlice.local).opacity
+        : 1
+      : 0;
+  const showBrandStrip = brandStripOpacity > 0.02 && !appReached;
   const showConsultNav = isNavHidden && appReached;
 
   return (
@@ -306,7 +302,15 @@ export function CobotImmersivePageClient({
         </div>
       </div>
 
-      {showBrandStrip && <RCoreBrandTopStrip lang={lang} messagesPageKey={messagesPageKey} />}
+      {showBrandStrip ? (
+        <div
+          className="rcore-brand-top-mount"
+          style={{ opacity: brandStripOpacity }}
+          aria-hidden={brandStripOpacity < 0.05}
+        >
+          <RCoreBrandTopStrip lang={lang} messagesPageKey={messagesPageKey} />
+        </div>
+      ) : null}
       {showConsultNav && (
         <RCoreAppStickySubnav
           lang={lang}

@@ -313,6 +313,8 @@
         "svg_caption": "Scroll to dissect the architecture. The official vector technical drawing wipes in as you scroll—envelope, joint limits, and control interfaces for mechanical and controls teams.",
         "scenario_caption": "From drawing to duty: r-Lite cobot arms in manufacturing, lab automation, and medical-assist workcells.",
         "scenario_image_alt": "r-Lite collaborative robot cobot product scene, showing integrated collaborative robotic arm form factor in a typical deployment.",
+        "flange_section_kicker": "Built in, not bolted on",
+        "flange_section_title": "Strength in every layer.",
         "flange_strip": [
           {
             "title": "Advanced safety",
@@ -445,6 +447,8 @@
         "svg_caption": "Scroll to inspect developer documentation. Vector envelopes and joint limits wipe in as you scroll—align mechanical, controls, and software before metal hits the floor.",
         "scenario_caption": "From drawing to duty: r-Ultra cobot arms in manufacturing, stamping, palletizing, and heavy-assembly workcells.",
         "scenario_image_alt": "r-Ultra collaborative robot cobot product scene, showing high-payload collaborative robotic arm form factor in a typical deployment.",
+        "flange_section_kicker": "Built in, not bolted on",
+        "flange_section_title": "Strength at industrial scale.",
         "flange_strip": [
           {
             "title": "ROS/ROS2 native",

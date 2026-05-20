@@ -251,7 +251,12 @@ export default function ClientLayout({
 
   useLayoutEffect(() => {
     document.body.style.margin = '0';
-    document.body.style.overflowX = 'hidden';
+    document.documentElement.style.width = '100%';
+    document.body.style.width = '100%';
+    /* `overflow-x: hidden` on html/body breaks `position: sticky` in the film scroll (r-lite / r-ultra). */
+    const overflowX = isArm ? 'clip' : 'hidden';
+    document.documentElement.style.overflowX = overflowX;
+    document.body.style.overflowX = overflowX;
     document.body.style.backgroundColor =
       isHome
         ? 'transparent'

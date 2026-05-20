@@ -53,6 +53,108 @@ export function isFilmScrollComplete(filmEl: HTMLElement | null, reducedMotion: 
   return computeFilmScrollSlice(filmEl, reducedMotion).progress >= 0.995;
 }
 
+/** 每条优点在 slice 内的进入阶段长度（与 `advPanelScrollMotion` enter 一致） */
+export const RCORE_FILM_ADV_ENTER_END = 0.38;
+
+export const RCORE_FILM_ADV_EXIT_START = 0.52;
+export const RCORE_FILM_ADV_EXIT_END = 1;
+
+function clamp01(x: number): number {
+  return Math.max(0, Math.min(1, x));
+}
+
+export function smoothstep(edge0: number, edge1: number, x: number): number {
+  const t = clamp01((x - edge0) / (edge1 - edge0));
+  return t * t * (3 - 2 * t);
+}
+
+/** 第三个优点 slice 内退出进度（与文案 `advPanelScrollMotion` 共用） */
+export function filmAdvSliceExitT(local: number): number {
+  return smoothstep(RCORE_FILM_ADV_EXIT_START, RCORE_FILM_ADV_EXIT_END, local);
+}
+
+/** 单条优点在 slice 内的位移与透明度：自下进入 → 中部最清晰 → 向上退出 */
+export function advPanelScrollMotion(local: number): { opacity: number; yPercent: number } {
+  const enter = smoothstep(0, RCORE_FILM_ADV_ENTER_END, local);
+  const exit = filmAdvSliceExitT(local);
+  const opacity = enter * (1 - exit);
+  const yPercent = (1 - enter) * 22 - exit * 22;
+  return { opacity, yPercent };
+}
+
+/** 第三条优点退场：与卷轴同速上移滚出，退出段不额外淡出（仅跟手滚动） */
+export function advPanelScrollRollOutMotion(local: number): { opacity: number; yPercent: number } {
+  const enter = smoothstep(0, RCORE_FILM_ADV_ENTER_END, local);
+  const exit = filmAdvSliceExitT(local);
+  const opacity = enter;
+  const yPercent = (1 - enter) * 22 - exit * 22;
+  return { opacity, yPercent };
+}
+
+/** 第三条优点滚出：从退出 scroll 起点滚到卷轴段末尾（与鼠标 1:1 像素上移） */
+export function filmAdv3RollOutMetrics(filmEl: HTMLElement): {
+  exitStartY: number;
+  exitEndY: number;
+} {
+  const { range, filmTop, vh } = filmScrollMetrics(filmEl);
+  const sliceSpan = range / RCORE_FILM_SLICE_COUNT;
+  const exitStartY = filmTop + sliceSpan * 3 + sliceSpan * RCORE_FILM_ADV_EXIT_START;
+  const exitEndY = filmTop + filmEl.offsetHeight - vh * 0.12;
+  return { exitStartY, exitEndY };
+}
+
+/** 退出段：每滚 1px 上移 1px，直到滚出视口 */
+export function filmAdv3RollOutOffsetPx(filmEl: HTMLElement, scrollY: number): number {
+  const { exitStartY, exitEndY } = filmAdv3RollOutMetrics(filmEl);
+  const { vh } = filmScrollMetrics(filmEl);
+  if (scrollY <= exitStartY) return 0;
+  const dragged = scrollY - exitStartY;
+  const maxDrag = exitEndY - exitStartY + vh;
+  return -Math.min(dragged, maxDrag);
+}
+
+export function isFilmAdv3RollOutActive(
+  filmEl: HTMLElement,
+  scrollY: number,
+  reducedMotion: boolean,
+): boolean {
+  if (reducedMotion) return false;
+  const slice = computeFilmScrollSlice(filmEl, reducedMotion);
+  if (slice.si !== 3) return false;
+  const { exitStartY, exitEndY } = filmAdv3RollOutMetrics(filmEl);
+  const { vh } = filmScrollMetrics(filmEl);
+  return scrollY >= exitStartY && scrollY <= exitEndY + vh * 0.5;
+}
+
+export function filmScrollMetrics(filmEl: HTMLElement): {
+  vh: number;
+  range: number;
+  filmTop: number;
+} {
+  const vh = window.innerHeight;
+  const range = Math.max(1, filmEl.offsetHeight - vh);
+  const filmTop = filmEl.offsetTop;
+  return { vh, range, filmTop };
+}
+
+/** 文档 scrollY：slice `si` 刚开始（local = 0） */
+export function scrollYForFilmSliceStart(filmEl: HTMLElement, si: number): number {
+  const { range, filmTop } = filmScrollMetrics(filmEl);
+  return filmTop + (si / RCORE_FILM_SLICE_COUNT) * range;
+}
+
+/**
+ * 沉浸页顶栏收起进度：从第一个优点 slice 起点开始，时长与文案 enter 一致。
+ */
+export function armMainNavProgressFromScrollY(filmEl: HTMLElement | null, scrollY: number): number {
+  if (!filmEl) return 0;
+  const { range, filmTop } = filmScrollMetrics(filmEl);
+  const adv1Start = filmTop + range / RCORE_FILM_SLICE_COUNT;
+  const navHideRange = (range / RCORE_FILM_SLICE_COUNT) * RCORE_FILM_ADV_ENTER_END;
+  const linear = clamp01((scrollY - adv1Start) / navHideRange);
+  return smoothstep(0, 1, linear);
+}
+
 export function cameraForFilmSlice(si: number): RcoreCameraPreset {
   if (si === 0) return RCORE_PAGE_HERO_CAMERA;
   return RCORE_FILM_ADV_CAMERAS[si - 1] ?? RCORE_FILM_ADV_CAMERAS[RCORE_FILM_ADV_CAMERAS.length - 1];

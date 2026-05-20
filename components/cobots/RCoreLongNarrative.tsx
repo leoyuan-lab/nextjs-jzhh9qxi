@@ -69,6 +69,8 @@ const fadeUp = {
 
 type FilmCopy = {
   section_aria: string;
+  flange_section_kicker: string;
+  flange_section_title: string;
   flange_strip: { title: string; body: string; highlight: string }[];
   svg_kicker: string;
   svg_caption: string;
@@ -244,7 +246,13 @@ export function RCoreLongNarrative({
         data-rcore-ln-flange
       >
         <div className="rcore-ln-flange-chapter" data-rcore-flange-chapter>
-          <div className="rcore-ln-flange-exit" data-rcore-flange-exit>
+          <motion.div className="rcore-ln-flange-exit" data-rcore-flange-exit>
+            <motion.div className="rcore-ln-flange-intro rcore-ln-copy-front" {...fadeUp}>
+              <div className="rcore-ln-flange-intro-head">
+                <span className="rcore-ln-eyebrow rcore-ln-eyebrow--blue">{film.flange_section_kicker}</span>
+                <h2 className="rcore-ln-flange-heading">{film.flange_section_title}</h2>
+              </div>
+            </motion.div>
             <div
               className="rcore-ln-flange-hero-visual"
               style={{
@@ -272,11 +280,10 @@ export function RCoreLongNarrative({
                     <hr className="rcore-ln-flange-col__rule" />
                   </div>
                   <p className="rcore-ln-flange-col__body">{fillTemplate(col.body, heroVars)}</p>
-                  <strong className="rcore-ln-flange-col__hi">{col.highlight}</strong>
                 </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -287,7 +294,6 @@ export function RCoreLongNarrative({
             <motion.div className="rcore-ln-bp-copy-col rcore-ln-copy-front" {...fadeUp}>
               <p className="rcore-ln-eyebrow rcore-ln-eyebrow--blue">{film.svg_kicker}</p>
               <p className="rcore-ln-body">{film.blueprint_intro_body}</p>
-              <p className="rcore-ln-sub">{film.svg_caption}</p>
             </motion.div>
             <motion.div className="rcore-ln-bp-svg-corner rcore-ln-copy-front" {...fadeUp}>
               <object

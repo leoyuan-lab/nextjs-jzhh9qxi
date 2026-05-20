@@ -739,12 +739,21 @@ body {
  * r‑Core 详情 (`app/cobots/r-core/page.tsx`)：与原 styled‑jsx global 对齐，随 globals 尽早下发。
  * 全部挂在 .arm-page-root 下，避免污染全站（不用 body 选择器）。
  */
+.arm-route-shell {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 .arm-page-root {
   background: #000;
   color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  /* 不要用 `overflow-x: hidden`：在 Chromium / WebKit 下会破坏子元素 `position: sticky`，中段 GLB 会整段跟页滚动 */
+  width: 100%;
+  max-width: 100%;
+  /* 勿在根上设 overflow-x: hidden/clip：会连带把 overflow-y 算成 auto，破坏 sticky 卷轴 */
   overflow-x: visible;
+  overscroll-behavior-x: none;
   /*
    * r‑Core 长叙事 + 卷轴：`pad-before` / `pad-after` = 段盒顶/底；`hero-breath` = 段内主标题前呼吸区（摞在段顶内边距之后）。
    * 全局挂在 `.arm-page-root`，子树内任意选择器可用同一套节奏。
@@ -769,8 +778,28 @@ body {
   display: flex;
 }
 
+.arm-page-root .rcore-brand-top-mount {
+  position: relative;
+  z-index: 1001;
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-brand-top-mount .rcore-brand-top {
+  pointer-events: auto;
+}
+
 .arm-page-root .nav-sub-enter {
-  animation: arm-subnav-drop-in 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: arm-subnav-slide-in 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes arm-subnav-slide-in {
+  from {
+    transform: translate3d(0, -8px, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 .arm-page-root .rcore-app-sticky-subnav {
@@ -1022,13 +1051,18 @@ body {
 }
 
 @media (max-width: 1024px), (pointer: coarse) {
+  .arm-page-root {
+    touch-action: pan-y;
+  }
+
   .arm-page-root .rcore-fixed-model-stage--advisor-framing .rcore-fixed-model-inner {
-    top: -12vh;
-    right: -28vw;
-    bottom: -8vh;
-    left: -28vw;
-    width: auto;
-    transform: translate(12vw, 10vh) scale(1);
+    top: -8vh;
+    right: -12vw;
+    bottom: -6vh;
+    left: -12vw;
+    width: 124vw;
+    max-width: none;
+    transform: translate(6vw, 8vh) scale(1);
   }
 }
 
@@ -1270,9 +1304,10 @@ body {
 /* ── r‑Core 叙事卷轴（`RCoreScrollFilm`）：叠在固定 GLB 之上 */
 .arm-page-root .rcore-narrative-root {
   position: relative;
-  z-index: 4;
+  z-index: 6;
   background: transparent;
   color: #f5f5f7;
+  isolation: isolate;
 }
 
 .arm-page-root .rcore-scroll-slab-hero {
@@ -1354,6 +1389,8 @@ body {
   z-index: 4;
   background: transparent;
   pointer-events: none;
+  /* 与下方 section 间距一致：收回卷轴末段多余空白，保留 pad-before + pad-after 节奏 */
+  margin-top: calc(-32vh + var(--rcore-ln-pad-before) + var(--rcore-ln-pad-after));
 }
 
 .arm-page-root .rcore-ln-copy-front {
@@ -1373,14 +1410,14 @@ body {
 }
 
 .arm-page-root .rcore-ln-section--bp {
-  min-height: 170vh;
+  min-height: 140vh;
   background: transparent;
+  overflow-x: clip;
 }
 
 .arm-page-root .rcore-ln-section--flange {
-  min-height: 128vh;
-  /* 比通用 `rcore-ln-section` 更小的上内边距：与卷轴末帧文案更贴近；底与各段共用 `--rcore-ln-pad-after` */
-  padding: clamp(12px, 2.4vh, 32px) clamp(18px, 4vw, 48px) var(--rcore-ln-pad-after);
+  min-height: 0;
+  padding: var(--rcore-ln-pad-before) clamp(18px, 4vw, 48px) var(--rcore-ln-pad-after);
   background: transparent;
   color: #f5f5f7;
   overflow-x: hidden;
@@ -1390,6 +1427,7 @@ body {
 .arm-page-root .rcore-ln-section--family {
   background: #000000;
   color: #f5f5f7;
+  overflow-x: clip;
 }
 
 .arm-page-root .rcore-ln-sticky-title {
@@ -1423,6 +1461,12 @@ body {
   font-size: clamp(14px, 1.15vw, 16px);
   letter-spacing: 0.12em;
   margin-bottom: clamp(20px, 2.8vh, 32px);
+}
+
+.arm-page-root .rcore-ln-flange-intro .rcore-ln-eyebrow--blue {
+  font-size: clamp(14px, 1.15vw, 16px);
+  letter-spacing: 0.12em;
+  margin: 0 0 clamp(12px, 1.8vh, 22px);
 }
 
 .arm-page-root .rcore-ln-lead,
@@ -1461,15 +1505,45 @@ body {
   pointer-events: auto;
 }
 
-/* 宽度 100vw + aspect-ratio 由内联 style 绑定源图像素（见 RCORE_ADVISOR_FLANGE_HERO_DIM） */
+.arm-page-root .rcore-ln-flange-intro {
+  position: relative;
+  z-index: 11;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: min(96vw, 1180px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 clamp(18px, 4vw, 32px) clamp(8px, 1.6vh, 16px);
+  text-align: center;
+  pointer-events: auto;
+}
+
+.arm-page-root .rcore-ln-flange-intro-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 100%;
+}
+
+.arm-page-root .rcore-ln-flange-heading {
+  margin: 0;
+  font-size: clamp(42px, 6.1vw, 68px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-wrap: balance;
+}
+
+/* 全宽铺底：用 100% 避免 100vw 在移动端撑出横向滚动条 */
 .arm-page-root .rcore-ln-flange-hero-visual {
   flex: 0 0 auto;
   position: relative;
-  width: 100vw;
-  max-width: none;
-  left: 50%;
-  right: auto;
-  margin-left: -50vw;
+  width: 100%;
+  max-width: 100%;
+  left: auto;
+  margin-left: 0;
   margin-right: 0;
   min-width: 0;
   overflow: hidden;
@@ -1534,10 +1608,10 @@ body {
   margin-right: auto;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  align-items: stretch;
+  align-items: start;
   column-gap: clamp(14px, 2vw, 28px);
-  padding-top: clamp(16px, 2.4vh, 32px);
-  padding-bottom: clamp(16px, 2.4vh, 28px);
+  padding-top: clamp(12px, 1.8vh, 20px);
+  padding-bottom: clamp(12px, 1.8vh, 20px);
   padding-inline: clamp(4px, 1vw, 12px);
   background: #000000;
 }
@@ -1545,12 +1619,10 @@ body {
 .arm-page-root .rcore-ln-flange-col {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
 }
 
 .arm-page-root .rcore-ln-flange-col__head {
   flex: 0 0 auto;
-  min-height: 5.75em;
   margin-bottom: 2px;
 }
 
@@ -1575,21 +1647,10 @@ body {
 }
 
 .arm-page-root .rcore-ln-flange-col__body {
-  flex: 1 1 auto;
   margin: 14px 0 0;
   font-size: clamp(12px, 1.1vw, 15px);
   line-height: 1.58;
   color: rgba(245, 245, 247, 0.62);
-}
-
-.arm-page-root .rcore-ln-flange-col__hi {
-  display: block;
-  flex: 0 0 auto;
-  margin: 14px 0 0;
-  font-size: clamp(12px, 1.05vw, 14px);
-  font-weight: 700;
-  line-height: 1.35;
-  color: #fff;
 }
 
 /* 蓝图长叙事：居中标题 + 左文案 / 右下矢量（无 GLB 中缝） */
@@ -1598,7 +1659,7 @@ body {
   flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
-  gap: clamp(20px, 3.5vh, 44px);
+  gap: clamp(10px, 1.8vh, 22px);
   /* 与 `.rcore-ln-app-stack` 同 token：主标题前呼吸区与 Application 段一致 */
   padding-top: var(--rcore-ln-hero-breath);
 }
@@ -1620,16 +1681,16 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, min(96vw, 720px));
   grid-template-rows: auto auto;
-  gap: clamp(10px, 1.6vw, 20px);
+  gap: clamp(4px, 0.8vw, 12px);
   align-items: start;
   overflow: visible;
-  min-height: clamp(62vh, 100vh, 130vh);
+  min-height: clamp(50vh, 78vh, 100vh);
 }
 
 .arm-page-root .rcore-ln-bp-copy-col {
   grid-column: 1 / 2;
   grid-row: 1 / 2;
-  padding-top: calc(10vh + clamp(0vh, 2vh, 4vh));
+  padding-top: calc(2vh + clamp(0vh, 1vh, 2vh));
   max-width: min(42ch, 94vw);
 }
 
@@ -1641,8 +1702,8 @@ body {
   width: min(96vw, 720px);
   max-width: 100%;
   margin-right: 0;
-  margin-top: clamp(0px, 1vh, 12px);
-  padding-top: 10px;
+  margin-top: 0;
+  padding-top: 0;
   overflow: visible;
 }
 
@@ -1650,12 +1711,12 @@ body {
   display: block;
   width: 100%;
   height: auto;
-  max-height: min(100vh, 1100px);
+  max-height: min(92vh, 1000px);
   border: 0;
   pointer-events: none;
   object-fit: contain;
   object-position: center top;
-  transform: translateY(-20vh) scale(1.2);
+  transform: translateY(-4vh) scale(1.14);
   transform-origin: center top;
   filter: invert(1) brightness(1.05) contrast(1.05);
   opacity: 0.92;
@@ -1720,6 +1781,7 @@ body {
   box-sizing: border-box;
   overflow-x: auto;
   overflow-y: hidden;
+  overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   scrollbar-width: thin;
@@ -1882,14 +1944,27 @@ body {
     display: block;
   }
 
+  .arm-page-root .rcore-ln-flange-intro {
+    padding: 0 max(16px, env(safe-area-inset-left, 0px)) clamp(10px, 2vh, 18px);
+  }
+
+  .arm-page-root .rcore-ln-flange-heading {
+    font-size: clamp(34px, 9vw, 52px);
+    white-space: normal;
+    text-wrap: balance;
+  }
+
   .arm-page-root .rcore-ln-flange-strip {
     grid-template-columns: 1fr;
     row-gap: 20px;
   }
 
-  .arm-page-root .rcore-film-tail__links a {
-    white-space: normal;
-    text-align: center;
+  .arm-page-root .rcore-film-tail__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 88vh;
+    padding: clamp(32px, 6vh, 56px) clamp(16px, 4vw, 24px) clamp(48px, 8vh, 72px);
   }
 
   .arm-page-root .rcore-film-adv--pos-right .rcore-film-adv__col {
@@ -1907,7 +1982,7 @@ body {
   .arm-page-root .rcore-ln-bp-copy-col {
     grid-column: 1 / -1;
     grid-row: 1 / 2;
-    padding-top: calc(6vh + clamp(0vh, 1.5vh, 3vh));
+    padding-top: calc(2vh + clamp(0vh, 1vh, 2vh));
   }
 
   .arm-page-root .rcore-ln-bp-svg-corner {
@@ -1915,11 +1990,49 @@ body {
     grid-row: 2 / 3;
     justify-self: stretch;
     width: 100%;
+    margin-top: 0;
   }
 
   .arm-page-root .rcore-ln-bp-svg {
-    max-height: min(74vh, 700px);
-    transform: translateY(-10vh) scale(1.12);
+    max-height: min(72vh, 680px);
+    transform: translateY(-2vh) scale(1.1);
+  }
+
+  .arm-page-root .rcore-ln-section--family {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .arm-page-root .rcore-ln-family-head {
+    padding-top: clamp(20px, 5vh, 36px);
+    margin-bottom: 0;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  .arm-page-root .rcore-ln-family-head .rcore-ln-eyebrow--blue {
+    margin-bottom: clamp(8px, 1.5vh, 14px);
+  }
+
+  .arm-page-root .rcore-ln-family-spacer {
+    display: none;
+    min-height: 0;
+    height: 0;
+  }
+
+  .arm-page-root .rcore-ln-fan {
+    max-width: none;
+    width: 100%;
+  }
+
+  .arm-page-root .rcore-ln-fan--deck {
+    --fan-card-w: min(300px, 52vw);
+    height: calc(var(--fan-card-w) * 16 / 9 + 32px);
+    margin-top: clamp(4px, 1vh, 10px);
+  }
+
+  .arm-page-root .rcore-ln-fan--deck .rcore-ln-fan__card {
+    width: var(--fan-card-w);
   }
 
   .arm-page-root .rcore-ln-bp-svg-corner:has(.rcore-ln-bp-svg--tall) {
@@ -1932,14 +2045,6 @@ body {
     min-height: 0;
     transform: none;
     width: 100%;
-  }
-
-  .arm-page-root .rcore-ln-fan--deck {
-    height: min(520px, 62vh);
-  }
-
-  .arm-page-root .rcore-ln-fan--deck .rcore-ln-fan__card {
-    width: min(280px, 44vw);
   }
 
   .arm-page-root .rcore-ln-fan--deck .rcore-ln-fan__card--l {
@@ -2387,6 +2492,14 @@ body {
     max-width: none;
   }
 
+  .arm-page-root .rcore-ln-cards__item {
+    max-width: min(92vw, 760px);
+  }
+
+  .arm-page-root .rcore-ln-cards__card {
+    width: min(92vw, 760px);
+  }
+
   .arm-page-root .rcore-film-flange-strip {
     grid-template-columns: 1fr;
     row-gap: 20px;
@@ -2421,7 +2534,10 @@ body {
 .arm-page-root .rcore-film-tail {
   position: relative;
   z-index: 6;
+  display: flex;
+  flex-direction: column;
   min-height: 88vh;
+  min-height: 88dvh;
   color: #f5f5f7;
   background: #000;
 }
@@ -2445,10 +2561,25 @@ body {
 .arm-page-root .rcore-film-tail__inner {
   position: relative;
   z-index: 2;
+  box-sizing: border-box;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
   max-width: min(1080px, 96vw);
   margin: 0 auto;
-  padding: calc(var(--rcore-ln-pad-before) + var(--rcore-ln-hero-breath)) 24px 100px;
+  padding: clamp(32px, 5vh, 56px) 24px clamp(48px, 7vh, 88px);
   text-align: center;
+}
+
+@media (min-width: 901px) {
+  .arm-page-root .rcore-film-tail__inner {
+    min-height: 88vh;
+    min-height: 88dvh;
+    padding: clamp(40px, 5vh, 64px) 24px;
+  }
 }
 
 .arm-page-root .rcore-film-tail__inner h2 {
@@ -2504,6 +2635,30 @@ body {
 .arm-page-root .rcore-film-tail__links a:hover {
   color: #5ac8fa;
   border-bottom-color: rgba(90, 200, 250, 0.95);
+}
+
+@media (max-width: 900px) {
+  .arm-page-root .rcore-film-tail__links {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: fit-content;
+    max-width: min(92vw, 340px);
+    margin-left: auto;
+    margin-right: auto;
+    gap: clamp(14px, 2.4vh, 20px);
+  }
+
+  .arm-page-root .rcore-film-tail__sep {
+    display: none;
+  }
+
+  .arm-page-root .rcore-film-tail__links a {
+    display: block;
+    width: 100%;
+    white-space: normal;
+    text-align: left;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

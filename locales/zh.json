@@ -313,6 +313,8 @@
         "svg_caption": "滚动以解构架构细节。官方矢量工程图随卷轴揭示包络、关节极限与控制接口——便于机械与电气团队快速对齐。",
         "scenario_caption": "从图纸走进场景：r-Lite 协作机械臂进入制造、实验室与医疗辅助等 Cobot 应用单元。",
         "scenario_image_alt": "r-Lite 协作机器人 Cobot 产品场景图，展示一体化协作机械臂外观与典型部署环境。",
+        "flange_section_kicker": "内建底气",
+        "flange_section_title": "每一层，都有实力。",
         "flange_strip": [
           {
             "title": "无障碍安全协作",
@@ -337,7 +339,7 @@
         ],
         "blueprint_intro_title": "透明的工程美学。",
         "blueprint_intro_body": "拒绝专有黑盒。每一个关节运动范围、工作半径极限与控制接口均公开记录。开箱前即可获取原生 ROS/ROS2 驱动框架与开放 SDK——集成以「小时」计，而非「周」。",
-        "application_kicker": "Application",
+        "application_kicker": "应用场景",
         "application_title": "为真实部署方式而设计。",
         "application_body": "从样机验证到稳定量产，同一套安全叙事、控制逻辑与示教体验贯穿始终——团队学会一次，就能带着信心横向扩展。",
         "application_cards": [
@@ -445,6 +447,8 @@
         "svg_caption": "滚动以查阅开发者文档。矢量包络与关节极限随卷轴揭示——机械、电气与软件在硬件落地前即可对齐。",
         "scenario_caption": "从图纸走进场景：r-Ultra 旗舰重载协作机械臂进入制造、冲压、码垛与重载装配等 Cobot 应用单元。",
         "scenario_image_alt": "r-Ultra 协作机器人 Cobot 产品场景图，展示高负载协作机械臂外观与典型部署环境。",
+        "flange_section_kicker": "内建底气",
+        "flange_section_title": "工业现场，层层见真。",
         "flange_strip": [
           {
             "title": "ROS/ROS2",
@@ -469,7 +473,7 @@
         ],
         "blueprint_intro_title": "开发者至上的开放架构。",
         "blueprint_intro_body": "我们坚信绝对工程透明——从数字孪生仿真文件到开放 SDK 与 ROS/ROS2 驱动。硬件落地前，开发团队即可模拟、测试并运行逻辑，从第一天起最大化管道效率。",
-        "application_kicker": "Application",
+        "application_kicker": "应用场景",
         "application_title": "为重载部署而生。",
         "application_body": "以旗舰负载完成上下料、码垛与搬运——与 r 系列共享同一套安全叙事与示教体验，按产线节拍扩展。",
         "application_cards": [
