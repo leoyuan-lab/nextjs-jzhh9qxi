@@ -11,6 +11,7 @@ import { rSeriesData } from '@/data/products';
 import enLocale from '@/locales/en.json';
 import zhLocale from '@/locales/zh.json';
 import { SiteLangContext } from '@/lib/site-lang-context';
+import { CookieSettingsButton } from '@/components/CookieConsent';
 import { trackEvent } from '@/lib/analytics';
 
 function navFamilyName(familyId: string) {
@@ -346,11 +347,6 @@ export default function ClientLayout({
       setInquiryStatus('idle');
       setInquiryFormKey((k) => k + 1);
       setIsInquiryOpen(true);
-      trackEvent('inquiry_open', {
-        source,
-        page_path: logicalPathname,
-        locale: resolvedLang,
-      });
     };
     window.addEventListener('roooll-inquiry-open', handleInquirySignal as EventListener);
     const syncFooterDarkFromRoute = () => {
@@ -972,7 +968,21 @@ export default function ClientLayout({
                     </div>
                   ))}
                 </div>
-                <div className="f-bottom"><div className="copyright-line">{config.ui.copyright}</div></div>
+                <div className="f-bottom">
+                  <div className="f-legal">
+                    <span
+                      onMouseDown={(event) => {
+                        if (!isPrimaryPointerDown(event)) return;
+                        event.preventDefault();
+                        followNavUrl(localizePath('/legal/privacy'));
+                      }}
+                    >
+                      {config.ui.privacyLink}
+                    </span>
+                    <CookieSettingsButton label={config.ui.cookieSettings} />
+                  </div>
+                  <div className="copyright-line">{config.ui.copyright}</div>
+                </div>
               </footer>
             </div>
           </div>

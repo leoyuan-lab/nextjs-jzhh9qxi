@@ -5,6 +5,7 @@ import { LoadingBrandLogo } from '@/components/LoadingBrandLogo';
 import { cobotGlbModels, rSeriesData, robotVariantImageAlt } from '@/data/products';
 import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
+import { trackCtaClick } from '@/lib/analytics';
 import { openInquiry } from '@/lib/open-inquiry';
 
 function familyTitle(familyId: string) {
@@ -382,10 +383,21 @@ export default function HomePageClient() {
             <h2 className="title">{titleRlite}</h2>
             <p className="subtitle">{home.heroRliteSubtitle}</p>
             <div className="cta-row">
-              <a href={path('/cobots/r-lite')} className="cta-link">
+              <a
+                href={path('/cobots/r-lite')}
+                className="cta-link"
+                onClick={() => trackCtaClick('home_hero1_learn_rlite')}
+              >
                 {ctaLearn}
               </a>
-              <button type="button" className="cta-link cta-btn" onClick={openHomeInquiry}>
+              <button
+                type="button"
+                className="cta-link cta-btn"
+                onClick={() => {
+                  trackCtaClick('home_hero1_inquiry');
+                  openHomeInquiry();
+                }}
+              >
                 {ctaInquiry}
               </button>
             </div>

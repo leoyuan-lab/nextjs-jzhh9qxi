@@ -2,6 +2,7 @@
 
 import enLocale from '@/locales/en.json';
 import zhLocale from '@/locales/zh.json';
+import { rooollVariantShortLabel } from '@/lib/roooll-product-schema';
 
 export interface MultiLang {
   zh: string;
@@ -61,9 +62,9 @@ export interface RobotFamily {
 export const productCatalogMeta = {
   datasheetRef: 'EV1.4-20260403',
   frSeriesModelsZh:
-    'FR3（可选镜像版本）、FR3-C、FR3-WMS、FR3-WML、FR5、FR5-C、FR5-WML、FR10、FR16、FR20、FR30',
+    'r-Lite（标准 / 一体式 / 移动短臂 / 移动长臂）、r-Core、r-Reach、r-Max（16kg / 20kg）、r-Ultra',
   frSeriesModelsEn:
-    'FR3 (optional mirror), FR3-C, FR3-WMS, FR3-WML, FR5, FR5-C, FR5-WML, FR10, FR16, FR20, FR30',
+    'r-Lite (standard, integrated, mobile S/L), r-Core, r-Reach, r-Max (16kg / 20kg), r-Ultra',
   certificationsZh:
     '质量管理体系：ISO 9001。产品认证：CR, CE, KCs, NRTL, RoHS 2.0, NSF, SEMI, IP65。ISO 功能安全：ISO 10218, ISO 13849, ISO 15066。',
   certificationsEn:
@@ -78,15 +79,15 @@ export const productCatalogMeta = {
 /** 控制箱规格（样册「控制箱规格参数」表格摘要） */
 export const controllerSpecs = {
   noteIntegrated: {
-    zh: 'FR3-C 与 FR5-C 控制箱集成在机器人底座。',
-    en: 'FR3-C & FR5-C: controller integrated in the robot base.',
+    zh: 'r-Lite / r-Core 一体式控制箱集成在机器人底座。',
+    en: 'r-Lite & r-Core integrated-controller variants house the control box in the robot base.',
   },
   rows: [
     {
       id: 'ctrl-a',
       powerSupply: '30–60VDC / 220VAC 10A 单相 50Hz / 100–240VAC 10A 单相 50–60Hz',
       outputPower: '48VDC / 42A max',
-      applicableRobots: ['FR3', 'FR3-WMS', 'FR3-WML', 'FR5', 'FR5-WML', 'FR10', 'FR16'],
+      applicableRobots: ['r-Lite', 'r-Core', 'r-Reach', 'r-Max 16kg'],
       ip: 'IP54',
       temp: '0–45℃',
       humidity: '90%RH (non-condensing)',
@@ -98,7 +99,7 @@ export const controllerSpecs = {
       id: 'ctrl-b',
       powerSupply: '100–240VAC 16A 单相 50–60Hz / 30–60VDC',
       outputPower: '48VDC / 104A max',
-      applicableRobots: ['FR20', 'FR30'],
+      applicableRobots: ['r-Max 20kg', 'r-Ultra'],
       ip: 'IP54',
       temp: '0–45℃',
       humidity: '90%RH (non-condensing)',
@@ -199,8 +200,8 @@ export const rSeriesData: RobotFamily[] = [
         toolPower: '24V / 1.5A',
         materials: { zh: '铝、钢', en: 'Aluminum, steel' },
         powerTestNote: {
-          zh: 'FR3 负载设置：3kg，Z 轴：18mm',
-          en: 'FR3 payload setting: 3kg, Z-axis: 18mm',
+          zh: 'r-Lite 负载测试：3kg，Z 轴：18mm',
+          en: 'r-Lite payload test: 3kg, Z-axis: 18mm',
         },
         axes: {
           base: { range: '±175°', speed: '180°/s' },
@@ -237,8 +238,8 @@ export const rSeriesData: RobotFamily[] = [
         toolPower: '24V / 1.5A',
         materials: { zh: '铝、钢', en: 'Aluminum, steel' },
         powerTestNote: {
-          zh: 'FR3-C 负载设置：3kg，Z 轴：18mm',
-          en: 'FR3-C payload setting: 3kg, Z-axis: 18mm',
+          zh: 'r-Lite 一体式 负载测试：3kg，Z 轴：18mm',
+          en: 'r-Lite integrated payload test: 3kg, Z-axis: 18mm',
         },
         axes: {
           base: { range: '±175°', speed: '150°/s' },
@@ -275,8 +276,8 @@ export const rSeriesData: RobotFamily[] = [
         toolPower: '24V / 1.5A',
         materials: { zh: '铝、钢', en: 'Aluminum, steel' },
         powerTestNote: {
-          zh: 'FR3-WMS 负载设置：3kg，Z 轴：18mm',
-          en: 'FR3-WMS payload setting: 3kg, Z-axis: 18mm',
+          zh: 'r-Lite 移动短臂 负载测试：3kg，Z 轴：18mm',
+          en: 'r-Lite mobile short-arm payload test: 3kg, Z-axis: 18mm',
         },
         axes: {
           base: { range: '±175°', speed: '150°/s' },
@@ -313,8 +314,8 @@ export const rSeriesData: RobotFamily[] = [
         toolPower: '24V / 1.5A',
         materials: { zh: '铝、钢', en: 'Aluminum, steel' },
         powerTestNote: {
-          zh: 'FR3-WML 负载设置：3kg，Z 轴：18mm',
-          en: 'FR3-WML payload setting: 3kg, Z-axis: 18mm',
+          zh: 'r-Lite 移动长臂 负载测试：3kg，Z 轴：18mm',
+          en: 'r-Lite mobile long-arm payload test: 3kg, Z-axis: 18mm',
         },
         axes: {
           base: { range: '±175°', speed: '150°/s' },
@@ -360,8 +361,8 @@ export const rSeriesData: RobotFamily[] = [
         toolPower: '24V / 1.5A',
         materials: { zh: '铝、钢', en: 'Aluminum, steel' },
         powerTestNote: {
-          zh: 'FR5 负载设置：5kg，Z 轴：30mm',
-          en: 'FR5 payload setting: 5kg, Z-axis: 30mm',
+          zh: 'r-Core 负载测试：5kg，Z 轴：30mm',
+          en: 'r-Core payload test: 5kg, Z-axis: 30mm',
         },
         axes: {
           base: { range: '±175°', speed: '180°/s' },
@@ -398,8 +399,8 @@ export const rSeriesData: RobotFamily[] = [
         toolPower: '24V / 1.5A',
         materials: { zh: '铝、钢', en: 'Aluminum, steel' },
         powerTestNote: {
-          zh: 'FR5-C 负载设置：4kg，Z 轴：30mm',
-          en: 'FR5-C payload setting: 4kg, Z-axis: 30mm',
+          zh: 'r-Core 一体式 负载测试：4kg，Z 轴：30mm',
+          en: 'r-Core integrated payload test: 4kg, Z-axis: 30mm',
         },
         axes: {
           base: { range: '±175°', speed: '150°/s' },
@@ -436,8 +437,8 @@ export const rSeriesData: RobotFamily[] = [
         toolPower: '24V / 1.5A',
         materials: { zh: '铝、钢', en: 'Aluminum, steel' },
         powerTestNote: {
-          zh: 'FR5-WML 负载设置：5kg，Z 轴：30mm',
-          en: 'FR5-WML payload setting: 5kg, Z-axis: 30mm',
+          zh: 'r-Core 移动长臂 负载测试：5kg，Z 轴：30mm',
+          en: 'r-Core mobile long-arm payload test: 5kg, Z-axis: 30mm',
         },
         axes: {
           base: { range: '±175°', speed: '120°/s' },
@@ -483,8 +484,8 @@ export const rSeriesData: RobotFamily[] = [
         toolPower: '24V / 1.5A',
         materials: { zh: '铝、钢', en: 'Aluminum, steel' },
         powerTestNote: {
-          zh: 'FR10 负载设置：10kg，Z 轴：60mm',
-          en: 'FR10 payload setting: 10kg, Z-axis: 60mm',
+          zh: 'r-Reach 负载测试：10kg，Z 轴：60mm',
+          en: 'r-Reach payload test: 10kg, Z-axis: 60mm',
         },
         axes: {
           base: { range: '±175°', speed: '120°/s' },
@@ -510,7 +511,7 @@ export const rSeriesData: RobotFamily[] = [
     variants: [
       {
         id: 'fr16-std',
-        name: 'FR16',
+        name: '16kg 重载',
         payload: '16kg（最大 20kg）',
         reach: '1034mm',
         repeatability: '±0.03mm',
@@ -530,8 +531,8 @@ export const rSeriesData: RobotFamily[] = [
         toolPower: '24V / 1.5A',
         materials: { zh: '铝、钢', en: 'Aluminum, steel' },
         powerTestNote: {
-          zh: 'FR16 负载设置：16kg，Z 轴：96mm',
-          en: 'FR16 payload setting: 16kg, Z-axis: 96mm',
+          zh: 'r-Max 16kg 负载测试：16kg，Z 轴：96mm',
+          en: 'r-Max 16kg payload test: 16kg, Z-axis: 96mm',
         },
         axes: {
           base: { range: '±175°', speed: '120°/s' },
@@ -548,7 +549,7 @@ export const rSeriesData: RobotFamily[] = [
       },
       {
         id: 'fr20-std',
-        name: 'FR20',
+        name: '20kg 长臂重载',
         payload: '20kg（最大 25kg）',
         reach: '1854mm',
         repeatability: '±0.1mm',
@@ -568,8 +569,8 @@ export const rSeriesData: RobotFamily[] = [
         toolPower: '24V / 1.5A',
         materials: { zh: '铝、钢', en: 'Aluminum, steel' },
         powerTestNote: {
-          zh: 'FR20 负载设置：20kg，Z 轴：120mm',
-          en: 'FR20 payload setting: 20kg, Z-axis: 120mm',
+          zh: 'r-Max 20kg 负载测试：20kg，Z 轴：120mm',
+          en: 'r-Max 20kg payload test: 20kg, Z-axis: 120mm',
         },
         axes: {
           base: { range: '±175°', speed: '120°/s' },
@@ -615,8 +616,8 @@ export const rSeriesData: RobotFamily[] = [
         toolPower: '24V / 1.5A',
         materials: { zh: '铝、钢', en: 'Aluminum, steel' },
         powerTestNote: {
-          zh: 'FR30 负载设置：30kg，Z 轴：200mm',
-          en: 'FR30 payload setting: 30kg, Z-axis: 200mm',
+          zh: 'r-Ultra 负载测试：30kg，Z 轴：200mm',
+          en: 'r-Ultra payload test: 30kg, Z-axis: 200mm',
         },
         axes: {
           base: { range: '±175°', speed: '120°/s' },
@@ -699,7 +700,7 @@ export function variantCatalogModelCode(variantId: string): string {
   return upper.endsWith('-STD') ? upper.slice(0, -4) : upper;
 }
 
-function descriptionSnippet(text: string, lang: 'zh' | 'en'): string {
+export function descriptionSnippet(text: string, lang: 'zh' | 'en'): string {
   const t = text.trim();
   if (!t) return lang === 'zh' ? '工业协作自动化场景' : 'industrial cobot automation';
   const parts = lang === 'zh' ? t.split(/[。.]/) : t.split('.');
@@ -718,14 +719,15 @@ function blueprintLocaleSection(lang: 'zh' | 'en') {
   return lang === 'zh' ? zhLocale.alt : enLocale.alt;
 }
 
-/**
- * 蓝图对外「机型一行」：**产品线展示名（r-Lite、r-Core）+ 官网型号码（FR3、FR16）**。
- * 绝不使用内部 variant slug（fr3-std、fr16-std 等）；型号码取自 `variantCatalogModelCode()`。
- */
+/** 蓝图 / 无障碍对外机型行：r 系列产品线 + 变体短名（无 FR 型号码）。 */
 export function robotVariantBlueprintModelName(variantId: string, lang: 'zh' | 'en'): string {
+  const v = robotVariantById[variantId];
   const fam = robotFamilyForVariant(variantId);
-  const code = variantCatalogModelCode(variantId);
-  return lang === 'zh' ? `${fam.displayName}（${code}）` : `${fam.displayName} (${code})`;
+  const short = rooollVariantShortLabel(v.name);
+  if (lang === 'zh') {
+    return short ? `${fam.displayName} · ${short}` : fam.displayName;
+  }
+  return short ? `${fam.displayName} · ${short}` : fam.displayName;
 }
 
 const BLUEPRINT_FALLBACK_ALT = {
@@ -847,12 +849,14 @@ export function robotVariantImageAlt(variantId: string, lang: 'zh' | 'en'): stri
   const v = robotVariantById[variantId];
   if (!v) return lang === 'zh' ? '协作机器人机械臂' : 'Collaborative robot arm';
   const fam = robotFamilyForVariant(variantId);
-  const code = variantCatalogModelCode(variantId);
+  const short = rooollVariantShortLabel(v.name);
   const purpose = descriptionSnippet(lang === 'zh' ? v.description.zh : v.description.en, lang);
   if (lang === 'zh') {
-    return `${fam.displayName}（${code}）协作机器人机械臂，适用于 ${purpose}`;
+    const line = short ? `${fam.displayName}（${short}）` : fam.displayName;
+    return `${line}协作机器人机械臂，适用于 ${purpose}`;
   }
-  return `${fam.displayName} (${code}) Collaborative Robot Arm for ${purpose}`;
+  const line = short ? `${fam.displayName} (${short})` : fam.displayName;
+  return `${line} Collaborative Robot Arm for ${purpose}`;
 }
 
 /** 与 `robotVariantById` 的 id 一一对应；WebP 由 `scripts/robot_pdf_pipeline.py` 从样册生成 */

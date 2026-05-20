@@ -10,6 +10,7 @@ export const SITEMAP_PATHS: readonly string[] = [
   '/applications/medical-lab',
   '/applications/retail-service',
   '/contact',
+  '/legal/privacy',
   '/accessories',
   '/cobots/humanoid',
   '/cobots/r-lite',

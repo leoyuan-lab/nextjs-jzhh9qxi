@@ -2,6 +2,7 @@
  * 全系机型规格页外壳（`cobots/all-cobots-specs`）。
  */
 import type { Metadata } from 'next';
+import { AllCobotsLineupJsonLd } from '@/components/AllCobotsLineupJsonLd';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_COBOTS } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
@@ -18,8 +19,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CobotsAllSpecsLayout({ children }: { children: React.ReactNode }) {
   const lang = await getSiteLang();
+  const siteOrigin = await getRequestSiteOrigin();
   return (
     <>
+      <AllCobotsLineupJsonLd lang={lang} origin={siteOrigin} />
       <BreadcrumbJsonLd
         lang={lang}
         id="jsonld-bc-cobots-all-specs"

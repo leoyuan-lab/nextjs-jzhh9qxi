@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { checkRateLimit, clientIpFromRequest } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 
@@ -32,7 +33,19 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;');
 }
 
+const INQUIRY_LIMIT = 8;
+const INQUIRY_WINDOW_MS = 15 * 60 * 1000;
+
 export async function POST(request: Request) {
+  const ip = clientIpFromRequest(request);
+  const limited = checkRateLimit(`inquiry:${ip}`, INQUIRY_LIMIT, INQUIRY_WINDOW_MS);
+  if (!limited.ok) {
+    return NextResponse.json(
+      { error: 'rate_limited' },
+      { status: 429, headers: { 'Retry-After': String(limited.retryAfterSec) } },
+    );
+  }
+
   let payload: InquiryPayload;
   try {
     payload = (await request.json()) as InquiryPayload;

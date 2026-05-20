@@ -14,6 +14,9 @@ import {
   type RobotFamily,
   type RobotVariant,
 } from '@/data/products';
+import { stripFrModelCodes as stripIndustrialModelCodes } from '@/lib/roooll-product-schema';
+
+export { stripIndustrialModelCodes };
 
 export type LineItem = RobotVariant & {
   family: RobotFamily;
@@ -126,18 +129,7 @@ function useScrollNotchHaptics(scrollRef: RefObject<HTMLDivElement | null>, acti
   }, [active, scrollRef]);
 }
 
-/** 页面上不展示原 FR 型号字样（仅影响本页展示，不改数据源） */
-export function stripIndustrialModelCodes(text: string): string {
-  const s = text
-    .replace(/fr\d{1,2}(?:-[a-z0-9]+)+/gi, '')
-    .replace(/FR\d{1,2}(?:-[A-Z0-9]+)*/g, '')
-    .replace(/\s{2,}/g, ' ')
-    .replace(/\s+([，。；、])/g, '$1')
-    .trim();
-  return s;
-}
-
-/** 变体展示名：FR16 → 16，FR20 → 20；其它名称去掉独立的 FR+数字 片段 */
+/** 变体展示名：去掉工业型号片段，保留 r 系列展示用语 */
 function displayVariantLabel(name: string): string {
   return name.replace(/\bFR(\d+)\b/gi, '$1');
 }

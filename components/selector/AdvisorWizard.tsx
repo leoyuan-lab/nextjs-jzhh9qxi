@@ -14,6 +14,7 @@ import {
   touchAdvisorStep,
   writeAdvisorPersisted,
 } from '@/lib/advisor-engine';
+import { trackEvent } from '@/lib/analytics';
 import { useSiteLang } from '@/lib/site-lang-context';
 
 const AdvisorResultPanel = dynamic(() => import('@/components/selector/AdvisorResultPanel'), {
@@ -348,6 +349,17 @@ export function AdvisorWizard() {
   };
 
   const result = urlStep === 'result' ? computeAdvisorResult(answers) : null;
+
+  const advisorCompleteSentRef = useRef(false);
+  useEffect(() => {
+    if (urlStep !== 'result' || !result) {
+      advisorCompleteSentRef.current = false;
+      return;
+    }
+    if (advisorCompleteSentRef.current) return;
+    advisorCompleteSentRef.current = true;
+    trackEvent('advisor_complete', { family_id: result.familyId, locale: safeLang });
+  }, [urlStep, result, safeLang]);
 
   const stepIndex = urlStep === 'result' ? -1 : Number(urlStep) - 1;
   const stepCopy = stepIndex >= 0 && stepIndex < t.steps.length ? t.steps[stepIndex] : null;

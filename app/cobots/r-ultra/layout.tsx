@@ -6,6 +6,7 @@ import { ArmRouteShell } from '@/components/ArmRouteShell';
 import { GlbPreloadLinks, GLB_PRELOAD_R_ULTRA_HERO } from '@/components/GlbPreloadLinks';
 import { ModelViewerScript } from '@/components/ModelViewerScript';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
+import { ProductJsonLd } from '@/components/ProductJsonLd';
 import { BC_HOME, BC_NAV_COBOTS } from '@/lib/nav-breadcrumbs';
 import {
   R_IMMERSIVE_OG_IMAGE_SIZE,
@@ -38,10 +39,20 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CobotsRUltraLayout({ children }: { children: React.ReactNode }) {
   const lang = await getSiteLang();
+  const siteOrigin = await getRequestSiteOrigin();
+  const page = getMessages(lang).pages.r_ultra;
   return (
     <ArmRouteShell>
       <ModelViewerScript />
       <GlbPreloadLinks hrefs={GLB_PRELOAD_R_ULTRA_HERO} />
+      <ProductJsonLd
+        familyId="r-ultra"
+        lang={lang}
+        origin={siteOrigin}
+        pagePath="/cobots/r-ultra"
+        description={page.metaDescription}
+        imagePathname={rUltraOgProductImagePath()}
+      />
       <BreadcrumbJsonLd
         lang={lang}
         id="jsonld-bc-cobots-r-ultra"

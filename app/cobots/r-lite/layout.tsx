@@ -6,6 +6,7 @@ import { ArmRouteShell } from '@/components/ArmRouteShell';
 import { GlbPreloadLinks, GLB_PRELOAD_R_LITE_HERO } from '@/components/GlbPreloadLinks';
 import { ModelViewerScript } from '@/components/ModelViewerScript';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
+import { ProductJsonLd } from '@/components/ProductJsonLd';
 import { BC_HOME, BC_NAV_COBOTS } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
 import { getMessages } from '@/lib/messages';
@@ -38,10 +39,20 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CobotsRLiteLayout({ children }: { children: React.ReactNode }) {
   const lang = await getSiteLang();
+  const siteOrigin = await getRequestSiteOrigin();
+  const page = getMessages(lang).pages.r_lite;
   return (
     <ArmRouteShell>
       <ModelViewerScript />
       <GlbPreloadLinks hrefs={GLB_PRELOAD_R_LITE_HERO} />
+      <ProductJsonLd
+        familyId="r-lite"
+        lang={lang}
+        origin={siteOrigin}
+        pagePath="/cobots/r-lite"
+        description={page.metaDescription}
+        imagePathname={rLiteOgProductImagePath()}
+      />
       <BreadcrumbJsonLd
         lang={lang}
         id="jsonld-bc-cobots-r-lite"

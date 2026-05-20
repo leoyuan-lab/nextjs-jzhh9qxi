@@ -6,6 +6,7 @@
  */
 import Image from 'next/image';
 import Link from 'next/link';
+import { trackCtaClick } from '@/lib/analytics';
 import { motion, useReducedMotion } from 'framer-motion';
 import type { CSSProperties, RefObject, MutableRefObject } from 'react';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -401,15 +402,27 @@ export function RCoreLongNarrative({
             <p className="rcore-film-tail__subtitle">{film.tail_subtitle}</p>
           ) : null}
           <nav className="rcore-film-tail__links" aria-label={film.section_aria}>
-            <Link href={`${base}/cobots/all-cobots-specs`}>{film.links.specs}</Link>
+            <Link
+              href={`${base}/cobots/all-cobots-specs`}
+              onClick={() => trackCtaClick('film_tail_specs')}
+            >
+              {film.links.specs}
+            </Link>
             <span className="rcore-film-tail__sep" aria-hidden>
               ·
             </span>
-            <Link href={`${base}/selector/advisor`}>{film.links.advisor}</Link>
+            <Link href={`${base}/selector/advisor`} onClick={() => trackCtaClick('film_tail_advisor')}>
+              {film.links.advisor}
+            </Link>
             <span className="rcore-film-tail__sep" aria-hidden>
               ·
             </span>
-            <Link href={`${base}/selector/comparison`}>{film.links.side_by_side}</Link>
+            <Link
+              href={`${base}/selector/comparison`}
+              onClick={() => trackCtaClick('film_tail_comparison')}
+            >
+              {film.links.side_by_side}
+            </Link>
           </nav>
         </div>
       </section>

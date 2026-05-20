@@ -11,6 +11,7 @@ import {
   stripIndustrialModelCodes,
 } from '@/components/selector/SelectorLineupUi';
 import { robotVariantImageAlt, robotVariantImageUrl, specLabels } from '@/data/products';
+import { trackEvent } from '@/lib/analytics';
 import { openInquiry } from '@/lib/open-inquiry';
 import { useSiteLang } from '@/lib/site-lang-context';
 
@@ -41,11 +42,12 @@ export default function SelectorComparisonPage() {
   const lineup = useMemo(() => buildLineup(), []);
 
   useEffect(() => {
+    trackEvent('selector_view', { selector: 'comparison', locale: safeLang });
     window.dispatchEvent(new CustomEvent('roooll-main-nav-progress', { detail: { progress: 0 } }));
     return () => {
       window.dispatchEvent(new CustomEvent('roooll-main-nav-progress', { detail: { progress: 0 } }));
     };
-  }, []);
+  }, [safeLang]);
 
   return (
     <section className="selector-hero2 border-t border-[#d2d2d7]/80 bg-[#f5f5f7] text-[#1d1d1f]" aria-labelledby="selector-hero2-title">

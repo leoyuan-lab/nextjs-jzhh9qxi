@@ -54,10 +54,19 @@
       "footnotesTitle": "ROOOLL Brand Commitments",
       "copyright": "Copyright © 2026 Roooll. All rights reserved.",
       "langBtn": "中文",
-      "mobileLang": "中"
+      "mobileLang": "中",
+      "privacyLink": "Privacy Policy",
+      "cookieSettings": "Cookie settings"
     },
     "seoBrief": {
       "ctaInquiryDefault": "Inquiry"
+    },
+    "cookieConsent": {
+      "title": "Cookies on Roooll.com",
+      "body": "We use essential cookies for language preference. With your consent, we also use analytics cookies (Google Analytics) and B2B marketing tags (LinkedIn Insight) to measure visits and improve our Cobot site.",
+      "privacyLink": "Privacy Policy",
+      "acceptAll": "Accept all",
+      "essentialOnly": "Essential only"
     }
   },
   "drawer": {
@@ -112,16 +121,16 @@
     "expandItemAria": "Show answer",
     "collapseItemAria": "Hide answer",
     "items": {
-      "q1": "We already run PLCs and vision—no dedicated robotics team. How long from unboxing a Roooll R-core for pick-and-place to a running first path?",
-      "a1": "R-core (FR5-C) integrates the controller in the base—about 11.8 kg total, φ125 mm footprint. Tune via Web App, 10.1″ teach pendant, or mobile. Host interfaces: standard TCP/IP, digital I/O, and Modbus TCP/RTU. On a typical single station, from mechanical install and calibration to the first program—usually 1–3 business days (fixture and vision integration may vary).",
-      "q2": "We need ~3 kg precision assembly and ~20 kg palletizing—how do we choose between R-core and r-Max without buying overlapping capability?",
-      "a2": "Spec by payload and reach—no over-buying. R-core targets light, precision cells: 4 kg rated (5 kg peak), 922 mm reach, up to ±0.02 mm repeatability for inspection, fastening, and lab work. r-Max (FR20) is built for heavy duty: 20 kg rated (25 kg peak), 1854 mm reach, ±0.1 mm repeatability for handling and palletizing. Both share the Roooll R-Series platform—control logic and accessories align, lowering lifecycle cost.",
+      "q1": "We already run PLCs and vision—no dedicated robotics team. How long from unboxing a Roooll r-Core for pick-and-place to a running first path?",
+      "a1": "r-Core (integrated controller) houses the control box in the base—about 11.8 kg total, φ125 mm footprint. Tune via Web App, 10.1″ teach pendant, or mobile. Host interfaces: standard TCP/IP, digital I/O, and Modbus TCP/RTU. On a typical single station, from mechanical install and calibration to the first program—usually 1–3 business days (fixture and vision integration may vary).",
+      "q2": "We need ~3 kg precision assembly and ~20 kg palletizing—how do we choose between r-Core and r-Max without buying overlapping capability?",
+      "a2": "Spec by payload and reach—no over-buying. r-Core targets light, precision cells: 4 kg rated (5 kg peak), 922 mm reach, up to ±0.02 mm repeatability for inspection, fastening, and lab work. r-Max 20kg long-reach heavy variant is built for palletizing: 20 kg rated (25 kg peak), 1854 mm reach, ±0.1 mm repeatability for handling and palletizing. Both share the Roooll r-Series platform—control logic and accessories align, lowering lifecycle cost.",
       "q3": "The site runs Siemens PLC + MES with quick-change grippers—can Roooll join the existing bus, or is a full rip-and-replace required?",
       "a3": "Native integration—no system rebuild. Roooll ships with TCP/IP, I/O, and Modbus TCP/RTU for mainstream PLC and MES stacks. On r-Max heavy-duty cabinets, optional Profinet, EtherNet/IP, EtherCAT, and CC-Link IE Field Basic are available (per order configuration). The tool flange follows ISO 9409-1; Roooll EOAT (grippers, vacuum, quick change, 3D vision) and third-party tools are supported.",
       "q4": "Three shifts, 6,000+ hours per year—will R-Series joints and reducers last, or do we replace the whole arm in two years?",
       "a4": "Roooll is engineered for demanding industrial duty. Industrial servos and precision reducers; rigorous QC before shipment. Core drive systems (motors, reducers) and control architecture carry a 2-year limited warranty. Roooll Insight enables live monitoring and alarm traceability. Under standard duty, the arm is designed for continuous long-run operation.",
       "q5": "We need white-label export—custom housing and teach UI. What is MOQ, and will lead time kill our milestone?",
-      "a5": "Roooll offers flexible OEM/ODM: branding, colorways, and industry-specific end-effector co-development. Small-batch R-core / r-Max programs are negotiable—often from a few dozen units for exterior and UI customization (flexible MOQ). Standard specs ship within 3–5 business days after payment confirmation; bespoke builds run on a dedicated line with timelines locked in contract.",
+      "a5": "Roooll offers flexible OEM/ODM: branding, colorways, and industry-specific end-effector co-development. Small-batch r-Core / r-Max programs are negotiable—often from a few dozen units for exterior and UI customization (flexible MOQ). Standard specs ship within 3–5 business days after payment confirmation; bespoke builds run on a dedicated line with timelines locked in contract.",
       "q6": "We ship to Europe and Southeast Asia—is CE in place, and can spares and remote support keep up overseas?",
       "a6": "Roooll R-Series meets RoHS, EU CE safety requirements, and ISO9001. Global support: experts online across time zones, professional response within 12 hours. Overseas spares cover core joint modules, control components, and common EOAT; remote diagnostics and on-site coordination via the Roooll service network (per regional agreement)."
     }
@@ -172,6 +181,61 @@
     "selector_advisor": {
       "metaTitleFocus": "Product Advisor (r-Lite / r-Core match)",
       "metaDescription": "Interactive advisor to match load, reach, and environment to r-Lite, r-Core, and other r‑Series Cobot lines."
+    },
+    "privacy": {
+      "metaTitleFocus": "Privacy Policy & Cookies",
+      "metaDescription": "How Roooll collects, uses, and protects personal data from Cobot website visitors, inquiry forms, analytics, and marketing tags.",
+      "title": "Privacy Policy",
+      "updated": "Last updated: May 2026",
+      "intro": "Roooll (“we”) operates roooll.com and related services for collaborative robot (Cobot) information and sales inquiries. This policy explains what we collect, why, and your choices.",
+      "backHome": "Back to Home",
+      "sections": [
+        {
+          "heading": "Data we collect",
+          "paragraphs": [
+            "Inquiry form: name, business email, industry, and message you submit voluntarily.",
+            "Technical logs: IP address, browser type, and page paths processed by our hosting provider for security and reliability.",
+            "Analytics (only if you accept cookies): pseudonymous usage data via Google Analytics 4.",
+            "Marketing tags (only if you accept cookies): LinkedIn Insight Tag may set cookies to measure B2B ad performance."
+          ]
+        },
+        {
+          "heading": "How we use data",
+          "paragraphs": [
+            "Respond to product and quotation requests.",
+            "Improve site content, Cobot selector tools, and performance.",
+            "Comply with law and prevent abuse (including rate limits and spam filtering on inquiry APIs)."
+          ]
+        },
+        {
+          "heading": "Legal bases (EEA/UK visitors)",
+          "paragraphs": [
+            "Contract / pre-contractual steps when you request a quote.",
+            "Legitimate interests for site security and aggregated analytics with consent.",
+            "Consent for non-essential cookies and marketing measurement tags."
+          ]
+        },
+        {
+          "heading": "Sharing & retention",
+          "paragraphs": [
+            "Inquiry email is delivered via Resend to our sales mailbox. Analytics data is processed by Google; LinkedIn processes tag data under its policies.",
+            "We retain inquiry records as long as needed for sales follow-up and legal obligations, then delete or anonymize."
+          ]
+        },
+        {
+          "heading": "Your rights",
+          "paragraphs": [
+            "You may request access, correction, or deletion of personal data by emailing info@roooll.com.",
+            "You can withdraw analytics consent anytime via Cookie settings in the site footer."
+          ]
+        },
+        {
+          "heading": "Contact",
+          "paragraphs": [
+            "Roooll — privacy requests: info@roooll.com"
+          ]
+        }
+      ]
     },
     "contact": {
       "title": "Contact Us",
@@ -401,8 +465,8 @@
     },
     "r_ultra": {
       "metaTitleFocus": "r-Ultra Flagship Heavy-Payload Cobot",
-      "metaDescription": "r-Ultra Cobot line: FR30 class flagship payload, 1402mm reach, and heavy transfer or palletizing ready robotic arm options.",
-      "immersive_glb_alt": "Roooll r-Ultra (FR30), 30kg payload, ±0.1mm repeatability, 1402mm reach; Collaborative Robot 6-axis arm for Industrial Automation in heavy handling and palletizing.",
+      "metaDescription": "r-Ultra Cobot line: 30kg flagship payload, 1402mm reach, and heavy transfer or palletizing ready collaborative robotic arm options.",
+      "immersive_glb_alt": "Roooll r-Ultra collaborative robot, 30kg payload, ±0.1mm repeatability, 1402mm reach; 6-axis cobot arm for heavy handling and palletizing.",
       "inquiry": "Inquiry",
       "scenario_subnav": {
         "brand_top_aria": "Roooll brand strip on r-Ultra immersive page",
@@ -505,33 +569,33 @@
     }
   },
   "alt": {
-    "acc_end_effectors": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability baseline; Collaborative Robot 6-axis arm tools for Industrial Automation gripping, vacuum, quick swap.",
-    "acc_vision": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability baseline; Collaborative Robot 6-axis arm vision for Industrial Automation localization and calibration.",
-    "acc_controllers": "Roooll R-max (FR20), 20kg payload, ±0.1mm repeatability baseline; Collaborative Robot 6-axis arm control for Industrial Automation safety logic, I/O, comms.",
-    "ecosystem_os": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability baseline; Collaborative Robot 6-axis arm OS for Industrial Automation motion control and safety flow.",
-    "ecosystem_insight": "Roooll R-max (FR20), 20kg payload, ±0.1mm repeatability baseline; Collaborative Robot 6-axis arm cloud for Industrial Automation telemetry, alarms, analytics.",
-    "selector_hero": "Roooll R-Lite (FR3-C), 3kg payload (instant 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm selector hero for Industrial Automation model matching.",
+    "acc_end_effectors": "Roooll r-Core collaborative robot end-effector tooling—gripping, vacuum, and quick-change modules for industrial automation.",
+    "acc_vision": "Roooll r-Core collaborative robot 3D vision for localization, calibration, and guided industrial tasks.",
+    "acc_controllers": "Roooll r-Max collaborative robot control cabinet—safety logic, I/O, and industrial field communication.",
+    "ecosystem_os": "Roooll OS motion and safety stack for r-Series collaborative robotic arms in industrial automation.",
+    "ecosystem_insight": "Roooll Insight cloud dashboards for r-Series cobot fleet telemetry, alarms, and analytics.",
+    "selector_hero": "Roooll product advisor hero: r-Lite integrated-controller cobot, 3kg payload (5kg instant), 622mm reach, ±0.05mm repeatability.",
     "blueprint_alt": "Technical schematic of {{modelName}} showing arm reach and structural details.",
     "blueprint_description": "Engineering blueprint and technical drawing of {{modelName}} collaborative robotic arm: {{reach}} working radius, schematic views with joint limits, footprint, and dimension callouts for mechanical integration.",
     "variant_images": {
-      "r_lite_fr3_std": "Roooll R-lite (FR3), 3kg payload, ±0.02mm repeatability, 622mm reach; Collaborative Robot 6-axis arm for Industrial Automation in compact lab handling.",
-      "r_lite_fr3_c": "Roooll R-lite (FR3-C), 3kg payload, ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm with integrated control for Industrial Automation cells.",
-      "r_lite_fr3_wms": "Roooll R-lite (FR3-WMS), 3kg payload, ±0.02mm repeatability, 622mm reach; Collaborative Robot 6-axis arm for Industrial Automation in mobile medical, lab ops.",
-      "r_lite_fr3_wml": "Roooll R-lite (FR3-WML), 3kg payload, ±0.05mm repeatability, 922mm reach; Collaborative Robot 6-axis arm for Industrial Automation across wider work envelopes.",
-      "r_core_fr5_std": "Roooll R-core (FR5), 5kg payload, ±0.02mm repeatability, 922mm reach; Collaborative Robot 6-axis arm for Industrial Automation in precision assembly and QC.",
-      "r_core_fr5_c": "Roooll R-core (FR5-C), 4kg payload, ±0.05mm repeatability, 922mm reach; Collaborative Robot 6-axis arm with integrated control for Industrial Automation lines.",
-      "r_core_fr5_wml": "Roooll R-core (FR5-WML), 5kg payload, ±0.1mm repeatability, 1900mm reach; Collaborative Robot 6-axis arm for Industrial Automation in long-reach tending.",
-      "r_reach_fr10_std": "Roooll R-reach (FR10), 10kg payload, ±0.05mm repeatability, 1400mm reach; Collaborative Robot 6-axis arm for Industrial Automation in medium-load transfer work.",
-      "r_max_fr16_std": "Roooll R-max (FR16), 16kg payload, ±0.03mm repeatability, 1034mm reach; Collaborative Robot 6-axis arm for Industrial Automation in force-controlled assembly.",
-      "r_max_fr20_std": "Roooll R-max (FR20), 20kg payload, ±0.1mm repeatability, 1854mm reach; Collaborative Robot 6-axis arm for Industrial Automation in handling and palletizing.",
-      "r_ultra_fr30_std": "Roooll R-ultra (FR30), 30kg payload, ±0.1mm repeatability, 1402mm reach; Collaborative Robot 6-axis arm for Industrial Automation in high-load transfer."
+      "r_lite_fr3_std": "Roooll r-Lite collaborative robot (standard), 3kg payload, ±0.02mm repeatability, 622mm reach; compact lab and precision assembly.",
+      "r_lite_fr3_c": "Roooll r-Lite collaborative robot (integrated controller), 3kg payload, ±0.05mm repeatability, 622mm reach; compact production cells.",
+      "r_lite_fr3_wms": "Roooll r-Lite collaborative robot (mobile short arm), 3kg payload, ±0.02mm repeatability, 622mm reach; medical and flexible stations.",
+      "r_lite_fr3_wml": "Roooll r-Lite collaborative robot (mobile long arm), 3kg payload, ±0.05mm repeatability, 922mm reach; wider work envelopes.",
+      "r_core_fr5_std": "Roooll r-Core collaborative robot (standard), 5kg payload, ±0.02mm repeatability, 922mm reach; precision assembly and QC.",
+      "r_core_fr5_c": "Roooll r-Core collaborative robot (integrated controller), 4kg payload, ±0.05mm repeatability, 922mm reach; space-efficient lines.",
+      "r_core_fr5_wml": "Roooll r-Core collaborative robot (mobile long arm), 5kg payload, ±0.1mm repeatability, 1900mm reach; long-reach machine tending.",
+      "r_reach_fr10_std": "Roooll r-Reach collaborative robot, 10kg payload, ±0.05mm repeatability, 1400mm reach; medium-load transfer applications.",
+      "r_max_fr16_std": "Roooll r-Max collaborative robot (16kg heavy-duty), 16kg payload, ±0.03mm repeatability, 1034mm reach; force-controlled assembly.",
+      "r_max_fr20_std": "Roooll r-Max collaborative robot (20kg long-reach heavy), 20kg payload, ±0.1mm repeatability, 1854mm reach; palletizing and handling.",
+      "r_ultra_fr30_std": "Roooll r-Ultra collaborative robot (flagship), 30kg payload, ±0.1mm repeatability, 1402mm reach; high-load transfer."
     },
-    "hero_rlite": "Roooll R-Lite (FR3-C), 3kg payload (instant 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm with integrated control for Industrial Automation in precision assembly and labs.",
-    "hero_rultra": "Roooll R-Ultra (FR30), 30kg payload, ±0.1mm repeatability, 1402mm reach; Collaborative Robot 6-axis arm for Industrial Automation in handling and palletizing.",
-    "r_lite_detail_flange": "Roooll R-Lite (FR3-C), 3kg payload (instant 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm close-up of the white end flange and upper arm on a solid black background for Industrial Automation end-effector mounting and quick change.",
-    "r_lite_detail": "Roooll R-Lite (FR3-C), 3kg payload (instant 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm detail for Industrial Automation joints and flange.",
-    "r_lite_detail_base": "Roooll R-Lite (FR3-C), 3kg payload (instant 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm base detail for Industrial Automation stability and setup.",
-    "r_lite_detail_elbow": "Roooll R-Lite (FR3-C), 3kg payload (instant 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm elbow detail for Industrial Automation control and motion.",
-    "r_lite_detail_wrist": "Roooll R-Lite (FR3-C), 3kg payload (instant 5kg), ±0.05mm repeatability, 622mm reach; Collaborative Robot 6-axis arm wrist detail for Industrial Automation orientation, pose."
+    "hero_rlite": "Roooll r-Lite collaborative robot (integrated controller), 3kg payload (5kg instant), ±0.05mm repeatability, 622mm reach; precision assembly and lab automation.",
+    "hero_rultra": "Roooll r-Ultra collaborative robot, 30kg payload, ±0.1mm repeatability, 1402mm reach; heavy handling and palletizing.",
+    "r_lite_detail_flange": "Roooll r-Lite collaborative robot (integrated controller)—close-up of white end flange and upper arm on black background; 3kg payload, 622mm reach, ±0.05mm repeatability.",
+    "r_lite_detail": "Roooll r-Lite collaborative robot (integrated controller) structural detail—3kg payload, 622mm reach, ±0.05mm repeatability, integrated base control.",
+    "r_lite_detail_base": "Roooll r-Lite collaborative robot (integrated controller) base detail—integrated control box for compact deployment.",
+    "r_lite_detail_elbow": "Roooll r-Lite collaborative robot (integrated controller) elbow joint detail—motion control and payload trajectory.",
+    "r_lite_detail_wrist": "Roooll r-Lite collaborative robot (integrated controller) wrist joint detail—pose accuracy and safe collaboration."
   }
 }

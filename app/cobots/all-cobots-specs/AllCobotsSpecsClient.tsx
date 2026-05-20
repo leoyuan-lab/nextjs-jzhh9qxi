@@ -8,6 +8,7 @@ import {
   SELECTOR_LINEUP_I18N,
   VariantDetailPortal,
 } from '@/components/selector/SelectorLineupUi';
+import { trackEvent } from '@/lib/analytics';
 import { openInquiry } from '@/lib/open-inquiry';
 import { useSiteLang } from '@/lib/site-lang-context';
 
@@ -41,6 +42,10 @@ export default function AllCobotsSpecsClient() {
         : `I'm interested in this model:\n- ${modelLabel}\n\nPlease contact me with recommendation and quotation.`;
     openInquiry({ body, source: 'all_cobots_specs' });
   };
+
+  useEffect(() => {
+    trackEvent('selector_view', { selector: 'all_cobots_specs', locale: safeLang });
+  }, [safeLang]);
 
   useEffect(() => {
     activeIdRef.current = activeId;

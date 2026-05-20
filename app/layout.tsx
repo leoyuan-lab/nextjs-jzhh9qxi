@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import './globals.css';
 import ClientLayout from './ClientLayout';
 import { Suspense } from 'react';
+import { CookieConsent } from '@/components/CookieConsent';
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import { GoogleAnalyticsPageView } from '@/components/GoogleAnalyticsPageView';
 import { OrganizationJsonLd } from '@/components/OrganizationJsonLd';
@@ -38,6 +39,7 @@ export default async function RootLayout({
         </Suspense>
         <OrganizationJsonLd origin={siteOrigin} />
         <ClientLayout initialLang={initialLang}>{children}</ClientLayout>
+        <CookieConsent />
       </body>
     </html>
   );

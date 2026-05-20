@@ -128,6 +128,18 @@ export function productSocialMetadata(
 const rootTitle = seoTitle(ROOT_TITLE_FOCUS);
 const rootDescription = seoDescription(ROOT_DESCRIPTION_BODY);
 
+/** Vercel preview / local dev should not compete with production in search indexes. */
+export function isProductionIndexable(): boolean {
+  const env = process.env.VERCEL_ENV;
+  return env !== 'preview' && env !== 'development';
+}
+
+export function productionIndexRobots(): { index: boolean; follow: boolean } {
+  return isProductionIndexable()
+    ? { index: true, follow: true }
+    : { index: false, follow: false };
+}
+
 export const rootMetadata: Metadata = {
   ...(typeof process.env.NEXT_PUBLIC_SITE_URL === 'string' &&
   process.env.NEXT_PUBLIC_SITE_URL.length > 0
@@ -136,7 +148,7 @@ export const rootMetadata: Metadata = {
   title: rootTitle,
   description: rootDescription,
   applicationName: 'Roooll',
-  robots: { index: true, follow: true },
+  robots: productionIndexRobots(),
   /** Tab favicon: `app/icon.svg`. Home-screen tile: `icons.other` avoids a misleading `apple` key; `rel` is still the required platform value. */
   icons: {
     other: [
