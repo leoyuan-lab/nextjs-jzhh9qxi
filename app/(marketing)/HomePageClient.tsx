@@ -378,7 +378,7 @@ export default function HomePageClient() {
         </div>
         <div className={`drag-hint ${showDragHint ? 'show' : ''}`}>{home.dragHint}</div>
         <div className="content-limit">
-          <div className="text-box dark-copy">
+          <div className="text-box">
             <h2 className="title">{titleRlite}</h2>
             <p className="subtitle">{home.heroRliteSubtitle}</p>
             <div className="cta-row">

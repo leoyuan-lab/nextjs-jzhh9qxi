@@ -2,7 +2,9 @@ import { cookies } from 'next/headers';
 import { headers } from 'next/headers';
 import './globals.css';
 import ClientLayout from './ClientLayout';
+import { Suspense } from 'react';
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
+import { GoogleAnalyticsPageView } from '@/components/GoogleAnalyticsPageView';
 import { OrganizationJsonLd } from '@/components/OrganizationJsonLd';
 import { getRequestSiteOrigin } from '@/lib/site-origin';
 import { rootMetadata } from '@/lib/site-seo';
@@ -31,6 +33,9 @@ export default async function RootLayout({
     <html lang={initialLang} suppressHydrationWarning>
       <body style={{ margin: 0 }}>
         <GoogleAnalytics />
+        <Suspense fallback={null}>
+          <GoogleAnalyticsPageView />
+        </Suspense>
         <OrganizationJsonLd origin={siteOrigin} />
         <ClientLayout initialLang={initialLang}>{children}</ClientLayout>
       </body>

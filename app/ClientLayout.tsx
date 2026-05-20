@@ -244,6 +244,14 @@ export default function ClientLayout({
     [resolvedLang],
   );
 
+  /** ClientLayout survives `<Link>` navigations; reset chrome state so arm inline nav styles do not leak. */
+  useLayoutEffect(() => {
+    setNavToneOverride(null);
+    setMainNavScrollProgress(0);
+    setIsChildSubNavVisible(false);
+    setIsDark(isArm);
+  }, [logicalPathname, isArm]);
+
   useLayoutEffect(() => {
     document.body.style.margin = '0';
     document.documentElement.style.width = '100%';
@@ -252,15 +260,8 @@ export default function ClientLayout({
     const overflowX = isArm ? 'clip' : 'hidden';
     document.documentElement.style.overflowX = overflowX;
     document.body.style.overflowX = overflowX;
-    document.body.style.backgroundColor =
-      isHome
-        ? 'transparent'
-        : isArm
-          ? '#000'
-          : isDark
-            ? '#000'
-            : '#fff';
-  }, [isArm, isDark, isHome, pathname]);
+    document.body.style.backgroundColor = isHome ? 'transparent' : isArm ? '#000' : '#fff';
+  }, [isArm, isHome, pathname]);
 
   useEffect(() => {
     document.documentElement.setAttribute('lang', resolvedLang);
@@ -352,12 +353,11 @@ export default function ClientLayout({
       });
     };
     window.addEventListener('roooll-inquiry-open', handleInquirySignal as EventListener);
-    const checkTheme = () => {
-      const bgColor = window.getComputedStyle(document.body).backgroundColor;
-      setIsDark(bgColor === 'rgb(0, 0, 0)' || bgColor === '#000' || bgColor === 'rgb(22, 22, 23)');
+    const syncFooterDarkFromRoute = () => {
+      setIsDark(isArm);
     };
-    checkTheme();
-    const themeTimer = setInterval(checkTheme, 500);
+    syncFooterDarkFromRoute();
+    const themeTimer = isArm ? setInterval(syncFooterDarkFromRoute, 500) : undefined;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setShowSearch(false);
@@ -408,19 +408,15 @@ export default function ClientLayout({
       window.removeEventListener('roooll-nav-tone', handleNavTone as EventListener);
       window.removeEventListener('roooll-main-nav-progress', handleMainNavProgress as EventListener);
       window.removeEventListener('selector-compare-sticky-pin', handleSelectorComparePin as EventListener);
-      clearInterval(themeTimer);
+      if (themeTimer !== undefined) clearInterval(themeTimer);
     };
-  }, [logicalPathname, resolvedLang]);
+  }, [logicalPathname, resolvedLang, isArm]);
 
   useLayoutEffect(() => {
-    if (isHome || isArm || isSelector) {
-      setIsChildSubNavVisible(false);
-      setMainNavScrollProgress(0);
-    }
     if (logicalPathname !== '/selector/comparison') {
       setIsSelectorComparePinned(false);
     }
-  }, [logicalPathname, isArm, isHome, isSelector]);
+  }, [logicalPathname]);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -697,7 +693,15 @@ export default function ClientLayout({
                                 'background 0.38s ease, backdrop-filter 0.38s ease, -webkit-backdrop-filter 0.38s ease, border-color 0.38s ease',
                             }
                         : {
-                            transition: 'background 0.3s',
+                            transform: 'translate3d(0, 0, 0)',
+                            opacity: 1,
+                            pointerEvents: 'auto',
+                            background: '',
+                            borderBottom: '',
+                            backdropFilter: '',
+                            WebkitBackdropFilter: '',
+                            transition:
+                              'background 0.3s, opacity 0.3s, transform 0.3s, border-color 0.3s, backdrop-filter 0.3s, -webkit-backdrop-filter 0.3s',
                           }),
                   }
             }
