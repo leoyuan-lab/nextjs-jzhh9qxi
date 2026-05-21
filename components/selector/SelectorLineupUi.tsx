@@ -9,6 +9,8 @@ import {
   robotVariantImageAlt,
   robotVariantImageUrl,
   robotVariantBlueprintSvgUrl,
+  robotSpecDisplayText,
+  robotSpecEnvironmentText,
   rSeriesData,
   specLabels,
   type RobotFamily,
@@ -144,6 +146,12 @@ export function lineupCardVariantShortName(name: string): string {
   return displayVariantLabel(s).trim();
 }
 
+/** 变体短名：优先 `shortName` 双语字段，否则回退 `name` */
+export function lineupCardVariantShortNameForItem(item: LineItem, lang: 'zh' | 'en'): string {
+  const raw = item.shortName ? ml(item.shortName, lang) : item.name;
+  return lineupCardVariantShortName(raw);
+}
+
 /** 灰色总结文案：分号处换行展示 */
 export function selectorSummarizeBody(text: string): string {
   return stripIndustrialModelCodes(text)
@@ -173,9 +181,17 @@ export const SELECTOR_LINEUP_I18N = {
     noise: '噪声',
     mounting: '安装方式',
     hero2Title: '对比全系 r 家族',
-    hero2Subtitle: '在三个下拉框中各选一款不同的 r 系列变体。',
+    hero2Subtitle:
+      '在三个下拉框中各选一款不同的 r 系列变体。加粗放大的数字标示出机型之间的差异。',
     hero2ChooseModel: '选择机型',
     hero2Inquiry: '咨询',
+    controllerSectionTitle: '外置控制箱（选配）',
+    controllerSharedNote:
+      '以下外置控制箱的 I/O、通讯协议与软件开发包等参数相同；差异主要在供电方式、功率档（2kW mini / 5kW）与重量。',
+    controllerIntegrated: '控制箱集成于机器人底座（一体式）。',
+    controllerAlternate: '另可选（直流版）',
+    controllerAlternateIntegratedSkip: '所选一体式机型无需外置控制箱。',
+    controllerFullSpecs: '完整控制箱规格',
     /** `{family}` = product line display name, e.g. r-Lite */
     specsGridAria: '{family} 系列技术规格',
     detailJointAxesAria: '{family} 各关节轴规格参数',
@@ -198,9 +214,17 @@ export const SELECTOR_LINEUP_I18N = {
     noise: 'Noise',
     mounting: 'Mounting',
     hero2Title: 'Compare all r family',
-    hero2Subtitle: 'Pick a different r‑Series variant in each menu below.',
+    hero2Subtitle:
+      'Pick a different r‑Series variant in each menu below. Highlighted numbers show where these models differ.',
     hero2ChooseModel: 'Choose models',
     hero2Inquiry: 'Inquiry',
+    controllerSectionTitle: 'External control cabinet (optional)',
+    controllerSharedNote:
+      'External control cabinets share the same I/O, communication protocols, and SDK; differences are mainly power input (DC vs AC), power tier (2 kW mini / 5 kW), and weight.',
+    controllerIntegrated: 'Control cabinet integrated in the robot base.',
+    controllerAlternate: 'Also available (DC)',
+    controllerAlternateIntegratedSkip: 'Integrated variants do not use an external cabinet.',
+    controllerFullSpecs: 'Full controller specifications',
     specsGridAria: '{family} series technical specifications',
     detailJointAxesAria: '{family} joint axes specifications',
   },
@@ -611,7 +635,7 @@ export function SelectorLineupCard({
   deferImageProcessingUntilVisible?: boolean;
   disableImagePostProcess?: boolean;
 }) {
-  const variantShort = lineupCardVariantShortName(item.name);
+  const variantShort = lineupCardVariantShortNameForItem(item, lang);
   const staggerMs = index * 180;
 
   return (
@@ -735,8 +759,8 @@ export function VariantDetailPortal({
   );
 
   const detailVariantShort = useMemo(
-    () => (detailItem ? lineupCardVariantShortName(detailItem.name) : ''),
-    [detailItem],
+    () => (detailItem ? lineupCardVariantShortNameForItem(detailItem, lang) : ''),
+    [detailItem, lang],
   );
 
   useScrollNotchHaptics(detailScrollRef, detailItem !== null);
@@ -896,41 +920,81 @@ export function VariantDetailPortal({
                     >
                       <SpecRow
                         label={specLabels.payload[lang]}
-                        value={detailItem.payload}
+                        value={robotSpecDisplayText(detailItem.payload, lang)}
                         detail
                         detailLineIndex={li++}
                       />
-                      <SpecRow label={specLabels.reach[lang]} value={detailItem.reach} detail detailLineIndex={li++} />
+                      <SpecRow
+                        label={specLabels.reach[lang]}
+                        value={robotSpecDisplayText(detailItem.reach, lang)}
+                        detail
+                        detailLineIndex={li++}
+                      />
                       <SpecRow
                         label={specLabels.repeatability[lang]}
-                        value={detailItem.repeatability}
+                        value={robotSpecDisplayText(detailItem.repeatability, lang)}
                         detail
                         detailLineIndex={li++}
                       />
-                      <SpecRow label={specLabels.weight[lang]} value={detailItem.weight} detail detailLineIndex={li++} />
+                      <SpecRow
+                        label={specLabels.weight[lang]}
+                        value={robotSpecDisplayText(detailItem.weight, lang)}
+                        detail
+                        detailLineIndex={li++}
+                      />
                       <SpecRow label={t.dof} value={detailItem.dof} detail detailLineIndex={li++} />
-                      <SpecRow label={specLabels.ip[lang]} value={detailItem.ipRating} detail detailLineIndex={li++} />
+                      <SpecRow
+                        label={specLabels.ip[lang]}
+                        value={robotSpecDisplayText(detailItem.ipRating, lang)}
+                        detail
+                        detailLineIndex={li++}
+                      />
                       <SpecRow
                         label={specLabels.power[lang]}
-                        value={`${detailItem.avgPower} / ${detailItem.peakPower}`}
+                        value={robotSpecDisplayText(`${detailItem.avgPower} / ${detailItem.peakPower}`, lang)}
                         detail
                         detailLineIndex={li++}
                       />
-                      <SpecRow label={specLabels.tcpSpeed[lang]} value={detailItem.tcpSpeed} detail detailLineIndex={li++} />
-                      <SpecRow label={specLabels.voltage[lang]} value={detailItem.voltage} detail detailLineIndex={li++} />
-                      <SpecRow label={t.noise} value={detailItem.noise} detail detailLineIndex={li++} />
+                      <SpecRow
+                        label={specLabels.tcpSpeed[lang]}
+                        value={robotSpecDisplayText(detailItem.tcpSpeed, lang)}
+                        detail
+                        detailLineIndex={li++}
+                      />
+                      <SpecRow
+                        label={specLabels.voltage[lang]}
+                        value={robotSpecDisplayText(detailItem.voltage, lang)}
+                        detail
+                        detailLineIndex={li++}
+                      />
+                      <SpecRow
+                        label={t.noise}
+                        value={robotSpecDisplayText(detailItem.noise, lang)}
+                        detail
+                        detailLineIndex={li++}
+                      />
                       <SpecRow label={t.mounting} value={ml(detailItem.mounting, lang)} detail detailLineIndex={li++} />
                       <SpecRow
                         label={specLabels.environment[lang]}
-                        value={`${detailItem.temperature}；${detailItem.humidity}`}
+                        value={robotSpecEnvironmentText(detailItem.temperature, detailItem.humidity, lang)}
                         detail
                         detailLineIndex={li++}
                       />
-                      <SpecRow label={specLabels.footprint[lang]} value={detailItem.footprint} detail detailLineIndex={li++} />
-                      <SpecRow label={specLabels.io[lang]} value={detailItem.ioPorts} detail detailLineIndex={li++} />
+                      <SpecRow
+                        label={specLabels.footprint[lang]}
+                        value={robotSpecDisplayText(detailItem.footprint, lang)}
+                        detail
+                        detailLineIndex={li++}
+                      />
+                      <SpecRow
+                        label={specLabels.io[lang]}
+                        value={robotSpecDisplayText(detailItem.ioPorts, lang)}
+                        detail
+                        detailLineIndex={li++}
+                      />
                       <SpecRow
                         label={lang === 'zh' ? '工具电源' : 'Tool power'}
-                        value={detailItem.toolPower}
+                        value={robotSpecDisplayText(detailItem.toolPower, lang)}
                         detail
                         detailLineIndex={li++}
                       />
@@ -974,11 +1038,11 @@ export function VariantDetailPortal({
                               <dt className="font-semibold text-[#1d1d1f] sm:text-[1rem]">{specLabels.axisLabels[key][lang]}</dt>
                               <dd className="text-[#424245] sm:text-[0.9375rem]">
                                 <span className="text-[#6e6e73]">{lang === 'zh' ? '范围' : 'Range'}: </span>
-                                {ax.range}
+                                {robotSpecDisplayText(ax.range, lang)}
                               </dd>
                               <dd className="text-[#424245] sm:text-[0.9375rem]">
                                 <span className="text-[#6e6e73]">{lang === 'zh' ? '最大角速度' : 'Max speed'}: </span>
-                                {ax.speed}
+                                {robotSpecDisplayText(ax.speed, lang)}
                               </dd>
                             </div>
                           );

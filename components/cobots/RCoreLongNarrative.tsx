@@ -12,6 +12,11 @@ import type { CSSProperties, RefObject, MutableRefObject } from 'react';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { RCoreFlangeHeroStill } from '@/components/cobots/RCoreFlangeHeroStill';
 import {
+  HorizontalScrollDots,
+  scrollHorizontalSnapItem,
+  useHorizontalScrollIndex,
+} from '@/components/HorizontalScrollDots';
+import {
   ROBOT_IMG_BASE,
   ROBOT_VECTOR_BASE,
   R_LITE_ADVISOR_FLANGE_HERO_DIM,
@@ -237,6 +242,20 @@ export function RCoreLongNarrative({
     [lang, film.application_cards, appCardIds],
   );
 
+  const appCardsScrollerRef = useRef<HTMLDivElement>(null);
+  const appCardSnapRefs = useRef<(HTMLElement | null)[]>([]);
+  appCardSnapRefs.current.length = appCards.length;
+
+  const getAppSnapItems = useCallback(
+    () => appCardSnapRefs.current.slice(0, appCards.length),
+    [appCards.length],
+  );
+  const appDotIndex = useHorizontalScrollIndex(appCardsScrollerRef, getAppSnapItems);
+
+  const scrollToAppCard = (index: number) => {
+    scrollHorizontalSnapItem(appCardsScrollerRef.current, appCardSnapRefs.current[index] ?? null, 'center');
+  };
+
   const flangeHeroAlt = immersiveFlangeHeroAlt(lang, messagesPageKey);
 
   return (
@@ -317,11 +336,14 @@ export function RCoreLongNarrative({
           <p className="rcore-ln-body rcore-ln-app-body">{film.application_body}</p>
         </motion.div>
         <div className="rcore-ln-app-spacer" />
-        <div className="rcore-ln-cards rcore-ln-copy-front">
+        <div ref={appCardsScrollerRef} className="rcore-ln-cards rcore-ln-copy-front roooll-hscroll">
           <div className="rcore-ln-cards__track">
             {appCards.map((c, i) => (
               <motion.div
                 key={c.id}
+                ref={(el) => {
+                  appCardSnapRefs.current[i] = el;
+                }}
                 className="rcore-ln-cards__item"
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 22 }}
                 whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
@@ -347,6 +369,13 @@ export function RCoreLongNarrative({
             ))}
           </div>
         </div>
+        <HorizontalScrollDots
+          count={appCards.length}
+          activeIndex={appDotIndex}
+          label={lang === 'zh' ? '应用场景卡片' : 'Application cards'}
+          onSelect={scrollToAppCard}
+          variant="dark"
+        />
       </section>
 
       <section ref={familyRef} className="rcore-ln-section rcore-ln-section--family">

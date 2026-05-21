@@ -17,6 +17,8 @@ export interface AxisSpec {
 export interface RobotVariant {
   id: string;
   name: string;
+  /** 卡片 / 下拉展示短名（缺省用 `name`） */
+  shortName?: MultiLang;
   payload: string;
   reach: string;
   repeatability: string;
@@ -66,9 +68,9 @@ export const productCatalogMeta = {
   frSeriesModelsEn:
     'r-Lite (standard, integrated, mobile S/L), r-Core, r-Reach, r-Max (16kg / 20kg), r-Ultra',
   certificationsZh:
-    '质量管理体系：ISO 9001。产品认证：CR, CE, KCs, NRTL, RoHS 2.0, NSF, SEMI, IP65。ISO 功能安全：ISO 10218, ISO 13849, ISO 15066。',
+    '设计符合 RoHS 及国际协作机器人安全标准口径。目标市场的合规与检测资料可按项目提供。功能安全设计参考 ISO 10218、ISO 13849、ISO 15066 等主流标准。',
   certificationsEn:
-    'Quality: ISO 9001. Product: CR, CE, KCs, NRTL, RoHS 2.0, NSF, SEMI, IP65. Functional safety: ISO 10218, ISO 13849, ISO 15066.',
+    'Designed to align with RoHS and widely referenced international cobot safety benchmarks. Compliance and test documentation for target markets available per project. Functional safety design references ISO 10218, ISO 13849, and ISO 15066.',
   productVision: {
     modularization: { zh: '模块化', en: 'Modularization' },
     quickDeployment: { zh: '快部署', en: 'Quick deployment' },
@@ -76,38 +78,201 @@ export const productCatalogMeta = {
   },
 } as const;
 
-/** 控制箱规格（样册「控制箱规格参数」表格摘要） */
+/** 控制箱单行规格（样册 EV1.4「控制箱规格参数 / CONTROLLER TECHNICAL SPECIFICATION」） */
+export interface ControllerSpec {
+  id: string;
+  name: MultiLang;
+  powerType: 'dc' | 'ac';
+  formFactor: 'mini' | 'standard';
+  outputKw: 2 | 5;
+  ip: string;
+  temperature: string;
+  humidity: string;
+  ioPorts: MultiLang;
+  ioPower: string;
+  standardComm: MultiLang;
+  optionalComm: MultiLang;
+  commBoard: MultiLang;
+  sdk: string;
+  dimensions: MultiLang;
+  weight: MultiLang;
+  materials: MultiLang;
+  powerSupply: MultiLang;
+  outputPower: string;
+  /** 与 `robotVariantById` 键对应，便于按机型筛选外置控制箱 */
+  applicableVariantIds: readonly string[];
+}
+
+const CONTROLLER_2KW_VARIANT_IDS = [
+  'fr3-std',
+  'fr3-wms',
+  'fr3-wml',
+  'fr5-std',
+  'fr5-wml',
+  'fr10-std',
+  'fr16-std',
+] as const;
+
+const CONTROLLER_5KW_VARIANT_IDS = ['fr20-std', 'fr30-std'] as const;
+
+const CONTROLLER_SHARED = {
+  ip: 'IP54',
+  temperature: '0–45℃',
+  humidity: '90%RH (non-condensing)',
+  ioPorts: {
+    zh: '数字输入(DI) 16 / 数字输出(DO) 16 / 模拟输入(AI) 2 / 模拟输出(AO) 2 / 高速脉冲输入 2',
+    en: 'DI 16 / DO 16 / AI 2 / AO 2 / High speed pulse input 2',
+  },
+  ioPower: '24V / 1.5A',
+  standardComm: {
+    zh: 'TCP/IP、I/O、Modbus_TCP/RTU',
+    en: 'I/O, TCP/IP, Modbus TCP/RTU',
+  },
+  optionalComm: {
+    zh: 'CC-Link IE Field Basic、Profinet、Ethernet/IP、EtherCAT',
+    en: 'CC-Link IE Field Basic, Profinet, Ethernet/IP, EtherCAT',
+  },
+  commBoard: {
+    zh: 'MiniPCI Express 实时以太网 PC 板卡',
+    en: 'MiniPCI Express — real-time Ethernet PC Board',
+  },
+  sdk: 'C# / C++ / Python / ROS / ROS2',
+  materials: { zh: '镀锌板', en: 'Galvanized plate' },
+} as const;
+
+/** 控制箱规格（样册「控制箱规格参数」四款外置控制箱） */
 export const controllerSpecs = {
   noteIntegrated: {
-    zh: 'r-Lite / r-Core 一体式控制箱集成在机器人底座。',
-    en: 'r-Lite & r-Core integrated-controller variants house the control box in the robot base.',
+    zh: '注：r-Lite · C 与 r-Core · C 控制箱集成在机器人底座。',
+    en: 'Note: The r-Lite · C and r-Core · C control cabinets are integrated into the robot base.',
   },
-  rows: [
+  models: [
     {
-      id: 'ctrl-a',
-      powerSupply: '30–60VDC / 220VAC 10A 单相 50Hz / 100–240VAC 10A 单相 50–60Hz',
+      id: 'roooll-dc-mini-2kw',
+      name: { zh: 'Roooll直流mini控制箱2kW', en: 'Roooll DC Mini Controller 2kW' },
+      powerType: 'dc',
+      formFactor: 'mini',
+      outputKw: 2,
+      ...CONTROLLER_SHARED,
+      dimensions: {
+        zh: '245×180×44.5mm（不含凸出物）',
+        en: '245×180×44.5mm (no protrusions)',
+      },
+      weight: { zh: '2.1kg（不含线重量）', en: '2.1kg (weight without wire)' },
+      powerSupply: { zh: '30–60VDC', en: '30–60VDC' },
       outputPower: '48VDC / 42A max',
-      applicableRobots: ['r-Lite', 'r-Core', 'r-Reach', 'r-Max 16kg'],
-      ip: 'IP54',
-      temp: '0–45℃',
-      humidity: '90%RH (non-condensing)',
-      io: 'DI 16 / DO 16 / AI 2 / AO 2 / 高速脉冲输入 2',
-      ioPower: '24V / 1.5A',
-      comm: 'TCP/IP、I/O、Modbus TCP/RTU',
+      applicableVariantIds: CONTROLLER_2KW_VARIANT_IDS,
     },
     {
-      id: 'ctrl-b',
-      powerSupply: '100–240VAC 16A 单相 50–60Hz / 30–60VDC',
+      id: 'roooll-dc-5kw',
+      name: { zh: 'Roooll直流控制箱5kW', en: 'Roooll DC Controller 5kW' },
+      powerType: 'dc',
+      formFactor: 'standard',
+      outputKw: 5,
+      ...CONTROLLER_SHARED,
+      dimensions: {
+        zh: '245×180×89mm（不含凸出物）',
+        en: '245×180×89mm (no protrusions)',
+      },
+      weight: { zh: '2.957kg（不含线重量）', en: '2.957kg (weight without wire)' },
+      powerSupply: { zh: '30–60VDC', en: '30–60VDC' },
       outputPower: '48VDC / 104A max',
-      applicableRobots: ['r-Max 20kg', 'r-Ultra'],
-      ip: 'IP54',
-      temp: '0–45℃',
-      humidity: '90%RH (non-condensing)',
-      io: 'DI 16 / DO 16 / AI 2 / AO 2 / 高速脉冲输入 2',
-      ioPower: '24V / 1.5A',
-      comm: 'TCP/IP、I/O、Modbus TCP/RTU；可选 CC-Link IE Field Basic、Profinet、Ethernet/IP、EtherCAT',
+      applicableVariantIds: CONTROLLER_5KW_VARIANT_IDS,
     },
-  ],
+    {
+      id: 'roooll-ac-mini-2kw',
+      name: { zh: 'Roooll交流mini控制箱2kW', en: 'Roooll AC Mini Controller 2kW' },
+      powerType: 'ac',
+      formFactor: 'mini',
+      outputKw: 2,
+      ...CONTROLLER_SHARED,
+      dimensions: {
+        zh: '245×180×44.5mm（不含凸出物）',
+        en: '245×180×44.5mm (no protrusions)',
+      },
+      weight: { zh: '2.5kg（不含线重量）', en: '2.5kg (weight without wire)' },
+      powerSupply: {
+        zh: '100–240VAC / 10A / 单相 / 50–60Hz',
+        en: '100–240VAC / 10A / Single-phase / 50–60Hz',
+      },
+      outputPower: '48VDC / 42A max',
+      applicableVariantIds: CONTROLLER_2KW_VARIANT_IDS,
+    },
+    {
+      id: 'roooll-ac-5kw',
+      name: { zh: 'Roooll交流控制箱5kW', en: 'Roooll AC Controller 5kW' },
+      powerType: 'ac',
+      formFactor: 'standard',
+      outputKw: 5,
+      ...CONTROLLER_SHARED,
+      dimensions: {
+        zh: '245×180×89mm（不含凸出物）',
+        en: '245×180×89mm (no protrusions)',
+      },
+      weight: { zh: '3.6kg（不含线重量）', en: '3.6kg (weight without wire)' },
+      powerSupply: {
+        zh: '100–240VAC / 16A / 单相 / 50–60Hz',
+        en: '100–240VAC / 16A / Single-phase / 50–60Hz',
+      },
+      outputPower: '48VDC / 104A max',
+      applicableVariantIds: CONTROLLER_5KW_VARIANT_IDS,
+    },
+  ] satisfies readonly ControllerSpec[],
+} as const;
+
+export const controllerById: Record<string, ControllerSpec> = Object.fromEntries(
+  controllerSpecs.models.map((m) => [m.id, m]),
+);
+
+/** 一体式控制箱机型（底座集成，无外置控制箱选配） */
+export const integratedControllerVariantIds = ['fr3-c', 'fr5-c'] as const;
+
+/** 某 variant 可用的外置控制箱（一体式机型返回空数组） */
+export function externalControllersForVariant(variantId: string): readonly ControllerSpec[] {
+  if ((integratedControllerVariantIds as readonly string[]).includes(variantId)) return [];
+  return controllerSpecs.models.filter((m) =>
+    (m.applicableVariantIds as readonly string[]).includes(variantId),
+  );
+}
+
+export type ControllerRecommendation =
+  | { kind: 'integrated' }
+  | { kind: 'external'; primary: ControllerSpec; alternate: ControllerSpec };
+
+/** 对比页默认推荐交流版为主、直流版为备选（同功率档） */
+export function controllerRecommendationForVariant(
+  variantId: string,
+): ControllerRecommendation | null {
+  if ((integratedControllerVariantIds as readonly string[]).includes(variantId)) {
+    return { kind: 'integrated' };
+  }
+  const external = externalControllersForVariant(variantId);
+  if (external.length === 0) return null;
+  const primary = external.find((c) => c.powerType === 'ac') ?? external[0]!;
+  const alternate = external.find((c) => c.id !== primary.id);
+  if (!alternate) return { kind: 'external', primary, alternate: primary };
+  return { kind: 'external', primary, alternate };
+}
+
+export const controllerSpecLabels = {
+  name: { zh: '型号', en: 'Model' },
+  ip: { zh: '防护等级', en: 'IP classification' },
+  temperature: { zh: '工作温度', en: 'Operating temperature' },
+  humidity: { zh: '工作湿度', en: 'Operating humidity' },
+  ioPorts: { zh: 'I/O 端口', en: 'I/O ports' },
+  ioPower: { zh: 'I/O 电源', en: 'I/O power supply' },
+  standardComm: { zh: '标配通讯', en: 'Standard communication' },
+  optionalComm: { zh: '可选通讯', en: 'Optional communication' },
+  commBoard: { zh: '通讯板卡选配', en: 'Communication board (optional)' },
+  sdk: { zh: '软件开发包', en: 'Software development kit' },
+  dimensions: { zh: '尺寸 (L×W×H)', en: 'L×W×H' },
+  weight: { zh: '设备重量', en: 'Weight' },
+  materials: { zh: '设备材料', en: 'Materials' },
+  powerSupply: { zh: '供电电源', en: 'Power supply' },
+  outputPower: { zh: '输出功率', en: 'Output power' },
+  applicableRobots: { zh: '适配机器人', en: 'Applicable robot' },
+  features: { zh: '设备特性', en: 'Features' },
+  physical: { zh: '物理性能', en: 'Physical' },
 } as const;
 
 /** 示教器（样册选配） */
@@ -149,7 +314,7 @@ export const explosionProofCabinetSpec = {
   volume: '126L',
   ventTime: '14 min',
   protectiveGas: '空气 (AIR)',
-  certificate: 'CE 22.7131',
+  certificate: 'Compliance documentation available per project',
 } as const;
 
 /** 移动安装套件（样册摘要） */
@@ -512,6 +677,7 @@ export const rSeriesData: RobotFamily[] = [
       {
         id: 'fr16-std',
         name: '16kg 重载',
+        shortName: { zh: '16kg 重载', en: '16kg heavy-duty' },
         payload: '16kg（最大 20kg）',
         reach: '1034mm',
         repeatability: '±0.03mm',
@@ -550,6 +716,7 @@ export const rSeriesData: RobotFamily[] = [
       {
         id: 'fr20-std',
         name: '20kg 长臂重载',
+        shortName: { zh: '20kg 长臂重载', en: '20kg long-reach' },
         payload: '20kg（最大 25kg）',
         reach: '1854mm',
         repeatability: '±0.1mm',
@@ -700,12 +867,52 @@ export function variantCatalogModelCode(variantId: string): string {
   return upper.endsWith('-STD') ? upper.slice(0, -4) : upper;
 }
 
+/** 访客可见机型行（r-Lite · WMS），与蓝图/Schema 命名一致 */
+export function rooollCatalogModelCode(variantId: string, lang: 'zh' | 'en' = 'en'): string {
+  return robotVariantBlueprintModelName(variantId, lang);
+}
+
+/** 控制箱「适配机器人」行：由 variant id 派生 r-Lite / r-Core 公开名 */
+export function controllerApplicableRobotsText(
+  spec: Pick<ControllerSpec, 'applicableVariantIds'>,
+  lang: 'zh' | 'en',
+): string {
+  const sep = lang === 'zh' ? '、' : ', ';
+  return spec.applicableVariantIds.map((id) => rooollCatalogModelCode(id, lang)).join(sep);
+}
+
 export function descriptionSnippet(text: string, lang: 'zh' | 'en'): string {
   const t = text.trim();
   if (!t) return lang === 'zh' ? '工业协作自动化场景' : 'industrial cobot automation';
   const parts = lang === 'zh' ? t.split(/[。.]/) : t.split('.');
   const snip = (parts[0] ?? t).trim();
   return snip.length > 140 ? `${snip.slice(0, 137)}…` : snip;
+}
+
+/**
+ * 规格参数字符串英文规范化（数据源层）。
+ * 样册字段以中文术语录入；英文界面统一替换，避免中英混杂。
+ */
+export function robotSpecDisplayText(text: string, lang: 'zh' | 'en'): string {
+  if (lang === 'zh' || !text) return text;
+  return text
+    .replace(/（瞬时\s+/g, ' (peak ')
+    .replace(/（最大\s+/g, ' (max ')
+    .replace(/（可选\s+/g, ' (optional ')
+    .replace(/（非凝结）/g, ' (non-condensing)')
+    .replace(/（/g, ' (')
+    .replace(/）/g, ')')
+    .replace(/；/g, '; ')
+    .replace(/\s+\)/g, ')')
+    .replace(/\(\s+/g, '(')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+/** 英文界面：环境行温湿度分隔符 */
+export function robotSpecEnvironmentText(temperature: string, humidity: string, lang: 'zh' | 'en'): string {
+  const sep = lang === 'zh' ? '；' : '; ';
+  return `${robotSpecDisplayText(temperature, lang)}${sep}${robotSpecDisplayText(humidity, lang)}`;
 }
 
 /** Locale alt key: `r_core_fr5_std`, `r_lite_fr3_c`, etc. */
@@ -719,11 +926,20 @@ function blueprintLocaleSection(lang: 'zh' | 'en') {
   return lang === 'zh' ? zhLocale.alt : enLocale.alt;
 }
 
+function variantPublicNameRaw(v: RobotVariant, lang: 'zh' | 'en'): string {
+  if (v.shortName) return lang === 'zh' ? v.shortName.zh : v.shortName.en;
+  return v.name;
+}
+
+function robotVariantPublicShortLabel(variantId: string, lang: 'zh' | 'en'): string {
+  const v = robotVariantById[variantId];
+  return rooollVariantShortLabel(variantPublicNameRaw(v, lang));
+}
+
 /** 蓝图 / 无障碍对外机型行：r 系列产品线 + 变体短名（无 FR 型号码）。 */
 export function robotVariantBlueprintModelName(variantId: string, lang: 'zh' | 'en'): string {
-  const v = robotVariantById[variantId];
   const fam = robotFamilyForVariant(variantId);
-  const short = rooollVariantShortLabel(v.name);
+  const short = robotVariantPublicShortLabel(variantId, lang);
   if (lang === 'zh') {
     return short ? `${fam.displayName} · ${short}` : fam.displayName;
   }
@@ -849,7 +1065,7 @@ export function robotVariantImageAlt(variantId: string, lang: 'zh' | 'en'): stri
   const v = robotVariantById[variantId];
   if (!v) return lang === 'zh' ? '协作机器人机械臂' : 'Collaborative robot arm';
   const fam = robotFamilyForVariant(variantId);
-  const short = rooollVariantShortLabel(v.name);
+  const short = robotVariantPublicShortLabel(variantId, lang);
   const purpose = descriptionSnippet(lang === 'zh' ? v.description.zh : v.description.en, lang);
   if (lang === 'zh') {
     const line = short ? `${fam.displayName}（${short}）` : fam.displayName;

@@ -1,33 +1,41 @@
 'use client';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { ControllerCompareSection } from '@/components/selector/ControllerCompareSection';
 import {
   AXIS_ORDER,
   buildLineup,
-  lineupCardVariantShortName,
+  lineupCardVariantShortNameForItem,
   ml,
   SubjectFillPng,
   type LineItem,
   SELECTOR_LINEUP_I18N,
   stripIndustrialModelCodes,
 } from '@/components/selector/SelectorLineupUi';
-import { robotVariantImageAlt, robotVariantImageUrl, specLabels } from '@/data/products';
+import { robotSpecDisplayText, robotSpecEnvironmentText, robotVariantImageAlt, robotVariantImageUrl, specLabels } from '@/data/products';
 import { trackEvent } from '@/lib/analytics';
+import {
+  compareIdsFromSearchParams,
+  defaultCompareSlotIds,
+  writeCompareIdsToUrl,
+  type CompareSlotIds,
+} from '@/lib/comparison-selection';
+import { EmphasizeSpecNumbers, specCellEmphasize } from '@/lib/emphasize-spec-numbers';
 import { openInquiry } from '@/lib/open-inquiry';
 import { useSiteLang } from '@/lib/site-lang-context';
 
 type SelectorPageCopy = (typeof SELECTOR_LINEUP_I18N)[keyof typeof SELECTOR_LINEUP_I18N];
 
-/** Hero2 默认：r‑Lite 标准、r‑Core 标准、r‑Max 16 */
-const HERO2_DEFAULT_IDS: [string, string, string] = ['fr3-std', 'fr5-std', 'fr16-std'];
+const HERO2_DEFAULT_IDS: CompareSlotIds = ['fr3-std', 'fr5-std', 'fr16-std'];
 const SELECTOR_NAV_PIN_PX = 44;
 
-function hero2SelectLabel(item: LineItem): string {
-  const v = lineupCardVariantShortName(item.name);
+function hero2SelectLabel(item: LineItem, lang: 'zh' | 'en'): string {
+  const v = lineupCardVariantShortNameForItem(item, lang);
   return v ? `${item.family.displayName} · ${v}` : item.family.displayName;
 }
 
 function openInquiryForModel(item: LineItem, lang: 'zh' | 'en') {
-  const modelLabel = hero2SelectLabel(item);
+  const modelLabel = hero2SelectLabel(item, lang);
   const body =
     lang === 'zh'
       ? `我想咨询以下机型：\n- ${modelLabel}\n\n请联系我并提供方案与报价。`
@@ -35,11 +43,37 @@ function openInquiryForModel(item: LineItem, lang: 'zh' | 'en') {
   openInquiry({ body, source: 'comparison' });
 }
 
+function CompareValue({
+  text,
+  emphasize,
+  className,
+}: {
+  text: string;
+  emphasize: boolean;
+  className: string;
+}) {
+  return (
+    <p className={`${className} whitespace-pre-line`}>
+      <EmphasizeSpecNumbers text={text} emphasize={emphasize} />
+    </p>
+  );
+}
+
 export default function SelectorComparisonPage() {
+  return (
+    <Suspense fallback={null}>
+      <SelectorComparisonPageContent />
+    </Suspense>
+  );
+}
+
+function SelectorComparisonPageContent() {
   const lang = useSiteLang();
   const safeLang: 'zh' | 'en' = lang === 'en' ? 'en' : 'zh';
   const t = SELECTOR_LINEUP_I18N[safeLang];
   const lineup = useMemo(() => buildLineup(), []);
+  const searchParams = useSearchParams();
+  const lineupIds = useMemo(() => lineup.map((item) => item.id), [lineup]);
 
   useEffect(() => {
     trackEvent('selector_view', { selector: 'comparison', locale: safeLang });
@@ -61,7 +95,13 @@ export default function SelectorComparisonPage() {
         <p className="mb-5 max-w-[46rem] text-[1.0625rem] leading-snug text-[#6e6e73] md:mb-6 md:text-[1.1875rem]">
           {t.hero2Subtitle}
         </p>
-        <SelectorHero2ModelCompare lineup={lineup} lang={safeLang} t={t} />
+        <SelectorHero2ModelCompare
+          lineup={lineup}
+          lineupIds={lineupIds}
+          searchParams={searchParams}
+          lang={safeLang}
+          t={t}
+        />
       </div>
     </section>
   );
@@ -69,10 +109,14 @@ export default function SelectorComparisonPage() {
 
 function SelectorHero2ModelCompare({
   lineup,
+  lineupIds,
+  searchParams,
   lang,
   t,
 }: {
   lineup: LineItem[];
+  lineupIds: readonly string[];
+  searchParams: ReturnType<typeof useSearchParams>;
   lang: 'zh' | 'en';
   t: SelectorPageCopy;
 }) {
@@ -83,21 +127,22 @@ function SelectorHero2ModelCompare({
   const [shellH, setShellH] = useState(0);
   const lastPinEventRef = useRef<boolean | null>(null);
 
-  const [ids, setIds] = useState<[string, string, string]>(() => {
-    const ok = (id: string) => lineup.some((x) => x.id === id);
-    const a = ok(HERO2_DEFAULT_IDS[0]) ? HERO2_DEFAULT_IDS[0] : lineup[0]?.id ?? '';
-    const b =
-      ok(HERO2_DEFAULT_IDS[1]) && HERO2_DEFAULT_IDS[1] !== a
-        ? HERO2_DEFAULT_IDS[1]
-        : lineup.find((x) => x.id !== a)?.id ?? a;
-    const c =
-      ok(HERO2_DEFAULT_IDS[2]) && HERO2_DEFAULT_IDS[2] !== a && HERO2_DEFAULT_IDS[2] !== b
-        ? HERO2_DEFAULT_IDS[2]
-        : lineup.find((x) => x.id !== a && x.id !== b)?.id ?? a;
-    return [a, b, c];
+  const [ids, setIds] = useState<CompareSlotIds>(() => {
+    const fromUrl = compareIdsFromSearchParams(new URLSearchParams(searchParams.toString()), lineupIds);
+    return fromUrl ?? defaultCompareSlotIds(lineupIds, HERO2_DEFAULT_IDS);
   });
 
   const selected = ids.map((id) => lineup.find((x) => x.id === id)).filter(Boolean) as LineItem[];
+
+  useEffect(() => {
+    const fromUrl = compareIdsFromSearchParams(searchParams, lineupIds);
+    if (!fromUrl) return;
+    setIds((prev) => (prev[0] === fromUrl[0] && prev[1] === fromUrl[1] && prev[2] === fromUrl[2] ? prev : fromUrl));
+  }, [lineupIds, searchParams]);
+
+  useEffect(() => {
+    writeCompareIdsToUrl(ids);
+  }, [ids]);
 
   useEffect(() => {
     const el = measureRef.current;
@@ -138,7 +183,7 @@ function SelectorHero2ModelCompare({
 
   const setSlot = (index: 0 | 1 | 2, id: string) => {
     setIds((prev) => {
-      const next: [string, string, string] = [...prev] as [string, string, string];
+      const next: CompareSlotIds = [...prev] as CompareSlotIds;
       next[index] = id;
       return next;
     });
@@ -152,21 +197,27 @@ function SelectorHero2ModelCompare({
     colIndex === 2 ? 'hidden text-center md:block' : 'text-center';
 
   const mainRows: { label: string; get: (i: LineItem) => string }[] = [
-    { label: specLabels.payload[lang], get: (i) => i.payload },
-    { label: specLabels.reach[lang], get: (i) => i.reach },
-    { label: specLabels.repeatability[lang], get: (i) => i.repeatability },
-    { label: specLabels.weight[lang], get: (i) => i.weight },
+    { label: specLabels.payload[lang], get: (i) => robotSpecDisplayText(i.payload, lang) },
+    { label: specLabels.reach[lang], get: (i) => robotSpecDisplayText(i.reach, lang) },
+    { label: specLabels.repeatability[lang], get: (i) => robotSpecDisplayText(i.repeatability, lang) },
+    { label: specLabels.weight[lang], get: (i) => robotSpecDisplayText(i.weight, lang) },
     { label: t.dof, get: (i) => i.dof },
-    { label: specLabels.ip[lang], get: (i) => i.ipRating },
-    { label: specLabels.power[lang], get: (i) => `${i.avgPower} / ${i.peakPower}` },
-    { label: specLabels.tcpSpeed[lang], get: (i) => i.tcpSpeed },
-    { label: specLabels.voltage[lang], get: (i) => i.voltage },
-    { label: t.noise, get: (i) => i.noise },
+    { label: specLabels.ip[lang], get: (i) => robotSpecDisplayText(i.ipRating, lang) },
+    {
+      label: specLabels.power[lang],
+      get: (i) => robotSpecDisplayText(`${i.avgPower} / ${i.peakPower}`, lang),
+    },
+    { label: specLabels.tcpSpeed[lang], get: (i) => robotSpecDisplayText(i.tcpSpeed, lang) },
+    { label: specLabels.voltage[lang], get: (i) => robotSpecDisplayText(i.voltage, lang) },
+    { label: t.noise, get: (i) => robotSpecDisplayText(i.noise, lang) },
     { label: t.mounting, get: (i) => ml(i.mounting, lang) },
-    { label: specLabels.environment[lang], get: (i) => `${i.temperature}；${i.humidity}` },
-    { label: specLabels.footprint[lang], get: (i) => i.footprint },
-    { label: specLabels.io[lang], get: (i) => i.ioPorts },
-    { label: lang === 'zh' ? '工具电源' : 'Tool power', get: (i) => i.toolPower },
+    {
+      label: specLabels.environment[lang],
+      get: (i) => robotSpecEnvironmentText(i.temperature, i.humidity, lang),
+    },
+    { label: specLabels.footprint[lang], get: (i) => robotSpecDisplayText(i.footprint, lang) },
+    { label: specLabels.io[lang], get: (i) => robotSpecDisplayText(i.ioPorts, lang) },
+    { label: lang === 'zh' ? '工具电源' : 'Tool power', get: (i) => robotSpecDisplayText(i.toolPower, lang) },
     { label: specLabels.materials[lang], get: (i) => (i.materials ? ml(i.materials, lang) : '—') },
     {
       label: lang === 'zh' ? '功率测试说明' : 'Power test note',
@@ -214,7 +265,7 @@ function SelectorHero2ModelCompare({
                       const takenElsewhere = ids.some((id, j) => j !== slot && id === opt.id);
                       return (
                         <option key={opt.id} value={opt.id} disabled={takenElsewhere}>
-                          {hero2SelectLabel(opt)}
+                          {hero2SelectLabel(opt, lang)}
                         </option>
                       );
                     })}
@@ -249,41 +300,58 @@ function SelectorHero2ModelCompare({
       </div>
 
       <div className="mt-10 w-full md:mt-12">
-        {mainRows.map((row, rowIdx) => (
-          <div
-            key={`${rowIdx}-${row.label}`}
-            className="border-t border-[#e8e8ed] py-6 first:border-t-0 first:pt-0 md:py-7"
-          >
-            <p className={rowSubhead}>{row.label}</p>
-            <div className={valueGrid}>
-              {selected.map((item, colIdx) => (
-                <div key={item.id} className={`${valueCellClass(colIdx)} px-1`}>
-                  <p className={`${valueText} whitespace-pre-line`}>{row.get(item)}</p>
-                </div>
-              ))}
+        {mainRows.map((row, rowIdx) => {
+          const values = selected.map((item) => row.get(item));
+          return (
+            <div
+              key={`${rowIdx}-${row.label}`}
+              className="border-t border-[#e8e8ed] py-6 first:border-t-0 first:pt-0 md:py-7"
+            >
+              <p className={rowSubhead}>{row.label}</p>
+              <div className={valueGrid}>
+                {values.map((value, colIdx) => (
+                  <div key={selected[colIdx]?.id ?? colIdx} className={`${valueCellClass(colIdx)} px-1`}>
+                    <CompareValue
+                      text={value}
+                      emphasize={specCellEmphasize(values, colIdx)}
+                      className={valueText}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         <div className="border-t border-[#d2d2d7] pt-8 md:pt-10">
           <p className={`${rowSubhead} mb-6 normal-case md:mb-8`}>{specLabels.axes[lang]}</p>
-          {AXIS_ORDER.map((axisKey, axIdx) => (
-            <div key={axisKey} className={`py-6 md:py-7 ${axIdx > 0 ? 'border-t border-[#e8e8ed]' : ''}`}>
-              <p className={`${rowSubhead} normal-case`}>{specLabels.axisLabels[axisKey][lang]}</p>
-              <div className={valueGrid}>
-                {selected.map((item, colIdx) => {
-                  const ax = item.axes[axisKey];
-                  const txt = `${lang === 'zh' ? '范围' : 'Range'}: ${ax.range}\n${lang === 'zh' ? '最大角速度' : 'Max speed'}: ${ax.speed}`;
-                  return (
-                    <div key={item.id} className={`${valueCellClass(colIdx)} px-1`}>
-                      <p className={`${valueText} whitespace-pre-line`}>{txt}</p>
+          {AXIS_ORDER.map((axisKey, axIdx) => {
+            const values = selected.map((item) => {
+              const ax = item.axes[axisKey];
+              const range = robotSpecDisplayText(ax.range, lang);
+              const speed = robotSpecDisplayText(ax.speed, lang);
+              return `${lang === 'zh' ? '范围' : 'Range'}: ${range}\n${lang === 'zh' ? '最大角速度' : 'Max speed'}: ${speed}`;
+            });
+            return (
+              <div key={axisKey} className={`py-6 md:py-7 ${axIdx > 0 ? 'border-t border-[#e8e8ed]' : ''}`}>
+                <p className={`${rowSubhead} normal-case`}>{specLabels.axisLabels[axisKey][lang]}</p>
+                <div className={valueGrid}>
+                  {values.map((value, colIdx) => (
+                    <div key={selected[colIdx]?.id ?? colIdx} className={`${valueCellClass(colIdx)} px-1`}>
+                      <CompareValue
+                        text={value}
+                        emphasize={specCellEmphasize(values, colIdx)}
+                        className={valueText}
+                      />
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+
+        <ControllerCompareSection selected={selected} lang={lang} />
       </div>
     </div>
   );

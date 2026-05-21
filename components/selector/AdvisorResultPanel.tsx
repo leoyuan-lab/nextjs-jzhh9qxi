@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import {
   buildLineup,
   lineItemForAdvisorFamily,
-  lineupCardVariantShortName,
+  lineupCardVariantShortNameForItem,
   SelectorLineupCard,
   SELECTOR_LINEUP_I18N,
   VariantDetailPortal,
@@ -73,7 +73,7 @@ export default function AdvisorResultPanel({
                 disableImagePostProcess
                 onOpenDetail={() => setAdvisorDetailId(item.id)}
                 onOpenInquiry={() => {
-                  const short = lineupCardVariantShortName(item.name);
+                  const short = lineupCardVariantShortNameForItem(item, safeLang);
                   const modelLabel = `${item.family.displayName}${short ? ` · ${short}` : ''}`;
                   const body =
                     safeLang === 'zh'

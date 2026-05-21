@@ -132,13 +132,13 @@
       "q5": "We need white-label export—custom housing and teach UI. What is MOQ, and will lead time kill our milestone?",
       "a5": "Roooll offers flexible OEM/ODM: branding, colorways, and industry-specific end-effector co-development. Small-batch r-Core / r-Max programs are negotiable—often from a few dozen units for exterior and UI customization (flexible MOQ). Standard specs ship within 3–5 business days after payment confirmation; bespoke builds run on a dedicated line with timelines locked in contract.",
       "q6": "We ship to Europe and Southeast Asia—is CE in place, and can spares and remote support keep up overseas?",
-      "a6": "Roooll R-Series meets RoHS, EU CE safety requirements, and ISO9001. Global support: experts online across time zones, professional response within 12 hours. Overseas spares cover core joint modules, control components, and common EOAT; remote diagnostics and on-site coordination via the Roooll service network (per regional agreement)."
+      "a6": "Roooll R-Series is designed to meet RoHS and widely referenced cobot safety benchmarks; export and regional compliance documentation can be supplied per project. Global support: experts online across time zones, professional response within 12 hours. Overseas spares cover core joint modules, control components, and common EOAT; remote diagnostics and on-site coordination via the Roooll service network (per regional agreement)."
     }
   },
   "footnotes": [
     {
       "q": "Core Excellence",
-      "a": "7+ Years of Proven Reliability. Beyond distributing robotic arms, we provide years of accumulated technical expertise. Every R-Series cobot undergoes a \"Zero-Defect\" quality control process before leaving the facility, ensuring peak performance right out of the box."
+      "a": "7+ Years of Proven Reliability. Beyond distributing robotic arms, we provide years of accumulated technical expertise. Every R-Series cobot undergoes a \"Zero-Defect\" quality control process before delivery, ensuring peak performance right out of the box."
     },
     {
       "q": "Global Assistance",
@@ -161,8 +161,8 @@
       "a": "Your Production, Protected. Core drive systems (motors, reducers) and control architectures are covered by a 2-year limited warranty. With our global response mechanism, we ensure your production line remains efficient and worry-free."
     },
     {
-      "q": "Certified Quality",
-      "a": "Global Standards, Local Trust. All R-Series products comply with international RoHS environmental standards and have obtained EU CE safety certification and ISO9001 quality management system certification. We advocate for sustainable manufacturing."
+      "q": "Compliance & safety",
+      "a": "Designed for global deployment. R-Series products align with RoHS and widely referenced international cobot safety benchmarks; compliance and test documentation for your target market can be supplied per project. We advocate responsible manufacturing and delivery."
     }
   ],
   "pages": {
@@ -244,19 +244,22 @@
     },
     "accessories": {
       "introTitle": "Cobot Accessories Ecosystem",
-      "introBody": "End tools, vision, controllers, and cabling will be listed by category; placeholder cards below until detail pages ship from locales.",
-      "categories": {
-        "end_effectors": {
-          "title": "End Effectors",
-          "body": "Grippers, vacuum tooling, and tool changers mapped to Roooll Cobot flange patterns (placeholder)."
-        },
-        "vision": {
-          "title": "Vision Systems",
-          "body": "2D / 3D vision bundles and calibration utilities (placeholder)."
-        },
+      "introBody": "Browse control cabinets, grippers, and fixtures by category. Controller specs come from product brochures; gripper and fixture cards are placeholders—expand specs or inquire in one tap.",
+      "swipeHint": "Swipe horizontally for more items",
+      "expandSpecs": "Full specs",
+      "inquiry": "Inquire",
+      "lanes": {
         "controllers": {
-          "title": "Controllers",
-          "body": "Industrial controllers, I/O expansion, and safety relays (placeholder)."
+          "title": "Control Cabinets",
+          "aria": "Roooll external control cabinet models"
+        },
+        "grippers": {
+          "title": "Grippers",
+          "aria": "Roooll gripper accessories"
+        },
+        "fixtures": {
+          "title": "Fixtures",
+          "aria": "Roooll fixture and tooling accessories"
         }
       }
     },
@@ -399,9 +402,9 @@
             "highlight": "Efficiency on your balance sheet."
           },
           {
-            "title": "Certified uptime",
-            "body": "Certified for continuous uptime. Built in a state-of-the-art facility and validated across international safety benchmarks, including CE, ISO, and CR certification. A resilient aluminum-steel architecture engineered for non-stop industrial utilization.",
-            "highlight": "CE · ISO · CR."
+            "title": "Safety by design",
+            "body": "Engineered for continuous uptime. Designed to align with RoHS and widely referenced international cobot safety benchmarks; export compliance documentation available per project. A resilient aluminum-steel architecture built for non-stop industrial utilization.",
+            "highlight": "Safety by design · Project docs."
           }
         ],
         "blueprint_intro_title": "Transparent engineering.",
@@ -533,9 +536,9 @@
             "highlight": "Friction-free ROI."
           },
           {
-            "title": "Certified resilience",
-            "body": "Fully certified across CE, CR, and ISO safety standards. Ten built-in levels of reactive collision detection and a ruggedized aluminum-steel housing safeguard operators and production uptime simultaneously.",
-            "highlight": "CE · CR · ISO."
+            "title": "Collaborative safety",
+            "body": "Designed to align with widely referenced international cobot safety standards. Ten built-in levels of reactive collision detection and a ruggedized aluminum-steel housing safeguard operators and production uptime; regional compliance documentation available per project.",
+            "highlight": "10-level collision detect · Safety by design."
           }
         ],
         "blueprint_intro_title": "Developer-first open architecture.",

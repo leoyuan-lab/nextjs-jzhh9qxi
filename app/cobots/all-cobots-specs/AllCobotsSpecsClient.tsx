@@ -2,8 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  HorizontalScrollDots,
+  scrollHorizontalSnapItem,
+  useHorizontalScrollIndex,
+} from '@/components/HorizontalScrollDots';
+import {
   buildLineup,
-  lineupCardVariantShortName,
+  lineupCardVariantShortNameForItem,
   SelectorLineupCard,
   SELECTOR_LINEUP_I18N,
   VariantDetailPortal,
@@ -30,11 +35,23 @@ export default function AllCobotsSpecsClient() {
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
   const magnetScrollRafRef = useRef<number | null>(null);
 
+  const getSnapItems = useCallback(
+    () => lineup.map((item) => cardRefs.current[item.id] ?? null),
+    [lineup],
+  );
+  const dotActiveIndex = useHorizontalScrollIndex(scrollerRef, getSnapItems);
+
+  const scrollToLineupIndex = (index: number) => {
+    const item = lineup[index];
+    if (!item) return;
+    scrollHorizontalSnapItem(scrollerRef.current, cardRefs.current[item.id] ?? null, 'center');
+  };
+
   const safeLang: 'zh' | 'en' = lang === 'en' ? 'en' : 'zh';
   const t = SELECTOR_I18N[safeLang];
 
   const openInquiryForItem = (item: (typeof lineup)[number]) => {
-    const short = lineupCardVariantShortName(item.name);
+    const short = lineupCardVariantShortNameForItem(item, safeLang);
     const modelLabel = `${item.family.displayName}${short ? ` · ${short}` : ''}`;
     const body =
       safeLang === 'zh'
@@ -199,7 +216,7 @@ export default function AllCobotsSpecsClient() {
       <div className="relative bg-transparent pb-16 md:pb-24">
         <div
           ref={scrollerRef}
-          className={`selector-scroller flex snap-x snap-mandatory gap-5 overflow-x-auto overflow-y-visible bg-transparent pb-3 pt-3 pl-0 pr-0 [-ms-overflow-style:none] [scrollbar-width:none] md:gap-6 md:pb-4 md:pt-4 md:pl-[22px] md:pr-[22px] [&::-webkit-scrollbar]:hidden ${
+          className={`selector-scroller roooll-hscroll flex snap-x snap-mandatory gap-5 overflow-x-auto overflow-y-visible bg-transparent pb-3 pt-3 pl-0 pr-0 md:gap-6 md:pb-4 md:pt-4 md:pl-[22px] md:pr-[22px] ${
             enableMagnetActive && isInteracting ? 'is-interacting' : ''
           }`}
           style={{ WebkitOverflowScrolling: 'touch', scrollPaddingLeft: 22, scrollPaddingRight: 22 }}
@@ -263,9 +280,12 @@ export default function AllCobotsSpecsClient() {
           />
           <div className="hidden w-8 shrink-0 snap-none md:block" aria-hidden />
         </div>
-        <p className="mx-auto mt-3 w-full max-w-[var(--roooll-w,1024px)] px-[22px] text-left text-[12px] text-[#aeaeb2]">
-          {safeLang === 'zh' ? '← 在触控板或触摸屏上左右滑动 →' : '← Swipe or scroll horizontally →'}
-        </p>
+        <HorizontalScrollDots
+          count={lineup.length}
+          activeIndex={dotActiveIndex}
+          label={safeLang === 'zh' ? '机型列表分页' : 'Model lineup pages'}
+          onSelect={scrollToLineupIndex}
+        />
       </div>
 
       <VariantDetailPortal lineup={lineup} detailId={detailId} onClose={() => setDetailId(null)} lang={safeLang} />
