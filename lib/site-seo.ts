@@ -1,6 +1,14 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 
 import { getSiteOrigin } from '@/lib/site-origin';
+
+/** Single source for `viewport` export — keep `viewport-fit: cover` so safe-area insets land
+ *  under the mobile hamburger overlay (else iOS / Android leave a strip at the status bar). */
+export const rootViewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+};
 
 /** Public URL path — Roooll orbit mark: OG/Twitter + Organization `logo` (see `OrganizationJsonLd`). */
 export const SITE_BRAND_ORBIT_LOGO_PATH = '/images/brand/roooll-orbit-logo.webp';

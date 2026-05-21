@@ -155,6 +155,45 @@ export function armMainNavProgressFromScrollY(filmEl: HTMLElement | null, scroll
   return smoothstep(0, 1, linear);
 }
 
+/** Apple-style crossfade: 主顶栏 → SVG 条 → 二级咨询（与 `armMainNavProgressFromScrollY` 同速区段） */
+export function armImmersiveSubnavOpacities(
+  filmEl: HTMLElement | null,
+  scrollY: number,
+  appSectionEl: HTMLElement | null,
+  mobileMenuOpen: boolean,
+  reducedMotion = false,
+): { brand: number; consult: number; mainNavHide: number } {
+  const mainNavHide = armMainNavProgressFromScrollY(filmEl, scrollY);
+  if (mobileMenuOpen || !filmEl) {
+    return { brand: 0, consult: 0, mainNavHide };
+  }
+
+  const { si } = computeFilmScrollSlice(filmEl, reducedMotion);
+  if (si < 1) {
+    return { brand: 0, consult: 0, mainNavHide };
+  }
+
+  const vh = typeof window !== 'undefined' ? window.innerHeight : 900;
+  let appApproach = 0;
+  if (appSectionEl) {
+    const top = appSectionEl.getBoundingClientRect().top;
+    appApproach = smoothstep(vh * 1.04, vh * 0.84, top);
+  }
+
+  if (reducedMotion) {
+    const consultOn = mainNavHide > 0.9 && appApproach > 0.45;
+    return {
+      brand: consultOn ? 0 : mainNavHide,
+      consult: consultOn ? 1 : 0,
+      mainNavHide,
+    };
+  }
+
+  const brand = mainNavHide * (1 - appApproach);
+  const consult = mainNavHide * appApproach;
+  return { brand, consult, mainNavHide };
+}
+
 export function cameraForFilmSlice(si: number): RcoreCameraPreset {
   if (si === 0) return RCORE_PAGE_HERO_CAMERA;
   return RCORE_FILM_ADV_CAMERAS[si - 1] ?? RCORE_FILM_ADV_CAMERAS[RCORE_FILM_ADV_CAMERAS.length - 1];

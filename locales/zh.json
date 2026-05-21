@@ -62,16 +62,16 @@
       "ctaInquiryDefault": "咨询"
     },
     "cookieConsent": {
-      "title": "Roooll.com 的 Cookie",
-      "body": "我们会使用必要 Cookie 保存语言偏好。经您同意后，还会使用分析 Cookie（Google Analytics）及 B2B 营销标签（LinkedIn Insight）统计访问并改进协作机器人官网体验。",
+      "title": "Cookie 偏好",
+      "body": "必要 Cookie 保存语言；同意后用于访问分析。",
       "privacyLink": "隐私政策",
-      "acceptAll": "全部接受",
-      "essentialOnly": "仅必要 Cookie"
+      "acceptAll": "接受",
+      "essentialOnly": "仅必要"
     }
   },
   "drawer": {
     "title": "开启咨询",
-    "subtitle": "留下您的联系方式，我们将提供正式报价。",
+    "subtitle": "留下您的联系方式，我们将提供正式报价",
     "nameLabel": "您的姓名",
     "namePlaceholder": "您的姓名",
     "emailLabel": "企业邮箱",
@@ -107,8 +107,8 @@
     "loadingSubline1": "赋能双手",
     "loadingSubline2": "重塑灵感",
     "dragHint": "按住鼠标拖动，可 360° 查看",
-    "heroRliteSubtitle": "轻量一体，精密协作。",
-    "heroRultraSubtitle": "超强负载，工业核心。",
+    "heroRliteSubtitle": "轻量一体，精密协作",
+    "heroRultraSubtitle": "超强负载，工业核心",
     "cardPreciseTitle": "极致触觉",
     "cardPreciseBody": "毫秒级碰撞响应",
     "cardPreciseCta": "了解 r-Lite 协作臂",
@@ -117,7 +117,7 @@
     "cardSmartCta": "了解 r-Ultra 重载臂"
   },
   "FAQ": {
-    "title": "有问题？有答案。",
+    "title": "有问题？有答案",
     "expandItemAria": "展开回答",
     "collapseItemAria": "收起回答",
     "items": {
@@ -300,14 +300,14 @@
       "inquiry": "咨询",
       "scenario_subnav": {
         "brand_top_aria": "r-Lite 沉浸页顶部品牌展示",
-        "slogan": "从图纸到产线，让下一台协作臂先转起来。",
+        "slogan": "从图纸到产线，让下一台协作臂先转起来",
         "tagline": "Let's get rolling"
       },
       "hero": {
-        "subtitle": "化繁为轻，空间归原。"
+        "subtitle": "化繁为轻，空间归原"
       },
       "highlights": {
-        "title": "精彩亮点。",
+        "title": "精彩亮点",
         "cards": [
           {
             "title": "法兰头 L6_flange",
@@ -340,29 +340,29 @@
         ]
       },
       "closer": {
-        "title": "近距离观察。"
+        "title": "近距离观察"
       },
       "scroll_film": {
         "section_aria": "r-Lite 协作机械臂中段沉浸叙事与规格要点",
         "advantages": [
           {
             "kicker": "形态与空间",
-            "title": "化繁为轻。",
-            "subtitle": "空间归原。",
-            "body": "{{payload}} 额定负载，整机约 {{weight}}。控制器直接整合于压铸底座，r-Lite 在 {{footprint}} 占地内实现 {{reach}} 工作半径——无外挂控制箱，零额外占地。",
+            "title": "化繁为轻",
+            "subtitle": "空间归原",
+            "body": "{{payload}} 额定负载，整机约 {{weight}}。控制器直接整合于压铸底座，r-Lite 在 {{footprint}} 占地内实现 {{reach}} 工作半径——无外挂控制箱，零额外占地；采购与备件路径更直，集成投入更可控。",
             "badge": "{{reach}} 工作半径 · 底座 {{footprint}} · 约 {{weight}}"
           },
           {
             "kicker": "精度与工业品质",
-            "title": "{{repeatability}} 重复定位。",
-            "subtitle": "班次表现，始终如一。",
+            "title": "{{repeatability}} 重复定位",
+            "subtitle": "班次表现，始终如一",
             "body": "微米级工程设计。在额定负载与受控轨迹下，各关节维持 {{repeatability}} 姿态精度——让高精密产线班次可复述、良率可站得住。",
             "badge": "{{repeatability}} · {{payload}} · {{tcpSpeed}} TCP"
           },
           {
             "kicker": "无缝部署",
-            "title": "直觉示教。",
-            "subtitle": "快速上线。",
+            "title": "直觉示教",
+            "subtitle": "快速上线",
             "body": "毫无门槛的自动化。{{description}} 通过 Web App、10.1 英寸示教器或移动终端手动引导手臂、编写路径——拖拽、保存，即刻运转。",
             "badge": "{{voltage}} · {{dof}} 轴 · Web App 示教"
           }
@@ -381,7 +381,7 @@
         "scenario_caption": "从图纸走进场景：r-Lite 协作机械臂进入制造、实验室与医疗辅助等 Cobot 应用单元。",
         "scenario_image_alt": "r-Lite 协作机器人 Cobot 产品场景图，展示一体化协作机械臂外观与典型部署环境。",
         "flange_section_kicker": "内建底气",
-        "flange_section_title": "每一层，都有实力。",
+        "flange_section_title": "每一层，都有实力",
         "flange_strip": [
           {
             "title": "无障碍安全协作",
@@ -395,7 +395,7 @@
           },
           {
             "title": "垂直整合经济学",
-            "body": "自研自造核心零部件，消除传统硬件层层加价。典型平均功耗 {{avgPower}}，在代表性工位中最快约 30 天即可收回成本——视班次、人工与夹具方案而定。",
+            "body": "垂直整合把采购价和备件路径做直，典型工位更快收回对人工与集成的投入（视班次与夹具而定）。",
             "highlight": "效率写进资产负债表。"
           },
           {
@@ -404,10 +404,10 @@
             "highlight": "CE · ISO · CR。"
           }
         ],
-        "blueprint_intro_title": "透明的工程美学。",
+        "blueprint_intro_title": "透明的工程美学",
         "blueprint_intro_body": "拒绝专有黑盒。每一个关节运动范围、工作半径极限与控制接口均公开记录。开箱前即可获取原生 ROS/ROS2 驱动框架与开放 SDK——集成以「小时」计，而非「周」。",
         "application_kicker": "应用场景",
-        "application_title": "为真实部署方式而设计。",
+        "application_title": "为真实部署而设计",
         "application_body": "从样机验证到稳定量产，同一套安全叙事、控制逻辑与示教体验贯穿始终——团队学会一次，就能带着信心横向扩展。",
         "application_cards": [
           {
@@ -421,11 +421,11 @@
           }
         ],
         "r_family_kicker": "All in r family.",
-        "r_family_title": "臂展与负载，一次选对。",
-        "r_family_subtitle": "全系 r‑series。",
+        "r_family_title": "所有臂展与负载",
+        "r_family_subtitle": "全在 r‑series",
         "r_family_body": "无论产线需要什么，R 家族皆能交付。从超紧凑桌面工作站到高负载工业重臂，Roooll r 系列覆盖完整的工作半径与负载配置——同一套安全、工具与升级路径。",
-        "tail_title": "下一工位，从这一台开始。",
-        "tail_subtitle": "产线、实验室、台面——同一套协作故事。",
+        "tail_title": "下一工位，从这一台开始",
+        "tail_subtitle": "产线、实验室、台面——同一套协作故事",
         "links": {
           "specs": "全系列 Cobot 规格总览",
           "advisor": "找到你的匹配",
@@ -435,7 +435,7 @@
       "narrative": {
         "title": "R3 芯片",
         "headline": "性能怪兽",
-        "subtitle": "实时路径规划，快如闪电。"
+        "subtitle": "实时路径规划，快如闪电"
       },
       "specs": {
         "title": "哪款适合您？",
@@ -470,33 +470,33 @@
       "inquiry": "咨询",
       "scenario_subnav": {
         "brand_top_aria": "r-Ultra 沉浸页顶部品牌展示",
-        "slogan": "从图纸到重载工位，让下一支协作臂先扛起来。",
+        "slogan": "从图纸到重载工位，让下一支协作臂先扛起来",
         "tagline": "Let's get rolling"
       },
       "hero": {
-        "subtitle": "旗舰负载。可编程技术栈。"
+        "subtitle": "旗舰负载，可编程技术栈"
       },
       "scroll_film": {
         "section_aria": "r-Ultra 协作机械臂中段沉浸叙事与规格要点",
         "advantages": [
           {
             "kicker": "重载工作包络",
-            "title": "额定 30kg。",
-            "subtitle": "1402mm 工作半径。",
-            "body": "{{payload}} 额定负载、{{reach}} 工作半径，整机约 {{weight}}——面向码垛、机床上下料与后道搬运。{{tcpSpeed}} TCP，{{footprint}} 安装 footprint，为真实产线节拍而生。",
+            "title": "额定 30kg",
+            "subtitle": "1402mm 工作半径",
+            "body": "{{payload}} 额定负载、{{reach}} 工作半径，整机约 {{weight}}——面向码垛、机床上下料与后道搬运，少为多机或围栏方案叠设备与二次集成。{{tcpSpeed}} TCP，{{footprint}} 安装 footprint，为真实产线节拍而生。",
             "badge": "{{payload}} · {{reach}} · {{tcpSpeed}} TCP"
           },
           {
             "kicker": "工业级计量",
-            "title": "{{repeatability}} 重复定位。",
-            "subtitle": "精度绝不妥协。",
+            "title": "{{repeatability}} 重复定位",
+            "subtitle": "精度绝不妥协",
             "body": "精密工程设计，在额定负载与受控轨迹下提供 {{repeatability}} 姿态重复性——把重载机械结构变成高吞吐制造技术栈中可信赖的一环。",
             "badge": "{{repeatability}} · {{payload}} · {{dof}} 轴"
           },
           {
             "kicker": "部署技术栈",
-            "title": "即插、即玩。",
-            "subtitle": "即编程。",
+            "title": "即插、即玩",
+            "subtitle": "即编程",
             "body": "通过标准移动浏览器、示教器或产线工业网络即时访问。r-Ultra 以拖拽示教配合原生 C++、Python 与 ROS/ROS2 流水线，为高级集成商准备就绪。",
             "badge": "{{voltage}} · Modbus/TCP · ROS/ROS2"
           }
@@ -515,7 +515,7 @@
         "scenario_caption": "从图纸走进场景：r-Ultra 旗舰重载协作机械臂进入制造、冲压、码垛与重载装配等 Cobot 应用单元。",
         "scenario_image_alt": "r-Ultra 协作机器人 Cobot 产品场景图，展示高负载协作机械臂外观与典型部署环境。",
         "flange_section_kicker": "内建底气",
-        "flange_section_title": "工业现场，层层见真。",
+        "flange_section_title": "工业现场，层层见真",
         "flange_strip": [
           {
             "title": "ROS/ROS2",
@@ -529,7 +529,7 @@
           },
           {
             "title": "全栈经济",
-            "body": "别再为传统中间商加价买单。核心零部件垂直整合，在不牺牲工业品质的前提下压缩成本。典型平均功耗 {{avgPower}}，代表性工位可在部署首月内实现盈亏平衡——视班次、人工与夹具方案而定。",
+            "body": "一台旗舰臂覆盖原有多设备或围栏方案时，占地、集成与备件路径一并算清，TCO 更易落地。",
             "highlight": "毫无阻力的 ROI。"
           },
           {
@@ -538,10 +538,10 @@
             "highlight": "CE · CR · ISO。"
           }
         ],
-        "blueprint_intro_title": "开发者至上的开放架构。",
+        "blueprint_intro_title": "开发者至上的架构",
         "blueprint_intro_body": "我们坚信绝对工程透明——从数字孪生仿真文件到开放 SDK 与 ROS/ROS2 驱动。硬件落地前，开发团队即可模拟、测试并运行逻辑，从第一天起最大化管道效率。",
         "application_kicker": "应用场景",
-        "application_title": "为重载部署而生。",
+        "application_title": "为重载部署而生",
         "application_body": "以旗舰负载完成上下料、码垛与搬运——与 r 系列共享同一套安全叙事与示教体验，按产线节拍扩展。",
         "application_cards": [
           {
@@ -555,11 +555,11 @@
           }
         ],
         "r_family_kicker": "All in r family.",
-        "r_family_title": "每种负载，每种臂展。",
-        "r_family_subtitle": "全系 r‑series。",
+        "r_family_title": "每种负载，每种臂展",
+        "r_family_subtitle": "全系 r‑series",
         "r_family_body": "每种负载，每种臂展，技术栈毫无断层。从微型桌面机器人到高容量重载举升，Roooll r 系列旨在消除自动化技术栈中的空白——工厂有场景，R 家族就有工程答案。",
-        "tail_title": "上线技术栈。",
-        "tail_subtitle": "重载交付，全面可编程。",
+        "tail_title": "上线技术栈",
+        "tail_subtitle": "重载交付，全面可编程",
         "links": {
           "specs": "全系列 Cobot 规格总览",
           "advisor": "找到你的匹配",

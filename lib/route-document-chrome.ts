@@ -16,8 +16,11 @@ export function syncRouteDocumentChrome({ isArm, isHome }: RouteDocumentChromeOp
   document.body.style.backgroundColor = isHome ? 'transparent' : isArm ? '#000' : '#fff';
 }
 
-/** Lock background scroll on mobile without clobbering arm `overflow-x: clip` (sticky film). */
-export function applyMobileMenuScrollLock(
+/**
+ * Arm immersive inquiry drawer: lock scroll without `position: fixed` so `window.scrollY`
+ * (and main-nav hide progress) stay stable — avoids the primary nav sliding back down.
+ */
+export function applyArmInquiryScrollLock(
   isArm: boolean,
   isHome: boolean,
 ): {
@@ -25,30 +28,51 @@ export function applyMobileMenuScrollLock(
 } {
   const body = document.body;
   const html = document.documentElement;
-  const prevBodyOverflow = body.style.overflow;
-  const prevBodyOverflowY = body.style.overflowY;
-  const prevBodyOverscroll = body.style.overscrollBehavior;
-  const prevHtmlOverscroll = html.style.overscrollBehavior;
+  const prev = {
+    bodyOverflow: body.style.overflow,
+    bodyOverflowY: body.style.overflowY,
+    htmlOverflow: html.style.overflow,
+    htmlOverflowY: html.style.overflowY,
+    overscrollBody: body.style.overscrollBehavior,
+    overscrollHtml: html.style.overscrollBehavior,
+  };
 
-  if (isArm) {
-    syncRouteDocumentChrome({ isArm: true, isHome });
-    body.style.overflowY = 'hidden';
-    body.style.overflow = '';
-  } else {
-    body.style.overflow = 'hidden';
-  }
+  html.style.overflow = 'hidden';
+  html.style.overflowY = 'hidden';
+  body.style.overflow = 'hidden';
+  body.style.overflowY = 'hidden';
   body.style.overscrollBehavior = 'none';
   html.style.overscrollBehavior = 'none';
 
+  if (isArm) {
+    syncRouteDocumentChrome({ isArm: true, isHome });
+  }
+
   return {
     restore: () => {
-      body.style.overflow = prevBodyOverflow;
-      body.style.overflowY = prevBodyOverflowY;
-      body.style.overscrollBehavior = prevBodyOverscroll;
-      html.style.overscrollBehavior = prevHtmlOverscroll;
+      body.style.overflow = prev.bodyOverflow;
+      body.style.overflowY = prev.bodyOverflowY;
+      html.style.overflow = prev.htmlOverflow;
+      html.style.overflowY = prev.htmlOverflowY;
+      body.style.overscrollBehavior = prev.overscrollBody;
+      html.style.overscrollBehavior = prev.overscrollHtml;
       if (isArm) {
         syncRouteDocumentChrome({ isArm: true, isHome });
       }
     },
   };
+}
+
+/**
+ * Lock background scroll when mobile menu / drawer open.
+ * Do **not** use `body { position: fixed }` — on iOS Safari it shrinks the layout viewport and
+ * leaves visible gaps above/below `position: fixed` overlays (r-lite vs r-ultra at scrollY=0).
+ */
+export function applyMobileMenuScrollLock(
+  isArm: boolean,
+  isHome: boolean,
+): {
+  restore: () => void;
+} {
+  return applyArmInquiryScrollLock(isArm, isHome);
 }

@@ -1,3 +1,5 @@
+@import './roooll-liquid-glass.css';
+
 @keyframes robot-tech-reveal-sweep {
   from {
     clip-path: inset(0 100% 0 0);
@@ -776,21 +778,54 @@ body.is-arm-immersive-route {
   width: 100%;
   height: 52px;
   z-index: 1001;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid #333;
   align-items: center;
   display: flex;
 }
 
 .arm-page-root .rcore-brand-top-mount {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   z-index: 1001;
   pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.arm-page-root .rcore-consult-nav-mount {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1002;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 8px 12px 0;
+  box-sizing: border-box;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+@media (min-width: 735px) {
+  .arm-page-root .rcore-consult-nav-mount {
+    padding: 10px max(16px, 20vh) 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arm-page-root .rcore-brand-top-mount,
+  .arm-page-root .rcore-consult-nav-mount {
+    transition: none;
+    will-change: auto;
+  }
 }
 
 .arm-page-root .rcore-brand-top-mount .rcore-brand-top {
+  pointer-events: auto;
+}
+
+.arm-page-root .rcore-consult-nav-mount .rcore-consult-nav-bar__glass {
   pointer-events: auto;
 }
 
@@ -813,83 +848,7 @@ body.is-arm-immersive-route {
   pointer-events: none;
 }
 
-.arm-page-root .rcore-app-sticky-subnav .nav-box,
-.arm-page-root .rcore-app-sticky-subnav a,
-.arm-page-root .rcore-app-sticky-subnav button {
-  pointer-events: auto;
-}
-
-.arm-page-root .rcore-app-sticky-subnav__box {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: clamp(12px, 2vw, 24px);
-  width: 100%;
-}
-
-.arm-page-root .rcore-app-sticky-subnav__left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.arm-page-root .rcore-app-sticky-subnav__logo-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #f5f5f7;
-  text-decoration: none;
-  border-radius: 10px;
-  outline-offset: 3px;
-}
-
-.arm-page-root .rcore-app-sticky-subnav__logo-link:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.55);
-}
-
-.arm-page-root .rcore-app-sticky-subnav__logo {
-  display: block;
-  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.45));
-}
-
-.arm-page-root .rcore-app-sticky-subnav__tag {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: rgba(245, 245, 247, 0.78);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.arm-page-root .rcore-app-sticky-subnav__right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.arm-page-root .rcore-app-sticky-subnav__product {
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: #f5f5f7;
-  white-space: nowrap;
-}
-
-@media (max-width: 640px) {
-  .arm-page-root .rcore-app-sticky-subnav__tag {
-    display: none;
-  }
-
-  .arm-page-root .rcore-app-sticky-subnav__product {
-    font-size: 13px;
-  }
-}
-
+/* 沉浸详情 SVG 顶条：原先实现 = 全透明叠层，靠背后 GLB/字穿过自然提亮（无 liquid glass） */
 .arm-page-root .nav-sub.rcore-brand-top {
   height: auto;
   min-height: 0;
@@ -900,9 +859,95 @@ body.is-arm-immersive-route {
   pointer-events: none;
   background: transparent;
   border-bottom: none;
+  box-shadow: none;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
   --logo-cutout: rgba(10, 10, 12, 0.94);
+}
+
+.arm-page-root .nav-sub.rcore-brand-top.nav-sub-enter {
+  animation: none;
+}
+
+/* Application 段咨询：Apple 式宽胶囊（两侧约 20vh 留白） */
+.arm-page-root .rcore-consult-nav-bar {
+  position: static;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-consult-nav-bar__glass {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding: 6px 8px 6px 16px;
+  border-radius: 999px;
+  box-sizing: border-box;
+  animation: none;
+  will-change: auto;
+}
+
+.arm-page-root .rcore-consult-nav-bar__product {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(245, 245, 247, 0.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arm-page-root .rcore-consult-nav-bar .cookie-consent__btn {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  font-size: 11px;
+}
+
+@media (max-width: 734px) {
+  .arm-page-root .rcore-consult-nav-bar__glass {
+    padding: 6px 6px 6px 12px;
+    gap: 8px;
+  }
+
+  .arm-page-root .rcore-consult-nav-bar__product {
+    font-size: 11px;
+  }
+
+  .arm-page-root .rcore-consult-nav-bar .cookie-consent__btn {
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+}
+
+@media (min-width: 735px) {
+  .arm-page-root .rcore-consult-nav-bar__glass {
+    padding: 5px 8px 5px 18px;
+    gap: 12px;
+  }
+
+  .arm-page-root .rcore-consult-nav-bar__product {
+    font-size: 12px;
+    letter-spacing: 0.03em;
+  }
+
+  .arm-page-root .rcore-consult-nav-bar .cookie-consent__btn {
+    padding: 5px 14px;
+    font-size: 11px;
+  }
 }
 
 .arm-page-root .rcore-brand-top__inner {
@@ -2400,12 +2445,7 @@ body.is-arm-immersive-route {
   max-width: min(420px, 86vw);
   padding: 22px 24px;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(22, 22, 23, 0.42);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  backdrop-filter: blur(14px) saturate(140%);
   pointer-events: none;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
 }
 
 .arm-page-root .rcore-film-glass--flange {
@@ -2790,6 +2830,47 @@ body.is-arm-immersive-route {
 }
 
 @media (max-width: 734px) {
+  /* 沉浸页：首屏三列优势 title/subtitle 保持；其余主标题略缩小，副标题不缩小（桌面不变） */
+  .arm-page-root .rcore-hero-copy-fixed__title {
+    font-size: clamp(64px, 11vw, 112px);
+  }
+
+  .arm-page-root .rcore-film-flange-strip__title {
+    font-size: clamp(17px, 1.95vw, 22px);
+  }
+
+  .arm-page-root .rcore-film-bp-intro__title {
+    font-size: clamp(34px, 4.6vw, 48px);
+  }
+
+  .arm-page-root .rcore-film-app__title {
+    font-size: clamp(42px, 6.8vw, 80px);
+  }
+
+  .arm-page-root .rcore-film-family__title {
+    font-size: clamp(40px, 6.2vw, 64px);
+  }
+
+  .arm-page-root .rcore-film-tail__inner h2 {
+    font-size: clamp(34px, 5.4vw, 54px);
+  }
+
+  .arm-page-root .rcore-ln-flange-heading {
+    font-size: clamp(30px, 8.2vw, 46px);
+  }
+
+  .arm-page-root .rcore-ln-bp-main-title {
+    font-size: clamp(38px, 6vw, 60px);
+  }
+
+  .arm-page-root .rcore-ln-sticky-title {
+    font-size: clamp(38px, 6vw, 60px);
+  }
+
+  .arm-page-root .rcore-ln-family-title {
+    font-size: clamp(40px, 6.2vw, 62px);
+  }
+
   .arm-page-root .roooll-faq-section__card {
     border-radius: 22px;
   }
@@ -2805,36 +2886,7 @@ body.is-arm-immersive-route {
   }
 }
 
-/* r‑Core `/cobots/r-core` 顶栏：透明顶 ↔ 下滑毛玻璃（与 ClientLayout `subPageNavProgress < 0.02` 分支一致；!important 避免其它规则抢样式） */
-.roooll-nav.is-dark.arm-nav-top-clear:not(.search-mode) {
-  background: transparent !important;
-  border-bottom-color: transparent !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
-
-.roooll-nav.is-dark.arm-nav-scroll-glass:not(.search-mode) {
-  background: rgba(22, 22, 23, 0.34) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  -webkit-backdrop-filter: saturate(160%) blur(12px) !important;
-  backdrop-filter: saturate(160%) blur(12px) !important;
-}
-
-/* 选型页 `/selector/*`：首屏顶栏全透明，避免默认 `.roooll-nav` 浅色底在浅色 hero 上像「白条」 */
-.roooll-nav.selector-nav-top-clear:not(.search-mode) {
-  background: transparent !important;
-  border-bottom-color: transparent !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
-
-.roooll-nav.selector-nav-scroll-glass:not(.search-mode) {
-  background: rgba(251, 251, 253, 0.76) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(18px) !important;
-  backdrop-filter: saturate(180%) blur(18px) !important;
-}
-
+/* Nav chrome layout — liquid glass material: `app/roooll-liquid-glass.css` */
 .roooll-nav {
   --logo-cutout: #ffffff;
   position: fixed;
@@ -2844,49 +2896,19 @@ body.is-arm-immersive-route {
   height: var(--nav-h);
   z-index: var(--z-nav);
   box-sizing: border-box;
-  background: rgba(251, 251, 253, 0.2);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.012);
-  -webkit-backdrop-filter: saturate(135%) blur(8px);
-  backdrop-filter: saturate(135%) blur(8px);
+  border-bottom: none;
 }
 
 .roooll-nav.is-dark {
   --logo-cutout: #161617;
-  background: rgba(22, 22, 23, 0.16);
   color: #f5f5f7;
-  border-bottom-color: rgba(255, 255, 255, 0.02);
 }
 
 .roooll-nav.is-home:not(.search-mode) {
-  border-bottom: none;
   box-shadow: none;
 }
 
-.roooll-nav.home-clear {
-  background: transparent !important;
-  border-bottom: none !important;
-  box-shadow: none !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
-
-.roooll-nav.home-ghost:not(.search-mode) {
-  background: rgba(251, 251, 253, 0.026) !important;
-  -webkit-backdrop-filter: saturate(165%) blur(4px) !important;
-  backdrop-filter: saturate(165%) blur(4px) !important;
-}
-
-.roooll-nav.home-ghost.is-dark:not(.search-mode) {
-  background: rgba(22, 22, 23, 0.038) !important;
-  color: #f5f5f7;
-  -webkit-backdrop-filter: saturate(155%) blur(5px) !important;
-  backdrop-filter: saturate(155%) blur(5px) !important;
-}
-
-.roooll-nav.search-mode {
-  background: #fff !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
-}
+/* search-mode nav glass: `app/roooll-liquid-glass.css` */
 
 .nav-container {
   width: 100%;
@@ -2993,17 +3015,19 @@ body.is-arm-immersive-route {
 
 .nav-mask-master {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
+  height: 100lvh;
   background: rgba(0, 0, 0, 0.5);
   z-index: 9997;
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
+  opacity: 1;
+  transition: opacity 0.48s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-.mobile-overlay-fixed {
+.mobile-overlay-root {
   display: none;
 }
 
@@ -3030,7 +3054,7 @@ body.is-arm-immersive-route {
     opacity: 0.82;
   }
 
-  .mobile-overlay-fixed {
+  .mobile-overlay-root {
     display: block;
   }
 
@@ -3077,8 +3101,8 @@ body.is-arm-immersive-route {
     tap-highlight-color: transparent;
   }
 
-  .mobile-overlay-fixed .m-row,
-  .mobile-overlay-fixed .m-sub-i {
+  .mobile-overlay-root .m-row,
+  .mobile-overlay-root .m-sub-i {
     -webkit-tap-highlight-color: transparent;
     tap-highlight-color: transparent;
   }
@@ -3428,91 +3452,81 @@ body.is-arm-immersive-route {
     padding-top: 10px;
   }
 
-  .mobile-overlay-fixed {
+  /*
+   * 全屏菜单：JS 内联高度（lib/mobile-menu-overlay.ts）+ transform 落下。
+   * 仅禁点透，保留 main 绘制供 backdrop-filter 模糊（visibility:hidden 会变成纯色）。
+   */
+  html.mobile-menu-open main,
+  html.mobile-menu-open .roooll-footer-wrapper {
+    pointer-events: none !important;
+  }
+
+  .mobile-overlay-root {
+    --mobile-menu-sheet-duration: 0.62s;
+    --mobile-menu-sheet-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --mobile-menu-row-stagger: 95ms;
+    --mobile-menu-row-delay-base: 0.62s;
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    bottom: env(safe-area-inset-bottom);
-    height: auto;
-    background: transparent;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    z-index: 9998;
-    padding-top: calc(var(--nav-h) + 10px);
-    padding-bottom: 10px;
-    overflow-y: auto;
-    opacity: 0;
-    transform: translate3d(0, -118%, 0) scale(1);
-    visibility: hidden;
-    pointer-events: none;
-    transition:
-      opacity 0.3s ease,
-      transform 0.62s cubic-bezier(0.22, 1, 0.36, 1),
-      visibility 0s linear 0.62s;
-  }
-
-  .mobile-overlay-fixed::before {
-    content: '';
-    position: fixed;
-    top: var(--nav-h);
-    left: 0;
     right: 0;
-    height: 22px;
-    background: transparent;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.28s ease;
-  }
-
-  .mobile-overlay-fixed.open {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-    visibility: visible;
-    pointer-events: auto;
-    transition:
-      opacity 0.3s ease,
-      transform 0.62s cubic-bezier(0.22, 1, 0.36, 1),
-      visibility 0s;
-  }
-
-  .mobile-overlay-fixed.closing {
-    opacity: 0;
-    transform: translate3d(0, -118%, 0) scale(1);
-    visibility: visible;
-    pointer-events: none;
-    transition:
-      opacity 0.3s ease,
-      transform 0.62s cubic-bezier(0.22, 1, 0.36, 1),
-      visibility 0s;
-  }
-
-  .mobile-overlay-fixed.closed {
-    opacity: 0;
-    transform: translate3d(0, -118%, 0) scale(1);
+    width: 100%;
+    min-height: 100dvh;
+    box-sizing: border-box;
+    z-index: 10050;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
     visibility: hidden;
     pointer-events: none;
-    background: transparent;
+    -webkit-tap-highlight-color: transparent;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    transition:
-      opacity 0.3s ease,
-      transform 0.62s cubic-bezier(0.22, 1, 0.36, 1),
-      visibility 0s linear 0.62s;
-  }
-
-  .mobile-overlay-fixed.open,
-  .mobile-overlay-fixed.closing {
     background: transparent;
-    -webkit-backdrop-filter: saturate(180%) blur(22px);
-    backdrop-filter: saturate(180%) blur(22px);
+    transform: translate3d(0, -100%, 0);
+    will-change: transform;
+    transition:
+      transform var(--mobile-menu-sheet-duration) var(--mobile-menu-sheet-ease),
+      visibility 0s linear var(--mobile-menu-sheet-duration);
   }
 
-  .mobile-overlay-fixed.open::before {
-    opacity: 1;
+  .mobile-overlay-root.open,
+  .mobile-overlay-root.closing {
+    visibility: visible;
   }
 
-  .mobile-overlay-fixed.is-dark {
+  .mobile-overlay-root.open {
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0);
+    transition:
+      transform var(--mobile-menu-sheet-duration) var(--mobile-menu-sheet-ease),
+      visibility 0s;
+  }
+
+  .mobile-overlay-root.closing {
+    transform: translate3d(0, -100%, 0);
+    pointer-events: none;
+    transition:
+      transform var(--mobile-menu-sheet-duration) var(--mobile-menu-sheet-ease),
+      visibility 0s linear var(--mobile-menu-sheet-duration);
+  }
+
+  .mobile-overlay-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+    background: transparent;
+  }
+
+  /* mobile sheet glass: `app/roooll-liquid-glass.css` — on .mobile-overlay-root */
+
+  .mobile-overlay-root.is-dark {
     color: #f5f5f7;
   }
 
@@ -3538,46 +3552,84 @@ body.is-arm-immersive-route {
     gap: 0;
   }
 
-  .mobile-overlay-fixed.is-dark::before {
-    background: transparent;
+  .roooll-nav.mobile-menu-open {
+    z-index: 10051;
+    border-bottom: none !important;
   }
 
-  .roooll-nav.mobile-menu-open {
-    background: transparent !important;
-    border-bottom-color: transparent !important;
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
+  .mobile-sheet-scrim {
+    display: none;
   }
+
+  .roooll-nav.mobile-menu-open.is-dark {
+    color: #f5f5f7;
+  }
+
+
+  /* mobile-menu-open nav: clear — `app/roooll-liquid-glass.css` */
 
   .mobile-col {
+    position: relative;
+    z-index: 1;
     flex-direction: column;
     align-items: stretch !important;
     justify-content: flex-start !important;
     height: auto !important;
-    padding: 10px 28px 20px !important;
+    min-height: 100%;
+    padding: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 10px)
+      max(28px, env(safe-area-inset-right, 0px))
+      calc(env(safe-area-inset-bottom, 0px) + 20px)
+      max(28px, env(safe-area-inset-left, 0px)) !important;
     gap: 12px;
+    box-sizing: border-box;
   }
 
   .m-sec {
     border-bottom: none;
     opacity: 0;
-    transform: translateY(14px);
-    transition:
-      opacity 0.2s ease,
-      transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: translateY(12px);
+    animation: none;
   }
 
-  .mobile-overlay-fixed.open .m-sec {
-    animation: mobileMenuRowIn 0.56s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: calc(var(--i, 0) * 95ms);
+  .mobile-overlay-root.open .m-sec {
+    animation: mobileMenuRowIn 0.52s var(--mobile-menu-sheet-ease) both;
+    animation-delay: calc(
+      var(--mobile-menu-row-delay-base) + var(--i, 0) * var(--mobile-menu-row-stagger)
+    );
     opacity: 1;
     transform: translateY(0);
   }
 
-  .mobile-overlay-fixed.closing .m-sec {
+  .mobile-overlay-root.closing .m-sec {
+    animation: none;
     opacity: 0;
     transform: translateY(-8px);
-    transition-delay: calc((4 - var(--i, 0)) * 28ms);
+    transition:
+      opacity 0.16s ease,
+      transform 0.16s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-overlay-root {
+      transform: none;
+      transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+    }
+
+    .mobile-overlay-root:not(.open) {
+      opacity: 0;
+    }
+
+    .mobile-overlay-root.open {
+      opacity: 1;
+      transform: none;
+    }
+
+    .mobile-overlay-root.open .m-sec {
+      animation: none;
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 
   .m-row {
@@ -3833,6 +3885,53 @@ button.selector-tap-clean {
   -webkit-tap-highlight-color: transparent;
   tap-highlight-color: transparent;
   touch-action: manipulation;
+}
+
+/* 手机端：可点击元素不要系统灰底 / 自定义灰底（链接、FAQ 问题、页脚等） */
+@media (max-width: 734px) {
+  a,
+  button,
+  summary,
+  .roooll-faq-section__trigger,
+  .f-col h4,
+  .f-list span,
+  .f-legal span,
+  .m-row,
+  .m-sub-i,
+  .s-item,
+  .cookie-consent__link,
+  .cookie-consent__btn,
+  .cookie-settings-btn,
+  .logo-box,
+  .roooll-home-wrapper a.cta-link,
+  .roooll-home-wrapper .cta-link,
+  .roooll-home-wrapper .sharp-card,
+  .selector-tap-clean {
+    -webkit-tap-highlight-color: transparent !important;
+    tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .roooll-faq-section__trigger:hover,
+  .roooll-faq-section__trigger:active {
+    background-color: transparent !important;
+  }
+
+  .m-row:active,
+  .m-sub-i:active {
+    opacity: 1;
+    transform: none;
+  }
+
+  .search-panel-layer .s-item:hover,
+  .search-panel-layer .s-item:active {
+    background: transparent !important;
+    transform: none;
+  }
+
+  .f-col h4:active {
+    background: transparent;
+  }
 }
 
 /* 全系机型详情弹层：规格行依次淡入（--detail-line-i 为行序 0,1,2…） */
@@ -4301,72 +4400,154 @@ button.selector-tap-clean {
 }
 
 /* Cookie consent + legal pages */
+@keyframes cookie-consent-breathe {
+  0%,
+  100% {
+    filter: brightness(0.98);
+  }
+
+  50% {
+    filter: brightness(1.04);
+  }
+}
+
 .cookie-consent {
   position: fixed;
-  inset: auto 16px 16px 16px;
+  left: 0;
+  right: 0;
+  bottom: max(14px, env(safe-area-inset-bottom, 0px));
   z-index: 10050;
+  display: flex;
+  justify-content: center;
+  padding: 0 max(12px, env(safe-area-inset-left, 0px)) 0 max(12px, env(safe-area-inset-right, 0px));
+  box-sizing: border-box;
   pointer-events: none;
 }
 
-.cookie-consent__panel {
+.cookie-consent__glass {
   pointer-events: auto;
-  max-width: 520px;
-  margin: 0 auto;
-  padding: 20px 22px;
-  border-radius: 18px;
-  background: rgba(251, 251, 253, 0.96);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-  backdrop-filter: saturate(180%) blur(20px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+  max-width: min(560px, calc(100vw - 24px));
+  padding: 10px 12px 10px 14px;
+  border-radius: 20px;
+  will-change: auto;
+  box-sizing: border-box;
 }
 
-.cookie-consent__title {
-  margin: 0 0 8px;
-  font-size: 17px;
-  font-weight: 600;
-  color: #1d1d1f;
+.cookie-consent__glass:not(.roooll-liquid-glass) {
+  animation: cookie-consent-breathe 5.5s ease-in-out infinite;
+  will-change: filter;
 }
 
-.cookie-consent__body,
-.cookie-consent__legal {
-  margin: 0 0 10px;
-  font-size: 13px;
-  line-height: 1.45;
-  color: #6e6e73;
+.cookie-consent__glass > * {
+  position: relative;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cookie-consent__glass {
+    animation: none;
+    opacity: 0.96;
+  }
+}
+
+.cookie-consent__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.cookie-consent__text {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: rgba(29, 29, 31, 0.78);
+  text-wrap: balance;
 }
 
 .cookie-consent__link {
-  color: #06c;
+  color: rgba(0, 102, 204, 0.9);
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .cookie-consent__link:hover {
+  color: #0071e3;
   text-decoration: underline;
 }
 
 .cookie-consent__actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 12px;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  gap: 6px;
 }
 
 .cookie-consent__btn {
   font: inherit;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 500;
-  padding: 8px 16px;
+  letter-spacing: -0.01em;
+  padding: 5px 11px;
   border-radius: 999px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  background: #fff;
-  color: #1d1d1f;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.45);
+  color: rgba(29, 29, 31, 0.85);
   cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.cookie-consent__btn:hover {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.cookie-consent__btn:active {
+  transform: scale(0.97);
 }
 
 .cookie-consent__btn--primary {
+  background: rgba(0, 113, 227, 0.88);
+  border-color: rgba(0, 113, 227, 0.35);
+  color: #fff;
+}
+
+.cookie-consent__btn--primary:hover {
   background: #0071e3;
   border-color: #0071e3;
-  color: #fff;
+}
+
+@media (min-width: 380px) {
+  .cookie-consent__glass {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px 8px 14px;
+    border-radius: 999px;
+  }
+
+  .cookie-consent__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .cookie-consent__actions {
+    flex-shrink: 0;
+  }
 }
 
 .legal-doc {

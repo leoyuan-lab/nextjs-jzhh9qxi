@@ -4,16 +4,26 @@ import React, {
   useEffect,
   useLayoutEffect,
   useMemo,
+  useRef,
   createContext,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import { rSeriesData } from '@/data/products';
 import enLocale from '@/locales/en.json';
 import zhLocale from '@/locales/zh.json';
 import { SiteLangContext } from '@/lib/site-lang-context';
-import { CookieSettingsButton } from '@/components/CookieConsent';
+import { CookieConsent, CookieSettingsButton } from '@/components/CookieConsent';
 import { trackEvent } from '@/lib/analytics';
-import { applyMobileMenuScrollLock, syncRouteDocumentChrome } from '@/lib/route-document-chrome';
+import {
+  applyMobileMenuOverlayToElement,
+  setMobileMenuDocumentOpen,
+} from '@/lib/mobile-menu-overlay';
+import {
+  applyArmInquiryScrollLock,
+  applyMobileMenuScrollLock,
+  syncRouteDocumentChrome,
+} from '@/lib/route-document-chrome';
 
 function navFamilyName(familyId: string) {
   return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
@@ -206,6 +216,7 @@ export default function ClientLayout({
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileExpandedApp, setMobileExpandedApp] = useState<string | null>(null);
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
+  const [mobileSheetEntered, setMobileSheetEntered] = useState(false);
   const [footerExpandedSection, setFooterExpandedSection] = useState<string | null>(null);
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
   const [inquiryPrefillBody, setInquiryPrefillBody] = useState<string | undefined>(undefined);
@@ -214,12 +225,15 @@ export default function ClientLayout({
   const [inquiryFormKey, setInquiryFormKey] = useState(0);
   const [isChildSubNavVisible, setIsChildSubNavVisible] = useState(false);
   const [mainNavScrollProgress, setMainNavScrollProgress] = useState(0);
+  const [frozenMainNavProgress, setFrozenMainNavProgress] = useState<number | null>(null);
   const [navToneOverride, setNavToneOverride] = useState<'dark' | 'light' | null>(null);
   const [isSelectorComparePinned, setIsSelectorComparePinned] = useState(false);
   const [sampledNavDark, setSampledNavDark] = useState<boolean | null>(null);
   /** True only at literal top of home — full clear bar; any scroll → whisper-glass (`home-ghost`). */
   const [homePinnedClear, setHomePinnedClear] = useState(true);
   const lastInquiryCloseAtRef = React.useRef(0);
+  const mainNavScrollProgressRef = useRef(0);
+  const mobileOverlayRef = React.useRef<HTMLDivElement | null>(null);
   const mobileToggleLockRef = React.useRef(false);
   const mobileToggleUnlockTimerRef = React.useRef<number | null>(null);
   const mobileQueuedToggleRef = React.useRef(false);
@@ -382,6 +396,7 @@ export default function ClientLayout({
       const customEvent = event as CustomEvent<{ progress?: number }>;
       const raw = customEvent.detail?.progress ?? 0;
       const clamped = Math.max(0, Math.min(1, raw));
+      mainNavScrollProgressRef.current = clamped;
       setMainNavScrollProgress(clamped);
     };
     const handleSelectorComparePin = (event: Event) => {
@@ -414,9 +429,14 @@ export default function ClientLayout({
   useEffect(() => {
     if (isMobileMenuOpen) {
       setMobileMenuVisible(true);
-      return;
+      setMobileSheetEntered(false);
+      const enterFrame = window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => setMobileSheetEntered(true));
+      });
+      return () => window.cancelAnimationFrame(enterFrame);
     }
-    const timer = window.setTimeout(() => setMobileMenuVisible(false), 620);
+    setMobileSheetEntered(false);
+    const timer = window.setTimeout(() => setMobileMenuVisible(false), 650);
     return () => {
       window.clearTimeout(timer);
     };
@@ -433,7 +453,7 @@ export default function ClientLayout({
     mobileExpandedResetTimerRef.current = window.setTimeout(() => {
       setMobileExpandedApp(null);
       mobileExpandedResetTimerRef.current = null;
-    }, 620);
+    }, 650);
     return () => {
       if (mobileExpandedResetTimerRef.current) {
         window.clearTimeout(mobileExpandedResetTimerRef.current);
@@ -442,19 +462,32 @@ export default function ClientLayout({
     };
   }, [isMobileMenuOpen]);
 
-  useEffect(() => {
-    if (!isMobileMenuOpen) return;
+  useLayoutEffect(() => {
+    if (isInquiryOpen && isArm && !isMobileMenuOpen) {
+      setFrozenMainNavProgress((prev) =>
+        prev === null ? mainNavScrollProgressRef.current : prev,
+      );
+    } else {
+      setFrozenMainNavProgress(null);
+    }
+  }, [isInquiryOpen, isArm, isMobileMenuOpen]);
 
-    const { restore } = applyMobileMenuScrollLock(isArm, isHome);
+  useEffect(() => {
+    if (!mobileMenuVisible && !isInquiryOpen) return;
+
+    const armInquiryOnly = isArm && isInquiryOpen && !mobileMenuVisible;
+    const { restore } = armInquiryOnly
+      ? applyArmInquiryScrollLock(isArm, isHome)
+      : applyMobileMenuScrollLock(isArm, isHome);
 
     const blockBackgroundTouchMove = (event: TouchEvent) => {
       const target = event.target as HTMLElement | null;
-      if (target?.closest('.mobile-overlay-fixed')) return;
+      if (target?.closest('.mobile-overlay-root, .exclusive-final-drawer')) return;
       event.preventDefault();
     };
     const blockBackgroundWheel = (event: WheelEvent) => {
       const target = event.target as HTMLElement | null;
-      if (target?.closest('.mobile-overlay-fixed')) return;
+      if (target?.closest('.mobile-overlay-root, .exclusive-final-drawer')) return;
       event.preventDefault();
     };
     const blockBackgroundScrollKeys = (event: KeyboardEvent) => {
@@ -474,25 +507,23 @@ export default function ClientLayout({
       document.removeEventListener('keydown', blockBackgroundScrollKeys);
       restore();
     };
-  }, [isMobileMenuOpen, isArm, isHome]);
+  }, [mobileMenuVisible, isInquiryOpen, isArm, isHome]);
 
-  /* 沉浸详情页：菜单曾用 overflow:hidden 会破坏 sticky；关菜单后恢复 clip 并重算卷轴 */
   useLayoutEffect(() => {
     window.dispatchEvent(
       new CustomEvent('roooll-mobile-menu', { detail: { open: isMobileMenuOpen } }),
     );
-    if (isMobileMenuOpen) return;
-    if (isArm) {
-      syncRouteDocumentChrome({ isArm, isHome });
-      const y = window.scrollY;
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          window.scrollTo(0, y);
-          window.dispatchEvent(new Event('resize'));
-        });
-      });
-    }
-  }, [isMobileMenuOpen, isArm, isHome]);
+  }, [isMobileMenuOpen]);
+
+  /* 菜单完全收起后再恢复 arm clip + 通知卷轴（避免关菜单瞬间页面卡住再弹出） */
+  useEffect(() => {
+    if (mobileMenuVisible || isMobileMenuOpen) return;
+    if (!isArm) return;
+    syncRouteDocumentChrome({ isArm, isHome });
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
+  }, [mobileMenuVisible, isMobileMenuOpen, isArm, isHome]);
 
   useEffect(() => {
     if (!HOME_CHROME_PATHS.has(logicalPathname)) {
@@ -568,7 +599,7 @@ export default function ClientLayout({
         mobileQueuedToggleRef.current = false;
         triggerMobileMenuToggle();
       }
-    }, 680);
+    }, 700);
   }, []);
 
   /** r‑Core 黑底页：首帧即深色顶栏，避免 isDark 尚未采样时出现浅色「白条」再变黑 */
@@ -582,7 +613,38 @@ export default function ClientLayout({
         : navToneOverride
           ? navToneOverride === 'dark'
           : isDark;
-  const subPageNavProgress = isHome ? 0 : Math.max(mainNavScrollProgress, isChildSubNavVisible ? 1 : 0);
+  const effectiveMainNavProgress = frozenMainNavProgress ?? mainNavScrollProgress;
+  const subPageNavProgress = isHome
+    ? 0
+    : Math.max(effectiveMainNavProgress, isChildSubNavVisible ? 1 : 0);
+
+  useLayoutEffect(() => {
+    setMobileMenuDocumentOpen(mobileMenuVisible);
+    if (!mobileMenuVisible) return;
+
+    const syncOverlay = () => {
+      const el = mobileOverlayRef.current;
+      if (el) {
+        applyMobileMenuOverlayToElement(el);
+        return;
+      }
+      window.requestAnimationFrame(syncOverlay);
+    };
+
+    syncOverlay();
+    window.visualViewport?.addEventListener('resize', syncOverlay);
+    window.visualViewport?.addEventListener('scroll', syncOverlay);
+    window.addEventListener('resize', syncOverlay);
+    window.addEventListener('orientationchange', syncOverlay);
+
+    return () => {
+      window.visualViewport?.removeEventListener('resize', syncOverlay);
+      window.visualViewport?.removeEventListener('scroll', syncOverlay);
+      window.removeEventListener('resize', syncOverlay);
+      window.removeEventListener('orientationchange', syncOverlay);
+      setMobileMenuDocumentOpen(false);
+    };
+  }, [mobileMenuVisible]);
 
   const searchConfig = useMemo(() => {
     const rawIndex: { name: string; url: string }[] = [];
@@ -628,12 +690,21 @@ export default function ClientLayout({
       <SiteLangContext.Provider value={resolvedLang}>
         <InquiryContext.Provider value={{ isOpen: isInquiryOpen, open: () => setIsInquiryOpen(true), close: () => setIsInquiryOpen(false) }}>
           
-          {(isMobileMenuOpen || showSearch || isInquiryOpen) && (
-            <div className="nav-mask-master" onClick={() => { setActiveMenu(null); setIsMobileMenuOpen(false); setShowSearch(false); setIsInquiryOpen(false); setSearchQuery(''); }} />
+          {(showSearch || isInquiryOpen) && (
+            <div
+              className="nav-mask-master"
+              onClick={() => {
+                setActiveMenu(null);
+                setIsMobileMenuOpen(false);
+                setShowSearch(false);
+                setIsInquiryOpen(false);
+                setSearchQuery('');
+              }}
+            />
           )}
 
           <nav
-            className={`roooll-nav ${isHome ? 'is-home' : ''} ${navIsDark ? 'is-dark' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homePinnedClear ? 'home-clear' : ''} ${isHome && !homePinnedClear && !showSearch ? 'home-ghost' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}${isArm && !showSearch ? (subPageNavProgress < 0.02 ? ' arm-nav-top-clear' : ' arm-nav-scroll-glass') : ''}${isSelector && !showSearch ? (subPageNavProgress < 0.02 ? ' selector-nav-top-clear' : ' selector-nav-scroll-glass') : ''}`}
+            className={`roooll-nav roooll-liquid-glass ${navIsDark ? 'is-dark roooll-liquid-glass--dark' : 'roooll-liquid-glass--light'} ${isHome ? 'is-home' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homePinnedClear ? 'home-clear' : ''} ${isHome && !homePinnedClear && !showSearch ? 'home-ghost' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}${isArm && !showSearch ? (subPageNavProgress < 0.02 ? ' arm-nav-top-clear' : ' arm-nav-scroll-glass') : ''}${isSelector && !showSearch ? (subPageNavProgress < 0.02 ? ' selector-nav-top-clear' : ' selector-nav-scroll-glass') : ''}`}
             style={
               isHome
                 ? undefined
@@ -649,7 +720,9 @@ export default function ClientLayout({
                         ? 0
                         : isSelector
                           ? 1
-                          : Math.max(0, 1 - subPageNavProgress),
+                          : isArm
+                            ? 1
+                            : Math.max(0, 1 - subPageNavProgress),
                     pointerEvents:
                       isSelector && logicalPathname === '/selector/comparison' && isSelectorComparePinned
                         ? 'none'
@@ -658,53 +731,9 @@ export default function ClientLayout({
                           : subPageNavProgress > 0.98
                             ? 'none'
                             : 'auto',
-                    ...(isSelector
-                      ? subPageNavProgress < 0.02
-                        ? {
-                            background: 'transparent',
-                            borderBottom: '1px solid transparent',
-                            backdropFilter: 'none',
-                            WebkitBackdropFilter: 'none',
-                            transition:
-                              'background 0.28s ease, border-color 0.22s ease, backdrop-filter 0.28s ease, -webkit-backdrop-filter 0.28s ease',
-                          }
-                        : {
-                            background: 'rgba(251, 251, 253, 0.76)',
-                            borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
-                            backdropFilter: 'saturate(180%) blur(18px)',
-                            WebkitBackdropFilter: 'saturate(180%) blur(18px)',
-                            transition:
-                              'background 0.28s ease, border-color 0.22s ease, backdrop-filter 0.28s ease, -webkit-backdrop-filter 0.28s ease',
-                          }
-                      : isArm
-                        ? subPageNavProgress < 0.02
-                          ? {
-                              background: 'transparent',
-                              borderBottom: '1px solid transparent',
-                              backdropFilter: 'none',
-                              WebkitBackdropFilter: 'none',
-                              transition:
-                                'background 0.38s ease, backdrop-filter 0.38s ease, -webkit-backdrop-filter 0.38s ease, border-color 0.38s ease',
-                            }
-                          : {
-                              background: 'rgba(22, 22, 23, 0.34)',
-                              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                              backdropFilter: 'saturate(160%) blur(12px)',
-                              WebkitBackdropFilter: 'saturate(160%) blur(12px)',
-                              transition:
-                                'background 0.38s ease, backdrop-filter 0.38s ease, -webkit-backdrop-filter 0.38s ease, border-color 0.38s ease',
-                            }
-                        : {
-                            transform: 'translate3d(0, 0, 0)',
-                            opacity: 1,
-                            pointerEvents: 'auto',
-                            background: '',
-                            borderBottom: '',
-                            backdropFilter: '',
-                            WebkitBackdropFilter: '',
-                            transition:
-                              'background 0.3s, opacity 0.3s, transform 0.3s, border-color 0.3s, backdrop-filter 0.3s, -webkit-backdrop-filter 0.3s',
-                          }),
+                    transition: isArm
+                      ? 'none'
+                      : 'transform 0.82s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.58s cubic-bezier(0.22, 1, 0.36, 1)',
                   }
             }
           >
@@ -821,7 +850,10 @@ export default function ClientLayout({
             </div>
 
             {activeMenu && (
-              <div className={`mega-menu-hard-layer ${navIsDark ? 'is-dark' : ''}`} onMouseLeave={() => setActiveMenu(null)}>
+              <div
+                className={`mega-menu-hard-layer roooll-liquid-glass ${navIsDark ? 'is-dark roooll-liquid-glass--dark' : 'roooll-liquid-glass--light'}`}
+                onMouseLeave={() => setActiveMenu(null)}
+              >
                 <div className="nav-container menu-inner">
                   <div className="menu-col">
                     <h4 className="menu-label">{config.ui.explore}</h4>
@@ -847,7 +879,9 @@ export default function ClientLayout({
                 </div>
               </div>
             )}
-            <div className={`search-panel-layer ${showSearch ? 'active' : ''} ${navIsDark ? 'is-dark' : ''}`}>
+            <div
+              className={`search-panel-layer roooll-liquid-glass ${showSearch ? 'active' : ''} ${navIsDark ? 'is-dark roooll-liquid-glass--dark' : 'roooll-liquid-glass--light'}`}
+            >
               <div className="nav-container search-inner">
                 <div className="search-bar">
                   <span className="search-leading-icon">🔍</span>
@@ -895,38 +929,49 @@ export default function ClientLayout({
             </div>
           </nav>
 
-          {mobileMenuVisible && (
-            <div className={`mobile-overlay-fixed ${isMobileMenuOpen ? 'open' : 'closing'} ${navIsDark ? 'is-dark' : ''}`}>
-              <div className="nav-container mobile-col">
-                {config.nav.map((item, idx) => (
-                  <div
-                    key={item.label}
-                    className={`m-sec ${mobileExpandedApp === item.label ? 'open' : ''}`}
-                    style={{ ['--i' as string]: idx }}
-                  >
-                    <div className="m-row" onClick={() => setMobileExpandedApp(mobileExpandedApp === item.label ? null : item.label)}>
-                      <span>{item.label}</span>
+          {mobileMenuVisible &&
+            typeof document !== 'undefined' &&
+            createPortal(
+              <div
+                ref={mobileOverlayRef}
+                className={`mobile-overlay-root roooll-liquid-glass ${isMobileMenuOpen && mobileSheetEntered ? 'open' : 'closing'} ${navIsDark ? 'is-dark roooll-liquid-glass--dark' : 'roooll-liquid-glass--light'}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+                role="presentation"
+              >
+                <div
+                  className="mobile-overlay-content nav-container mobile-col"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  {config.nav.map((item, idx) => (
+                    <div
+                      key={item.label}
+                      className={`m-sec ${mobileExpandedApp === item.label ? 'open' : ''}`}
+                      style={{ ['--i' as string]: idx }}
+                    >
+                      <div className="m-row" onClick={() => setMobileExpandedApp(mobileExpandedApp === item.label ? null : item.label)}>
+                        <span>{item.label}</span>
+                      </div>
+                      <div className="m-subs" aria-hidden={mobileExpandedApp !== item.label}>
+                        {item.links.map((sub) => (
+                          <div
+                            key={navSubLabel(sub)}
+                            className="m-sub-i"
+                            onMouseDown={(event) => {
+                              if (!isPrimaryPointerDown(event)) return;
+                              event.preventDefault();
+                              followNavUrl(localizePath(navSubUrl(item, sub)), () => setIsMobileMenuOpen(false));
+                            }}
+                          >
+                            {navSubLabel(sub)}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="m-subs" aria-hidden={mobileExpandedApp !== item.label}>
-                      {item.links.map((sub) => (
-                        <div
-                          key={navSubLabel(sub)}
-                          className="m-sub-i"
-                          onMouseDown={(event) => {
-                            if (!isPrimaryPointerDown(event)) return;
-                            event.preventDefault();
-                            followNavUrl(localizePath(navSubUrl(item, sub)), () => setIsMobileMenuOpen(false));
-                          }}
-                        >
-                          {navSubLabel(sub)}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+                  ))}
+                </div>
+              </div>,
+              document.body,
+            )}
 
           <main
             style={{
@@ -995,20 +1040,17 @@ export default function ClientLayout({
 
           {/* Roooll：咨询抽屉 */}
           <div
-            className={`exclusive-final-drawer ${isInquiryOpen ? 'open' : ''}`}
+            className={`exclusive-final-drawer roooll-liquid-glass roooll-liquid-glass--dark ${isInquiryOpen ? 'open' : ''}`}
             style={{
               position: 'fixed', top: 0, right: 0, bottom: 0, width: '100%', maxWidth: '480px',
-              backgroundColor: 'rgba(28, 28, 30, 0.32)', 
-              backdropFilter: 'blur(44px) saturate(185%) brightness(88%)',
-              WebkitBackdropFilter: 'blur(44px) saturate(185%) brightness(88%)',
               zIndex: 1000000,
               transform: isInquiryOpen ? 'translate3d(0, 0, 0)' : 'translate3d(104%, 0, 0)',
               opacity: isInquiryOpen ? 1 : 0,
               transition: `transform 0.72s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.38s ease, visibility 0s linear ${isInquiryOpen ? '0s' : '0.72s'}`,
               visibility: isInquiryOpen ? 'visible' : 'hidden',
               pointerEvents: isInquiryOpen ? 'auto' : 'none',
-              borderLeft: '1px solid rgba(255,255,255,0.1)', color: '#fff',
-              display: 'flex', flexDirection: 'column', boxShadow: '-24px 0 80px rgba(0,0,0,0.34)',
+              color: '#fff',
+              display: 'flex', flexDirection: 'column',
               overscrollBehavior: 'contain',
               WebkitOverflowScrolling: 'touch',
             }}
@@ -1078,6 +1120,7 @@ export default function ClientLayout({
             </div>
           </div>
         </InquiryContext.Provider>
+        <CookieConsent />
       </SiteLangContext.Provider>
 
         <style jsx global>{`
@@ -1089,32 +1132,9 @@ export default function ClientLayout({
           body { margin: 0; overflow-x: hidden; }
           html.is-arm-immersive-route, body.is-arm-immersive-route { overflow-x: clip; }
           .nav-container { width: 100%; max-width: var(--roooll-w); margin: 0 auto; padding: 0 22px; display: flex; justify-content: space-between; align-items: center; height: 100%; box-sizing: border-box; }
-          .roooll-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); background: rgba(251,251,253,0.2); backdrop-filter: saturate(135%) blur(8px); z-index: var(--z-nav); border-bottom: 1px solid rgba(0,0,0,0.012); transition: background 0.38s ease, backdrop-filter 0.38s ease, -webkit-backdrop-filter 0.38s ease, transform 0.78s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s ease, border-color 0.24s ease, color 0.32s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
+          .roooll-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); z-index: var(--z-nav); transition: transform 0.78s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s ease, color 0.32s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
           .roooll-nav.slide-up { transform: translateY(-104%); opacity: 0; pointer-events: none; }
-          .roooll-nav.is-dark { background: rgba(22, 22, 23, 0.16); color: #f5f5f7; border-bottom-color: rgba(255,255,255,0.02); }
-          .roooll-nav.is-home:not(.search-mode) {
-            border-bottom: none !important;
-            box-shadow: none !important;
-          }
-          .roooll-nav.home-clear {
-            background: transparent !important;
-            border-bottom: none !important;
-            box-shadow: none !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-          }
-          .roooll-nav.home-ghost:not(.search-mode) {
-            background: rgba(251, 251, 253, 0.026) !important;
-            backdrop-filter: saturate(165%) blur(4px) !important;
-            -webkit-backdrop-filter: saturate(165%) blur(4px) !important;
-          }
-          .roooll-nav.home-ghost.is-dark:not(.search-mode) {
-            background: rgba(22, 22, 23, 0.038) !important;
-            color: #f5f5f7;
-            backdrop-filter: saturate(155%) blur(5px) !important;
-            -webkit-backdrop-filter: saturate(155%) blur(5px) !important;
-          }
-          .roooll-nav.search-mode { background: #fff !important; border-bottom: 1px solid rgba(0,0,0,0.06) !important; }
+          .roooll-nav.is-home:not(.search-mode) { box-shadow: none !important; }
           .roooll-nav { --logo-cutout: #ffffff; }
           .roooll-nav.is-dark { --logo-cutout: #161617; }
           /* Desktop-only (styled-jsx loads after globals.css; unscoped rules override max-width:734px) */
@@ -1143,8 +1163,8 @@ export default function ClientLayout({
             .is-dark .lang-pc-switch:focus-visible { background: rgba(255,255,255,0.18); }
             .mobile-utility { display: none; align-items: center; gap: 15px; }
           }
-          .mega-menu-hard-layer { position: absolute; top: var(--nav-h); left: 0; width: 100%; background: #fbfbfd; height: 320px; border-bottom: 1px solid #d2d2d7; z-index: 9998; animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-          .mega-menu-hard-layer.is-dark { background: #161617; border-bottom-color: #424245; color: #f5f5f7; }
+          .mega-menu-hard-layer { position: absolute; top: var(--nav-h); left: 0; width: 100%; height: 320px; z-index: 9998; animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+          .mega-menu-hard-layer.is-dark { color: #f5f5f7; }
           @keyframes slideDown { from { height: 0; opacity: 0; } to { height: 320px; opacity: 1; } }
           .menu-inner { align-items: flex-start !important; padding-top: 40px !important; }
           .menu-label { font-size: 12px; color: #6e6e73; margin-bottom: 15px; }
@@ -1165,8 +1185,8 @@ export default function ClientLayout({
             from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
           }
-          .search-panel-layer { position: absolute; top: 0; left: 0; width: 100%; height: 0; background: rgba(251,251,253,0.96); backdrop-filter: saturate(180%) blur(26px); -webkit-backdrop-filter: saturate(180%) blur(26px); overflow: hidden; transition: height 0.36s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.24s ease; z-index: 10000; visibility: hidden; opacity: 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
-          .search-panel-layer.is-dark { background: rgba(22,22,23,0.92) !important; color: #f5f5f7; border-bottom-color: rgba(255,255,255,0.1); }
+          .search-panel-layer { position: absolute; top: 0; left: 0; width: 100%; height: 0; overflow: hidden; transition: height 0.36s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.24s ease; z-index: 10000; visibility: hidden; opacity: 0; }
+          .search-panel-layer.is-dark { color: #f5f5f7; }
           .search-panel-layer.active { height: 460px; visibility: visible; opacity: 1; }
           .search-inner { padding-top: 54px !important; padding-bottom: 34px !important; flex-direction: column !important; align-items: flex-start !important; }
           .search-bar { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 0 14px; box-sizing: border-box; background: rgba(255,255,255,0.72); box-shadow: 0 8px 30px rgba(0,0,0,0.06); overflow: hidden; }

@@ -14,7 +14,10 @@ export function RCoreBrandTopStrip({ lang, messagesPageKey = 'r_lite' }: Props) 
   const home = `/${lang}`;
 
   return (
-    <nav className="nav-sub nav-sub-enter rcore-brand-top" aria-label={copy.brand_top_aria}>
+    <nav
+      className="nav-sub nav-sub-enter rcore-brand-top"
+      aria-label={copy.brand_top_aria}
+    >
       <div className="rcore-brand-top__inner">
         <Link href={home} className="rcore-brand-top__logo-link" aria-label={brandAria}>
           <svg className="rcore-brand-top__logo" width={40} height={40} viewBox="0 0 128 128" role="img" aria-hidden>

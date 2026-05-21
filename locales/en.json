@@ -62,11 +62,11 @@
       "ctaInquiryDefault": "Inquiry"
     },
     "cookieConsent": {
-      "title": "Cookies on Roooll.com",
-      "body": "We use essential cookies for language preference. With your consent, we also use analytics cookies (Google Analytics) and B2B marketing tags (LinkedIn Insight) to measure visits and improve our Cobot site.",
-      "privacyLink": "Privacy Policy",
-      "acceptAll": "Accept all",
-      "essentialOnly": "Essential only"
+      "title": "Cookie preferences",
+      "body": "Essential cookies save language; analytics only with consent.",
+      "privacyLink": "Privacy",
+      "acceptAll": "Accept",
+      "essentialOnly": "Essential"
     }
   },
   "drawer": {
@@ -349,7 +349,7 @@
             "kicker": "Form and footprint",
             "title": "Mass, reduced.",
             "subtitle": "Space, reclaimed.",
-            "body": "{{payload}} rated payload in an ~{{weight}} self-contained chassis. By integrating the entire controller directly into the die-cast base, r-Lite delivers agile {{reach}} reach with no external cabinet clutter—zero wasted floor space on a {{footprint}} footprint.",
+            "body": "{{payload}} rated payload in an ~{{weight}} self-contained chassis. By integrating the entire controller directly into the die-cast base, r-Lite delivers agile {{reach}} reach with no external cabinet clutter—zero wasted floor space on a {{footprint}} footprint, with straightforward acquisition and spares and less integration overhead.",
             "badge": "{{reach}} reach · {{footprint}} base · ~{{weight}}"
           },
           {
@@ -395,7 +395,7 @@
           },
           {
             "title": "Disruptive ROI",
-            "body": "Vertical integration. Unmatched automation economics. Because we own the complete R&D and manufacturing chain of core robotic components, we eliminate legacy hardware markups. At a typical {{avgPower}} average draw, r-Lite can reach full cost recovery in as little as 30 days in representative cells—subject to shift model, labor, and tooling.",
+            "body": "Vertical integration keeps acquisition and spares straightforward, so representative cells can earn back labor and integration spend sooner (shift model and tooling dependent).",
             "highlight": "Efficiency on your balance sheet."
           },
           {
@@ -421,7 +421,7 @@
           }
         ],
         "r_family_kicker": "All in r family.",
-        "r_family_title": "Every reach. Every load.",
+        "r_family_title": "Every reach & Load",
         "r_family_subtitle": "All in r-series",
         "r_family_body": "Whatever your line demands, the R-family delivers. From ultra-compact workstation companions to robust, high-payload industrial arms, Roooll r-series spans a complete spectrum of reach and payload configurations—one safety story, one tooling mindset, one upgrade path.",
         "tail_title": "Your next cell starts here.",
@@ -483,7 +483,7 @@
             "kicker": "Heavy-duty envelope",
             "title": "30 kg rated.",
             "subtitle": "1402 mm reach.",
-            "body": "{{payload}} nominal payload and {{reach}} reach in a ~{{weight}} industrial cobot built for palletizing, machine tending, and end-of-line transfer—{{tcpSpeed}} TCP and a {{footprint}} base footprint sized for real factory floors.",
+            "body": "{{payload}} nominal payload and {{reach}} reach in a ~{{weight}} industrial cobot built for palletizing, machine tending, and end-of-line transfer—fewer stacked machines, fence layers, and integration rework than a traditional heavy cell. {{tcpSpeed}} TCP and a {{footprint}} base footprint sized for real factory floors.",
             "badge": "{{payload}} · {{reach}} · {{tcpSpeed}} TCP"
           },
           {
@@ -529,7 +529,7 @@
           },
           {
             "title": "Full-stack economics",
-            "body": "Stop paying bloated legacy markups. Vertical integration across core component R&D and manufacturing compresses cost without sacrificing industrial grade. At a typical {{avgPower}} average draw, representative cells can break even within the first month of deployment—subject to shift model, labor, and tooling.",
+            "body": "When one flagship arm replaces multiple machines or a fenced setup, footprint, integration, and spares fold into a clearer TCO.",
             "highlight": "Friction-free ROI."
           },
           {

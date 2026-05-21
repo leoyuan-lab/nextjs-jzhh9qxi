@@ -15,7 +15,7 @@ import {
   applyAdvisorFlangeMaterial,
   applyRcoreCamera,
   applyRcoreViewerLighting,
-  advPanelScrollMotion,
+  armImmersiveSubnavOpacities,
   armMainNavProgressFromScrollY,
   cameraForFilmSlice,
   clearViewerMotion,
@@ -68,6 +68,7 @@ export function CobotImmersivePageClient({
     immersiveProductId === 'r-ultra' ? cobotGlbModels.rUltraFr30 : cobotGlbModels.rLiteFr3C;
   const [lang, setLang] = useState<AppLocale>(initialLang);
   const [scrollVal, setScrollVal] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const mvRef = useRef<HTMLElement>(null);
   const fixedStageRef = useRef<HTMLDivElement>(null);
   const modelInnerRef = useRef<HTMLDivElement>(null);
@@ -111,8 +112,8 @@ export function CobotImmersivePageClient({
     window.addEventListener('langChange', syncLang);
 
     const handleScroll = () => {
-      const y = window.scrollY;
-      setScrollVal(y);
+      if (isMobileNavScrollLocked()) return;
+      setScrollVal(window.scrollY);
     };
     window.scrollTo(0, 0);
     requestAnimationFrame(() => window.scrollTo(0, 0));
@@ -260,23 +261,52 @@ export function CobotImmersivePageClient({
     };
   }, [scrollVal]);
 
+  useEffect(() => {
+    const onMobileMenu = (event: Event) => {
+      setMobileMenuOpen(Boolean((event as CustomEvent<{ open?: boolean }>).detail?.open));
+    };
+    window.addEventListener('roooll-mobile-menu', onMobileMenu);
+    return () => window.removeEventListener('roooll-mobile-menu', onMobileMenu);
+  }, []);
+
   const filmEl = filmRootRef.current;
-  const filmSlice = filmEl ? computeFilmScrollSlice(filmEl, false) : null;
-  const navProgress = armMainNavProgressFromScrollY(filmEl, scrollVal);
-  const isNavHidden = navProgress > 0.98;
-  const vh = typeof window !== 'undefined' ? window.innerHeight : 900;
-  const appEl = appSectionRef.current;
-  const appReached = Boolean(
-    isNavHidden && appEl && appEl.getBoundingClientRect().top < vh * 0.92,
+  const reducedMotion =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const subnavFade = armImmersiveSubnavOpacities(
+    filmEl,
+    scrollVal,
+    appSectionRef.current,
+    mobileMenuOpen,
+    reducedMotion,
   );
-  const brandStripOpacity =
-    filmSlice && filmSlice.si >= 1
-      ? filmSlice.si === 1
-        ? advPanelScrollMotion(filmSlice.local).opacity
-        : 1
-      : 0;
-  const showBrandStrip = brandStripOpacity > 0.02 && !appReached;
-  const showConsultNav = isNavHidden && appReached;
+  const brandStripOpacity = subnavFade.brand;
+  const consultNavOpacity = subnavFade.consult;
+  const [displayBrand, setDisplayBrand] = useState(0);
+  const [displayConsult, setDisplayConsult] = useState(0);
+  const brandTargetRef = useRef(0);
+  const consultTargetRef = useRef(0);
+  brandTargetRef.current = brandStripOpacity;
+  consultTargetRef.current = consultNavOpacity;
+
+  useEffect(() => {
+    let frame = 0;
+    const ease = 0.14;
+    const tick = () => {
+      setDisplayBrand((prev) => {
+        const t = brandTargetRef.current;
+        const next = prev + (t - prev) * ease;
+        return Math.abs(t - next) < 0.002 ? t : next;
+      });
+      setDisplayConsult((prev) => {
+        const t = consultTargetRef.current;
+        const next = prev + (t - prev) * ease;
+        return Math.abs(t - next) < 0.002 ? t : next;
+      });
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   return (
     <div className="roooll-wrapper arm-page-root">
@@ -316,22 +346,32 @@ export function CobotImmersivePageClient({
         </div>
       </div>
 
-      {showBrandStrip ? (
-        <div
-          className="rcore-brand-top-mount"
-          style={{ opacity: brandStripOpacity }}
-          aria-hidden={brandStripOpacity < 0.05}
-        >
-          <RCoreBrandTopStrip lang={lang} messagesPageKey={messagesPageKey} />
-        </div>
-      ) : null}
-      {showConsultNav && (
+      <div
+        className="rcore-brand-top-mount"
+        style={{
+          opacity: displayBrand,
+          transform: `translate3d(0, ${((1 - displayBrand) * -52).toFixed(2)}px, 0)`,
+          pointerEvents: displayBrand > 0.02 ? 'auto' : 'none',
+        }}
+        aria-hidden={displayBrand < 0.05}
+      >
+        <RCoreBrandTopStrip lang={lang} messagesPageKey={messagesPageKey} />
+      </div>
+      <div
+        className="rcore-consult-nav-mount"
+        style={{
+          opacity: displayConsult,
+          transform: `translate3d(0, ${((1 - displayConsult) * -56).toFixed(2)}px, 0)`,
+          pointerEvents: displayConsult > 0.02 ? 'auto' : 'none',
+        }}
+        aria-hidden={displayConsult < 0.05}
+      >
         <RCoreAppStickySubnav
           lang={lang}
           productLineLabel={productLineLabel}
           messagesPageKey={messagesPageKey}
         />
-      )}
+      </div>
 
       <RCoreScrollFilm
         lang={lang}

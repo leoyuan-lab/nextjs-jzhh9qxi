@@ -3,14 +3,14 @@ import { headers } from 'next/headers';
 import './globals.css';
 import ClientLayout from './ClientLayout';
 import { Suspense } from 'react';
-import { CookieConsent } from '@/components/CookieConsent';
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import { GoogleAnalyticsPageView } from '@/components/GoogleAnalyticsPageView';
 import { OrganizationJsonLd } from '@/components/OrganizationJsonLd';
 import { getRequestSiteOrigin } from '@/lib/site-origin';
-import { rootMetadata } from '@/lib/site-seo';
+import { rootMetadata, rootViewport } from '@/lib/site-seo';
 
 export const metadata = rootMetadata;
+export const viewport = rootViewport;
 
 export default async function RootLayout({
   children,
@@ -31,15 +31,14 @@ export default async function RootLayout({
   const siteOrigin = await getRequestSiteOrigin();
 
   return (
-    <html lang={initialLang} suppressHydrationWarning>
-      <body style={{ margin: 0 }}>
+    <html lang={initialLang} suppressHydrationWarning style={{ margin: 0 }}>
+      <body style={{ margin: 0, padding: 0 }}>
         <GoogleAnalytics />
         <Suspense fallback={null}>
           <GoogleAnalyticsPageView />
         </Suspense>
         <OrganizationJsonLd origin={siteOrigin} />
         <ClientLayout initialLang={initialLang}>{children}</ClientLayout>
-        <CookieConsent />
       </body>
     </html>
   );
