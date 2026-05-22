@@ -13,6 +13,7 @@ import {
   SELECTOR_LINEUP_I18N,
   VariantDetailPortal,
 } from '@/components/selector/SelectorLineupUi';
+import { SelectorJourneySection } from '@/components/selector/SelectorJourneySection';
 import { trackEvent } from '@/lib/analytics';
 import { openInquiry } from '@/lib/open-inquiry';
 import { useSiteLang } from '@/lib/site-lang-context';
@@ -213,72 +214,74 @@ export default function AllCobotsSpecsClient() {
         </p>
       </section>
 
-      <div className="relative bg-transparent pb-16 md:pb-24">
-        <div
-          ref={scrollerRef}
-          className={`selector-scroller roooll-hscroll flex snap-x snap-mandatory gap-5 overflow-x-auto overflow-y-visible bg-transparent pb-3 pt-3 pl-0 pr-0 md:gap-6 md:pb-4 md:pt-4 md:pl-[22px] md:pr-[22px] ${
-            enableMagnetActive && isInteracting ? 'is-interacting' : ''
-          }`}
-          style={{ WebkitOverflowScrolling: 'touch', scrollPaddingLeft: 22, scrollPaddingRight: 22 }}
-          aria-label={safeLang === 'zh' ? '机型横向列表' : 'Model lineup'}
-          onPointerEnter={(e) => {
-            if (enableMagnetActive) return;
-            lastPointerRef.current = { x: e.clientX, y: e.clientY };
-            updateDesktopHoverFromPointer();
-          }}
-          onPointerLeave={() => {
-            if (enableMagnetActive) return;
-            lastPointerRef.current = null;
-            setDesktopHoverId(null);
-          }}
-          onScroll={() => {
-            if (enableMagnetActive) {
+      <div className="relative bg-transparent pb-8 md:pb-10">
+        <div className="selector-scroller-stage">
+          <div
+            ref={scrollerRef}
+            className={`selector-scroller roooll-hscroll flex snap-x snap-mandatory gap-5 overflow-x-auto overflow-y-visible bg-transparent pl-0 pr-0 md:gap-6 md:pl-[22px] md:pr-[22px] ${
+              enableMagnetActive && isInteracting ? 'is-interacting' : ''
+            }`}
+            style={{ WebkitOverflowScrolling: 'touch', scrollPaddingLeft: 22, scrollPaddingRight: 22 }}
+            aria-label={safeLang === 'zh' ? '机型横向列表' : 'Model lineup'}
+            onPointerEnter={(e) => {
+              if (enableMagnetActive) return;
+              lastPointerRef.current = { x: e.clientX, y: e.clientY };
+              updateDesktopHoverFromPointer();
+            }}
+            onPointerLeave={() => {
+              if (enableMagnetActive) return;
+              lastPointerRef.current = null;
+              setDesktopHoverId(null);
+            }}
+            onScroll={() => {
+              if (enableMagnetActive) {
+                markInteracting();
+                scheduleMagnetScrollUpdate();
+                return;
+              }
+              updateDesktopHoverFromPointer();
+            }}
+            onPointerDown={() => {
+              if (!enableMagnetActive) return;
               markInteracting();
-              scheduleMagnetScrollUpdate();
-              return;
-            }
-            updateDesktopHoverFromPointer();
-          }}
-          onPointerDown={() => {
-            if (!enableMagnetActive) return;
-            markInteracting();
-            updateActiveFromCenter();
-          }}
-          onPointerUp={markInteracting}
-          onPointerCancel={markInteracting}
-        >
-          <div
-            className="shrink-0 snap-none md:hidden"
-            style={{ width: 'max(22px, calc(50vw - min(46vw, 204px)))' }}
-            aria-hidden
-          />
-          {lineup.map((item, index) => (
+              updateActiveFromCenter();
+            }}
+            onPointerUp={markInteracting}
+            onPointerCancel={markInteracting}
+          >
             <div
-              key={item.id}
-              ref={(el) => {
-                cardRefs.current[item.id] = el;
-              }}
-              className={`selector-card-shell ${
-                enableMagnetActive && activeId === item.id ? 'is-active' : ''
-              } ${!enableMagnetActive && desktopHoverId === item.id ? 'is-hovered' : ''}`}
-            >
-              <SelectorLineupCard
-                item={item}
-                lang={safeLang}
-                t={t}
-                index={index}
-                onOpenDetail={() => setDetailId(item.id)}
-                onOpenInquiry={() => openInquiryForItem(item)}
-                deferImageProcessingUntilVisible
-              />
-            </div>
-          ))}
-          <div
-            className="shrink-0 snap-none md:hidden"
-            style={{ width: 'max(22px, calc(50vw - min(46vw, 204px)))' }}
-            aria-hidden
-          />
-          <div className="hidden w-8 shrink-0 snap-none md:block" aria-hidden />
+              className="shrink-0 snap-none md:hidden"
+              style={{ width: 'max(22px, calc(50vw - min(46vw, 204px)))' }}
+              aria-hidden
+            />
+            {lineup.map((item, index) => (
+              <div
+                key={item.id}
+                ref={(el) => {
+                  cardRefs.current[item.id] = el;
+                }}
+                className={`selector-card-shell ${
+                  enableMagnetActive && activeId === item.id ? 'is-active' : ''
+                } ${!enableMagnetActive && desktopHoverId === item.id ? 'is-hovered' : ''}`}
+              >
+                <SelectorLineupCard
+                  item={item}
+                  lang={safeLang}
+                  t={t}
+                  index={index}
+                  onOpenDetail={() => setDetailId(item.id)}
+                  onOpenInquiry={() => openInquiryForItem(item)}
+                  deferImageProcessingUntilVisible
+                />
+              </div>
+            ))}
+            <div
+              className="shrink-0 snap-none md:hidden"
+              style={{ width: 'max(22px, calc(50vw - min(46vw, 204px)))' }}
+              aria-hidden
+            />
+            <div className="hidden w-8 shrink-0 snap-none md:block" aria-hidden />
+          </div>
         </div>
         <HorizontalScrollDots
           count={lineup.length}
@@ -287,6 +290,8 @@ export default function AllCobotsSpecsClient() {
           onSelect={scrollToLineupIndex}
         />
       </div>
+
+      <SelectorJourneySection />
 
       <VariantDetailPortal lineup={lineup} detailId={detailId} onClose={() => setDetailId(null)} lang={safeLang} />
     </div>

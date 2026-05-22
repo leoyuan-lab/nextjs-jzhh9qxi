@@ -25,6 +25,12 @@ export const BC_NAV_SUPPORT = {
   en: 'Support',
 } as const;
 
+export const BC_NAV_ACCESSORIES = {
+  href: '/accessories',
+  zh: '配件',
+  en: 'Accessories',
+} as const;
+
 export const BC_NAV_ABOUT = {
   href: '/about/story',
   zh: '关于我们',

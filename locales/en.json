@@ -33,7 +33,10 @@
     },
     "accessories_section": "Accessories",
     "accessories": {
-      "catalog": "Cobot Accessories Ecosystem"
+      "overview": "Overview",
+      "controllers": "Control Cabinets",
+      "grippers": "Grippers",
+      "fixtures": "Fixtures"
     },
     "about_section": "About",
     "about": {
@@ -168,7 +171,38 @@
   "pages": {
     "all_cobots_specs": {
       "metaTitleFocus": "Full r-Lite / r-Core Cobot lineup & specs",
-      "metaDescription": "Browse every r‑Series Cobot variant matrix—r-Lite, r-Core, r-Reach, r-Max, r-Ultra—with payloads, reach, joint axes, and power in one place."
+      "metaDescription": "Browse every r‑Series Cobot variant matrix—r-Lite, r-Core, r-Reach, r-Max, r-Ultra—with payloads, reach, joint axes, and power in one place.",
+      "journey": {
+        "headlineLines": ["Not sure?", "Select with more confidence."],
+        "headline": "The right arm for your line.",
+        "kicker": "Choose with confidence",
+        "title": "Not sure yet?",
+        "subtitle": "Browse every variant above—or let these two tools narrow the field.",
+        "advisor": {
+          "eyebrow": "Get matched",
+          "title": "Product Advisor",
+          "summary": "Answer five quick questions. We recommend a primary model and an upgrade path—with an inquiry draft ready to send.",
+          "meta": "5 questions · ~2 min",
+          "cta": "Start the advisor",
+          "features": [
+            "Load, reach, and environment fit",
+            "Primary model plus upgrade path",
+            "Inquiry draft included"
+          ]
+        },
+        "comparison": {
+          "eyebrow": "Compare specs",
+          "title": "Side-by-side comparison",
+          "summary": "Pick any three models from the lineup. Payload, reach, joint axes, and control cabinets—in one shareable table.",
+          "meta": "3 models · 16+ spec rows",
+          "cta": "Compare models",
+          "features": [
+            "Every r-series variant in the picker",
+            "Joint axes and controller rows",
+            "Shareable comparison link"
+          ]
+        }
+      }
     },
     "humanoid": {
       "metaTitleFocus": "Humanoid Embodied-AI Cobot vision",
@@ -244,10 +278,59 @@
     },
     "accessories": {
       "introTitle": "Cobot Accessories Ecosystem",
-      "introBody": "Browse control cabinets, grippers, and fixtures by category. Controller specs come from product brochures; gripper and fixture cards are placeholders—expand specs or inquire in one tap.",
+      "introBody": "External control cabinets, grippers, and fixtures built around the same r-Series interfaces and support path. Browse by category—or jump into live control-cabinet specs below.",
       "swipeHint": "Swipe horizontally for more items",
       "expandSpecs": "Full specs",
       "inquiry": "Inquire",
+      "subnavAria": "Accessories category navigation",
+      "featured": {
+        "viewAll": "Explore all control cabinets"
+      },
+      "comingSoon": {
+        "grippers": {
+          "title": "Grippers",
+          "body": "Parallel grippers, vacuum kits, and more EOAT are being finalized—this page will use the same browse experience when they launch.",
+          "badge": "Coming soon"
+        },
+        "fixtures": {
+          "title": "Fixtures",
+          "body": "Quick-change plates, assembly tooling, and locating solutions will roll out here. Share your station details via inquiry for early guidance.",
+          "badge": "Coming soon"
+        }
+      },
+      "categories": {
+        "sectionTitle": "Explore by category",
+        "cards": {
+          "controllers": {
+            "title": "Control Cabinets",
+            "summary": "External cabinets, fieldbus, and IO.",
+            "cta": "Explore control cabinets",
+            "liveBadge": "Available",
+            "soonBadge": "Coming soon"
+          },
+          "grippers": {
+            "title": "Grippers",
+            "summary": "EOAT picking on ISO 9409-1 flanges.",
+            "cta": "Explore grippers",
+            "liveBadge": "Available",
+            "soonBadge": "Coming soon"
+          },
+          "fixtures": {
+            "title": "Fixtures",
+            "summary": "Quick change, locating, and assembly tooling.",
+            "cta": "Explore fixtures",
+            "liveBadge": "Available",
+            "soonBadge": "Coming soon"
+          }
+        }
+      },
+      "controllersPage": {
+        "metaTitleFocus": "Cobot External Control Cabinets",
+        "metaDescription": "Roooll external control cabinet models—power, fieldbus, dimensions, and applicable r-Series cobot pairings for integration quotes.",
+        "eyebrow": "Accessories · Control Cabinets",
+        "title": "External Control Cabinets",
+        "intro": "Browse external control cabinet models with brochure-grade specs—power, fieldbus options, dimensions, and applicable r-Series cobot pairings."
+      },
       "lanes": {
         "controllers": {
           "title": "Control Cabinets",

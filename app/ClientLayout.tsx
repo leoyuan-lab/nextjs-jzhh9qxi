@@ -161,7 +161,12 @@ function buildNav(messages: MessagesFile): NavSection[] {
     {
       label: n.accessories_section,
       url: '/accessories',
-      links: [{ label: n.accessories.catalog, url: '/accessories' }],
+      links: [
+        { label: n.accessories.overview, url: '/accessories' },
+        { label: n.accessories.controllers, url: '/accessories/controllers' },
+        { label: n.accessories.grippers, url: '/accessories#accessories-grippers' },
+        { label: n.accessories.fixtures, url: '/accessories#accessories-fixtures' },
+      ],
     },
     {
       label: n.about_section,

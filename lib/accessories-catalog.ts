@@ -8,6 +8,42 @@ import {
 
 export type AccessoryLaneId = 'controllers' | 'grippers' | 'fixtures';
 
+export const ACCESSORY_LANE_ORDER: readonly AccessoryLaneId[] = [
+  'controllers',
+  'grippers',
+  'fixtures',
+];
+
+export const ACCESSORIES_HUB_TOP_ID = 'accessories-top';
+
+export function accessoryLaneSectionId(lane: AccessoryLaneId): string {
+  return `accessories-${lane}`;
+}
+
+export function accessoryHubHref(lane?: AccessoryLaneId): string {
+  if (!lane) return '/accessories';
+  return accessoryLaneHref(lane);
+}
+
+/** Lanes with a dedicated category URL (expand when more SKUs ship). */
+export const ACCESSORY_LANE_SPOKE_PATH: Partial<Record<AccessoryLaneId, string>> = {
+  controllers: '/accessories/controllers',
+};
+
+export function accessoryLaneHasSpoke(lane: AccessoryLaneId): boolean {
+  return lane in ACCESSORY_LANE_SPOKE_PATH;
+}
+
+export function accessoryLaneHref(lane: AccessoryLaneId): string {
+  const spoke = ACCESSORY_LANE_SPOKE_PATH[lane];
+  if (spoke) return spoke;
+  return `/accessories#${accessoryLaneSectionId(lane)}`;
+}
+
+export function accessoryHubPreviewLanes(): AccessoryLaneId[] {
+  return [...ACCESSORY_LANE_ORDER];
+}
+
 export interface AccessoryCatalogItem {
   id: string;
   lane: AccessoryLaneId;
@@ -203,6 +239,57 @@ export function buildAccessoriesPageJsonLd(
   const pageName =
     lang === 'zh' ? 'Roooll 协作机器人配件' : 'Roooll Cobot Accessories Ecosystem';
 
+  return buildAccessoriesCollectionJsonLd({
+    lang,
+    base,
+    pagePath: '/accessories',
+    pageName,
+    items,
+  });
+}
+
+export function buildAccessoriesLaneJsonLd(
+  lang: 'zh' | 'en',
+  origin: string,
+  lane: AccessoryLaneId,
+  items: readonly AccessoryCatalogItem[],
+) {
+  const spokePath = ACCESSORY_LANE_SPOKE_PATH[lane];
+  if (!spokePath) {
+    throw new Error(`No spoke path configured for accessories lane: ${lane}`);
+  }
+  const base = origin.replace(/\/$/, '');
+  const pageName =
+    lane === 'controllers'
+      ? lang === 'zh'
+        ? 'Roooll 协作机器人外置控制箱'
+        : 'Roooll Cobot External Control Cabinets'
+      : ml(items[0]?.schemaCategory ?? { zh: '配件', en: 'Accessories' }, lang);
+
+  return buildAccessoriesCollectionJsonLd({
+    lang,
+    base,
+    pagePath: spokePath,
+    pageName,
+    items,
+  });
+}
+
+function buildAccessoriesCollectionJsonLd({
+  lang,
+  base,
+  pagePath,
+  pageName,
+  items,
+}: {
+  lang: 'zh' | 'en';
+  base: string;
+  pagePath: string;
+  pageName: string;
+  items: readonly AccessoryCatalogItem[];
+}) {
+  const pageUrl = new URL(`/${lang}${pagePath}`, `${base}/`).href;
+
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -219,28 +306,33 @@ export function buildAccessoriesPageJsonLd(
         '@type': 'ItemList',
         '@id': `${pageUrl}#itemlist`,
         name: pageName,
-        itemListElement: items.map((item, index) => ({
-          '@type': 'ListItem',
-          position: index + 1,
-          item: {
-            '@type': 'Product',
-            '@id': `${pageUrl}#${item.id}`,
-            name: ml(item.name, lang),
-            description: ml(item.schemaDescription, lang),
-            sku: item.id,
-            url: `${pageUrl}#${item.id}`,
-            image: new URL(item.image, `${base}/`).href,
-            brand: { '@type': 'Brand', name: 'Roooll' },
-            manufacturer: { '@type': 'Organization', name: 'Roooll' },
-            category: ml(item.schemaCategory, lang),
-            offers: {
-              '@type': 'Offer',
-              availability: 'https://schema.org/InStock',
-              url: `${pageUrl}#${item.id}`,
-              seller: { '@type': 'Organization', name: 'Roooll' },
+        itemListElement: items.map((item, index) => {
+          const itemPath = ACCESSORY_LANE_SPOKE_PATH[item.lane] ?? pagePath;
+          const itemPageUrl = new URL(`/${lang}${itemPath}`, `${base}/`).href;
+          const itemUrl = `${itemPageUrl}#${item.id}`;
+          return {
+            '@type': 'ListItem',
+            position: index + 1,
+            item: {
+              '@type': 'Product',
+              '@id': itemUrl,
+              name: ml(item.name, lang),
+              description: ml(item.schemaDescription, lang),
+              sku: item.id,
+              url: itemUrl,
+              image: new URL(item.image, `${base}/`).href,
+              brand: { '@type': 'Brand', name: 'Roooll' },
+              manufacturer: { '@type': 'Organization', name: 'Roooll' },
+              category: ml(item.schemaCategory, lang),
+              offers: {
+                '@type': 'Offer',
+                availability: 'https://schema.org/InStock',
+                url: itemUrl,
+                seller: { '@type': 'Organization', name: 'Roooll' },
+              },
             },
-          },
-        })),
+          };
+        }),
       },
     ],
   };

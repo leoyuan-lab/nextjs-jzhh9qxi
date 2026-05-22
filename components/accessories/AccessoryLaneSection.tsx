@@ -10,23 +10,17 @@ import {
 import {
   accessoryItemsByLane,
   accessorySpecValue,
+  accessoryLaneSectionId,
   type AccessoryCatalogItem,
   type AccessoryLaneId,
 } from '@/lib/accessories-catalog';
-import { controllerSpecs } from '@/data/products';
 import { openInquiry } from '@/lib/open-inquiry';
-import { useSiteLang } from '@/lib/site-lang-context';
 
-type HubCopy = {
-  swipeHint: string;
+export type AccessoryLaneCopy = {
   expandSpecs: string;
   inquiry: string;
   lanes: Record<AccessoryLaneId, { title: string; aria: string; note?: string }>;
 };
-
-function laneItems(lane: AccessoryLaneId): readonly AccessoryCatalogItem[] {
-  return accessoryItemsByLane(lane);
-}
 
 function openInquiryForAccessory(item: AccessoryCatalogItem, lang: 'zh' | 'en') {
   const name = lang === 'zh' ? item.name.zh : item.name.en;
@@ -46,7 +40,7 @@ function AccessoryCard({
 }: {
   item: AccessoryCatalogItem;
   lang: 'zh' | 'en';
-  copy: HubCopy;
+  copy: AccessoryLaneCopy;
   cardRef?: (el: HTMLElement | null) => void;
   onLayoutChange?: () => void;
 }) {
@@ -113,18 +107,20 @@ function AccessoryCard({
   );
 }
 
-function AccessoryLane({
+export function AccessoryLaneSection({
   lane,
   lang,
   copy,
+  showHeader = true,
 }: {
   lane: AccessoryLaneId;
   lang: 'zh' | 'en';
-  copy: HubCopy;
+  copy: AccessoryLaneCopy;
+  showHeader?: boolean;
 }) {
   const laneCopy = copy.lanes[lane];
-  const items = laneItems(lane);
-  const sectionId = `accessories-${lane}`;
+  const items = accessoryItemsByLane(lane);
+  const sectionId = accessoryLaneSectionId(lane);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const snapRefs = useRef<(HTMLElement | null)[]>([]);
   snapRefs.current.length = items.length;
@@ -153,11 +149,22 @@ function AccessoryLane({
   }, []);
 
   return (
-    <section id={sectionId} className="accessories-lane" aria-labelledby={`${sectionId}-title`}>
-      <div className="accessories-lane-header">
-        <h2 id={`${sectionId}-title`}>{laneCopy.title}</h2>
-        {laneCopy.note ? <p className="accessories-lane-note">{laneCopy.note}</p> : null}
-      </div>
+    <section
+      id={sectionId}
+      className="accessories-lane"
+      aria-label={showHeader ? undefined : laneCopy.aria}
+      aria-labelledby={showHeader ? `${sectionId}-title` : undefined}
+    >
+      {showHeader ? (
+        <div className="accessories-lane-header">
+          <h2 id={`${sectionId}-title`}>{laneCopy.title}</h2>
+          {laneCopy.note ? <p className="accessories-lane-note">{laneCopy.note}</p> : null}
+        </div>
+      ) : laneCopy.note ? (
+        <div className="accessories-lane-header">
+          <p className="accessories-lane-note">{laneCopy.note}</p>
+        </div>
+      ) : null}
       <div className="accessories-lane-scroller-wrap">
         <div
           ref={scrollerRef}
@@ -185,29 +192,5 @@ function AccessoryLane({
         />
       </div>
     </section>
-  );
-}
-
-const LANE_ORDER: AccessoryLaneId[] = ['controllers', 'grippers', 'fixtures'];
-
-export function AccessoriesHub({ copy }: { copy: HubCopy }) {
-  const lang = useSiteLang();
-  const safeLang: 'zh' | 'en' = lang === 'en' ? 'en' : 'zh';
-  const integratedNote =
-    safeLang === 'zh' ? controllerSpecs.noteIntegrated.zh : controllerSpecs.noteIntegrated.en;
-  const copyWithNote: HubCopy = {
-    ...copy,
-    lanes: {
-      ...copy.lanes,
-      controllers: { ...copy.lanes.controllers, note: integratedNote },
-    },
-  };
-
-  return (
-    <div className="accessories-hub-lanes">
-      {LANE_ORDER.map((lane) => (
-        <AccessoryLane key={lane} lane={lane} lang={safeLang} copy={copyWithNote} />
-      ))}
-    </div>
   );
 }

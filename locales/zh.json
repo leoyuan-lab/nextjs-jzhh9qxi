@@ -33,7 +33,10 @@
     },
     "accessories_section": "配件",
     "accessories": {
-      "catalog": "配件生态"
+      "overview": "总览",
+      "controllers": "控制箱",
+      "grippers": "夹爪",
+      "fixtures": "夹具"
     },
     "about_section": "关于我们",
     "about": {
@@ -168,7 +171,38 @@
   "pages": {
     "all_cobots_specs": {
       "metaTitleFocus": "全系列 r-Lite / r-Core 协作机器人规格",
-      "metaDescription": "横向浏览 r-Lite、r-Core、r-Reach、r-Max、r-Ultra 等 r 系列协作机械臂全矩阵：负载、工作半径、关节轴、接口与功率要点一站对比。"
+      "metaDescription": "横向浏览 r-Lite、r-Core、r-Reach、r-Max、r-Ultra 等 r 系列协作机械臂全矩阵：负载、工作半径、关节轴、接口与功率要点一站对比。",
+      "journey": {
+        "headlineLines": ["还没想好？", "帮你选得更笃定些。"],
+        "headline": "找到产线合适的那一臂。",
+        "kicker": "从容选型",
+        "title": "还没想好？",
+        "subtitle": "上方已浏览全系，也可以用下面两种方式快速缩小范围。",
+        "advisor": {
+          "eyebrow": "智能推荐",
+          "title": "选型顾问",
+          "summary": "五个简单问题，帮你锁定主推机型与升级方案，咨询草稿一并备好。",
+          "meta": "5 个问题 · 约 2 分钟",
+          "cta": "开始选型",
+          "features": [
+            "按负载、臂展与环境匹配",
+            "主推 + 升级双机推荐",
+            "附带咨询草稿"
+          ]
+        },
+        "comparison": {
+          "eyebrow": "参数对比",
+          "title": "并排对比",
+          "summary": "任选三款机型，负载、臂展、关节轴与控制箱，一张表全部看清。",
+          "meta": "3 台 · 16+ 项参数",
+          "cta": "开始对比",
+          "features": [
+            "全系 11 款均可选",
+            "关节轴与控制箱对比",
+            "链接可分享保存"
+          ]
+        }
+      }
     },
     "humanoid": {
       "metaTitleFocus": "人形具身智能协作机器人愿景",
@@ -244,10 +278,59 @@
     },
     "accessories": {
       "introTitle": "协作机器人配件生态",
-      "introBody": "控制箱、夹爪与夹具按类横向浏览；控制箱规格来自产品手册，夹爪与夹具为占位条目，可展开规格或一键咨询。",
+      "introBody": "从外置控制箱到末端夹爪与工装，Roooll 配件与 r 系列协作臂同一套接口、同一套支持。按分类浏览，或从下方直接进入已上线规格。",
       "swipeHint": "左右滑动查看更多",
       "expandSpecs": "展开规格",
       "inquiry": "咨询",
+      "subnavAria": "配件分类导航",
+      "featured": {
+        "viewAll": "查看全部控制箱"
+      },
+      "comingSoon": {
+        "grippers": {
+          "title": "夹爪",
+          "body": "平行夹爪、真空吸盘与更多 EOAT 正在整理规格与适配清单，发布后将与此页同一套浏览体验。",
+          "badge": "即将发布"
+        },
+        "fixtures": {
+          "title": "夹具",
+          "body": "快换板、装配工装与定位方案将陆续上线；如需提前评估，可通过咨询说明工况。",
+          "badge": "即将发布"
+        }
+      },
+      "categories": {
+        "sectionTitle": "按分类探索",
+        "cards": {
+          "controllers": {
+            "title": "控制箱",
+            "summary": "外置控制柜、通信扩展与 IO。",
+            "cta": "探索控制箱",
+            "liveBadge": "已上线",
+            "soonBadge": "即将发布"
+          },
+          "grippers": {
+            "title": "夹爪",
+            "summary": "末端取放与 ISO 9409-1 法兰 EOAT。",
+            "cta": "探索夹爪",
+            "liveBadge": "已上线",
+            "soonBadge": "即将发布"
+          },
+          "fixtures": {
+            "title": "夹具",
+            "summary": "快换、定位与装配工装。",
+            "cta": "探索夹具",
+            "liveBadge": "已上线",
+            "soonBadge": "即将发布"
+          }
+        }
+      },
+      "controllersPage": {
+        "metaTitleFocus": "协作机器人外置控制箱",
+        "metaDescription": "Roooll 外置控制柜型号、功率、通信接口与适用机型一览；匹配 r-Core / r-Max 协作机械臂产线集成与询价。",
+        "eyebrow": "配件 · 控制箱",
+        "title": "外置控制箱",
+        "intro": "横向浏览外置控制柜型号：功率、通信接口、尺寸与适用 r 系列机型配对；规格来自产品手册，支持一键咨询。"
+      },
       "lanes": {
         "controllers": {
           "title": "控制箱",

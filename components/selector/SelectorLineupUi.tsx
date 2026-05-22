@@ -1,9 +1,11 @@
 'use client';
 import Image from 'next/image';
+import Link from 'next/link';
 import type { CSSProperties, HTMLAttributes, MouseEvent, RefObject } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
+  controllerDisplayForVariant,
   robotVariantBlueprintAlt,
   robotVariantBlueprintDescription,
   robotVariantImageAlt,
@@ -185,11 +187,13 @@ export const SELECTOR_LINEUP_I18N = {
       '在三个下拉框中各选一款不同的 r 系列变体。加粗放大的数字标示出机型之间的差异。',
     hero2ChooseModel: '选择机型',
     hero2Inquiry: '咨询',
+    controllerLabel: '控制箱',
     controllerSectionTitle: '外置控制箱（选配）',
     controllerSharedNote:
       '以下外置控制箱的 I/O、通讯协议与软件开发包等参数相同；差异主要在供电方式、功率档（2kW mini / 5kW）与重量。',
     controllerIntegrated: '控制箱集成于机器人底座（一体式）。',
     controllerAlternate: '另可选（直流版）',
+    controllerDcOptional: '直流版可选',
     controllerAlternateIntegratedSkip: '所选一体式机型无需外置控制箱。',
     controllerFullSpecs: '完整控制箱规格',
     /** `{family}` = product line display name, e.g. r-Lite */
@@ -218,11 +222,13 @@ export const SELECTOR_LINEUP_I18N = {
       'Pick a different r‑Series variant in each menu below. Highlighted numbers show where these models differ.',
     hero2ChooseModel: 'Choose models',
     hero2Inquiry: 'Inquiry',
+    controllerLabel: 'Controller',
     controllerSectionTitle: 'External control cabinet (optional)',
     controllerSharedNote:
       'External control cabinets share the same I/O, communication protocols, and SDK; differences are mainly power input (DC vs AC), power tier (2 kW mini / 5 kW), and weight.',
     controllerIntegrated: 'Control cabinet integrated in the robot base.',
     controllerAlternate: 'Also available (DC)',
+    controllerDcOptional: 'DC version optional',
     controllerAlternateIntegratedSkip: 'Integrated variants do not use an external cabinet.',
     controllerFullSpecs: 'Full controller specifications',
     specsGridAria: '{family} series technical specifications',
@@ -234,6 +240,74 @@ export type SelectorLineupCopy = (typeof SELECTOR_LINEUP_I18N)['zh'];
 
 /** 中/英文案对象联合（用于卡片 `t`，避免 `as const` 与 Pick 的 readonly 冲突） */
 export type SelectorLineupAnyLang = (typeof SELECTOR_LINEUP_I18N)[keyof typeof SELECTOR_LINEUP_I18N];
+
+function VariantControllerCardRow({
+  variantId,
+  lang,
+  t,
+}: {
+  variantId: string;
+  lang: 'zh' | 'en';
+  t: SelectorLineupAnyLang;
+}) {
+  const display = controllerDisplayForVariant(variantId, lang, { compact: true });
+  if (!display) return null;
+
+  return (
+    <div className="col-span-2">
+      <dt className="mb-0.5 font-medium text-[#86868b]">{t.controllerLabel}</dt>
+      <dd className="font-semibold leading-snug text-[#1d1d1f]">{display.primary}</dd>
+      {display.dcOptional ? (
+        <dd className="mt-0.5 text-[0.75rem] font-medium leading-snug text-[#6e6e73]">{t.controllerDcOptional}</dd>
+      ) : null}
+    </div>
+  );
+}
+
+function VariantControllerDetailBlock({
+  variantId,
+  lang,
+  t,
+  detailLineIndex,
+}: {
+  variantId: string;
+  lang: 'zh' | 'en';
+  t: SelectorLineupAnyLang;
+  detailLineIndex: number;
+}) {
+  const display = controllerDisplayForVariant(variantId, lang);
+  if (!display) return null;
+
+  const href = `/${lang}/accessories/controllers`;
+  const detailPrimary =
+    display.dcOptional && lang === 'zh'
+      ? `${display.primary}（默认推荐交流版）`
+      : display.dcOptional
+        ? `${display.primary} (AC recommended)`
+        : display.primary;
+
+  return (
+    <div
+      className="selector-detail-line mt-8 border-t border-black/[0.06] pt-5 sm:mt-10 sm:pt-6"
+      style={{ ['--detail-line-i' as string]: detailLineIndex } as CSSProperties}
+    >
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6e6e73] sm:text-xs">
+        {t.controllerLabel}
+      </p>
+      <p className="text-[0.9375rem] leading-relaxed text-[#424245] sm:text-[1.0625rem]">{detailPrimary}</p>
+      {display.secondary ? (
+        <p className="mt-1 text-[0.8125rem] leading-relaxed text-[#6e6e73] sm:text-[0.9375rem]">{display.secondary}</p>
+      ) : null}
+      {display.dcOptional ? (
+        <p className="mt-1 text-[0.8125rem] leading-relaxed text-[#6e6e73] sm:text-[0.9375rem]">{t.controllerDcOptional}</p>
+      ) : null}
+      <Link href={href} className="selector-journey-duo-link mt-3 inline-block text-[0.9375rem] sm:text-[1rem]">
+        {t.controllerFullSpecs}
+        <span aria-hidden> ›</span>
+      </Link>
+    </div>
+  );
+}
 
 /** Roooll UI 圆形按钮内图标：黑底上用 currentColor（白） */
 function RooollCirclePlusIcon({ className }: { className?: string }) {
@@ -640,7 +714,7 @@ export function SelectorLineupCard({
 
   return (
     <article
-      className={`selector-card-surface relative flex flex-col overflow-hidden rounded-[2rem] border border-black/[0.06] bg-[#f5f5f7] ${
+      className={`selector-card-surface relative flex flex-col overflow-hidden rounded-[2rem] bg-[#f5f5f7] ${
         embedded
           ? 'w-full max-w-[min(100%,428px)] shrink snap-none mx-auto'
           : 'w-[min(92vw,408px)] shrink-0 snap-center md:w-[428px] md:snap-start'
@@ -672,8 +746,8 @@ export function SelectorLineupCard({
               </div>
             )}
           </div>
-          <div className="grid min-h-[336px] grid-rows-[auto_auto_auto_1fr] px-8 pb-8 pt-6 text-left">
-            <h2 className="mb-3 min-h-[3.5rem] text-[1.5625rem] font-semibold leading-tight tracking-[-0.02em] text-[#1d1d1f]">
+          <div className="grid grid-rows-[auto_auto_auto_1fr] px-8 pb-6 pt-5 text-left">
+            <h2 className="mb-2 text-[1.5625rem] font-semibold leading-tight tracking-[-0.02em] text-[#1d1d1f]">
               {item.family.displayName}
               {variantShort ? (
                 <>
@@ -682,29 +756,30 @@ export function SelectorLineupCard({
                 </>
               ) : null}
             </h2>
-            <p className="mb-5 min-h-[4.75rem] line-clamp-3 whitespace-pre-line text-[0.9375rem] leading-relaxed text-[#424245]">
+            <p className="mb-2.5 line-clamp-3 whitespace-pre-line text-[0.9375rem] leading-snug text-[#424245]">
               {selectorSummarizeBody(lang === 'zh' ? item.description.zh : item.description.en)}
             </p>
             <dl
-              className="mb-4 grid grid-cols-2 gap-x-4 gap-y-3.5 text-[0.8125rem]"
+              className="mb-2.5 grid grid-cols-2 gap-x-4 gap-y-2 text-[0.8125rem]"
               aria-label={t.specsGridAria.replace('{family}', item.family.displayName)}
             >
               <div>
                 <dt className="mb-0.5 font-medium text-[#86868b]">{t.payload}</dt>
-                <dd className="font-semibold text-[#1d1d1f]">{item.payload}</dd>
+                <dd className="font-semibold text-[#1d1d1f]">{robotSpecDisplayText(item.payload, lang)}</dd>
               </div>
               <div>
                 <dt className="mb-0.5 font-medium text-[#86868b]">{t.reach}</dt>
-                <dd className="font-semibold text-[#1d1d1f]">{item.reach}</dd>
+                <dd className="font-semibold text-[#1d1d1f]">{robotSpecDisplayText(item.reach, lang)}</dd>
               </div>
               <div>
                 <dt className="mb-0.5 font-medium text-[#86868b]">{t.repeatability}</dt>
-                <dd className="font-semibold text-[#1d1d1f]">{item.repeatability}</dd>
+                <dd className="font-semibold text-[#1d1d1f]">{robotSpecDisplayText(item.repeatability, lang)}</dd>
               </div>
               <div>
                 <dt className="mb-0.5 font-medium text-[#86868b]">{t.weight}</dt>
-                <dd className="font-semibold text-[#1d1d1f]">{item.weight}</dd>
+                <dd className="font-semibold text-[#1d1d1f]">{robotSpecDisplayText(item.weight, lang)}</dd>
               </div>
+              <VariantControllerCardRow variantId={item.id} lang={lang} t={t} />
             </dl>
             <div className="mt-auto flex items-center justify-between gap-2 pt-1">
               {onOpenInquiry ? (
@@ -1049,6 +1124,12 @@ export function VariantDetailPortal({
                         })}
                       </dl>
                     </div>
+                    <VariantControllerDetailBlock
+                      variantId={detailItem.id}
+                      lang={lang}
+                      t={t}
+                      detailLineIndex={li++}
+                    />
                     <div className="h-8 sm:h-10" aria-hidden />
                   </>
                 );

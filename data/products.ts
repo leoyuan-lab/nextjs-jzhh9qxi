@@ -254,6 +254,57 @@ export function controllerRecommendationForVariant(
   return { kind: 'external', primary, alternate };
 }
 
+/** 卡片 / 详情：控制箱展示（主推荐 AC + 可选 DC 提示） */
+export function controllerDisplayForVariant(
+  variantId: string,
+  lang: 'zh' | 'en',
+  opts?: { compact?: boolean },
+): { primary: string; secondary?: string; dcOptional: boolean } | null {
+  const rec = controllerRecommendationForVariant(variantId);
+  if (!rec) return null;
+  if (rec.kind === 'integrated') {
+    return {
+      primary:
+        opts?.compact
+          ? lang === 'zh'
+            ? '集成于机器人底座'
+            : 'Integrated in robot base'
+          : lang === 'zh'
+            ? '控制箱集成于机器人底座，无需外置控制柜。'
+            : 'Control cabinet is integrated in the robot base—no external cabinet required.',
+      dcOptional: false,
+    };
+  }
+  const primary = lang === 'zh' ? rec.primary.name.zh : rec.primary.name.en;
+  const secondary = `${rec.primary.outputKw} kW · ${rec.primary.outputPower}`;
+  const dcOptional = rec.alternate.id !== rec.primary.id && rec.alternate.powerType === 'dc';
+  return { primary, secondary, dcOptional };
+}
+
+/** @deprecated Use `controllerDisplayForVariant` */
+export function controllerBriefForVariant(variantId: string, lang: 'zh' | 'en'): string | null {
+  return controllerDisplayForVariant(variantId, lang)?.primary ?? null;
+}
+
+/** @deprecated Use `controllerDisplayForVariant` */
+export function controllerDetailIntroForVariant(
+  variantId: string,
+  lang: 'zh' | 'en',
+): { primary: string; secondary?: string } | null {
+  const display = controllerDisplayForVariant(variantId, lang);
+  if (!display) return null;
+  if (display.dcOptional) {
+    return {
+      primary:
+        lang === 'zh'
+          ? `${display.primary}（默认推荐交流版）`
+          : `${display.primary} (AC recommended)`,
+      secondary: display.secondary,
+    };
+  }
+  return { primary: display.primary, secondary: display.secondary };
+}
+
 export const controllerSpecLabels = {
   name: { zh: '型号', en: 'Model' },
   ip: { zh: '防护等级', en: 'IP classification' },
@@ -677,7 +728,7 @@ export const rSeriesData: RobotFamily[] = [
       {
         id: 'fr16-std',
         name: '16kg 重载',
-        shortName: { zh: '16kg 重载', en: '16kg heavy-duty' },
+        shortName: { zh: '16', en: '16' },
         payload: '16kg（最大 20kg）',
         reach: '1034mm',
         repeatability: '±0.03mm',
@@ -716,7 +767,7 @@ export const rSeriesData: RobotFamily[] = [
       {
         id: 'fr20-std',
         name: '20kg 长臂重载',
-        shortName: { zh: '20kg 长臂重载', en: '20kg long-reach' },
+        shortName: { zh: '20', en: '20' },
         payload: '20kg（最大 25kg）',
         reach: '1854mm',
         repeatability: '±0.1mm',
@@ -825,6 +876,13 @@ export const R_LITE_ADVISOR_FLANGE_HERO_IMG =
 
 /** 与 `R_LITE_ADVISOR_FLANGE_HERO_IMG` 源文件像素一致（换图时请同步更新，供 hero 容器 aspect-ratio） */
 export const R_LITE_ADVISOR_FLANGE_HERO_DIM = { width: 2828, height: 1430 } as const;
+
+/** 全系列规格页 journey 区块裁切主视觉（自 `r-core-cobot-fr5-wml-hd.webp` 裁出） */
+export const ALL_COBOTS_JOURNEY_HERO_IMG =
+  '/images/robots/r-core-cobot-fr5-wml-hd-big.webp';
+
+/** 与 `ALL_COBOTS_JOURNEY_HERO_IMG` 源文件像素一致 */
+export const ALL_COBOTS_JOURNEY_HERO_DIM = { width: 1904, height: 1270 } as const;
 
 /** @deprecated Use `R_LITE_ADVISOR_FLANGE_HERO_IMG` */
 export const RCORE_ADVISOR_FLANGE_HERO_IMG = R_LITE_ADVISOR_FLANGE_HERO_IMG;

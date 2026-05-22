@@ -58,7 +58,10 @@ function variantTemplateVars(variantId: string, lang: AppLocale): Record<string,
   };
 }
 
-const FAMILY_VARIANT_IDS = ['fr3-c', 'fr5-wml', 'fr20-std'] as const;
+const FAMILY_VARIANT_IDS_BY_PAGE: Record<ImmersiveMessagesPageKey, readonly string[]> = {
+  r_lite: ['fr3-std', 'fr3-c', 'fr3-wml'],
+  r_ultra: ['fr16-std', 'fr20-std', 'fr30-std'],
+};
 
 const APP_CARD_IDS_BY_PAGE: Record<ImmersiveMessagesPageKey, readonly string[]> = {
   r_lite: ['fr3-c', 'fr5-c', 'fr3-std'],
@@ -91,8 +94,6 @@ type FilmCopy = {
   r_family_title: string;
   r_family_subtitle: string;
   r_family_body: string;
-  tail_title: string;
-  tail_subtitle?: string;
   links: { specs: string; advisor: string; side_by_side: string };
 };
 
@@ -214,16 +215,17 @@ export function RCoreLongNarrative({
   const blueprintSrc = `${ROBOT_VECTOR_BASE}/${robotVariantBlueprintSvgFilename(primaryVariantId)}`;
   const blueprintAlt = robotVariantBlueprintAlt(primaryVariantId, lang);
   const blueprintDesc = robotVariantBlueprintDescription(primaryVariantId, lang);
-  const scenarioWebp = `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename(primaryVariantId)}`;
+
+  const familyVariantIds = FAMILY_VARIANT_IDS_BY_PAGE[messagesPageKey];
 
   const familyAssets = useMemo(
     () =>
-      FAMILY_VARIANT_IDS.map((id) => ({
+      familyVariantIds.map((id) => ({
         id,
         src: `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename(id)}`,
         alt: robotVariantImageAlt(id, lang),
       })),
-    [lang],
+    [lang, familyVariantIds],
   );
 
   const appCardIds = APP_CARD_IDS_BY_PAGE[messagesPageKey];
@@ -412,48 +414,33 @@ export function RCoreLongNarrative({
         <motion.p className="rcore-ln-family-body rcore-ln-copy-front" {...fadeUp}>
           {film.r_family_body}
         </motion.p>
-      </section>
-
-      <section className="rcore-film-tail" aria-labelledby="rcore-film-tail-heading">
-        <div className="rcore-film-tail__bg">
-          <Image
-            src={scenarioWebp}
-            alt={film.scenario_image_alt}
-            fill
-            sizes="100vw"
-            className="rcore-film-tail__bg-img"
-          />
-          <div className="rcore-film-tail__scrim" aria-hidden />
-        </div>
-        <div className="rcore-film-tail__inner rcore-ln-copy-front">
-          <h2 id="rcore-film-tail-heading">{film.tail_title}</h2>
-          {film.tail_subtitle?.trim() ? (
-            <p className="rcore-film-tail__subtitle">{film.tail_subtitle}</p>
-          ) : null}
-          <nav className="rcore-film-tail__links" aria-label={film.section_aria}>
-            <Link
-              href={`${base}/cobots/all-cobots-specs`}
-              onClick={() => trackCtaClick('film_tail_specs')}
-            >
-              {film.links.specs}
-            </Link>
-            <span className="rcore-film-tail__sep" aria-hidden>
-              ·
-            </span>
-            <Link href={`${base}/selector/advisor`} onClick={() => trackCtaClick('film_tail_advisor')}>
-              {film.links.advisor}
-            </Link>
-            <span className="rcore-film-tail__sep" aria-hidden>
-              ·
-            </span>
+        <motion.nav
+          className="rcore-ln-family-links rcore-ln-copy-front"
+          {...fadeUp}
+          aria-label={lang === 'zh' ? '选型与对比' : 'Selector tools'}
+        >
+          <Link
+            href={`${base}/selector/advisor`}
+            className="rcore-ln-family-links__primary"
+            onClick={() => trackCtaClick('film_tail_advisor')}
+          >
+            {film.links.advisor} ›
+          </Link>
+          <p className="rcore-ln-family-links__secondary">
             <Link
               href={`${base}/selector/comparison`}
               onClick={() => trackCtaClick('film_tail_comparison')}
             >
               {film.links.side_by_side}
             </Link>
-          </nav>
-        </div>
+            <span className="rcore-ln-family-links__sep" aria-hidden>
+              ·
+            </span>
+            <Link href={`${base}/cobots/all-cobots-specs`} onClick={() => trackCtaClick('film_tail_specs')}>
+              {film.links.specs}
+            </Link>
+          </p>
+        </motion.nav>
       </section>
     </div>
   );
