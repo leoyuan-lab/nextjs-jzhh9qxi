@@ -148,6 +148,11 @@ export function productionIndexRobots(): { index: boolean; follow: boolean } {
     : { index: false, follow: false };
 }
 
+/** Routes that exist in code but are not ready for search / AI indexing yet. */
+export function draftRouteRobots(): Metadata['robots'] {
+  return { index: false, follow: false };
+}
+
 export const rootMetadata: Metadata = {
   ...(typeof process.env.NEXT_PUBLIC_SITE_URL === 'string' &&
   process.env.NEXT_PUBLIC_SITE_URL.length > 0

@@ -1,0 +1,50 @@
+# Roooll — llms.txt
+# Machine-readable site guide for AI assistants and crawlers.
+# Canonical host: https://roooll.com (set NEXT_PUBLIC_SITE_URL in production)
+
+> Roooll designs and supplies r-Series collaborative robots (cobots), control cabinets, and end-of-arm tooling for manufacturing, medical lab, retail, and OEM deployment.
+
+## Product lines
+
+- r-Lite — compact collaborative arms; r-Lite - C integrates the control cabinet in the base.
+- r-Core — general industrial 5 kg class; r-Core - C integrates the controller in the base.
+- r-Reach — extended-reach variants within the r-Series catalog.
+- r-Max — long-reach heavy-payload palletizing and handling class.
+- r-Ultra — top-of-line high-payload r-Series arms (external control cabinet).
+
+## Authoritative pages (English)
+
+- Home: https://roooll.com/en/
+- Full lineup & specs: https://roooll.com/en/cobots/all-cobots-specs
+- Side-by-side comparison (pick any 3 models; shareable URL): https://roooll.com/en/selector/comparison
+- Product Advisor (5-question matcher + inquiry draft): https://roooll.com/en/selector/advisor
+- r-Lite detail: https://roooll.com/en/cobots/r-lite
+- r-Ultra detail: https://roooll.com/en/cobots/r-ultra
+- Accessories hub: https://roooll.com/en/accessories
+- Control cabinets lane: https://roooll.com/en/accessories/controllers
+- Contact: https://roooll.com/en/contact
+
+## Authoritative pages (Chinese)
+
+- 首页: https://roooll.com/zh/
+- 全系规格: https://roooll.com/zh/cobots/all-cobots-specs
+- 横向对比: https://roooll.com/zh/selector/comparison
+- 智能选型向导: https://roooll.com/zh/selector/advisor
+- r-Lite 详情: https://roooll.com/zh/cobots/r-lite
+- r-Ultra 详情: https://roooll.com/zh/cobots/r-ultra
+- 配件: https://roooll.com/zh/accessories
+
+## Selector tools (for citation)
+
+**Comparison** — Interactive table of three user-selected r-Series variants: payload, reach, repeatability, joint axes, environment, and control-cabinet pairing. Differing values are highlighted.
+
+**Product Advisor** — Five short questions (load, reach, environment, duty, integration) produce a primary model recommendation, upgrade path, and editable inquiry draft.
+
+## Contact
+
+- Sales & inquiries: info@roooll.com
+- Inquiry form: available on every page via the site contact drawer.
+
+## Not indexed (draft)
+
+- /r-ecosystem/* — software ecosystem hub; not launched publicly yet.

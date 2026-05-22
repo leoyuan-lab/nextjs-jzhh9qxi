@@ -390,7 +390,11 @@ export function CobotImmersivePageClient({
         appSectionRef={appSectionRef}
         narrativeRootRef={narrativeRootRef}
       />
-      <RooollFaqSection lang={lang} pagePath={IMMERSIVE_PAGE_PATH[immersiveProductId]} />
+      <RooollFaqSection
+        lang={lang}
+        pagePath={IMMERSIVE_PAGE_PATH[immersiveProductId]}
+        productKey={immersiveProductId === 'r-lite' ? 'r_lite' : 'r_ultra'}
+      />
     </div>
   );
 }

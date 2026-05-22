@@ -122,21 +122,67 @@
   "FAQ": {
     "title": "Questions? Answers.",
     "expandItemAria": "Show answer",
-    "collapseItemAria": "Hide answer",
+    "collapseItemAria": "Hide answer"
+  },
+  "FAQ_r_lite": {
+    "title": "Questions? Answers.",
     "items": {
-      "q1": "We already run PLCs and vision—no dedicated robotics team. How long from unboxing a Roooll r-Core for pick-and-place to a running first path?",
-      "a1": "r-Core (integrated controller) houses the control box in the base—about 11.8 kg total, φ125 mm footprint. Tune via Web App, 10.1″ teach pendant, or mobile. Host interfaces: standard TCP/IP, digital I/O, and Modbus TCP/RTU. On a typical single station, from mechanical install and calibration to the first program—usually 1–3 business days (fixture and vision integration may vary).",
-      "q2": "We need ~3 kg precision assembly and ~20 kg palletizing—how do we choose between r-Core and r-Max without buying overlapping capability?",
-      "a2": "Spec by payload and reach—no over-buying. r-Core targets light, precision cells: 4 kg rated (5 kg peak), 922 mm reach, up to ±0.02 mm repeatability for inspection, fastening, and lab work. r-Max 20kg long-reach heavy variant is built for palletizing: 20 kg rated (25 kg peak), 1854 mm reach, ±0.1 mm repeatability for handling and palletizing. Both share the Roooll r-Series platform—control logic and accessories align, lowering lifecycle cost.",
-      "q3": "The site runs Siemens PLC + MES with quick-change grippers—can Roooll join the existing bus, or is a full rip-and-replace required?",
-      "a3": "Native integration—no system rebuild. Roooll ships with TCP/IP, I/O, and Modbus TCP/RTU for mainstream PLC and MES stacks. On r-Max heavy-duty cabinets, optional Profinet, EtherNet/IP, EtherCAT, and CC-Link IE Field Basic are available (per order configuration). The tool flange follows ISO 9409-1; Roooll EOAT (grippers, vacuum, quick change, 3D vision) and third-party tools are supported.",
-      "q4": "Three shifts, 6,000+ hours per year—will R-Series joints and reducers last, or do we replace the whole arm in two years?",
-      "a4": "Roooll is engineered for demanding industrial duty. Industrial servos and precision reducers; rigorous QC before shipment. Core drive systems (motors, reducers) and control architecture carry a 2-year limited warranty. Roooll Insight enables live monitoring and alarm traceability. Under standard duty, the arm is designed for continuous long-run operation.",
-      "q5": "We need white-label export—custom housing and teach UI. What is MOQ, and will lead time kill our milestone?",
-      "a5": "Roooll offers flexible OEM/ODM: branding, colorways, and industry-specific end-effector co-development. Small-batch r-Core / r-Max programs are negotiable—often from a few dozen units for exterior and UI customization (flexible MOQ). Standard specs ship within 3–5 business days after payment confirmation; bespoke builds run on a dedicated line with timelines locked in contract.",
-      "q6": "We ship to Europe and Southeast Asia—is CE in place, and can spares and remote support keep up overseas?",
-      "a6": "Roooll R-Series is designed to meet RoHS and widely referenced cobot safety benchmarks; export and regional compliance documentation can be supplied per project. Global support: experts online across time zones, professional response within 12 hours. Overseas spares cover core joint modules, control components, and common EOAT; remote diagnostics and on-site coordination via the Roooll service network (per regional agreement)."
+      "q1": "We already run PLCs and vision—no dedicated robotics team. How long from unboxing an r-Lite - C for pick-and-place to a running first path?",
+      "a1": "r-Lite - C integrates the control cabinet in the base—compact footprint for bench and line-side cells. Tune via Web App, teach pendant, or mobile; host interfaces include TCP/IP, digital I/O, and Modbus TCP/RTU. For the robot itself—unbox, mount, and run a first taught pick-and-place path—experienced teams often finish in a few hours, typically within one business day. Full station bring-up with fixtures, vision, and PLC/MES handshaking usually takes longer (often 1–3 business days, project-dependent).",
+      "q2": "We need ~3 kg precision assembly—when is r-Lite the right call versus r-Core or r-Max?",
+      "a2": "Choose r-Lite for the smallest integrated footprint and light payloads (3 kg rated class on standard variants). Step up to r-Core when you need higher repeatability or a 5 kg class cell without growing the arm. r-Max covers long-reach palletizing—use the comparison tool if two lines overlap.",
+      "q3": "The site runs Siemens PLC + MES with quick-change grippers—can r-Lite join the existing bus?",
+      "a3": "Yes—native TCP/IP, I/O, and Modbus TCP/RTU for mainstream PLC and MES stacks. No rip-and-replace. The tool flange follows ISO 9409-1; Roooll EOAT and qualified third-party grippers, vacuum, and quick-change modules are supported.",
+      "q4": "Three shifts, 6,000+ hours per year—will r-Lite joints and reducers last?",
+      "a4": "Roooll r-Series uses industrial servos and precision reducers with rigorous QC before shipment. Core drive systems carry a 2-year limited warranty. Under standard duty, the arm is designed for continuous long-run operation.",
+      "q5": "We need white-label export—custom housing and teach UI. What is MOQ for r-Lite programs?",
+      "a5": "Roooll offers flexible OEM/ODM on r-Series lines—branding, colorways, and EOAT co-development. Small-batch programs are negotiable (often from a few dozen units for exterior and UI customization). Standard specs ship within 3–5 business days after payment confirmation.",
+      "q6": "We ship to Europe and Southeast Asia—is compliance documentation available, and can spares keep up overseas?",
+      "a6": "Roooll R-Series is designed to meet RoHS and widely referenced cobot safety benchmarks; export documentation can be supplied per project. Global support with professional response within 12 hours; overseas spares cover core joint modules and common EOAT.",
+      "q7": "What does “integrated control cabinet” mean on r-Lite - C?",
+      "a7": "The motion controller, power stage, and I/O live inside the robot base—no separate cabinet on the floor. You still pair external fieldbus options when the variant requires an external cabinet; see the controller row on the lineup or comparison pages.",
+      "q8": "How is r-Lite - C different from r-Core - C if both integrate the controller?",
+      "a8": "r-Lite targets the lightest 3 kg class with the most compact cell layout. r-Core - C adds a 4–5 kg class envelope, tighter repeatability options, and a broader set of industrial variants—pick by payload, reach, and repeatability rows in the spec table.",
+      "q9": "Which grippers and fixtures fit the r-Lite flange?",
+      "a9": "ISO 9409-1 tool flange across r-Lite variants. Roooll-published grippers and fixtures on the Accessories hub are sized for r-Series pairing; third-party EOAT is supported—list your interface and cycle time in an inquiry."
     }
+  },
+  "FAQ_r_ultra": {
+    "title": "Questions? Answers.",
+    "items": {
+      "q1": "We need high payload and long reach for palletizing—how quickly can r-Ultra go from install to first production path?",
+      "a1": "r-Ultra ships as a heavy-duty r-Series arm paired with an external control cabinet (see Accessories for cabinet specs). Typical single-station commissioning—mechanical install, cabinet wiring, first program—often 2–5 business days depending on fieldbus and EOAT integration.",
+      "q2": "When should we choose r-Ultra instead of r-Max?",
+      "a2": "Compare rated payload, reach, and repeatability rows side by side. r-Max leads on long-reach palletizing in the 16–20 kg class; r-Ultra covers the top of the r-Series payload envelope when the application needs maximum capacity or a specific ultra variant from the catalog.",
+      "q3": "Can r-Ultra integrate with our PLC, MES, and fieldbus stack?",
+      "a3": "External control cabinets support TCP/IP, I/O, Modbus TCP/RTU, and optional industrial Ethernet (Profinet, EtherNet/IP, EtherCAT, CC-Link IE Field Basic—per cabinet model). The tool flange is ISO 9409-1 for Roooll and third-party EOAT.",
+      "q4": "Three shifts, 6,000+ hours per year—are r-Ultra drives and reducers built for that duty?",
+      "a4": "Industrial servos, precision reducers, and pre-shipment QC are standard on r-Series heavy lines. Core drive systems carry a 2-year limited warranty; continuous operation is the design target under standard duty.",
+      "q5": "We need OEM branding on a heavy cobot line—what batch sizes and lead times are realistic?",
+      "a5": "OEM/ODM covers housing, colorways, teach UI, and industry EOAT. Small-batch r-Ultra / r-Max programs are negotiable; standard configurations ship within 3–5 business days after payment confirmation—custom timelines are fixed in contract.",
+      "q6": "Export to EU and Southeast Asia—compliance docs and overseas spares?",
+      "a6": "RoHS-aligned design and cobot safety benchmarks; regional compliance packages per project. Global support within 12 hours; spares for joints, control components, and common EOAT with remote diagnostics.",
+      "q7": "Does r-Ultra always use an external control cabinet?",
+      "a7": "Yes—r-Ultra pairs with Roooll external control cabinets (not a base-integrated - C layout). Cabinet choice drives fieldbus, power, and install footprint; see Accessories → Control Cabinets and the comparison controller row.",
+      "q8": "Which end-effectors are realistic at r-Ultra payloads?",
+      "a8": "ISO 9409-1 flange with payload-rated grippers, vacuum, and custom tooling—verify mass, CG, and cycle limits against the variant payload row. Roooll fixtures and third-party EOAT are supported; share your tool CAD in an inquiry.",
+      "q9": "Can we compare r-Ultra against r-Max or r-Core on this site?",
+      "a9": "Use Side-by-Side Comparison to lock any three catalog variants—including joint axes and controller pairing—or run the Product Advisor for a guided shortlist with an inquiry draft."
+    }
+  },
+  "organization": {
+    "description": "Roooll designs and supplies r-Series collaborative robots (cobots) and robotic arm accessories for manufacturing, medical lab, retail, and OEM deployment.",
+    "contactEmail": "info@roooll.com",
+    "contactType": "sales",
+    "areaServed": "Worldwide",
+    "knowsAbout": [
+      "Collaborative robots",
+      "Cobots",
+      "Industrial robotic arms",
+      "Robot control cabinets",
+      "End-of-arm tooling",
+      "Smart manufacturing automation"
+    ]
   },
   "footnotes": [
     {

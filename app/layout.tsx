@@ -37,7 +37,7 @@ export default async function RootLayout({
         <Suspense fallback={null}>
           <GoogleAnalyticsPageView />
         </Suspense>
-        <OrganizationJsonLd origin={siteOrigin} />
+        <OrganizationJsonLd origin={siteOrigin} lang={initialLang} />
         <ClientLayout initialLang={initialLang}>{children}</ClientLayout>
       </body>
     </html>

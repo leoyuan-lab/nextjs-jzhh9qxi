@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useCallback, useId, useMemo, useState } from 'react';
-import { getFaqPairs } from '@/lib/faq-messages';
+import { getFaqSectionTitle, getProductFaqPairs, type FaqProductKey } from '@/lib/faq-messages';
 import { getMessages, type AppLocale } from '@/lib/messages';
 import { getSiteOriginForClient } from '@/lib/site-origin-fallback';
 
@@ -10,8 +10,9 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 type RooollFaqSectionProps = {
   lang: AppLocale;
-  /** Logical path without locale, e.g. `/cobots/r-lite` — used in FAQPage JSON-LD. */
-  pagePath: '/cobots/r-lite' | '/cobots/r-ultra';
+  /** Logical path without locale — used in FAQPage JSON-LD. */
+  pagePath: string;
+  productKey: FaqProductKey;
 };
 
 function absolutePageUrl(origin: string, lang: AppLocale, pagePath: string): string {
@@ -19,11 +20,12 @@ function absolutePageUrl(origin: string, lang: AppLocale, pagePath: string): str
   return `${base}/${lang}${pagePath}`;
 }
 
-export function RooollFaqSection({ lang, pagePath }: RooollFaqSectionProps) {
+export function RooollFaqSection({ lang, pagePath, productKey }: RooollFaqSectionProps) {
   const sectionId = useId();
   const prefersReducedMotion = useReducedMotion();
   const faqCopy = getMessages(lang).FAQ;
-  const pairs = useMemo(() => getFaqPairs(lang), [lang]);
+  const sectionTitle = getFaqSectionTitle(lang, productKey);
+  const pairs = useMemo(() => getProductFaqPairs(lang, productKey), [lang, productKey]);
   const [openId, setOpenId] = useState<number | null>(null);
 
   const toggle = useCallback((id: number) => {
@@ -49,8 +51,7 @@ export function RooollFaqSection({ lang, pagePath }: RooollFaqSectionProps) {
     };
   }, [lang, pagePath, pairs]);
 
-  const jsonLdId =
-    pagePath === '/cobots/r-ultra' ? 'jsonld-faq-cobots-r-ultra' : 'jsonld-faq-cobots-r-lite';
+  const jsonLdId = `jsonld-faq${pagePath.replace(/\//g, '-')}`;
 
   const panelTransition = prefersReducedMotion
     ? { duration: 0 }
@@ -75,7 +76,7 @@ export function RooollFaqSection({ lang, pagePath }: RooollFaqSectionProps) {
         transition={{ duration: 0.55, ease: EASE }}
       >
         <h2 id={`${sectionId}-title`} className="roooll-faq-section__title">
-          {faqCopy.title}
+          {sectionTitle}
         </h2>
 
         <motion.div

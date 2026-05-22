@@ -8,7 +8,11 @@ export default function robots(): MetadataRoute.Robots {
   const indexable = isProductionIndexable();
   return {
     rules: indexable
-      ? { userAgent: '*', allow: '/' }
+      ? {
+          userAgent: '*',
+          allow: '/',
+          disallow: ['/zh/r-ecosystem', '/en/r-ecosystem', '/zh/r-ecosystem/', '/en/r-ecosystem/'],
+        }
       : { userAgent: '*', disallow: '/' },
     sitemap: indexable ? `${origin}/sitemap.xml` : undefined,
   };
