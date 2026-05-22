@@ -24,12 +24,12 @@ export function specCellEmphasize(values: readonly string[], colIndex: number): 
 
   let mode = '';
   let modeCount = 0;
-  for (const [value, count] of counts) {
+  counts.forEach((count, value) => {
     if (count > modeCount) {
       mode = value;
       modeCount = count;
     }
-  }
+  });
 
   if (!mode) return false;
   if (modeCount === 1) return true;
