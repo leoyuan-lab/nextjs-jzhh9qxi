@@ -8,12 +8,32 @@ export function specValuesDiffer(values: readonly string[]): boolean {
   return new Set(normalized).size > 1;
 }
 
-/** 仅当该列数值与同排其他列不同时强调（忽略 em dash 占位） */
+/** 仅当该列数值与同排多数值不同时强调（同值列保持细字） */
 export function specCellEmphasize(values: readonly string[], colIndex: number): boolean {
   const normalized = values.map((v) => v.trim());
+  if (!specValuesDiffer(normalized)) return false;
+
   const self = normalized[colIndex] ?? '';
   if (!self || self === '—') return false;
-  return normalized.some((value, index) => index !== colIndex && value !== '—' && value !== self);
+
+  const counts = new Map<string, number>();
+  for (const value of normalized) {
+    if (!value || value === '—') continue;
+    counts.set(value, (counts.get(value) ?? 0) + 1);
+  }
+
+  let mode = '';
+  let modeCount = 0;
+  for (const [value, count] of counts) {
+    if (count > modeCount) {
+      mode = value;
+      modeCount = count;
+    }
+  }
+
+  if (!mode) return false;
+  if (modeCount === 1) return true;
+  return self !== mode;
 }
 
 export function EmphasizeSpecNumbers({

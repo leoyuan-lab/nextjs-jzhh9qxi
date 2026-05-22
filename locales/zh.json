@@ -218,6 +218,9 @@
     "all_cobots_specs": {
       "metaTitleFocus": "全系列 r-Lite / r-Core 协作机器人规格",
       "metaDescription": "横向浏览 r-Lite、r-Core、r-Reach、r-Max、r-Ultra 等 r 系列协作机械臂全矩阵：负载、工作半径、关节轴、接口与功率要点一站对比。",
+      "lineup": {
+        "subtitle": "从轻到重。全系 r 系列协作臂——规格并排，一目了然。"
+      },
       "journey": {
         "headlineLines": ["还没想好？", "帮你选得更笃定些。"],
         "headline": "找到产线合适的那一臂。",
@@ -240,6 +243,7 @@
           "eyebrow": "参数对比",
           "title": "并排对比",
           "summary": "任选三款机型，负载、臂展、关节轴与控制箱，一张表全部看清。",
+          "summaryMobile": "任选两款机型，负载、臂展、关节轴与控制箱，一张表全部看清。",
           "meta": "3 台 · 16+ 项参数",
           "cta": "开始对比",
           "features": [
@@ -256,7 +260,17 @@
     },
     "selector_comparison": {
       "metaTitleFocus": "r 系列协作臂横向对比",
-      "metaDescription": "并排对比三款 r-Series Cobot：负载、工作范围、关节轴与功率，一次看清机械臂差异。"
+      "metaDescription": "并排对比任意三款 r 系列 Cobot（r-Lite、r-Core、r-Reach、r-Max、r-Ultra）：负载、工作半径、重复精度、关节轴、控制箱与功率，一张可分享的对比表。",
+      "headlineLines": ["对比全系 r 家族", "看清差距在哪里。"],
+      "footer": {
+        "title": "需要帮你缩小范围？",
+        "summary": "对比表看清了差距，选型顾问还能按负载、臂展和环境给出主推与升级方案。",
+        "cta": "开始选型"
+      },
+      "sections": {
+        "cobotSpecs": "协作机器人规格",
+        "controlCabinet": "外置控制箱（选配）"
+      }
     },
     "selector_advisor": {
       "metaTitleFocus": "智能选型向导（r-Lite / r-Core）",

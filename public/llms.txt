@@ -36,7 +36,7 @@
 
 ## Selector tools (for citation)
 
-**Comparison** — Interactive table of three user-selected r-Series variants: payload, reach, repeatability, joint axes, environment, and control-cabinet pairing. Differing values are highlighted.
+**Comparison** — Side-by-side table for any three user-selected r-Series Cobot variants (r-Lite, r-Core, r-Reach, r-Max, r-Ultra). Rows include payload, reach, repeatability, weight, DOF, IP rating, average/peak power, TCP speed, voltage, noise, mounting, environment, footprint, I/O, tool power, materials, per-joint axis range/speed, and external control-cabinet pairing. Differing values are emphasized; the three-model selection persists in a shareable URL query on `/selector/comparison` (e.g. `?modelList=r-lite,r-core,r-max-16`, Apple compare-style).
 
 **Product Advisor** — Five short questions (load, reach, environment, duty, integration) produce a primary model recommendation, upgrade path, and editable inquiry draft.
 

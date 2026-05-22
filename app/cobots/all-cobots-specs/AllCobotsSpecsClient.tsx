@@ -15,6 +15,7 @@ import {
 } from '@/components/selector/SelectorLineupUi';
 import { SelectorJourneySection } from '@/components/selector/SelectorJourneySection';
 import { trackEvent } from '@/lib/analytics';
+import { getMessages } from '@/lib/messages';
 import { openInquiry } from '@/lib/open-inquiry';
 import { useSiteLang } from '@/lib/site-lang-context';
 
@@ -50,6 +51,7 @@ export default function AllCobotsSpecsClient() {
 
   const safeLang: 'zh' | 'en' = lang === 'en' ? 'en' : 'zh';
   const t = SELECTOR_I18N[safeLang];
+  const lineupSubtitle = getMessages(safeLang).pages.all_cobots_specs.lineup.subtitle;
 
   const openInquiryForItem = (item: (typeof lineup)[number]) => {
     const short = lineupCardVariantShortNameForItem(item, safeLang);
@@ -210,7 +212,7 @@ export default function AllCobotsSpecsClient() {
           {t.title}
         </h1>
         <p className="max-w-[46rem] text-[1.0625rem] font-normal leading-snug text-[#6e6e73] md:text-[1.3125rem]">
-          {t.subtitle}
+          {lineupSubtitle}
         </p>
       </section>
 

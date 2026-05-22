@@ -232,7 +232,6 @@ export default function ClientLayout({
   const [mainNavScrollProgress, setMainNavScrollProgress] = useState(0);
   const [frozenMainNavProgress, setFrozenMainNavProgress] = useState<number | null>(null);
   const [navToneOverride, setNavToneOverride] = useState<'dark' | 'light' | null>(null);
-  const [isSelectorComparePinned, setIsSelectorComparePinned] = useState(false);
   const [sampledNavDark, setSampledNavDark] = useState<boolean | null>(null);
   /** True only at literal top of home — full clear bar; any scroll → whisper-glass (`home-ghost`). */
   const [homePinnedClear, setHomePinnedClear] = useState(true);
@@ -404,15 +403,10 @@ export default function ClientLayout({
       mainNavScrollProgressRef.current = clamped;
       setMainNavScrollProgress(clamped);
     };
-    const handleSelectorComparePin = (event: Event) => {
-      const customEvent = event as CustomEvent<{ pinned?: boolean }>;
-      setIsSelectorComparePinned(Boolean(customEvent.detail?.pinned));
-    };
     window.addEventListener('langChange', handleLangChange);
     window.addEventListener('roooll-subnav-visibility', handleSubNavVisibility as EventListener);
     window.addEventListener('roooll-nav-tone', handleNavTone as EventListener);
     window.addEventListener('roooll-main-nav-progress', handleMainNavProgress as EventListener);
-    window.addEventListener('selector-compare-sticky-pin', handleSelectorComparePin as EventListener);
     return () => {
       window.removeEventListener('langChange', handleLangChange);
       window.removeEventListener('keydown', handleKeyDown);
@@ -420,16 +414,9 @@ export default function ClientLayout({
       window.removeEventListener('roooll-subnav-visibility', handleSubNavVisibility as EventListener);
       window.removeEventListener('roooll-nav-tone', handleNavTone as EventListener);
       window.removeEventListener('roooll-main-nav-progress', handleMainNavProgress as EventListener);
-      window.removeEventListener('selector-compare-sticky-pin', handleSelectorComparePin as EventListener);
       if (themeTimer !== undefined) clearInterval(themeTimer);
     };
   }, [logicalPathname, resolvedLang, isArm]);
-
-  useLayoutEffect(() => {
-    if (logicalPathname !== '/selector/comparison') {
-      setIsSelectorComparePinned(false);
-    }
-  }, [logicalPathname]);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -622,6 +609,8 @@ export default function ClientLayout({
   const subPageNavProgress = isHome
     ? 0
     : Math.max(effectiveMainNavProgress, isChildSubNavVisible ? 1 : 0);
+  const isComparePage = logicalPathname === '/selector/comparison';
+  const selectorNavStaysVisible = isSelector && !isComparePage;
 
   useLayoutEffect(() => {
     setMobileMenuDocumentOpen(mobileMenuVisible);
@@ -714,28 +703,20 @@ export default function ClientLayout({
               isHome
                 ? undefined
                 : {
-                    /* 选型页顶栏不随 progress 上滑隐藏，仅用 progress 切换透明 / 毛玻璃（与 r‑Core 首屏透底一致） */
-                    transform: isSelector
-                      ? logicalPathname === '/selector/comparison' && isSelectorComparePinned
-                        ? 'translate3d(0, -104%, 0)'
-                        : 'translate3d(0, 0, 0)'
+                    /* 选型顾问顶栏不随 progress 上滑隐藏；对比页随滚动收起（与全系规格等子页一致） */
+                    transform: selectorNavStaysVisible
+                      ? 'translate3d(0, 0, 0)'
                       : `translate3d(0, -${(subPageNavProgress * 104).toFixed(2)}%, 0)`,
-                    opacity:
-                      isSelector && logicalPathname === '/selector/comparison' && isSelectorComparePinned
-                        ? 0
-                        : isSelector
-                          ? 1
-                          : isArm
-                            ? 1
-                            : Math.max(0, 1 - subPageNavProgress),
-                    pointerEvents:
-                      isSelector && logicalPathname === '/selector/comparison' && isSelectorComparePinned
+                    opacity: selectorNavStaysVisible
+                      ? 1
+                      : isArm
+                        ? 1
+                        : Math.max(0, 1 - subPageNavProgress),
+                    pointerEvents: selectorNavStaysVisible
+                      ? 'auto'
+                      : subPageNavProgress > 0.98
                         ? 'none'
-                        : isSelector
-                          ? 'auto'
-                          : subPageNavProgress > 0.98
-                            ? 'none'
-                            : 'auto',
+                        : 'auto',
                     transition: isArm
                       ? 'none'
                       : 'transform 0.82s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.58s cubic-bezier(0.22, 1, 0.36, 1)',

@@ -218,6 +218,9 @@
     "all_cobots_specs": {
       "metaTitleFocus": "Full r-Lite / r-Core Cobot lineup & specs",
       "metaDescription": "Browse every r‑Series Cobot variant matrix—r-Lite, r-Core, r-Reach, r-Max, r-Ultra—with payloads, reach, joint axes, and power in one place.",
+      "lineup": {
+        "subtitle": "Light to heavy. Every r‑Series collaborative robotic arm—specs, side by side."
+      },
       "journey": {
         "headlineLines": ["Not sure?", "Select with more confidence."],
         "headline": "The right arm for your line.",
@@ -240,6 +243,7 @@
           "eyebrow": "Compare specs",
           "title": "Side-by-side comparison",
           "summary": "Pick any three models from the lineup. Payload, reach, joint axes, and control cabinets—in one shareable table.",
+          "summaryMobile": "Pick any two models from the lineup. Payload, reach, joint axes, and control cabinets—in one shareable table.",
           "meta": "3 models · 16+ spec rows",
           "cta": "Compare models",
           "features": [
@@ -256,7 +260,17 @@
     },
     "selector_comparison": {
       "metaTitleFocus": "Side-by-side r-Series Cobot comparison",
-      "metaDescription": "Compare three r‑Series Cobots side by side: payload, reach, axes, and power—pick the right collaborative robotic arm."
+      "metaDescription": "Compare any three r‑Series Cobots—r-Lite, r-Core, r-Reach, r-Max, r-Ultra—with payload, reach, repeatability, joint axes, control cabinets, and power in one shareable table.",
+      "headlineLines": ["Compare all r family", "See what sets them apart."],
+      "footer": {
+        "title": "Need help narrowing it down?",
+        "summary": "You’ve seen the specs—answer five questions for a primary model and upgrade path.",
+        "cta": "Start the advisor"
+      },
+      "sections": {
+        "cobotSpecs": "Cobot specs",
+        "controlCabinet": "External control cabinet (optional)"
+      }
     },
     "selector_advisor": {
       "metaTitleFocus": "Product Advisor (r-Lite / r-Core match)",

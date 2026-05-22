@@ -22,10 +22,12 @@ type JourneyBeatCopy = {
   cta: string;
 };
 
+type JourneyComparisonCopy = JourneyBeatCopy & { summaryMobile?: string };
+
 type JourneyCopy = {
   headlineLines: string[];
   advisor: JourneyBeatCopy;
-  comparison: JourneyBeatCopy;
+  comparison: JourneyComparisonCopy;
 };
 
 function JourneyBeat({
@@ -76,6 +78,13 @@ export function SelectorJourneySection() {
   const copy = getMessages(safeLang).pages.all_cobots_specs.journey;
   const heroAlt = robotVariantImageAlt(HERO_IMAGE_ID, safeLang);
   const base = `/${safeLang}`;
+  const mobileCopy: JourneyCopy = {
+    ...copy,
+    comparison: {
+      ...copy.comparison,
+      summary: copy.comparison.summaryMobile ?? copy.comparison.summary,
+    },
+  };
 
   return (
     <section className="selector-journey-band" aria-labelledby="selector-journey-title">
@@ -109,7 +118,7 @@ export function SelectorJourneySection() {
       </div>
 
       <div className="selector-journey-panel">
-        <JourneyDuo copy={copy} base={base} className="selector-journey-duo--below" />
+        <JourneyDuo copy={mobileCopy} base={base} className="selector-journey-duo--below" />
       </div>
     </section>
   );

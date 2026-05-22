@@ -166,7 +166,7 @@ export function selectorSummarizeBody(text: string): string {
 export const SELECTOR_LINEUP_I18N = {
   zh: {
     title: '探索全系机型',
-    subtitle: '左右滑动，浏览全部 r 系列协作臂变体。',
+    subtitle: '从轻到重。全系 r 系列协作臂——规格并排，一目了然。',
     payload: '负载',
     reach: '工作半径',
     repeatability: '重复定位精度',
@@ -183,9 +183,7 @@ export const SELECTOR_LINEUP_I18N = {
     noise: '噪声',
     mounting: '安装方式',
     hero2Title: '对比全系 r 家族',
-    hero2Subtitle:
-      '在三个下拉框中各选一款不同的 r 系列变体。加粗放大的数字标示出机型之间的差异。',
-    hero2ChooseModel: '选择机型',
+    hero2Subtitle: '看清差距在哪里。',
     hero2Inquiry: '咨询',
     controllerLabel: '控制箱',
     controllerSectionTitle: '外置控制箱（选配）',
@@ -202,7 +200,7 @@ export const SELECTOR_LINEUP_I18N = {
   },
   en: {
     title: 'Explore the lineup',
-    subtitle: 'Swipe sideways to browse every r‑Series cobot variant.',
+    subtitle: 'Light to heavy. Every r‑Series collaborative robotic arm—specs, side by side.',
     payload: 'Payload',
     reach: 'Reach',
     repeatability: 'Repeatability',
@@ -218,9 +216,7 @@ export const SELECTOR_LINEUP_I18N = {
     noise: 'Noise',
     mounting: 'Mounting',
     hero2Title: 'Compare all r family',
-    hero2Subtitle:
-      'Pick a different r‑Series variant in each menu below. Highlighted numbers show where these models differ.',
-    hero2ChooseModel: 'Choose models',
+    hero2Subtitle: 'See what sets them apart.',
     hero2Inquiry: 'Inquiry',
     controllerLabel: 'Controller',
     controllerSectionTitle: 'External control cabinet (optional)',
