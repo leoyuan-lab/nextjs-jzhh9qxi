@@ -336,6 +336,86 @@
       "body": "Sales, partnerships, and follow-the-sun service—reach us by email or use the Inquiry entry point sitewide.",
       "ctaHome": "Back to Home"
     },
+    "support": {
+      "logoAlt": "Roooll brand mark on support page.",
+      "resources": {
+        "heroTitle": "Need help? Starts here.",
+        "manualCard": {
+          "title": "Manual download",
+          "body": "Product manuals, quick-start guides, and safety documentation. Leave your email and our team will follow up with download access.",
+          "emailLabel": "Email address",
+          "emailPlaceholder": "you@company.com",
+          "submit": "Request download",
+          "submitting": "Sending…",
+          "success": "Thank you. Our team will email you download access within 12 hours.",
+          "errorInvalid": "Please enter a valid email address.",
+          "errorRate": "Too many requests. Please try again in a few minutes.",
+          "errorGeneric": "Something went wrong. Please try again or email info@roooll.com."
+        },
+        "distributorCard": {
+          "title": "Distributor only",
+          "body": "Channel pricing, co-marketing assets, and partner onboarding—for authorized Roooll distributors.",
+          "cta": "Channel partner access",
+          "badge": "Authorized partners"
+        }
+      },
+      "service": {
+        "heroTitle": "Global service. Built in.",
+        "heroBody": "From your first inquiry to years on the factory floor—we bring expert guidance across time zones, dependable delivery, tailored engineering, and warranty coverage that keeps production moving.",
+        "cards": {
+          "global": {
+            "title": "Always within reach.",
+            "body": "Our specialists work across time zones, around the clock. Whether it is a business question or deep technical support, expect a thoughtful reply within 12 hours."
+          },
+          "deployment": {
+            "title": "Ready when you are.",
+            "body": "Standard configurations ship within 3–5 business days after payment confirmation. Large programs and custom builds follow timelines agreed in your contract—clear from day one."
+          },
+          "bespoke": {
+            "title": "Your vision. Our engineering.",
+            "body": "Beyond the R-Series catalog: OEM and ODM programs, brand integration, and co-developed end-effectors built for your industry."
+          },
+          "warranty": {
+            "title": "Two years. Zero guesswork.",
+            "body": "Motors, reducers, and control architecture covered by a limited two-year warranty—backed by a global response network that keeps your line running."
+          }
+        },
+        "ctaContact": "Contact technical support",
+        "ctaResources": "Manuals & downloads"
+      },
+      "distributors": {
+        "heroTitle": "Authorized distributors.",
+        "heroBody": "For Roooll channel partners—request pricing packs, launch kits, training paths, and co-marketing materials through our channel team.",
+        "badge": "Authorized partners",
+        "welcomeKicker": "Channel partner space",
+        "perks": {
+          "pricing": {
+            "title": "Pricing packs",
+            "body": "Regional pricing tools and configuration guides for your sales team."
+          },
+          "launch": {
+            "title": "Launch kits",
+            "body": "Co-marketing assets, product one-pagers, and go-to-market templates."
+          },
+          "training": {
+            "title": "Training paths",
+            "body": "Onboarding sequences, technical primers, and demo playbooks."
+          }
+        },
+        "cards": {
+          "access": {
+            "title": "Partner resources",
+            "body": "Already an authorized distributor? Contact your regional account manager or our channel team for pricing tools and partner materials.",
+            "cta": "Contact channel team"
+          },
+          "become": {
+            "title": "Become a partner",
+            "body": "Roooll is expanding its global distributor network. Tell us about your territory, installed base, and application focus—we will respond within 12 hours.",
+            "cta": "Apply for partnership"
+          }
+        }
+      }
+    },
     "accessories": {
       "introTitle": "Match your needs",
       "introBody": "External control cabinets, grippers, and fixtures built around the same r-Series interfaces and support path. Browse by category—or jump into live control-cabinet specs below.",
@@ -742,6 +822,9 @@
     "r_lite_detail": "Roooll r-Lite collaborative robot (integrated controller) structural detail—3kg payload, 622mm reach, ±0.05mm repeatability, integrated base control.",
     "r_lite_detail_base": "Roooll r-Lite collaborative robot (integrated controller) base detail—integrated control box for compact deployment.",
     "r_lite_detail_elbow": "Roooll r-Lite collaborative robot (integrated controller) elbow joint detail—motion control and payload trajectory.",
-    "r_lite_detail_wrist": "Roooll r-Lite collaborative robot (integrated controller) wrist joint detail—pose accuracy and safe collaboration."
+    "r_lite_detail_wrist": "Roooll r-Lite collaborative robot (integrated controller) wrist joint detail—pose accuracy and safe collaboration.",
+    "support_service_hero": "Roooll r-Core collaborative robot (standard), 5kg payload, 922mm reach—global service and field support for collaborative robotic arms.",
+    "support_manual": "Manual and documentation download for Roooll r-Series collaborative robotic arms.",
+    "support_distributor": "Authorized Roooll distributor and channel partner resources."
   }
 }

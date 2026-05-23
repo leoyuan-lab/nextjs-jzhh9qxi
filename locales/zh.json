@@ -336,6 +336,86 @@
       "body": "销售、渠道合作与售后支持请通过下方邮箱联络；紧急项目也可通过站点「咨询」入口发起工单。",
       "ctaHome": "返回首页"
     },
+    "support": {
+      "logoAlt": "Roooll 品牌标识，技术支持页面。",
+      "resources": {
+        "heroTitle": "需要帮助？从这里开始。",
+        "manualCard": {
+          "title": "手册下载",
+          "body": "产品手册、快速入门与安全文档。留下邮箱，我们的团队将跟进并发送下载方式。",
+          "emailLabel": "邮箱地址",
+          "emailPlaceholder": "name@company.com",
+          "submit": "申请下载",
+          "submitting": "提交中…",
+          "success": "感谢提交，我们的团队将在 12 小时内通过邮件发送下载方式。",
+          "errorInvalid": "请输入有效的邮箱地址。",
+          "errorRate": "请求过于频繁，请稍后再试。",
+          "errorGeneric": "提交失败，请重试或通过 info@roooll.com 联系我们。"
+        },
+        "distributorCard": {
+          "title": "经销商专区",
+          "body": "渠道价格、联合营销素材与伙伴入驻资料——仅限 Roooll 授权经销商。",
+          "cta": "联系渠道团队",
+          "badge": "Authorized partners"
+        }
+      },
+      "service": {
+        "heroTitle": "全球服务，融入每一环。",
+        "heroBody": "从首次咨询到产线长期运行——跨时区专家响应、可预期的交付节奏、深度定制工程，以及让生产持续运转的质保体系。",
+        "cards": {
+          "global": {
+            "title": "随时在线，跨时区响应。",
+            "body": "专家团队 24/7 全时段在线。无论是业务询价还是复杂的技术支持，我们承诺在 12 小时内为您提供详尽的专业反馈。"
+          },
+          "deployment": {
+            "title": "高效部署，准时送达。",
+            "body": "标准规格产品在确认后 3–5 个工作日内即可安排启运。对于大规模部署或深度定制需求，交付周期将在合同中清晰约定。"
+          },
+          "bespoke": {
+            "title": "将愿景化为现实。",
+            "body": "除标准 R 系列外，我们支持 OEM/ODM 深度定制、品牌标识植入，以及面向特定行业的末端执行器联合开发。"
+          },
+          "warranty": {
+            "title": "2 年质保，后顾无忧。",
+            "body": "核心动力系统（电机、减速机）及控制架构享有 2 年有限质保，配合全球快速响应机制，确保产线高效运转。"
+          }
+        },
+        "ctaContact": "联系技术支持",
+        "ctaResources": "手册与资料下载"
+      },
+      "distributors": {
+        "heroTitle": "授权经销商专区。",
+        "heroBody": "面向 Roooll 渠道伙伴——通过渠道团队获取价格资料、上市素材、培训路径与联合营销支持。",
+        "badge": "Authorized partners",
+        "welcomeKicker": "Channel partner space",
+        "perks": {
+          "pricing": {
+            "title": "Pricing packs",
+            "body": "面向销售团队的区域价格工具与配置指南。"
+          },
+          "launch": {
+            "title": "Launch kits",
+            "body": "联合营销素材、产品 one-pager 与上市模板。"
+          },
+          "training": {
+            "title": "Training paths",
+            "body": "入驻流程、技术培训与 demo  playbook。"
+          }
+        },
+        "cards": {
+          "access": {
+            "title": "伙伴资源",
+            "body": "若您已是授权经销商，请联系区域客户经理或渠道团队，获取价格工具与伙伴资料。",
+            "cta": "联系渠道团队"
+          },
+          "become": {
+            "title": "成为合作伙伴",
+            "body": "Roooll 正在拓展全球经销网络。告诉我们您的区域、客户基础与应用方向——我们将在 12 小时内回复。",
+            "cta": "申请渠道合作"
+          }
+        }
+      }
+    },
     "accessories": {
       "introTitle": "找你所需",
       "introBody": "从外置控制箱到末端夹爪与工装，Roooll 配件与 r 系列协作臂同一套接口、同一套支持。按分类浏览，或从下方直接进入已上线规格。",
@@ -742,6 +822,9 @@
     "r_lite_detail": "Roooll r-Lite 协作机器人（一体式控制）结构细节展示 - 额定 3kg（瞬时 5kg）负载、622mm 工作半径、±0.05mm 重复定位精度，底座一体式控制与工业级品质。",
     "r_lite_detail_base": "Roooll r-Lite 协作机器人（一体式控制）底座结构细节 - 一体式控制箱集成，兼顾紧凑部署与稳定运行。",
     "r_lite_detail_elbow": "Roooll r-Lite 协作机器人（一体式控制）中段关节细节 - 突出负载轨迹与协同控制能力。",
-    "r_lite_detail_wrist": "Roooll r-Lite 协作机器人（一体式控制）腕部关节细节 - 强调姿态精度与安全协作。"
+    "r_lite_detail_wrist": "Roooll r-Lite 协作机器人（一体式控制）腕部关节细节 - 强调姿态精度与安全协作。",
+    "support_service_hero": "Roooll r-Core 协作机器人（标准版），5kg 负载、922mm 臂展——面向 r 系列协作机械臂的全球服务与现场支持。",
+    "support_manual": "Roooll r 系列协作机械臂产品手册与文档下载。",
+    "support_distributor": "Roooll 授权经销商与渠道伙伴资源入口。"
   }
 }

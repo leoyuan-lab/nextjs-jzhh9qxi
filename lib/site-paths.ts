@@ -22,4 +22,5 @@ export const SITEMAP_PATHS: readonly string[] = [
   '/selector/comparison',
   '/support/resources',
   '/support/service',
+  '/support/distributors',
 ];
