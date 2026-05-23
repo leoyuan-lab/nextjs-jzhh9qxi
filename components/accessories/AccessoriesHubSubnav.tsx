@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import {
   ACCESSORIES_HUB_TOP_ID,
   ACCESSORY_LANE_ORDER,
@@ -11,13 +12,14 @@ import {
   accessoryLaneSectionId,
   type AccessoryLaneId,
 } from '@/lib/accessories-catalog';
+import {
+  PIN_SHELL_OFF_PX,
+  PIN_SHELL_ON_PX,
+  preserveScrollOnLayoutShift,
+} from '@/lib/pinned-shell-scroll';
 import { useSiteLang } from '@/lib/site-lang-context';
 
 const LOCALE_PREFIX_RE = /^\/(zh|en)(\/|$)/;
-
-/** Match `--nav-h` / compare picker pin threshold. */
-const ACCESSORIES_SUBNAV_PIN_ON_PX = 44;
-const ACCESSORIES_SUBNAV_PIN_OFF_PX = 56;
 const SCROLL_OFFSET_UNPINNED_PX = 96;
 const SCROLL_OFFSET_PINNED_EXTRA_PX = 8;
 const PROGRAMMATIC_SCROLL_MS = 900;
@@ -62,10 +64,20 @@ function subnavItemHref(lane: ActiveId, variant: 'hub' | 'spoke'): string {
   return accessoryLaneHref(lane);
 }
 
-function emitMainNavProgress(progress: number) {
+function emitMainNavProgress(progress: number, instant = false) {
   window.dispatchEvent(
-    new CustomEvent('roooll-main-nav-progress', { detail: { progress: Math.max(0, Math.min(1, progress)) } }),
+    new CustomEvent('roooll-main-nav-progress', {
+      detail: { progress: Math.max(0, Math.min(1, progress)), instant },
+    }),
   );
+}
+
+function syncAccessoriesSubnavPinnedDataset(pinned: boolean) {
+  if (pinned) {
+    document.documentElement.dataset.accessoriesSubnavPinned = 'true';
+  } else {
+    delete document.documentElement.dataset.accessoriesSubnavPinned;
+  }
 }
 
 function activeIdFromSectionDomId(sectionId: string): ActiveId {
@@ -150,16 +162,30 @@ export function AccessoriesHubSubnav({
     [copy, resolvedVariant],
   );
 
+  const setPinnedWithNav = useCallback((nextPinned: boolean, options?: { instant?: boolean }) => {
+    if (pinnedRef.current === nextPinned) return;
+    preserveScrollOnLayoutShift(sentinelRef.current, () => {
+      pinnedRef.current = nextPinned;
+      flushSync(() => {
+        setPinned(nextPinned);
+      });
+    });
+    emitMainNavProgress(nextPinned ? 1 : 0, options?.instant ?? false);
+    syncAccessoriesSubnavPinnedDataset(nextPinned);
+  }, []);
+
   const syncPinnedFromSentinel = useCallback(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
     const top = sentinel.getBoundingClientRect().top;
-    setPinned((prev) => {
-      if (!prev && top <= ACCESSORIES_SUBNAV_PIN_ON_PX) return true;
-      if (prev && top > ACCESSORIES_SUBNAV_PIN_OFF_PX) return false;
-      return prev;
-    });
-  }, []);
+    if (!pinnedRef.current && top <= PIN_SHELL_ON_PX) {
+      setPinnedWithNav(true);
+      return;
+    }
+    if (pinnedRef.current && top > PIN_SHELL_OFF_PX) {
+      setPinnedWithNav(false);
+    }
+  }, [setPinnedWithNav]);
 
   syncPinRef.current = syncPinnedFromSentinel;
 
@@ -208,18 +234,6 @@ export function AccessoriesHubSubnav({
   }, [syncPinnedFromSentinel]);
 
   useEffect(() => {
-    emitMainNavProgress(pinned ? 1 : 0);
-  }, [pinned]);
-
-  useEffect(() => {
-    if (pinned) {
-      document.documentElement.dataset.accessoriesSubnavPinned = 'true';
-    } else {
-      delete document.documentElement.dataset.accessoriesSubnavPinned;
-    }
-  }, [pinned]);
-
-  useEffect(() => {
     return () => {
       emitMainNavProgress(0);
       delete document.documentElement.dataset.accessoriesSubnavPinned;
@@ -241,12 +255,21 @@ export function AccessoriesHubSubnav({
     if (hash && document.getElementById(hash)) {
       requestAnimationFrame(() => {
         beginProgrammaticScroll();
-        scrollToSection(hash, SCROLL_OFFSET_UNPINNED_PX);
+        const targetPinned = hash !== ACCESSORIES_HUB_TOP_ID;
         setActiveId(activeIdFromSectionDomId(hash));
-        window.setTimeout(endProgrammaticScroll, programmaticScrollDurationMs());
+        if (targetPinned) {
+          setPinnedWithNav(true, { instant: true });
+        } else {
+          setPinnedWithNav(false, { instant: true });
+        }
+        requestAnimationFrame(() => {
+          const offset = targetPinned ? pinnedScrollOffsetPx() : SCROLL_OFFSET_UNPINNED_PX;
+          scrollToSection(hash, offset);
+          window.setTimeout(endProgrammaticScroll, programmaticScrollDurationMs());
+        });
       });
     }
-  }, [beginProgrammaticScroll, current, endProgrammaticScroll, isHub, spokeLane]);
+  }, [beginProgrammaticScroll, current, endProgrammaticScroll, isHub, pinnedScrollOffsetPx, setPinnedWithNav, spokeLane]);
 
   useEffect(() => {
     if (current || spokeLane || !isHub) return;
@@ -275,11 +298,18 @@ export function AccessoriesHubSubnav({
     (targetId: string, id: ActiveId) => {
       beginProgrammaticScroll();
       setActiveId(id);
-      const offset = pinnedRef.current ? pinnedScrollOffsetPx() : SCROLL_OFFSET_UNPINNED_PX;
-      scrollToSection(targetId, offset);
-      window.setTimeout(endProgrammaticScroll, programmaticScrollDurationMs());
+      activeIdRef.current = id;
+
+      const targetPinned = targetId !== ACCESSORIES_HUB_TOP_ID;
+      setPinnedWithNav(targetPinned, { instant: true });
+
+      requestAnimationFrame(() => {
+        const offset = targetPinned ? pinnedScrollOffsetPx() : SCROLL_OFFSET_UNPINNED_PX;
+        scrollToSection(targetId, offset);
+        window.setTimeout(endProgrammaticScroll, programmaticScrollDurationMs());
+      });
     },
-    [beginProgrammaticScroll, endProgrammaticScroll, pinnedScrollOffsetPx],
+    [beginProgrammaticScroll, endProgrammaticScroll, pinnedScrollOffsetPx, setPinnedWithNav],
   );
 
   const onHubNavClick = (

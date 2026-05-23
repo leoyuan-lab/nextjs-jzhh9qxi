@@ -24,13 +24,13 @@ import {
 import { EmphasizeSpecNumbers, specCellEmphasize } from '@/lib/emphasize-spec-numbers';
 import { getMessages } from '@/lib/messages';
 import { openInquiry } from '@/lib/open-inquiry';
+import { PIN_SHELL_OFF_PX, PIN_SHELL_ON_PX, preserveScrollOnLayoutShift } from '@/lib/pinned-shell-scroll';
 import { useSiteLang } from '@/lib/site-lang-context';
 
 type SelectorPageCopy = (typeof SELECTOR_LINEUP_I18N)[keyof typeof SELECTOR_LINEUP_I18N];
 type CompareExitCopy = { title: string; summary: string; cta: string };
 
 const HERO2_DEFAULT_IDS: CompareSlotIds = ['fr3-std', 'fr5-std', 'fr16-std'];
-const SELECTOR_NAV_PIN_PX = 44;
 
 function hero2SelectLabel(item: LineItem, lang: 'zh' | 'en'): string {
   const v = lineupCardVariantShortNameForItem(item, lang);
@@ -232,6 +232,7 @@ function SelectorHero2ModelCompare({
   const sentinelRef = useRef<HTMLDivElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
+  const pinnedRef = useRef(false);
   const [pinned, setPinned] = useState(false);
   const [shellH, setShellH] = useState(0);
 
@@ -264,10 +265,25 @@ function SelectorHero2ModelCompare({
   }, [ids, lang]);
 
   useEffect(() => {
+    const updatePinned = (nextPinned: boolean) => {
+      if (pinnedRef.current === nextPinned) return;
+      preserveScrollOnLayoutShift(sentinelRef.current, () => {
+        pinnedRef.current = nextPinned;
+        setPinned(nextPinned);
+      });
+    };
+
     const tick = () => {
       const s = sentinelRef.current;
       if (!s) return;
-      setPinned(s.getBoundingClientRect().top <= SELECTOR_NAV_PIN_PX);
+      const top = s.getBoundingClientRect().top;
+      if (!pinnedRef.current && top <= PIN_SHELL_ON_PX) {
+        updatePinned(true);
+        return;
+      }
+      if (pinnedRef.current && top > PIN_SHELL_OFF_PX) {
+        updatePinned(false);
+      }
     };
 
     tick();

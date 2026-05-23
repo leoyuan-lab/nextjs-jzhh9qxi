@@ -230,6 +230,7 @@ export default function ClientLayout({
   const [inquiryFormKey, setInquiryFormKey] = useState(0);
   const [isChildSubNavVisible, setIsChildSubNavVisible] = useState(false);
   const [mainNavScrollProgress, setMainNavScrollProgress] = useState(0);
+  const [mainNavProgressInstant, setMainNavProgressInstant] = useState(false);
   const [frozenMainNavProgress, setFrozenMainNavProgress] = useState<number | null>(null);
   const [navToneOverride, setNavToneOverride] = useState<'dark' | 'light' | null>(null);
   const [sampledNavDark, setSampledNavDark] = useState<boolean | null>(null);
@@ -397,11 +398,17 @@ export default function ClientLayout({
       else setNavToneOverride(null);
     };
     const handleMainNavProgress = (event: Event) => {
-      const customEvent = event as CustomEvent<{ progress?: number }>;
+      const customEvent = event as CustomEvent<{ progress?: number; instant?: boolean }>;
       const raw = customEvent.detail?.progress ?? 0;
       const clamped = Math.max(0, Math.min(1, raw));
       mainNavScrollProgressRef.current = clamped;
       setMainNavScrollProgress(clamped);
+      if (customEvent.detail?.instant) {
+        setMainNavProgressInstant(true);
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => setMainNavProgressInstant(false));
+        });
+      }
     };
     window.addEventListener('langChange', handleLangChange);
     window.addEventListener('roooll-subnav-visibility', handleSubNavVisibility as EventListener);
@@ -717,9 +724,10 @@ export default function ClientLayout({
                       : subPageNavProgress > 0.98
                         ? 'none'
                         : 'auto',
-                    transition: isArm
-                      ? 'none'
-                      : 'transform 0.82s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.58s cubic-bezier(0.22, 1, 0.36, 1)',
+                    transition:
+                      isArm || mainNavProgressInstant
+                        ? 'none'
+                        : 'transform 0.82s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.58s cubic-bezier(0.22, 1, 0.36, 1)',
                   }
             }
           >
