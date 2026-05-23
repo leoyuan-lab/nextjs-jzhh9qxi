@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ACCESSORIES_HUB_TOP_ID,
   ACCESSORY_LANE_ORDER,
@@ -14,6 +14,17 @@ import {
 import { useSiteLang } from '@/lib/site-lang-context';
 
 const LOCALE_PREFIX_RE = /^\/(zh|en)(\/|$)/;
+
+/** Match `--nav-h` / compare picker pin threshold. */
+const ACCESSORIES_SUBNAV_PIN_ON_PX = 44;
+const ACCESSORIES_SUBNAV_PIN_OFF_PX = 56;
+const SCROLL_OFFSET_UNPINNED_PX = 96;
+const SCROLL_OFFSET_PINNED_EXTRA_PX = 8;
+const PROGRAMMATIC_SCROLL_MS = 900;
+
+function programmaticScrollDurationMs(): number {
+  return scrollBehavior() === 'auto' ? 120 : PROGRAMMATIC_SCROLL_MS;
+}
 
 function stripLocalePrefix(pathname: string): string {
   if (!pathname || pathname === '/') return '/';
@@ -30,13 +41,18 @@ type SubnavCopy = {
 
 type ActiveId = typeof ACCESSORIES_HUB_TOP_ID | AccessoryLaneId;
 
-const SCROLL_OFFSET_PX = 96;
+function scrollBehavior(): ScrollBehavior {
+  if (typeof window === 'undefined') return 'auto';
+  if (window.matchMedia('(max-width: 767px)').matches) return 'auto';
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return 'auto';
+  return 'smooth';
+}
 
-function scrollToSection(id: string) {
+function scrollToSection(id: string, offsetPx: number) {
   const el = document.getElementById(id);
   if (!el) return;
-  const top = el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET_PX;
-  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  const top = el.getBoundingClientRect().top + window.scrollY - offsetPx;
+  window.scrollTo({ top: Math.max(0, top), behavior: scrollBehavior() });
   window.history.replaceState(null, '', `#${id}`);
 }
 
@@ -44,6 +60,18 @@ function subnavItemHref(lane: ActiveId, variant: 'hub' | 'spoke'): string {
   if (lane === ACCESSORIES_HUB_TOP_ID) return '/accessories';
   if (variant === 'hub') return `/accessories#${accessoryLaneSectionId(lane)}`;
   return accessoryLaneHref(lane);
+}
+
+function emitMainNavProgress(progress: number) {
+  window.dispatchEvent(
+    new CustomEvent('roooll-main-nav-progress', { detail: { progress: Math.max(0, Math.min(1, progress)) } }),
+  );
+}
+
+function activeIdFromSectionDomId(sectionId: string): ActiveId {
+  if (sectionId === ACCESSORIES_HUB_TOP_ID) return ACCESSORIES_HUB_TOP_ID;
+  const lane = ACCESSORY_LANE_ORDER.find((item) => accessoryLaneSectionId(item) === sectionId);
+  return lane ?? ACCESSORIES_HUB_TOP_ID;
 }
 
 export function AccessoriesHubSubnav({
@@ -64,9 +92,36 @@ export function AccessoriesHubSubnav({
     ? (pathname.replace('/accessories/', '') as AccessoryLaneId)
     : null;
 
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
+  const spacerRef = useRef<HTMLDivElement>(null);
+  const pinnedRef = useRef(false);
+  const programmaticScrollUntilRef = useRef(0);
+  const activeIdRef = useRef<ActiveId>(ACCESSORIES_HUB_TOP_ID);
+  const syncPinRef = useRef<(() => void) | null>(null);
+
+  const [pinned, setPinned] = useState(false);
   const [activeId, setActiveId] = useState<ActiveId>(
     current ?? spokeLane ?? ACCESSORIES_HUB_TOP_ID,
   );
+
+  activeIdRef.current = activeId;
+  pinnedRef.current = pinned;
+
+  const hubSectionIds = useMemo(
+    () => [
+      ACCESSORIES_HUB_TOP_ID,
+      ...accessoryHubPreviewLanes().map((lane) => accessoryLaneSectionId(lane)),
+    ],
+    [],
+  );
+
+  const pinnedScrollOffsetPx = useCallback((): number => {
+    const spacerH = spacerRef.current?.offsetHeight ?? 0;
+    return spacerH > 0
+      ? spacerH + SCROLL_OFFSET_PINNED_EXTRA_PX
+      : SCROLL_OFFSET_UNPINNED_PX;
+  }, []);
 
   const localizeHref = useCallback(
     (path: string) => {
@@ -95,6 +150,82 @@ export function AccessoriesHubSubnav({
     [copy, resolvedVariant],
   );
 
+  const syncPinnedFromSentinel = useCallback(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const top = sentinel.getBoundingClientRect().top;
+    setPinned((prev) => {
+      if (!prev && top <= ACCESSORIES_SUBNAV_PIN_ON_PX) return true;
+      if (prev && top > ACCESSORIES_SUBNAV_PIN_OFF_PX) return false;
+      return prev;
+    });
+  }, []);
+
+  syncPinRef.current = syncPinnedFromSentinel;
+
+  const resolveActiveFromScroll = useCallback(
+    (offsetPx: number): ActiveId => {
+      let next: ActiveId = ACCESSORIES_HUB_TOP_ID;
+      for (const sectionId of hubSectionIds) {
+        const el = document.getElementById(sectionId);
+        if (!el) continue;
+        if (el.getBoundingClientRect().top <= offsetPx + 12) {
+          next = activeIdFromSectionDomId(sectionId);
+        }
+      }
+      return next;
+    },
+    [hubSectionIds],
+  );
+
+  const beginProgrammaticScroll = useCallback(() => {
+    programmaticScrollUntilRef.current = Date.now() + programmaticScrollDurationMs();
+  }, []);
+
+  const endProgrammaticScroll = useCallback(() => {
+    programmaticScrollUntilRef.current = 0;
+    syncPinRef.current?.();
+    if (!current && !spokeLane && isHub) {
+      const offset = pinnedRef.current ? pinnedScrollOffsetPx() : SCROLL_OFFSET_UNPINNED_PX;
+      const next = resolveActiveFromScroll(offset);
+      if (next !== activeIdRef.current) setActiveId(next);
+    }
+  }, [current, isHub, pinnedScrollOffsetPx, resolveActiveFromScroll, spokeLane]);
+
+  useEffect(() => {
+    const tick = () => {
+      if (Date.now() < programmaticScrollUntilRef.current) return;
+      syncPinnedFromSentinel();
+    };
+
+    tick();
+    window.addEventListener('scroll', tick, { passive: true });
+    window.addEventListener('resize', tick);
+    return () => {
+      window.removeEventListener('scroll', tick);
+      window.removeEventListener('resize', tick);
+    };
+  }, [syncPinnedFromSentinel]);
+
+  useEffect(() => {
+    emitMainNavProgress(pinned ? 1 : 0);
+  }, [pinned]);
+
+  useEffect(() => {
+    if (pinned) {
+      document.documentElement.dataset.accessoriesSubnavPinned = 'true';
+    } else {
+      delete document.documentElement.dataset.accessoriesSubnavPinned;
+    }
+  }, [pinned]);
+
+  useEffect(() => {
+    return () => {
+      emitMainNavProgress(0);
+      delete document.documentElement.dataset.accessoriesSubnavPinned;
+    };
+  }, []);
+
   useEffect(() => {
     if (current) {
       setActiveId(current);
@@ -109,82 +240,99 @@ export function AccessoriesHubSubnav({
     const hash = window.location.hash.slice(1);
     if (hash && document.getElementById(hash)) {
       requestAnimationFrame(() => {
-        scrollToSection(hash);
-        const laneFromHash = ACCESSORY_LANE_ORDER.find(
-          (lane) => accessoryLaneSectionId(lane) === hash,
-        );
-        setActiveId(laneFromHash ?? ACCESSORIES_HUB_TOP_ID);
+        beginProgrammaticScroll();
+        scrollToSection(hash, SCROLL_OFFSET_UNPINNED_PX);
+        setActiveId(activeIdFromSectionDomId(hash));
+        window.setTimeout(endProgrammaticScroll, programmaticScrollDurationMs());
       });
     }
-  }, [current, isHub, spokeLane]);
+  }, [beginProgrammaticScroll, current, endProgrammaticScroll, isHub, spokeLane]);
 
   useEffect(() => {
     if (current || spokeLane || !isHub) return;
 
-    const sectionIds = [
-      ACCESSORIES_HUB_TOP_ID,
-      ...accessoryHubPreviewLanes().map((lane) => accessoryLaneSectionId(lane)),
-    ];
-    const elements = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => Boolean(el));
-    if (!elements.length) return;
+    let rafId = 0;
+    const onScroll = () => {
+      if (Date.now() < programmaticScrollUntilRef.current) return;
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(() => {
+        rafId = 0;
+        const offset = pinnedRef.current ? pinnedScrollOffsetPx() : SCROLL_OFFSET_UNPINNED_PX;
+        const next = resolveActiveFromScroll(offset);
+        if (next !== activeIdRef.current) setActiveId(next);
+      });
+    };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        const next = visible[0]?.target.id;
-        if (!next) return;
-        if (next === ACCESSORIES_HUB_TOP_ID) {
-          setActiveId(ACCESSORIES_HUB_TOP_ID);
-          return;
-        }
-        const lane = ACCESSORY_LANE_ORDER.find((item) => accessoryLaneSectionId(item) === next);
-        if (lane) setActiveId(lane);
-      },
-      {
-        rootMargin: `-${SCROLL_OFFSET_PX}px 0px -52% 0px`,
-        threshold: [0, 0.12, 0.35, 0.6],
-      },
-    );
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
+  }, [current, isHub, pinnedScrollOffsetPx, resolveActiveFromScroll, spokeLane]);
 
-    elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [current, isHub, spokeLane]);
+  const scrollHubTo = useCallback(
+    (targetId: string, id: ActiveId) => {
+      beginProgrammaticScroll();
+      setActiveId(id);
+      const offset = pinnedRef.current ? pinnedScrollOffsetPx() : SCROLL_OFFSET_UNPINNED_PX;
+      scrollToSection(targetId, offset);
+      window.setTimeout(endProgrammaticScroll, programmaticScrollDurationMs());
+    },
+    [beginProgrammaticScroll, endProgrammaticScroll, pinnedScrollOffsetPx],
+  );
 
-  const onHubHashClick = (
+  const onHubNavClick = (
     event: React.MouseEvent<HTMLAnchorElement>,
     id: ActiveId,
     href: string,
   ) => {
-    if (resolvedVariant !== 'hub' || !href.includes('#')) return;
+    if (resolvedVariant !== 'hub') return;
+
+    if (id === ACCESSORIES_HUB_TOP_ID) {
+      event.preventDefault();
+      scrollHubTo(ACCESSORIES_HUB_TOP_ID, ACCESSORIES_HUB_TOP_ID);
+      return;
+    }
+
+    if (!href.includes('#')) return;
     const hash = href.split('#')[1];
     if (!hash || !document.getElementById(hash)) return;
     event.preventDefault();
-    scrollToSection(hash);
-    setActiveId(id);
+    scrollHubTo(hash, id);
   };
 
   return (
-    <nav className="accessories-hub-subnav" aria-label={copy.subnavAria}>
-      <div className="accessories-hub-subnav-inner roooll-hscroll">
-        {navItems.map((item) => {
-          const resolvedHref = localizeHref(item.href);
-          const isActive = activeId === item.id;
-          return (
-            <Link
-              key={item.id}
-              href={resolvedHref}
-              className={`accessories-hub-subnav-link${isActive ? ' is-active' : ''}`}
-              onClick={(event) => onHubHashClick(event, item.id, item.href)}
-            >
-              {item.label}
-            </Link>
-          );
-        })}
+    <>
+      <div ref={sentinelRef} className="accessories-hub-subnav-sentinel" aria-hidden />
+      <div
+        ref={spacerRef}
+        className={`accessories-hub-subnav-spacer${pinned ? ' is-active' : ''}`}
+        aria-hidden
+      />
+      <div
+        ref={shellRef}
+        className={pinned ? 'accessories-hub-subnav-shell is-pinned' : 'accessories-hub-subnav-shell'}
+      >
+        <nav className="accessories-hub-subnav" aria-label={copy.subnavAria}>
+          <div className="accessories-hub-subnav-inner roooll-hscroll">
+            {navItems.map((item) => {
+              const resolvedHref = localizeHref(item.href);
+              const isActive = activeId === item.id;
+              return (
+                <Link
+                  key={item.id}
+                  href={resolvedHref}
+                  className={`accessories-hub-subnav-link${isActive ? ' is-active' : ''}`}
+                  onClick={(event) => onHubNavClick(event, item.id, item.href)}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
       </div>
-    </nav>
+    </>
   );
 }

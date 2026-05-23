@@ -135,11 +135,17 @@ export default function HomePageClient() {
     }
   };
 
+  const heroLoadFinishedRef = useRef(false);
+
   useEffect(() => {
-    const v5 = viewerRef5.current;
-    const v20 = viewerRef20.current;
+    let cancelled = false;
+    let pollId: number | null = null;
+    let v5Attached = false;
+    let rafId: number | null = null;
 
     const finishLoading = () => {
+      if (heroLoadFinishedRef.current) return;
+      heroLoadFinishedRef.current = true;
       setLoadingProgress(100);
       if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
       hideTimerRef.current = window.setTimeout(() => setIsLoaded(true), 320);
@@ -150,7 +156,7 @@ export default function HomePageClient() {
       if (typeof raw !== 'number') return;
       const progress = Math.min(99, Math.max(0, Math.round(raw * 100)));
       setLoadingProgress((prev) => Math.max(prev, progress));
-      if (progress >= 100) finishLoading();
+      if (progress >= 99) finishLoading();
     };
 
     const stopJointSpin = () => {
@@ -201,7 +207,6 @@ export default function HomePageClient() {
 
       if (heroRotateDelayRef.current) window.clearTimeout(heroRotateDelayRef.current);
       heroRotateDelayRef.current = window.setTimeout(() => {
-        /* 默认 auto-rotate 为逆时针；负的 rotation-per-second 反转方向（与默认同速用 -100%） */
         heroRotateReadyRef.current = true;
         viewer.setAttribute('rotation-per-second', '-100%');
         viewer.setAttribute('auto-rotate', '');
@@ -212,6 +217,8 @@ export default function HomePageClient() {
     };
 
     const onLoad5 = () => {
+      const v5 = viewerRef5.current;
+      if (!v5?.model) return;
       applyPerfectMaterial(v5.model);
       startJointSpin(v5);
       startSimpleHeroSequence(v5);
@@ -220,6 +227,8 @@ export default function HomePageClient() {
     };
 
     const onLoad20 = () => {
+      const v20 = viewerRef20.current;
+      if (!v20?.model) return;
       applyPerfectMaterial(v20.model);
       const isMobile = window.innerWidth < 768;
       v20.setAttribute('camera-target', isMobile ? 'auto 122% auto' : 'auto 110% auto');
@@ -227,34 +236,39 @@ export default function HomePageClient() {
       v20.setAttribute('field-of-view', isMobile ? '25deg' : '15.5deg');
     };
 
-    if (v5) {
-      v5.setAttribute('fetchpriority', 'high');
-      v5.addEventListener('progress', onProgress);
-      v5.addEventListener('load', onLoad5);
-    }
-
     const onHeroInteract = () => setShowDragHint(false);
-    if (v5) {
+
+    const attachHeroViewer = () => {
+      const v5 = viewerRef5.current;
+      if (!v5 || v5Attached) return;
+      v5Attached = true;
+      v5.setAttribute('fetchpriority', 'high');
+      if (v5.model) {
+        onLoad5();
+      } else {
+        v5.addEventListener('progress', onProgress);
+        v5.addEventListener('load', onLoad5);
+      }
       v5.addEventListener('pointerdown', onHeroInteract);
       v5.addEventListener('touchstart', onHeroInteract);
-    }
 
-    if (v20) v20.addEventListener('load', onLoad20);
+      const v20 = viewerRef20.current;
+      if (v20) v20.addEventListener('load', onLoad20);
+    };
 
-    let rafId: number | null = null;
     const syncHeroMotionByScroll = () => {
       if (rafId !== null) return;
       rafId = window.requestAnimationFrame(() => {
         rafId = null;
+        const v5 = viewerRef5.current;
+        const v20 = viewerRef20.current;
         const y = window.scrollY;
         const vh = Math.max(window.innerHeight, 1);
 
-        // Home section 1 near viewport: keep hero-1 joint animation alive.
         const hero1Active = y < vh * 1.25;
         if (hero1Active) startJointSpin(v5);
         else stopJointSpin();
 
-        // Pause auto-rotate outside hero sections to free mobile GPU/CPU for footer scroll.
         if (v5) {
           const hero1AutoRotateActive = heroRotateReadyRef.current && y < vh * 1.55;
           if (hero1AutoRotateActive) v5.setAttribute('auto-rotate', '');
@@ -267,16 +281,43 @@ export default function HomePageClient() {
         }
       });
     };
+
+    const boot = async () => {
+      if (typeof customElements !== 'undefined') {
+        try {
+          await customElements.whenDefined('model-viewer');
+        } catch {
+          /* model-viewer script may load after first paint */
+        }
+      }
+      if (cancelled) return;
+      attachHeroViewer();
+      if (!v5Attached) {
+        pollId = window.setInterval(() => {
+          if (cancelled) return;
+          attachHeroViewer();
+          if (v5Attached && pollId !== null) {
+            window.clearInterval(pollId);
+            pollId = null;
+          }
+        }, 50);
+      }
+    };
+
+    boot();
     syncHeroMotionByScroll();
     window.addEventListener('scroll', syncHeroMotionByScroll, { passive: true });
-    window.addEventListener('resize', syncHeroMotionByScroll, { passive: true });
-
-    forceHideTimerRef.current = window.setTimeout(() => finishLoading(), 12000);
+    window.addEventListener('resize', syncHeroMotionByScroll);
+    forceHideTimerRef.current = window.setTimeout(() => finishLoading(), 8000);
 
     return () => {
+      cancelled = true;
+      if (pollId !== null) window.clearInterval(pollId);
       if (rafId !== null) window.cancelAnimationFrame(rafId);
       window.removeEventListener('scroll', syncHeroMotionByScroll);
       window.removeEventListener('resize', syncHeroMotionByScroll);
+      const v5 = viewerRef5.current;
+      const v20 = viewerRef20.current;
       if (v5) {
         v5.removeEventListener('progress', onProgress);
         v5.removeEventListener('load', onLoad5);

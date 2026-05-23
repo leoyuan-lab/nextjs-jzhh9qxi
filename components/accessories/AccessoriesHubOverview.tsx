@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { AccessoryLaneSection, type AccessoryLaneCopy } from '@/components/accessories/AccessoryLaneSection';
 import {
   ACCESSORY_LANE_ORDER,
-  accessoryLaneHasSpoke,
   accessoryLaneHref,
   accessoryLaneSectionId,
   type AccessoryLaneId,
@@ -78,7 +77,6 @@ export function AccessoriesHubOverview({
           {ACCESSORY_LANE_ORDER.map((lane) => {
             const card = copy.categories.cards[lane];
             const href = `/${safeLang}${accessoryLaneHref(lane)}`;
-            const badge = accessoryLaneHasSpoke(lane) ? card.liveBadge : card.soonBadge;
             return (
               <Link key={lane} href={href} className="accessories-category-card">
                 <div className="accessories-category-card-media">
@@ -86,20 +84,12 @@ export function AccessoriesHubOverview({
                     src={CATEGORY_IMAGES[lane]}
                     alt={card.title}
                     fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-contain p-5"
+                    sizes="(max-width: 767px) 120px, 200px"
+                    className="accessories-category-card-img object-contain"
                   />
                 </div>
                 <div className="accessories-category-card-body">
-                  <div className="accessories-category-card-head">
-                    <h3>{card.title}</h3>
-                    {badge ? <span className="accessories-category-card-badge">{badge}</span> : null}
-                  </div>
-                  <p className="accessories-category-card-summary">{card.summary}</p>
-                  <span className="accessories-category-card-cta">
-                    {card.cta}
-                    <span aria-hidden> ›</span>
-                  </span>
+                  <h3 className="accessories-category-card-title">{card.title}</h3>
                 </div>
               </Link>
             );
