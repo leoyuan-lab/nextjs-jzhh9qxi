@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteOrigin = await getRequestSiteOrigin();
   return pageMetadata(
     'Global Cobot Service',
-    'Global service for robotic arm fleets: RMA portals, SLA packs, robotics arm preventative maintenance, escalation lines.',
+    'Global service for Roooll cobots: cross-time-zone engineering, custom OEM/ODM programs, lead times, warranty, firmware updates, spare parts, and self-service resources.',
     '/support/service',
     lang,
     siteOrigin,

@@ -2,11 +2,15 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { SupportCardIcon } from '@/components/support/SupportCardIcon';
 import {
   SupportIconBespoke,
   SupportIconDeployment,
   SupportIconGlobal,
+  SupportIconManual,
+  SupportIconSoftware,
+  SupportIconSpareParts,
   SupportIconWarranty,
 } from '@/components/support/SupportIcons';
 import { SupportPageShell } from '@/components/support/SupportPageShell';
@@ -16,11 +20,61 @@ import { useSiteLang } from '@/lib/site-lang-context';
 
 const SERVICE_HERO_IMAGE = '/images/robots/r-core-cobot-fr5-std.webp';
 
+type ServiceCardProps = {
+  className?: string;
+  icon: ReactNode;
+  title: string;
+  body: string;
+  href?: string;
+  cta?: string;
+  banner?: boolean;
+};
+
+function ServiceCard({ className, icon, title, body, href, cta, banner }: ServiceCardProps) {
+  const content = banner ? (
+    <>
+      <SupportCardIcon size="large">{icon}</SupportCardIcon>
+      <div className="support-card-banner-copy">
+        <h2>{title}</h2>
+        <p>{body}</p>
+      </div>
+      {cta ? <span className="support-card-cta">{cta} ›</span> : null}
+    </>
+  ) : (
+    <>
+      <SupportCardIcon size="large">{icon}</SupportCardIcon>
+      <h2>{title}</h2>
+      <p>{body}</p>
+      {cta ? <span className="support-card-cta">{cta} ›</span> : null}
+    </>
+  );
+
+  const cardClass = [
+    'support-card',
+    'support-card--tile',
+    banner ? 'support-card--banner' : '',
+    href ? 'support-card--link' : '',
+    className ?? '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  if (href) {
+    return (
+      <Link href={href} className={cardClass}>
+        {content}
+      </Link>
+    );
+  }
+
+  return <article className={cardClass}>{content}</article>;
+}
+
 export function SupportServiceClient() {
   const lang = useSiteLang();
   const messages = getMessages(lang);
   const copy = messages.pages.support.service;
-  const { global: globalCard, deployment, bespoke, warranty } = copy.cards;
+  const { cards } = copy;
   const heroAlt = messages.alt.support_service_hero;
   const resourcesHref = `/${lang}/support/resources`;
 
@@ -35,66 +89,81 @@ export function SupportServiceClient() {
 
   return (
     <SupportPageShell>
-      <header className="support-hero support-hero--center">
-        <h1>{copy.heroTitle}</h1>
-        <p>{copy.heroBody}</p>
-      </header>
+      <div className="support-service-page">
+        <header className="support-hero support-hero--center support-hero--service">
+          <h1>{copy.heroTitle}</h1>
+          <p>{copy.heroBody}</p>
+        </header>
 
-      <div className="support-service-grid">
-        <article className="support-card support-card--split">
-          <div className="support-card-media">
-            <Image
-              src={SERVICE_HERO_IMAGE}
-              alt={heroAlt}
-              width={640}
-              height={640}
-              sizes="(max-width: 767px) 100vw, 40vw"
-              className="support-card-media-img"
-            />
-          </div>
-          <div className="support-card-body">
-            <SupportCardIcon size="large">
-              <SupportIconGlobal />
-            </SupportCardIcon>
-            <h2>{globalCard.title}</h2>
-            <p>{globalCard.body}</p>
-          </div>
-        </article>
-
-        <div className="support-service-row">
-          <article className="support-card support-card--wide">
-            <SupportCardIcon size="large">
-              <SupportIconBespoke />
-            </SupportCardIcon>
-            <h2>{bespoke.title}</h2>
-            <p>{bespoke.body}</p>
+        <div className="support-service-bento">
+          <article className="support-card support-card--split support-bento-global">
+            <div className="support-card-body">
+              <SupportCardIcon size="large">
+                <SupportIconGlobal />
+              </SupportCardIcon>
+              <h2>{cards.global.title}</h2>
+              <p>{cards.global.body}</p>
+            </div>
+            <div className="support-card-media">
+              <Image
+                src={SERVICE_HERO_IMAGE}
+                alt={heroAlt}
+                width={640}
+                height={640}
+                sizes="(max-width: 767px) 100vw, 28vw"
+                className="support-card-media-img"
+              />
+            </div>
           </article>
 
-          <article className="support-card support-card--narrow support-card--muted">
-            <SupportCardIcon size="large">
-              <SupportIconDeployment />
-            </SupportCardIcon>
-            <h2>{deployment.title}</h2>
-            <p>{deployment.body}</p>
-          </article>
+          <ServiceCard
+            className="support-bento-bespoke"
+            icon={<SupportIconBespoke />}
+            title={cards.bespoke.title}
+            body={cards.bespoke.body}
+          />
+          <ServiceCard
+            className="support-bento-deployment"
+            icon={<SupportIconDeployment />}
+            title={cards.deployment.title}
+            body={cards.deployment.body}
+          />
+          <ServiceCard
+            className="support-bento-warranty"
+            icon={<SupportIconWarranty />}
+            title={cards.warranty.title}
+            body={cards.warranty.body}
+          />
+          <ServiceCard
+            className="support-bento-software"
+            icon={<SupportIconSoftware />}
+            title={cards.software.title}
+            body={cards.software.body}
+          />
+          <ServiceCard
+            className="support-bento-spare"
+            icon={<SupportIconSpareParts />}
+            title={cards.spareParts.title}
+            body={cards.spareParts.body}
+          />
+          <ServiceCard
+            className="support-bento-resources"
+            banner
+            icon={<SupportIconManual />}
+            title={cards.resources.title}
+            body={cards.resources.body}
+            href={resourcesHref}
+          />
         </div>
 
-        <article className="support-card support-card--hero">
-          <SupportCardIcon size="large">
-            <SupportIconWarranty />
-          </SupportCardIcon>
-          <h2>{warranty.title}</h2>
-          <p>{warranty.body}</p>
-        </article>
-      </div>
-
-      <div className="support-service-cta">
-        <button type="button" className="support-service-cta-primary" onClick={openServiceInquiry}>
-          {copy.ctaContact} ›
-        </button>
-        <Link href={resourcesHref} className="support-service-cta-secondary">
-          {copy.ctaResources} ›
-        </Link>
+        <div className="support-service-cta">
+          <button type="button" className="support-service-cta-primary" onClick={openServiceInquiry}>
+            {copy.ctaContact} ›
+          </button>
+          <Link href={resourcesHref} className="support-service-cta-secondary">
+            {copy.ctaResources} ›
+          </Link>
+        </div>
       </div>
     </SupportPageShell>
   );

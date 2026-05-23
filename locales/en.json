@@ -361,23 +361,35 @@
       },
       "service": {
         "heroTitle": "Global service. Built in.",
-        "heroBody": "From your first inquiry to years on the factory floor—we bring expert guidance across time zones, dependable delivery, tailored engineering, and warranty coverage that keeps production moving.",
+        "heroBody": "From day one on the factory floor to years of high-yield production, our support is integrated into every robot. Expert guidance across time zones, tailored engineering, and relentless uptime, guaranteed.",
         "cards": {
           "global": {
             "title": "Always within reach.",
-            "body": "Our specialists work across time zones, around the clock. Whether it is a business question or deep technical support, expect a thoughtful reply within 12 hours."
-          },
-          "deployment": {
-            "title": "Ready when you are.",
-            "body": "Standard configurations ship within 3–5 business days after payment confirmation. Large programs and custom builds follow timelines agreed in your contract—clear from day one."
+            "body": "Real-time expertise, across every time zone. From initial deployment to complex troubleshooting, our engineering team ensures a definitive resolution within 12 hours."
           },
           "bespoke": {
             "title": "Your vision. Our engineering.",
-            "body": "Beyond the R-Series catalog: OEM and ODM programs, brand integration, and co-developed end-effectors built for your industry."
+            "body": "Go beyond the standard catalog. We partner with you on OEM/ODM development, white-label branding, and application-specific end-effectors tailored exactly to your workflow."
+          },
+          "deployment": {
+            "title": "Ready when you are.",
+            "body": "High availability, zero waiting. Standard configurations ship within 3 to 5 business days. For volume deployments and custom solutions, deadlines are transparent and locked from day one."
           },
           "warranty": {
             "title": "Two years. Zero guesswork.",
-            "body": "Motors, reducers, and control architecture covered by a limited two-year warranty—backed by a global response network that keeps your line running."
+            "body": "Every core component—motors, reducers, and control architecture—is covered by an industry-leading two-year warranty. Backed by a responsive global network dedicated to keeping your line running."
+          },
+          "software": {
+            "title": "Evolution, automatically.",
+            "body": "Your hardware stays ahead of the curve. Benefit from continuous firmware updates, OS optimizations, and open-access SDK enhancements that unlock new capabilities over time."
+          },
+          "spareParts": {
+            "title": "Minimized downtime. Maximized trust.",
+            "body": "Critical components shouldn't wait. We maintain dedicated regional stock for motors and joint modules, ensuring rapid global dispatch to keep your production moving."
+          },
+          "resources": {
+            "title": "Everything you need, instantly.",
+            "body": "Skip the queue and access our comprehensive repository. Instantly download production-ready 3D CAD files, simulation tools, programming guides, and detailed user manuals."
           }
         },
         "ctaContact": "Contact technical support",

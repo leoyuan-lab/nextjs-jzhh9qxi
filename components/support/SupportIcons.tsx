@@ -78,6 +78,26 @@ export function SupportIconWarranty(props: IconProps) {
   );
 }
 
+export function SupportIconSoftware(props: IconProps) {
+  return (
+    <SvgRoot {...props}>
+      <rect x="4" y="4" width="16" height="16" rx="2" />
+      <path d="M9 9h6M9 13h4" />
+      <path d="M8 4V2M16 4V2M8 20v2M16 20v2" />
+    </SvgRoot>
+  );
+}
+
+export function SupportIconSpareParts(props: IconProps) {
+  return (
+    <SvgRoot {...props}>
+      <path d="M3 7h18v13H3V7z" />
+      <path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2" />
+      <path d="M12 11v6M9.5 13.5h5" />
+    </SvgRoot>
+  );
+}
+
 export function SupportIconPartner(props: IconProps) {
   return (
     <SvgRoot {...props}>
