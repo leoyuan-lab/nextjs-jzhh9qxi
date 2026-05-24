@@ -101,6 +101,8 @@
   },
   "homepage": {
     "ctaLearn": "进一步了解",
+    "ctaLearnRliteAria": "进一步了解 r-Lite 协作机器人",
+    "ctaLearnRultraAria": "进一步了解 r-Ultra 协作机器人",
     "ctaInquiry": "咨询",
     "loadingSloganBefore": "让我们大",
     "loadingSloganMark": "干",

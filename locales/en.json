@@ -101,6 +101,8 @@
   },
   "homepage": {
     "ctaLearn": "Learn more",
+    "ctaLearnRliteAria": "Learn more about r-Lite collaborative cobot",
+    "ctaLearnRultraAria": "Learn more about r-Ultra collaborative cobot",
     "ctaInquiry": "Inquiry",
     "loadingSloganBefore": "Let's get r",
     "loadingSloganMark": "o",

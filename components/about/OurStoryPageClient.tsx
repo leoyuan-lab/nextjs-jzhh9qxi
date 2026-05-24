@@ -33,9 +33,14 @@ function curtainOpeningOverlapVh(): number {
     : STORY_CURTAIN_OPENING_OVERLAP.desktop;
 }
 
+function storyViewportHeight(): number {
+  if (typeof window === 'undefined') return 800;
+  return window.visualViewport?.height ?? window.innerHeight;
+}
+
 /** Single scrollY timeline for origin lift — avoids opening/curtain track desync plateaus. */
 function originTopLiftProgressFromScrollY(scrollY: number): number {
-  const vh = window.visualViewport?.height ?? window.innerHeight;
+  const vh = storyViewportHeight();
   const { exitEnd } = STORY_OPENING_PHASE;
   const { topLiftEnd } = STORY_CURTAIN_PHASE;
   const opening = STORY_SCROLL_TRACK.opening;

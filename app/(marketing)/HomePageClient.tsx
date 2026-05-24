@@ -427,6 +427,7 @@ export default function HomePageClient() {
               <a
                 href={path('/cobots/r-lite')}
                 className="cta-link"
+                aria-label={home.ctaLearnRliteAria}
                 onClick={() => trackCtaClick('home_hero1_learn_rlite')}
               >
                 {ctaLearn}
@@ -482,7 +483,7 @@ export default function HomePageClient() {
             <h2 className="title">{titleRultra}</h2>
             <p className="subtitle">{home.heroRultraSubtitle}</p>
             <div className="cta-row">
-              <a href={path('/cobots/r-ultra')} className="cta-link">
+              <a href={path('/cobots/r-ultra')} className="cta-link" aria-label={home.ctaLearnRultraAria}>
                 {ctaLearn}
               </a>
               <button type="button" className="cta-link cta-btn" onClick={openHomeInquiry}>
