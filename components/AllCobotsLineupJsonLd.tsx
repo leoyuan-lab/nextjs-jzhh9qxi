@@ -1,4 +1,5 @@
-import { assertNoFrInJsonLd, buildAllCobotsItemListLd } from '@/lib/roooll-product-schema';
+import { buildAllCobotsItemListLd } from '@/lib/all-cobots-lineup-ld';
+import { assertNoFrInJsonLd } from '@/lib/roooll-product-schema';
 
 type Props = {
   lang: 'zh' | 'en';

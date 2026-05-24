@@ -38,11 +38,11 @@
       "grippers": "Grippers",
       "fixtures": "Fixtures"
     },
-    "about_section": "About",
+    "about_section": "About Roooll",
     "about": {
       "story": "Our Story",
       "news": "Newsroom",
-      "contact": "Contact Us"
+      "contact": "Contact Roooll"
     }
   },
   "chrome": {
@@ -332,9 +332,63 @@
       ]
     },
     "contact": {
-      "title": "Contact Us",
-      "body": "Sales, partnerships, and follow-the-sun service—reach us by email or use the Inquiry entry point sitewide.",
-      "ctaHome": "Back to Home"
+      "logoAlt": "Roooll brand mark on the contact page.",
+      "heroTitle": "Contacting Roooll",
+      "heroBody": "Sales, integrations, and partnerships—tell us about your project or reach us directly by email.",
+      "emailCta": "info@roooll.com",
+      "cards": {
+        "inquiry": {
+          "title": "Project inquiry",
+          "body": "Share payload, reach, and application details. Our sales team typically responds within one business day.",
+          "cta": "Start inquiry"
+        },
+        "email": {
+          "title": "Email us",
+          "body": "General questions, partnership introductions, and press—write anytime.",
+          "cta": "Send email"
+        },
+        "support": {
+          "title": "Service & support",
+          "body": "Deployment help, warranty coverage, manuals, and global technical assistance.",
+          "cta": "Get support"
+        }
+      },
+      "footnote": "Authorized distributors can use the channel partner page for pricing packs and co-marketing assets.",
+      "footnoteLink": "Channel partners"
+    },
+    "story": {
+      "openingKicker": "Our Story",
+      "openingTitle": "Precision, made approachable.",
+      "openingBody": "Roooll builds collaborative robots where mechanical rigor meets software anyone can run—on the line, in the lab, and beside the people who keep industry moving.",
+      "originKicker": "Origin",
+      "originTitle": "Why we exist.",
+      "originBody": "We started with a simple tension: factories and labs need repeatable motion, but deployment cannot depend on a handful of specialists. Roooll exists to close that gap—with arms that are precise enough for real work and approachable enough to ship quickly.",
+      "philosophyKicker": "How we build",
+      "philosophyTitle": "Three commitments behind every r-Series arm.",
+      "philosophyPillars": {
+        "modular": {
+          "title": "Modular by design",
+          "body": "Variants and tooling share one mental model—integrate once, scale across cells."
+        },
+        "deploy": {
+          "title": "Quick to deploy",
+          "body": "From bench to line with clear interfaces, documentation, and support within reach."
+        },
+        "operate": {
+          "title": "Easy to operate",
+          "body": "Web-native operation and open SDK paths—operators first, not gatekeepers."
+        }
+      },
+      "peopleKicker": "People",
+      "peopleTitle": "Dignity in every link of the chain.",
+      "peopleBody": "We expect fair labor practices across our supply chain, safe collaboration on real floors, and technology that assists people rather than replacing their judgment. Human rights are not a footnote—they are part of how we choose partners and design workflows.",
+      "planetKicker": "Planet",
+      "planetTitle": "Design with the long horizon.",
+      "planetBody": "RoHS-aligned materials, responsible sourcing, and durable mechanics that stay in service—not in landfill. We design for energy-conscious operation and publish compliance documentation per project so customers can plan with facts, not slogans.",
+      "closingTitle": "If this standard matches yours, walk with us.",
+      "closingBody": "Explore the r-Series lineup—or tell us about the work you need to move.",
+      "closingExplore": "Explore r-Series",
+      "closingContact": "Contact Roooll"
     },
     "support": {
       "logoAlt": "Roooll brand mark on support page.",
@@ -839,6 +893,11 @@
     "r_lite_detail_wrist": "Roooll r-Lite collaborative robot (integrated controller) wrist joint detail—pose accuracy and safe collaboration.",
     "support_service_hero": "Roooll r-Core collaborative robot (standard), 5kg payload, 922mm reach—global service and field support for collaborative robotic arms.",
     "support_manual": "Manual and documentation download for Roooll r-Series collaborative robotic arms.",
-    "support_distributor": "Authorized Roooll distributor and channel partner resources."
+    "support_distributor": "Authorized Roooll distributor and channel partner resources.",
+    "story_chapter_opening": "Roooll brand mark on a dark field—Our Story opening chapter.",
+    "story_chapter_origin": "Roooll r-Core collaborative robot (mobile long arm), 5kg payload, 1900mm reach—precision engineering at the heart of our story.",
+    "story_chapter_people": "People gathered on green cliffs above the ocean—Roooll commitment to human dignity and safe collaboration.",
+    "story_chapter_planet": "Puppy in a green meadow under natural light—Roooll environmental responsibility and care for the world we share.",
+    "story_chapter_closing": "Wide desert landscape at golden hour—Roooll Our Story closing invitation to explore r-Series and get in touch."
   }
 }

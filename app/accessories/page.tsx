@@ -34,8 +34,8 @@ export default async function AccessoriesPage() {
           { href: '/accessories', en: 'Cobot Accessories Ecosystem' },
         ]}
       />
-      <div id="accessories-top" className="accessories-hub-intro accessories-hub-intro-hero">
-        <h1>{base.introTitle}</h1>
+      <div id="accessories-top" className="accessories-hub-intro accessories-hub-intro-hero roooll-page-hero-top">
+        <h1 className="roooll-page-hero-title">{base.introTitle}</h1>
         <p>{base.introBody}</p>
       </div>
       <AccessoriesHubSubnav copy={subnavCopy} variant="hub" />

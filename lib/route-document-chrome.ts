@@ -1,18 +1,26 @@
-/** Keep html/body overflow in sync with route — `overflow-x: clip` on arm pages preserves sticky film scroll. */
+/** Keep html/body overflow in sync with route — sticky scroll pages need overflow-x: visible. */
 
 export type RouteDocumentChromeOptions = {
   isArm: boolean;
   isHome: boolean;
+  /** Our Story curtain-pull: sticky pin requires visible overflow on html/body. */
+  isStickyScroll?: boolean;
 };
 
-export function syncRouteDocumentChrome({ isArm, isHome }: RouteDocumentChromeOptions): void {
+export function syncRouteDocumentChrome({
+  isArm,
+  isHome,
+  isStickyScroll = false,
+}: RouteDocumentChromeOptions): void {
   if (typeof document === 'undefined') return;
 
-  const overflowX = isArm ? 'clip' : 'hidden';
+  const overflowX = isStickyScroll ? 'visible' : isArm ? 'clip' : 'hidden';
   document.documentElement.style.overflowX = overflowX;
   document.body.style.overflowX = overflowX;
   document.documentElement.classList.toggle('is-arm-immersive-route', isArm);
   document.body.classList.toggle('is-arm-immersive-route', isArm);
+  document.documentElement.classList.toggle('is-sticky-scroll-route', isStickyScroll);
+  document.body.classList.toggle('is-sticky-scroll-route', isStickyScroll);
   document.body.style.backgroundColor = isHome ? 'transparent' : isArm ? '#000' : '#fff';
 }
 

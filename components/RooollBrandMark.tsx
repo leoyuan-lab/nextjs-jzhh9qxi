@@ -1,0 +1,53 @@
+'use client';
+
+type Props = {
+  /** Render width in CSS pixels (height follows 1024:745 aspect). Ignored when `fillContainer`. */
+  width?: number;
+  /** Fill the parent box (uses width/height 100% + preserveAspectRatio). */
+  fillContainer?: boolean;
+  className?: string;
+  /** Accessible name; omit when decorative. */
+  title?: string;
+  decorative?: boolean;
+  /** Mark color; default currentColor for CSS / parent control (e.g. white on dark, black on light). */
+  color?: string;
+};
+
+const VIEWBOX_W = 1024;
+const VIEWBOX_H = 745;
+
+/** Sharp line trace from `roooll-loading-logo.webp` (see `roooll-brand-mark.svg`). */
+const MARK_PATH =
+  'M 665.00 392.00 L 621.00 412.00 L 581.00 425.00 L 576.00 425.00 L 566.00 429.00 L 557.00 430.00 L 535.00 436.00 L 528.00 436.00 L 504.00 441.00 L 454.00 445.00 L 430.00 445.00 L 389.00 440.00 L 388.00 441.00 L 400.00 457.00 L 418.00 475.00 L 438.00 490.00 L 460.00 501.00 L 478.00 507.00 L 500.00 511.00 L 525.00 512.00 L 556.00 507.00 L 585.00 496.00 L 605.00 484.00 L 619.00 473.00 L 635.00 456.00 L 650.00 434.00 L 662.00 407.00 Z M 724.00 318.00 L 718.00 302.00 L 711.00 294.00 L 702.00 287.00 L 676.00 276.00 L 641.00 271.00 L 632.00 260.00 L 612.00 241.00 L 601.00 233.00 L 579.00 221.00 L 564.00 215.00 L 544.00 210.00 L 491.00 210.00 L 465.00 217.00 L 443.00 227.00 L 429.00 237.00 L 427.00 237.00 L 404.00 258.00 L 394.00 270.00 L 382.00 289.00 L 371.00 316.00 L 369.00 325.00 L 354.00 332.00 L 340.00 342.00 L 338.00 342.00 L 321.00 358.00 L 316.00 365.00 L 310.00 380.00 L 310.00 393.00 L 316.00 407.00 L 321.00 413.00 L 332.00 421.00 L 348.00 429.00 L 382.00 438.00 L 385.00 437.00 L 376.00 422.00 L 371.00 409.00 L 371.00 402.00 L 392.00 407.00 L 410.00 409.00 L 466.00 410.00 L 507.00 406.00 L 561.00 395.00 L 609.00 380.00 L 647.00 363.00 L 668.00 350.00 L 669.00 348.00 L 667.00 333.00 L 663.00 315.00 L 659.00 306.00 L 660.00 305.00 L 677.00 309.00 L 686.00 314.00 L 692.00 320.00 L 692.00 328.00 L 690.00 332.00 L 681.00 342.00 L 672.00 348.00 L 670.00 351.00 L 671.00 361.00 L 668.00 385.00 L 669.00 388.00 L 693.00 373.00 L 713.00 354.00 L 723.00 334.00 Z M 362.00 363.00 L 365.00 364.00 L 366.00 368.00 L 366.00 379.00 L 371.00 399.00 L 370.00 403.00 L 361.00 401.00 L 351.00 396.00 L 343.00 388.00 L 343.00 382.00 L 348.00 374.00 Z';
+
+/**
+ * Official Roooll orbit mark (from loading-logo webp trace). Single fill; holes stay transparent.
+ * Set parent `color` or `color` prop for light/dark surfaces — no second image asset needed.
+ */
+export function RooollBrandMark({
+  width = 128,
+  fillContainer,
+  className,
+  title,
+  decorative,
+  color = 'currentColor',
+}: Props) {
+  const renderHeight = (width * VIEWBOX_H) / VIEWBOX_W;
+  const a11yTitle = decorative ? undefined : title;
+
+  return (
+    <svg
+      className={className}
+      width={fillContainer ? '100%' : width}
+      height={fillContainer ? '100%' : renderHeight}
+      viewBox={`0 0 ${VIEWBOX_W} ${VIEWBOX_H}`}
+      preserveAspectRatio="xMidYMid meet"
+      role={decorative ? 'presentation' : 'img'}
+      aria-hidden={decorative ? true : undefined}
+      aria-label={decorative ? undefined : a11yTitle}
+    >
+      {a11yTitle ? <title>{a11yTitle}</title> : null}
+      <path fill={color} fillRule="evenodd" d={MARK_PATH} />
+    </svg>
+  );
+}

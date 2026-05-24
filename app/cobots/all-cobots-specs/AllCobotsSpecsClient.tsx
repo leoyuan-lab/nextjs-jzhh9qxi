@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   HorizontalScrollDots,
   scrollHorizontalSnapItem,
@@ -18,13 +19,28 @@ import { trackEvent } from '@/lib/analytics';
 import { getMessages } from '@/lib/messages';
 import { openInquiry } from '@/lib/open-inquiry';
 import { useSiteLang } from '@/lib/site-lang-context';
+import {
+  variantDetailPathname,
+  variantIdFromPublicUrlToken,
+  variantPublicSlug,
+} from '@/lib/variant-public-slug';
 
 const SELECTOR_I18N = SELECTOR_LINEUP_I18N;
 const ACTIVE_SWITCH_HYSTERESIS_PX = 18;
 
-export default function AllCobotsSpecsClient() {
+type Props = {
+  /** When set, opens the detail modal for this public slug (from `/all-cobots-specs/{slug}`). */
+  initialVariantSlug?: string;
+};
+
+export default function AllCobotsSpecsClient({ initialVariantSlug }: Props) {
   const lang = useSiteLang();
-  const [detailId, setDetailId] = useState<string | null>(null);
+  const router = useRouter();
+  const resolvedInitialId = useMemo(
+    () => (initialVariantSlug ? variantIdFromPublicUrlToken(initialVariantSlug) : null),
+    [initialVariantSlug],
+  );
+  const [detailId, setDetailId] = useState<string | null>(resolvedInitialId);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isInteracting, setIsInteracting] = useState(false);
   const [enableMagnetActive, setEnableMagnetActive] = useState(false);
@@ -70,6 +86,24 @@ export default function AllCobotsSpecsClient() {
   useEffect(() => {
     activeIdRef.current = activeId;
   }, [activeId]);
+
+  useEffect(() => {
+    setDetailId(resolvedInitialId);
+  }, [resolvedInitialId]);
+
+  const openDetailForItem = useCallback(
+    (itemId: string) => {
+      setDetailId(itemId);
+      const slug = variantPublicSlug(itemId);
+      router.push(`/${lang}${variantDetailPathname(slug)}`, { scroll: false });
+    },
+    [lang, router],
+  );
+
+  const closeDetail = useCallback(() => {
+    setDetailId(null);
+    router.push(`/${lang}/cobots/all-cobots-specs`, { scroll: false });
+  }, [lang, router]);
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
@@ -206,11 +240,8 @@ export default function AllCobotsSpecsClient() {
 
   return (
     <div className="selector-root min-h-screen bg-[#f5f5f7] text-[#1d1d1f] antialiased" style={{ WebkitFontSmoothing: 'antialiased' }}>
-      <section className="hero-copy mx-auto w-full max-w-[var(--roooll-w,1024px)] bg-transparent px-[22px] pb-8 pt-7 text-left md:pb-10 md:pt-8">
-        <div className="mb-3 h-[11px] shrink-0 md:h-3" aria-hidden />
-        <h1 className="mb-4 text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.03em] text-[#1d1d1f] md:text-[3.25rem]">
-          {t.title}
-        </h1>
+      <section className="hero-copy roooll-page-hero-top mx-auto w-full max-w-[var(--roooll-w,1024px)] bg-transparent px-[22px] pb-8 text-left md:pb-10">
+        <h1 className="roooll-page-hero-title mb-4">{t.title}</h1>
         <p className="max-w-[46rem] text-[1.0625rem] font-normal leading-snug text-[#6e6e73] md:text-[1.3125rem]">
           {lineupSubtitle}
         </p>
@@ -271,7 +302,7 @@ export default function AllCobotsSpecsClient() {
                   lang={safeLang}
                   t={t}
                   index={index}
-                  onOpenDetail={() => setDetailId(item.id)}
+                  onOpenDetail={() => openDetailForItem(item.id)}
                   onOpenInquiry={() => openInquiryForItem(item)}
                   deferImageProcessingUntilVisible
                 />
@@ -295,7 +326,7 @@ export default function AllCobotsSpecsClient() {
 
       <SelectorJourneySection />
 
-      <VariantDetailPortal lineup={lineup} detailId={detailId} onClose={() => setDetailId(null)} lang={safeLang} />
+      <VariantDetailPortal lineup={lineup} detailId={detailId} onClose={closeDetail} lang={safeLang} />
     </div>
   );
 }

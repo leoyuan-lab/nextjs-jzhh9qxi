@@ -34,3 +34,19 @@ export function variantIdFromPublicUrlToken(token: string): string | null {
   if (!trimmed) return null;
   return PUBLIC_SLUG_TO_VARIANT_ID[trimmed] ?? null;
 }
+
+/** All visitor-facing slugs (11 lineup models), stable sitemap / static-params order. */
+export const ALL_VARIANT_PUBLIC_SLUGS: readonly string[] = ALL_VARIANT_IDS.map((id) =>
+  variantPublicSlug(id),
+);
+
+const ALL_COBOTS_SPECS_BASE = '/cobots/all-cobots-specs';
+
+/** Logical path for a variant detail deep link (no locale prefix). */
+export function variantDetailPathname(slug: string): `${typeof ALL_COBOTS_SPECS_BASE}/${string}` {
+  return `${ALL_COBOTS_SPECS_BASE}/${slug}`;
+}
+
+export function variantDetailPathnameForVariantId(variantId: string): string {
+  return variantDetailPathname(variantPublicSlug(variantId));
+}

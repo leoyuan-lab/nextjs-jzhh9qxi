@@ -127,10 +127,10 @@ function SelectorComparisonPageContent() {
 
   return (
     <section className="selector-hero2 border-t border-[#d2d2d7]/80 bg-[#f5f5f7] text-[#1d1d1f]" aria-labelledby="selector-hero2-title">
-      <div className="mx-auto w-full max-w-[var(--roooll-w,1024px)] px-[22px] pb-10 pt-10 md:pb-14 md:pt-12">
+      <div className="selector-hero2-head roooll-page-hero-top mx-auto w-full max-w-[var(--roooll-w,1024px)] px-[22px] pb-10 md:pb-14">
         <h1
           id="selector-hero2-title"
-          className="mb-5 max-w-[52rem] text-[2rem] font-semibold leading-[1.07] tracking-[-0.03em] text-[#1d1d1f] md:mb-6 md:text-[2.75rem]"
+          className="roooll-page-hero-title max-w-[52rem]"
         >
           {pageCopy.headlineLines.map((line) => (
             <span key={line} className="block">

@@ -212,6 +212,7 @@ export default function ClientLayout({
   const isHome = HOME_CHROME_PATHS.has(logicalPathname);
   const isArm = ARM_NAV_PATHS.has(logicalPathname);
   const isSelector = SELECTOR_NAV_PATHS.has(logicalPathname);
+  const isOurStory = logicalPathname === '/about/story';
   const isAdvisorHeroPeek = logicalPathname === ADVISOR_HERO_PEEK_PATH;
   const [lang, setLang] = useState<'zh' | 'en'>(initialLang);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -277,8 +278,8 @@ export default function ClientLayout({
     document.body.style.margin = '0';
     document.documentElement.style.width = '100%';
     document.body.style.width = '100%';
-    syncRouteDocumentChrome({ isArm, isHome });
-  }, [isArm, isHome, pathname]);
+    syncRouteDocumentChrome({ isArm, isHome, isStickyScroll: isOurStory });
+  }, [isArm, isHome, isOurStory, pathname]);
 
   useEffect(() => {
     document.documentElement.setAttribute('lang', resolvedLang);
@@ -602,8 +603,13 @@ export default function ClientLayout({
   }, []);
 
   /** r‑Core 黑底页：首帧即深色顶栏，避免 isDark 尚未采样时出现浅色「白条」再变黑 */
-  const navIsDark =
-    isHome
+  const effectiveMainNavProgress = frozenMainNavProgress ?? mainNavScrollProgress;
+  const subPageNavProgress = isHome
+    ? 0
+    : Math.max(effectiveMainNavProgress, isChildSubNavVisible ? 1 : 0);
+  const navIsDark = isOurStory
+    ? subPageNavProgress >= 0.02 && navToneOverride === 'dark'
+    : isHome
       ? (sampledNavDark ?? isDark)
       : isArm
         ? navToneOverride === 'light'
@@ -612,12 +618,9 @@ export default function ClientLayout({
         : navToneOverride
           ? navToneOverride === 'dark'
           : isDark;
-  const effectiveMainNavProgress = frozenMainNavProgress ?? mainNavScrollProgress;
-  const subPageNavProgress = isHome
-    ? 0
-    : Math.max(effectiveMainNavProgress, isChildSubNavVisible ? 1 : 0);
   const isComparePage = logicalPathname === '/selector/comparison';
   const selectorNavStaysVisible = isSelector && !isComparePage;
+  const navStaysFixed = selectorNavStaysVisible || isOurStory;
 
   useLayoutEffect(() => {
     setMobileMenuDocumentOpen(mobileMenuVisible);
@@ -705,27 +708,27 @@ export default function ClientLayout({
           )}
 
           <nav
-            className={`roooll-nav roooll-liquid-glass ${navIsDark ? 'is-dark roooll-liquid-glass--dark' : 'roooll-liquid-glass--light'} ${isHome ? 'is-home' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homePinnedClear ? 'home-clear' : ''} ${isHome && !homePinnedClear && !showSearch ? 'home-ghost' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}${isArm && !showSearch ? (subPageNavProgress < 0.02 ? ' arm-nav-top-clear' : ' arm-nav-scroll-glass') : ''}${isSelector && !showSearch ? (subPageNavProgress < 0.02 ? ' selector-nav-top-clear' : ' selector-nav-scroll-glass') : ''}`}
+            className={`roooll-nav roooll-liquid-glass ${navIsDark ? 'is-dark roooll-liquid-glass--dark' : 'roooll-liquid-glass--light'} ${isHome ? 'is-home' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homePinnedClear ? 'home-clear' : ''} ${isHome && !homePinnedClear && !showSearch ? 'home-ghost' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}${isArm && !showSearch ? (subPageNavProgress < 0.02 ? ' arm-nav-top-clear' : ' arm-nav-scroll-glass') : ''}${isSelector && !showSearch ? (subPageNavProgress < 0.02 ? ' selector-nav-top-clear' : ' selector-nav-scroll-glass') : ''}${isOurStory && !showSearch ? (subPageNavProgress < 0.02 ? ' story-nav-top-clear' : ' story-nav-scroll-glass') : ''}`}
             style={
               isHome
                 ? undefined
                 : {
                     /* 选型顾问顶栏不随 progress 上滑隐藏；对比页随滚动收起（与全系规格等子页一致） */
-                    transform: selectorNavStaysVisible
+                    transform: navStaysFixed
                       ? 'translate3d(0, 0, 0)'
                       : `translate3d(0, -${(subPageNavProgress * 104).toFixed(2)}%, 0)`,
-                    opacity: selectorNavStaysVisible
+                    opacity: navStaysFixed
                       ? 1
                       : isArm
                         ? 1
                         : Math.max(0, 1 - subPageNavProgress),
-                    pointerEvents: selectorNavStaysVisible
+                    pointerEvents: navStaysFixed
                       ? 'auto'
                       : subPageNavProgress > 0.98
                         ? 'none'
                         : 'auto',
                     transition:
-                      isArm || mainNavProgressInstant
+                      isOurStory || isArm || mainNavProgressInstant
                         ? 'none'
                         : 'transform 0.82s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.58s cubic-bezier(0.22, 1, 0.36, 1)',
                   }

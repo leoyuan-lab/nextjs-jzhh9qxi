@@ -27,7 +27,7 @@ export default async function ContactLayout({ children }: { children: React.Reac
         items={[
           { href: BC_HOME.href, en: BC_HOME.en },
           { href: BC_NAV_ABOUT.href, en: BC_NAV_ABOUT.en },
-          { href: '/contact', en: 'Contact Us' },
+          { href: '/contact', en: 'Contact Roooll' },
         ]}
       />
       {children}

@@ -38,11 +38,11 @@
       "grippers": "夹爪",
       "fixtures": "夹具"
     },
-    "about_section": "关于我们",
+    "about_section": "关于 Roooll",
     "about": {
       "story": "品牌故事",
       "news": "新闻资讯",
-      "contact": "联系我们"
+      "contact": "联系 Roooll"
     }
   },
   "chrome": {
@@ -332,9 +332,63 @@
       ]
     },
     "contact": {
-      "title": "联系我们",
-      "body": "销售、渠道合作与售后支持请通过下方邮箱联络；紧急项目也可通过站点「咨询」入口发起工单。",
-      "ctaHome": "返回首页"
+      "logoAlt": "Roooll 品牌标识，联系我们页面。",
+      "heroTitle": "联系 Roooll",
+      "heroBody": "销售、集成与渠道合作——介绍您的项目，或直接通过邮件与我们沟通。",
+      "emailCta": "info@roooll.com",
+      "cards": {
+        "inquiry": {
+          "title": "项目咨询",
+          "body": "告知负载、臂展与应用场景。销售团队通常在一个工作日内回复。",
+          "cta": "发起咨询"
+        },
+        "email": {
+          "title": "邮件联系",
+          "body": "一般问题、合作洽谈与媒体联络，欢迎随时来信。",
+          "cta": "发送邮件"
+        },
+        "support": {
+          "title": "服务与支持",
+          "body": "部署协助、保修政策、手册下载与全球技术支持。",
+          "cta": "获取支持"
+        }
+      },
+      "footnote": "授权经销商可通过渠道伙伴页面获取价格包与联合营销素材。",
+      "footnoteLink": "渠道伙伴"
+    },
+    "story": {
+      "openingKicker": "品牌故事",
+      "openingTitle": "精密，为人所易。",
+      "openingBody": "Roooll 做协作机器人——让机械精度与人人可上手的软件在同一条产线、同一间实验室里会合，站在一线的人身边完成真实工作。",
+      "originKicker": "起源",
+      "originTitle": "我们为何存在。",
+      "originBody": "我们看见一种长期存在的张力：产线与实验室需要可重复的运动，部署却不能永远依赖少数专家。Roooll 为弥合这道缝隙而生——足够精密以承担真实工艺，也足够易用以快速落地。",
+      "philosophyKicker": "我们如何构建",
+      "philosophyTitle": "每一代 r 系列背后的三项承诺。",
+      "philosophyPillars": {
+        "modular": {
+          "title": "模块化",
+          "body": "机型与工装共享同一套集成逻辑——一次接入，多工位复用。"
+        },
+        "deploy": {
+          "title": "快部署",
+          "body": "从台架到产线，接口清晰、文档齐备，支持触手可及。"
+        },
+        "operate": {
+          "title": "易操作",
+          "body": "Web 化操作与开放 SDK——一线优先，而非把门槛留给少数人。"
+        }
+      },
+      "peopleKicker": "People",
+      "peopleTitle": "链条上的每一环，都应被尊重。",
+      "peopleBody": "我们要求供应链中的公平劳动实践，要求真实工位上的安全协作，也要求技术辅助人的判断而非简单取代。人权不是脚注——它影响我们选择伙伴、设计流程的方式。",
+      "planetKicker": "Planet",
+      "planetTitle": "以更长的时间尺度做设计。",
+      "planetBody": "符合 RoHS 口径的材料、审慎的采购，以及值得长期服役的机械结构——而不是短期淘汰。我们按项目提供合规文档，让客户用事实规划，而非口号。",
+      "closingTitle": "若这与您认同的标准一致，欢迎与我们同行。",
+      "closingBody": "了解 r 系列全系——或告诉我们您要搬动的工序。",
+      "closingExplore": "探索 r 系列",
+      "closingContact": "联系 Roooll"
     },
     "support": {
       "logoAlt": "Roooll 品牌标识，技术支持页面。",
@@ -839,6 +893,11 @@
     "r_lite_detail_wrist": "Roooll r-Lite 协作机器人（一体式控制）腕部关节细节 - 强调姿态精度与安全协作。",
     "support_service_hero": "Roooll r-Core 协作机器人（标准版），5kg 负载、922mm 臂展——面向 r 系列协作机械臂的全球服务与现场支持。",
     "support_manual": "Roooll r 系列协作机械臂产品手册与文档下载。",
-    "support_distributor": "Roooll 授权经销商与渠道伙伴资源入口。"
+    "support_distributor": "Roooll 授权经销商与渠道伙伴资源入口。",
+    "story_chapter_opening": "深色背景上的 Roooll 品牌标识——品牌故事开篇章节。",
+    "story_chapter_origin": "Roooll r-Core 协作机器人（移动长臂版），5kg 负载、1900mm 臂展——品牌故事中的精密工程代表。",
+    "story_chapter_people": "绿色悬崖上的人群俯瞰海洋——Roooll 对人权与安全协作的承诺。",
+    "story_chapter_planet": "自然光下绿色草地中的小狗——Roooll 对环保与我们所共享世界的关怀。",
+    "story_chapter_closing": "金色时刻的广阔沙漠景观——Roooll 品牌故事收尾，邀请探索 r 系列并联系我们。"
   }
 }

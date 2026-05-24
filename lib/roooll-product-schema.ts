@@ -139,29 +139,6 @@ export function allLineupVariantIds(): string[] {
   return rSeriesData.flatMap((f) => f.variants.map((v) => v.id));
 }
 
-export function buildAllCobotsItemListLd(lang: 'zh' | 'en', origin: string) {
-  const base = origin.replace(/\/$/, '');
-  const pageUrl = new URL(`/${lang}/cobots/all-cobots-specs`, `${base}/`).href;
-  const ids = allLineupVariantIds();
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: lang === 'zh' ? 'Roooll r 系列全系协作机器人' : 'Roooll r-Series collaborative cobot lineup',
-    description:
-      lang === 'zh'
-        ? 'r-Lite、r-Core、r-Reach、r-Max、r-Ultra 全系机型规格一览。'
-        : 'Full r-Lite, r-Core, r-Reach, r-Max, and r-Ultra collaborative robot lineup and specifications.',
-    url: pageUrl,
-    numberOfItems: ids.length,
-    itemListElement: ids.map((variantId, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      item: buildVariantProductLd(variantId, lang, origin, pageUrl),
-    })),
-  };
-}
-
 /** Guard: JSON-LD must not leak FR catalog tokens in string values. */
 export function assertNoFrInJsonLd(json: unknown): void {
   if (process.env.NODE_ENV === 'production') return;
