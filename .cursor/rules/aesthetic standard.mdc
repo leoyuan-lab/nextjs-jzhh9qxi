@@ -1,21 +1,50 @@
-# Roooll Project - AI Programming Guidelines
-
-## Core Principles
-1. **代码完整性**：在我没有明确提出要变更原本已有的功能和代码之前，绝对不要丢三落四。每次新增加或优化功能时，必须保证原本未要求修改部分的完整性，严禁擅自删减或简化周围的代码。
-2. **视觉与设计风格**：本项目严格追求【Apple 风格】的高端、极简美学。
-   - 保持优雅的呼吸感与大面积的留白。
-   - 所有的动效和交互必须追求细腻、平滑的动态质感。
-   - 优先使用精致的材质（如细腻的磨砂玻璃效果等）。
-
-## Tech Stack & Standards
-- Framework: Next.js (App Router)
-- Styling: Tailwind CSS
-- Components: TypeScript / React components
-- 3D Assets: Optimizing for GLB/3D interactive models
-
-## Response Strategy
-- 直接给出最优雅、规范、没有缺失的代码实现。
-- 如果涉及 UI 变动，主动考虑响应式布局（Desktop & Mobile）。
 ---
+description: Apple aesthetic + mandatory mobile bottom safe-area (transparent home-indicator strip)
 alwaysApply: true
 ---
+
+# Roooll aesthetic & mobile safe-area
+
+## Core principles
+
+1. **代码完整性**：未明确要求时，不删改已有功能与动画（含 Our Story `curtain-pull`、开屏时间轴等）。安全区问题只用 CSS inset/clip 修，不重做页面结构。
+2. **Apple 风格**：留白、细腻动效、磨砂玻璃；Desktop & Mobile 均要考虑。
+
+## Mobile bottom safe-area（强制）
+
+**安全区** = 手机底部 Home Indicator / 地址栏旁的系统留白，由 `env(safe-area-inset-bottom)` 量出；全站已启用 `viewport-fit: cover`（`rootViewport` in `lib/site-seo.ts`）。
+
+**要求（≤734px，所有页面）**：这条底部带必须**透明可见**——透出正在滚动的页面内容，**禁止**被任何不透明色、渐变（含 Our Story 淡蓝 `--story-sky-bg`）或 fixed 全屏层挡住。
+
+### 必须
+
+- 使用 `globals.css` 令牌：`--roooll-safe-bottom`、`--roooll-viewport-h`
+- **`html` / `body` 透明**（与 home、Our Story `isStickyScroll` 一致）——安全区透出**正在滚动的页面层**，不要用 `#fff` body 垫底
+- 页面根（如 `.our-story` mobile）`background: transparent`；颜色由 scroll track / curtain 层提供（参考 r-Lite `.arm-page-root`、Contact `.support-page-root`）
+- Our Story **仅** mobile 对 `.our-story-opening-stack`：`bottom: var(--roooll-safe-bottom)` + `height: auto` — **禁止** `display:none`、`background-clip: content-box`、duplicate hero、改 curtain 时间轴
+- 新的 fixed 全屏壳层：`bottom: var(--roooll-safe-bottom)` + `height: auto` — **禁止** mobile 单独 `height: 100dvh` / `inset: 0` 盖住 home indicator
+
+### 禁止
+
+- 用白色/纯色条「替换」安全区
+- 为修安全区而删除首屏、duplicate 起源、改 `curtain-pull` 逻辑、或 mobile 单独一套 hero
+- 假设 `opacity: 0` / `visibility: hidden` 在 iOS 上一定不绘制 — 须 **physical** 不覆盖 inset（见 arm/contact）
+
+### 示例
+
+```css
+/* ✅ fixed 全屏 overlay */
+.my-hero-fixed.roooll-viewport-fixed { /* globals 已定义 clip + bottom */ }
+
+/* ❌ 淡蓝/白底铺满含 home indicator */
+.fullscreen { position: fixed; inset: 0; height: 100dvh; background: #b8dcfa; }
+```
+
+### 自测
+
+- Mobile Safari：各路由滚到内容区，底部 home-indicator 带应看到**页面内容**，不是色块
+- 改 Our Story / 新 fixed 层后必测；勿让用户反复提同一问题
+
+## Tech stack
+
+- Next.js App Router · Tailwind · TypeScript · GLB/3D

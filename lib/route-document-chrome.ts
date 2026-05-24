@@ -21,7 +21,8 @@ export function syncRouteDocumentChrome({
   document.body.classList.toggle('is-arm-immersive-route', isArm);
   document.documentElement.classList.toggle('is-sticky-scroll-route', isStickyScroll);
   document.body.classList.toggle('is-sticky-scroll-route', isStickyScroll);
-  document.body.style.backgroundColor = isHome ? 'transparent' : isArm ? '#000' : '#fff';
+  document.body.style.backgroundColor =
+    isHome || isStickyScroll ? 'transparent' : isArm ? '#000' : '#fff';
 }
 
 /**

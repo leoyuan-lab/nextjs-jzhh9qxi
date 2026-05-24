@@ -357,36 +357,38 @@
       "footnoteLink": "渠道伙伴"
     },
     "story": {
+      "metaTitle": "品牌故事",
+      "metaDescription": "探索 Roooll 的品牌使命、机械工程原则、透明路线图，以及创始人对协作机器人未来的坚守。",
       "openingKicker": "品牌故事",
       "openingTitle": "精密，为人所易。",
-      "openingBody": "Roooll 做协作机器人——让机械精度与人人可上手的软件在同一条产线、同一间实验室里会合，站在一线的人身边完成真实工作。",
+      "openingBody": "Roooll 打造的协作机器人，让严谨的机械精度与人人皆可上手的软件交融。在产线，在实验室，在每一个推动工业前行的人身边，各履其责。",
       "originKicker": "起源",
-      "originTitle": "我们为何存在。",
-      "originBody": "我们看见一种长期存在的张力：产线与实验室需要可重复的运动，部署却不能永远依赖少数专家。Roooll 为弥合这道缝隙而生——足够精密以承担真实工艺，也足够易用以快速落地。",
-      "philosophyKicker": "我们如何构建",
-      "philosophyTitle": "每一代 r 系列背后的三项承诺。",
+      "originTitle": "为何而来。",
+      "originBody": "我们始于对一个行业痛点的思考：产线与实验室需要绝对可重复的精准运动，而部署不该只是少数专家的特权。Roooll 为弥合这道缝隙而来——以足够承载真实工艺的精密，和触手可及的易用，让落地重归高效。",
+      "philosophyKicker": "制造理念",
+      "philosophyTitle": "每一款 r 系列，皆承载三项承诺。",
       "philosophyPillars": {
         "modular": {
-          "title": "模块化",
-          "body": "机型与工装共享同一套集成逻辑——一次接入，多工位复用。"
+          "title": "生而模块化。",
+          "body": "机型与工装共享同一套逻辑架构。一次集成，多工位无缝复用。"
         },
         "deploy": {
-          "title": "快部署",
-          "body": "从台架到产线，接口清晰、文档齐备，支持触手可及。"
+          "title": "交付，快一步。",
+          "body": "从台架测试到产线实战，清晰的接口与详尽的文档随手可得，让每一步都有据可依。"
         },
         "operate": {
-          "title": "易操作",
-          "body": "Web 化操作与开放 SDK——一线优先，而非把门槛留给少数人。"
+          "title": "操作，少门槛。",
+          "body": "浏览器原生控制与开放的 SDK。把操作权还给一线，而非留在少数人的壁垒里。"
         }
       },
-      "peopleKicker": "People",
-      "peopleTitle": "链条上的每一环，都应被尊重。",
-      "peopleBody": "我们要求供应链中的公平劳动实践，要求真实工位上的安全协作，也要求技术辅助人的判断而非简单取代。人权不是脚注——它影响我们选择伙伴、设计流程的方式。",
-      "planetKicker": "Planet",
-      "planetTitle": "以更长的时间尺度做设计。",
-      "planetBody": "符合 RoHS 口径的材料、审慎的采购，以及值得长期服役的机械结构——而不是短期淘汰。我们按项目提供合规文档，让客户用事实规划，而非口号。",
-      "closingTitle": "若这与您认同的标准一致，欢迎与我们同行。",
-      "closingBody": "了解 r 系列全系——或告诉我们您要搬动的工序。",
+      "peopleKicker": "员工与社会",
+      "peopleTitle": "链条之上，每一步皆是尊重。",
+      "peopleBody": "我们在供应链中恪守公平劳动原则，在真实工位上筑牢安全协作底线。我们始终相信，技术应当延伸人类的智慧，而非取代人的判断。人权绝非标语，它深植于我们选择伙伴与设计流程的每一步。",
+      "planetKicker": "环境与可持续",
+      "planetTitle": "以长远目光，丈量设计。",
+      "planetBody": "采用符合 RoHS 标准的材料与审慎采购的部件，打造值得长期服役的机械结构，拒绝沦为电子垃圾。我们按项目提供真实的合规文档，让每一步规划都基于事实，而非口号。",
+      "closingTitle": "若这就是您认同的标准，欢迎同行。",
+      "closingBody": "进一步了解 r 系列全系产品，或告诉我们您正面临的工序挑战。",
       "closingExplore": "探索 r 系列",
       "closingContact": "联系 Roooll"
     },
@@ -894,10 +896,10 @@
     "support_service_hero": "Roooll r-Core 协作机器人（标准版），5kg 负载、922mm 臂展——面向 r 系列协作机械臂的全球服务与现场支持。",
     "support_manual": "Roooll r 系列协作机械臂产品手册与文档下载。",
     "support_distributor": "Roooll 授权经销商与渠道伙伴资源入口。",
-    "story_chapter_opening": "深色背景上的 Roooll 品牌标识——品牌故事开篇章节。",
-    "story_chapter_origin": "Roooll r-Core 协作机器人（移动长臂版），5kg 负载、1900mm 臂展——品牌故事中的精密工程代表。",
-    "story_chapter_people": "绿色悬崖上的人群俯瞰海洋——Roooll 对人权与安全协作的承诺。",
-    "story_chapter_planet": "自然光下绿色草地中的小狗——Roooll 对环保与我们所共享世界的关怀。",
-    "story_chapter_closing": "金色时刻的广阔沙漠景观——Roooll 品牌故事收尾，邀请探索 r 系列并联系我们。"
+    "story_chapter_opening": "深色极简背景中央的 Roooll 品牌标识——品牌故事开篇。",
+    "story_chapter_origin": "Roooll r-Core 协作机器人（移动长臂版），具备 5kg 负载与 1900mm 臂展——彰显极致的精密工程。",
+    "story_chapter_people": "绿色悬崖上的人群俯瞰壮阔海洋——象征 Roooll 对人权与安全协作的坚定承诺。",
+    "story_chapter_planet": "自然光下绿色草地中的小狗——象征 Roooll 对生态环境的责任与可持续发展理念。",
+    "story_chapter_closing": "金色时刻下广阔沉静的沙漠景观——Roooll 品牌故事收尾，向您发出 r 系列探索邀请。"
   }
 }

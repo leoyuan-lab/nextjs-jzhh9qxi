@@ -88,6 +88,35 @@ function syncOurStoryNavChrome(y: number) {
   }
 }
 
+/** Keep fixed opening/curtain shells aligned with iOS visual viewport (Safari bar resize). */
+function useStoryVisualViewport() {
+  useEffect(() => {
+    const root = document.documentElement;
+    const sync = () => {
+      const vv = window.visualViewport;
+      const h = vv?.height ?? window.innerHeight;
+      const top = vv?.offsetTop ?? 0;
+      root.style.setProperty('--story-vv-h', `${h}px`);
+      root.style.setProperty('--story-vv-top', `${top}px`);
+    };
+
+    sync();
+    window.visualViewport?.addEventListener('resize', sync);
+    window.visualViewport?.addEventListener('scroll', sync);
+    window.addEventListener('resize', sync, { passive: true });
+    window.addEventListener('scroll', sync, { passive: true });
+
+    return () => {
+      window.visualViewport?.removeEventListener('resize', sync);
+      window.visualViewport?.removeEventListener('scroll', sync);
+      window.removeEventListener('resize', sync);
+      window.removeEventListener('scroll', sync);
+      root.style.removeProperty('--story-vv-h');
+      root.style.removeProperty('--story-vv-top');
+    };
+  }, []);
+}
+
 /** Sync main nav: clear at top, ultra-light glass on scroll; dark tone only after origin lifts. */
 function useOurStoryNavChrome() {
   const { scrollY } = useScroll();
@@ -295,24 +324,26 @@ function StoryOpeningWithOrigin({
           <StoryOriginCard {...origin} />
         </motion.div>
         <motion.div className="our-story-opening-stack__exit" style={{ y: windowY }}>
-          <motion.div
-            className="our-story-opening-window"
-            style={{ scale: windowScale, borderRadius: windowRadius }}
-          >
-            <div className="our-story-opening-logo">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={logoSrc} alt={logoAlt} width={1024} height={745} decoding="async" fetchPriority="high" />
-            </div>
-            <StoryCopyBlock
-              kicker={kicker}
-              title={title}
-              body={body}
-              titleAs="h1"
-              tone="light"
-              align="center"
-              className="our-story-opening-copy"
-            />
-          </motion.div>
+          <div className="our-story-opening-window">
+            <motion.div
+              className="our-story-opening-window__scale"
+              style={{ scale: windowScale, borderRadius: windowRadius }}
+            >
+              <div className="our-story-opening-logo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={logoSrc} alt={logoAlt} width={1024} height={745} decoding="async" fetchPriority="high" />
+              </div>
+              <StoryCopyBlock
+                kicker={kicker}
+                title={title}
+                body={body}
+                titleAs="h1"
+                tone="light"
+                align="center"
+                className="our-story-opening-copy"
+              />
+            </motion.div>
+          </div>
         </motion.div>
       </motion.div>
     </div>
@@ -535,6 +566,7 @@ function StoryClosingSection({
 
 export function OurStoryPageClient() {
   useOurStoryNavChrome();
+  useStoryVisualViewport();
   const lang = useSiteLang();
   const messages = getMessages(lang);
   const copy = messages.pages.story;

@@ -357,36 +357,38 @@
       "footnoteLink": "Channel partners"
     },
     "story": {
+      "metaTitle": "Our Story",
+      "metaDescription": "Mission, engineering principles, transparency, and cobot stewardship from the founders of Roooll.",
       "openingKicker": "Our Story",
       "openingTitle": "Precision, made approachable.",
-      "openingBody": "Roooll builds collaborative robots where mechanical rigor meets software anyone can run—on the line, in the lab, and beside the people who keep industry moving.",
+      "openingBody": "Roooll builds collaborative robots where mechanical rigor meets software anyone can master—on the line, in the lab, and alongside the people who keep industry moving.",
       "originKicker": "Origin",
       "originTitle": "Why we exist.",
-      "originBody": "We started with a simple tension: factories and labs need repeatable motion, but deployment cannot depend on a handful of specialists. Roooll exists to close that gap—with arms that are precise enough for real work and approachable enough to ship quickly.",
-      "philosophyKicker": "How we build",
-      "philosophyTitle": "Three commitments behind every r-Series arm.",
+      "originBody": "We began by addressing a fundamental tension: factories and labs demand absolute repeatability, yet deployment shouldn't depend on a rare few. Roooll closes that gap—with arms precise enough for real work, and intuitive enough to deploy instantly.",
+      "philosophyKicker": "How We Build",
+      "philosophyTitle": "Three commitments behind the r-Series.",
       "philosophyPillars": {
         "modular": {
-          "title": "Modular by design",
-          "body": "Variants and tooling share one mental model—integrate once, scale across cells."
+          "title": "Modular by design.",
+          "body": "Form factors and tooling share a single mental model. Integrate once, deploy across any cell."
         },
         "deploy": {
-          "title": "Quick to deploy",
-          "body": "From bench to line with clear interfaces, documentation, and support within reach."
+          "title": "Quick to deploy.",
+          "body": "Transition from bench to production seamlessly with clean interfaces, exhaustive documentation, and dedicated support."
         },
         "operate": {
-          "title": "Easy to operate",
-          "body": "Web-native operation and open SDK paths—operators first, not gatekeepers."
+          "title": "Easy to operate.",
+          "body": "Web-native control and open SDKs. Power to the operators, not the gatekeepers."
         }
       },
       "peopleKicker": "People",
-      "peopleTitle": "Dignity in every link of the chain.",
-      "peopleBody": "We expect fair labor practices across our supply chain, safe collaboration on real floors, and technology that assists people rather than replacing their judgment. Human rights are not a footnote—they are part of how we choose partners and design workflows.",
+      "peopleTitle": "Dignity in every link.",
+      "peopleBody": "We mandate fair labor across our supply chain, ensure absolute safety on actual workshop floors, and design technology to augment human judgment—not replace it. For us, human rights shape how we choose partners and build workflows.",
       "planetKicker": "Planet",
-      "planetTitle": "Design with the long horizon.",
-      "planetBody": "RoHS-aligned materials, responsible sourcing, and durable mechanics that stay in service—not in landfill. We design for energy-conscious operation and publish compliance documentation per project so customers can plan with facts, not slogans.",
-      "closingTitle": "If this standard matches yours, walk with us.",
-      "closingBody": "Explore the r-Series lineup—or tell us about the work you need to move.",
+      "planetTitle": "Designed for the long horizon.",
+      "planetBody": "Crafted with RoHS-compliant materials, responsibly sourced components, and durable mechanics engineered for service—not landfills. We provide verifiable compliance data per project, building trust on facts, not slogans.",
+      "closingTitle": "If this standard matches yours, let's build together.",
+      "closingBody": "Explore the r-Series lineup—or share the automation challenges you're looking to solve.",
       "closingExplore": "Explore r-Series",
       "closingContact": "Contact Roooll"
     },
@@ -894,10 +896,10 @@
     "support_service_hero": "Roooll r-Core collaborative robot (standard), 5kg payload, 922mm reach—global service and field support for collaborative robotic arms.",
     "support_manual": "Manual and documentation download for Roooll r-Series collaborative robotic arms.",
     "support_distributor": "Authorized Roooll distributor and channel partner resources.",
-    "story_chapter_opening": "Roooll brand mark on a dark field—Our Story opening chapter.",
-    "story_chapter_origin": "Roooll r-Core collaborative robot (mobile long arm), 5kg payload, 1900mm reach—precision engineering at the heart of our story.",
-    "story_chapter_people": "People gathered on green cliffs above the ocean—Roooll commitment to human dignity and safe collaboration.",
-    "story_chapter_planet": "Puppy in a green meadow under natural light—Roooll environmental responsibility and care for the world we share.",
-    "story_chapter_closing": "Wide desert landscape at golden hour—Roooll Our Story closing invitation to explore r-Series and get in touch."
+    "story_chapter_opening": "The Roooll brand mark centered on a dark minimalist field—Our Story opening.",
+    "story_chapter_origin": "Roooll r-Core collaborative robot with mobile long arm, 5kg payload, and 1900mm reach—showcasing precision engineering.",
+    "story_chapter_people": "Individuals gathered on vibrant green cliffs overlooking the ocean—representing Roooll's commitment to human dignity.",
+    "story_chapter_planet": "A puppy in a sunlit green meadow—symbolizing environmental responsibility and sustainable engineering at Roooll.",
+    "story_chapter_closing": "A vast desert landscape during golden hour—inviting viewers to explore the Roooll r-Series."
   }
 }
