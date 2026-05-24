@@ -1,5 +1,6 @@
 /**
  * 全系机型规格页外壳（`cobots/all-cobots-specs`）。
+ * Lineup UI lives here so `/all-cobots-specs` ↔ `/all-cobots-specs/{slug}` does not remount the client.
  */
 import type { Metadata } from 'next';
 import { AllCobotsLineupJsonLd } from '@/components/AllCobotsLineupJsonLd';
@@ -9,6 +10,7 @@ import { getSiteLang } from '@/lib/get-site-lang';
 import { getMessages } from '@/lib/messages';
 import { getRequestSiteOrigin } from '@/lib/site-origin';
 import { pageMetadata } from '@/lib/site-seo';
+import AllCobotsSpecsClient from './AllCobotsSpecsClient';
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
@@ -32,6 +34,7 @@ export default async function CobotsAllSpecsLayout({ children }: { children: Rea
           { href: '/cobots/all-cobots-specs', en: 'r-series cobots & Specs' },
         ]}
       />
+      <AllCobotsSpecsClient />
       {children}
     </>
   );

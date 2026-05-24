@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 
 import { AllCobotsVariantSeoContent } from '@/components/selector/AllCobotsVariantSeoContent';
@@ -20,10 +19,6 @@ import {
   variantDetailPathname,
   variantIdFromPublicUrlToken,
 } from '@/lib/variant-public-slug';
-
-const AllCobotsSpecsClient = dynamic(() => import('../AllCobotsSpecsClient'), {
-  loading: () => <div className="min-h-screen bg-[#f5f5f7]" aria-busy="true" />,
-});
 
 type PageProps = {
   params: { slug: string };
@@ -77,7 +72,6 @@ export default async function AllCobotsVariantDetailPage({ params }: PageProps) 
         ]}
       />
       <AllCobotsVariantSeoContent variantId={variantId} lang={lang} />
-      <AllCobotsSpecsClient initialVariantSlug={slug} />
     </>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import {
   HorizontalScrollDots,
   scrollHorizontalSnapItem,
@@ -28,19 +28,15 @@ import {
 const SELECTOR_I18N = SELECTOR_LINEUP_I18N;
 const ACTIVE_SWITCH_HYSTERESIS_PX = 18;
 
-type Props = {
-  /** When set, opens the detail modal for this public slug (from `/all-cobots-specs/{slug}`). */
-  initialVariantSlug?: string;
-};
-
-export default function AllCobotsSpecsClient({ initialVariantSlug }: Props) {
+export default function AllCobotsSpecsClient() {
   const lang = useSiteLang();
   const router = useRouter();
-  const resolvedInitialId = useMemo(
-    () => (initialVariantSlug ? variantIdFromPublicUrlToken(initialVariantSlug) : null),
-    [initialVariantSlug],
+  const params = useParams();
+  const slugFromUrl = typeof params.slug === 'string' ? params.slug : null;
+  const detailId = useMemo(
+    () => (slugFromUrl ? variantIdFromPublicUrlToken(slugFromUrl) : null),
+    [slugFromUrl],
   );
-  const [detailId, setDetailId] = useState<string | null>(resolvedInitialId);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isInteracting, setIsInteracting] = useState(false);
   const [enableMagnetActive, setEnableMagnetActive] = useState(false);
@@ -87,13 +83,8 @@ export default function AllCobotsSpecsClient({ initialVariantSlug }: Props) {
     activeIdRef.current = activeId;
   }, [activeId]);
 
-  useEffect(() => {
-    setDetailId(resolvedInitialId);
-  }, [resolvedInitialId]);
-
   const openDetailForItem = useCallback(
     (itemId: string) => {
-      setDetailId(itemId);
       const slug = variantPublicSlug(itemId);
       router.push(`/${lang}${variantDetailPathname(slug)}`, { scroll: false });
     },
@@ -101,7 +92,6 @@ export default function AllCobotsSpecsClient({ initialVariantSlug }: Props) {
   );
 
   const closeDetail = useCallback(() => {
-    setDetailId(null);
     router.push(`/${lang}/cobots/all-cobots-specs`, { scroll: false });
   }, [lang, router]);
 
