@@ -2,19 +2,15 @@ import type { Metadata } from 'next';
 import { GlbPreloadLinks, GLB_PRELOAD_HOME } from '@/components/GlbPreloadLinks';
 import { ModelViewerScript } from '@/components/ModelViewerScript';
 import { getSiteLang } from '@/lib/get-site-lang';
+import { getMessages } from '@/lib/messages';
 import { getRequestSiteOrigin } from '@/lib/site-origin';
 import { pageMetadata } from '@/lib/site-seo';
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
   const siteOrigin = await getRequestSiteOrigin();
-  return pageMetadata(
-    'Collaborative Cobot Lineup',
-    'Explore Roooll Cobots across r‑Lite, r‑Core, r‑Reach, r‑Max, and r‑Ultra—browse interactive robotic arm showcases and lineup entry points.',
-    '/',
-    lang,
-    siteOrigin,
-  );
+  const page = getMessages(lang).pages.home;
+  return pageMetadata(page.metaTitleFocus, page.metaDescription, '/', lang, siteOrigin);
 }
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {

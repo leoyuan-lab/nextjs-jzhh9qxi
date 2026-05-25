@@ -222,9 +222,13 @@
     }
   ],
   "pages": {
+    "home": {
+      "metaTitleFocus": "Collaborative Cobot & Robotic Arm Lineup — r-Lite to r-Ultra",
+      "metaDescription": "Explore Roooll Cobots across r-Lite, r-Core, r-Reach, r-Max, and r-Ultra—interactive collaborative robotic arm showcases and lineup entry points from 3kg to 30kg."
+    },
     "all_cobots_specs": {
-      "metaTitleFocus": "Full r-Lite / r-Core Cobot lineup & specs",
-      "metaDescription": "Browse every r‑Series Cobot variant matrix—r-Lite, r-Core, r-Reach, r-Max, r-Ultra—with payloads, reach, joint axes, and power in one place.",
+      "metaTitleFocus": "Full r-Series Cobot Specs — 3kg to 30kg Robotic Arms",
+      "metaDescription": "Browse every r‑Series Cobot variant matrix—r-Lite, r-Core, r-Reach, r-Max, r-Ultra—with payloads from 3kg to 30kg, reach, joint axes, and power in one place.",
       "lineup": {
         "subtitle": "Light to heavy. Every r‑Series collaborative robotic arm—specs, side by side."
       },
@@ -266,7 +270,7 @@
       "metaDescription": "Humanoid Cobot roadmap: embodied AI, tactile interaction, and next‑gen collaborative robotic arm research partnerships."
     },
     "r_core": {
-      "metaTitleFocus": "r-Core Line-ready Cobot Robotic Arm",
+      "metaTitleFocus": "r-Core Pick-and-Place Cobot Robotic Arm",
       "metaDescription": "r-Series r-Core line-ready cobot robotic arm: 5 kg class payload, 922 mm reach, ±0.02 mm repeatability—pick, place, inspect, and handling for production and lab cells.",
       "hero": {
         "title": "r-Core",
@@ -357,7 +361,7 @@
     },
     "selector_comparison": {
       "metaTitleFocus": "Side-by-side r-Series Cobot comparison",
-      "metaDescription": "Compare any three r‑Series Cobots—r-Lite, r-Core, r-Reach, r-Max, r-Ultra—with payload, reach, repeatability, joint axes, control cabinets, and power in one shareable table.",
+      "metaDescription": "Compare any three r‑Series Cobots—3kg, 5kg, 10kg, 16kg, 20kg, and 30kg class arms across r-Lite, r-Core, r-Reach, r-Max, r-Ultra—with payload, reach, repeatability, joint axes, control cabinets, and power in one shareable table.",
       "headlineLines": ["Compare all r family", "See what sets them apart."],
       "footer": {
         "title": "Need help narrowing it down?",
@@ -370,8 +374,24 @@
       }
     },
     "selector_advisor": {
-      "metaTitleFocus": "Product Advisor (r-Lite / r-Core match)",
-      "metaDescription": "Interactive advisor to match load, reach, and environment to r-Lite, r-Core, and other r‑Series Cobot lines."
+      "metaTitleFocus": "Cobot Product Advisor — Match Payload, Reach & Application",
+      "metaDescription": "Interactive advisor to match load, reach, and environment to r-Lite, r-Core, r-Reach, r-Max, r-Ultra, and other r‑Series Cobot lines."
+    },
+    "applications_manufacturing": {
+      "metaTitleFocus": "Manufacturing Cobot Robotic Arm — CNC Tending & Assembly",
+      "metaDescription": "Smart manufacturing Cobots: CNC tending, AOI, adhesives, and line-balancing with programmable collaborative robotic arms for factory cells."
+    },
+    "applications_medical_lab": {
+      "metaTitleFocus": "Lab Automation Cobot — Medical & Bench Robotic Arms",
+      "metaDescription": "Medical and lab automation Cobots: sterile tending, repeatable pipetting robotics, bench-top collaborative robotic arms, and ISO-ready workflows."
+    },
+    "applications_education": {
+      "metaTitleFocus": "Education Cobot Programs — Robotic Arm Curriculum",
+      "metaDescription": "University and research Cobot labs: curriculum bundles, LMS integration, collaborative robotic arm curriculum, and embodied AI demos."
+    },
+    "applications_retail_service": {
+      "metaTitleFocus": "Retail & Service Cobot — Compact Robotic Arms",
+      "metaDescription": "Retail and front-house Cobots: compact collaborative robotic arms for greetings, dispensing, kiosk tending, and reliable service automation."
     },
     "privacy": {
       "metaTitleFocus": "Privacy Policy & Cookies",
@@ -429,6 +449,8 @@
       ]
     },
     "contact": {
+      "metaTitleFocus": "Contact Cobot Sales & OEM Integration",
+      "metaDescription": "Contact Roooll Cobot OEM sales, robot integration, quoting, demos, and collaborative robotic arm PoCs via worldwide teams.",
       "logoAlt": "Roooll brand mark on the contact page.",
       "heroTitle": "Contacting Roooll",
       "heroBody": "Sales, integrations, and partnerships—tell us about your project or reach us directly by email.",
@@ -660,8 +682,8 @@
         }
       },
       "controllersPage": {
-        "metaTitleFocus": "Cobot External Control Cabinets",
-        "metaDescription": "Roooll external control cabinet models—power, fieldbus, dimensions, and applicable r-Series cobot pairings for integration quotes.",
+        "metaTitleFocus": "Cobot External Control Cabinets — r-Core / r-Max / r-Ultra",
+        "metaDescription": "Roooll external control cabinet models—power, fieldbus, dimensions, and pairings for r-Core, r-Max, and r-Ultra cobot robotic arm integration quotes.",
         "eyebrow": "Accessories · Control Cabinets",
         "title": "External Control Cabinets",
         "intro": "Browse external control cabinet models with brochure-grade specs—power, fieldbus options, dimensions, and applicable r-Series cobot pairings."
@@ -716,7 +738,7 @@
     },
     "r_lite": {
       "metaTitleFocus": "r-Lite Integrated Cobot Robotic Arm",
-      "metaDescription": "r-Series r-Lite cobot platform: 3kg nominal (instant 5kg) payload, 622mm reach, ±0.05mm repeatability, and a base-integrated controller for compact production and lab cells.",
+      "metaDescription": "r-Series r-Lite compact integrated-controller cobot platform: 3kg nominal (instant 5kg) payload, 622mm reach, ±0.05mm repeatability, and a base-integrated controller for compact production and lab cells.",
       "immersive_glb_alt": "Roooll r-Lite integrated collaborative robot cobot for immersive product page; 6-axis collaborative robotic arm with integrated control for precision assembly and lab automation.",
       "inquiry": "Inquiry",
       "scenario_subnav": {
@@ -885,8 +907,8 @@
       }
     },
     "r_ultra": {
-      "metaTitleFocus": "r-Ultra Flagship Heavy-Payload Cobot",
-      "metaDescription": "r-Ultra Cobot line: 30kg flagship payload, 1402mm reach, and heavy transfer or palletizing ready collaborative robotic arm options.",
+      "metaTitleFocus": "Heavy-Payload Cobot Robotic Arm — r-Ultra & r-Max",
+      "metaDescription": "r-Ultra 30kg flagship and r-Max 16–20kg long-reach cobots (to 1854mm)—collaborative robotic arms for palletizing, handling, CNC tending, and end-of-line transfer. Compare r-Series specs.",
       "immersive_glb_alt": "Roooll r-Ultra collaborative robot, 30kg payload, ±0.1mm repeatability, 1402mm reach; 6-axis cobot arm for heavy handling and palletizing.",
       "inquiry": "Inquiry",
       "scenario_subnav": {

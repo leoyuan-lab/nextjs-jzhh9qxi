@@ -58,6 +58,25 @@ export function robotVariantSchemaDescription(variantId: string, lang: 'zh' | 'e
   return `${name}: payload ${stripFrModelCodes(v.payload)}, reach ${v.reach}, repeatability ${v.repeatability}. ${purpose}`;
 }
 
+/** SEO-only meta description extras (visible spec copy stays in `products.ts`). */
+const VARIANT_META_SEO_EXTRA: Partial<Record<string, { en: string; zh: string }>> = {
+  'fr16-std': {
+    en: '16kg compact heavy-duty cobot robotic arm for force-controlled assembly and production cells.',
+    zh: '16kg 紧凑重载协作机械臂，适配力控装配与产线工位。',
+  },
+  'fr20-std': {
+    en: '20kg long-reach cobot (1854mm) for robot palletizing, material handling, and end-of-line collaborative robotic arms.',
+    zh: '20kg 长臂展协作机器人（1854mm），面向码垛、搬运与产线末端协作机械臂应用。',
+  },
+};
+
+/** `<meta description>` for variant spec routes — may extend schema copy for keyword coverage. */
+export function robotVariantMetaDescription(variantId: string, lang: 'zh' | 'en'): string {
+  const base = robotVariantSchemaDescription(variantId, lang);
+  const extra = VARIANT_META_SEO_EXTRA[variantId]?.[lang];
+  return extra ? `${base} ${extra}` : base;
+}
+
 export function buildVariantProductLd(
   variantId: string,
   lang: 'zh' | 'en',

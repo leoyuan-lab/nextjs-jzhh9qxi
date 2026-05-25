@@ -16,9 +16,9 @@ export const rootViewport: Viewport = {
   viewportFit: 'cover',
 };
 
-const ROOT_TITLE_FOCUS = 'Collaborative Cobot Lineup';
+const ROOT_TITLE_FOCUS = 'Collaborative Cobot & Robotic Arm Lineup — r-Lite to r-Ultra';
 const ROOT_DESCRIPTION_BODY =
-  'Collaborative Cobot models and robotic arm specifications for factories, labs, retail, and OEM deployment.';
+  'Explore Roooll Cobots across r-Lite, r-Core, r-Reach, r-Max, and r-Ultra—collaborative robotic arm showcases and specs from 3kg to 30kg for factories, labs, retail, and OEM deployment.';
 
 /** Visible <title> — brand suffix unified for Roooll (see locales for product focus phrases). */
 export function seoTitle(focusPhrase: string): string {
@@ -26,14 +26,15 @@ export function seoTitle(focusPhrase: string): string {
   return `${trimmed} | Roooll - Collaborative Robots`;
 }
 
-/** <meta description> must contain both phrases (English keyword coverage). */
+/** <meta description> must contain cobot + robotic-arm phrases (EN or ZH). */
 export function seoDescription(body: string): string {
   const t = body.trim();
-  const hasCobot = /\bcobot\b/i.test(t);
-  const hasRoboticArm = /\brobotic arm\b/i.test(t);
+  const isZh = /[\u4e00-\u9fff]/.test(t);
+  const hasCobot = /\bcobot\b/i.test(t) || /协作机器人/.test(t);
+  const hasRoboticArm = /\brobotic arm\b/i.test(t) || /协作机械臂|机械臂/.test(t);
   let out = t;
-  if (!hasCobot) out = `${out} Cobots`;
-  if (!hasRoboticArm) out = `${out} robotic arm specs.`;
+  if (!hasCobot) out = isZh ? `${out} Cobot 协作机器人` : `${out} Cobots`;
+  if (!hasRoboticArm) out = isZh ? `${out}协作机械臂规格。` : `${out} robotic arm specs.`;
   return out.replace(/\s+/g, ' ').trim();
 }
 

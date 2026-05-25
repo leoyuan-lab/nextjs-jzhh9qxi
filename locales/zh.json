@@ -222,9 +222,13 @@
     }
   ],
   "pages": {
+    "home": {
+      "metaTitleFocus": "协作机器人与协作机械臂全系 — r-Lite 至 r-Ultra",
+      "metaDescription": "浏览 Roooll r-Lite、r-Core、r-Reach、r-Max、r-Ultra 协作机器人与机械臂展示入口，覆盖 3kg 至 30kg 负载区间。"
+    },
     "all_cobots_specs": {
-      "metaTitleFocus": "全系列 r-Lite / r-Core 协作机器人规格",
-      "metaDescription": "横向浏览 r-Lite、r-Core、r-Reach、r-Max、r-Ultra 等 r 系列协作机械臂全矩阵：负载、工作半径、关节轴、接口与功率要点一站对比。",
+      "metaTitleFocus": "全系列 r 系列协作机器人规格 — 3kg 至 30kg",
+      "metaDescription": "横向浏览 r-Lite、r-Core、r-Reach、r-Max、r-Ultra 等 r 系列协作机械臂全矩阵：3kg 至 30kg 负载、工作半径、关节轴、接口与功率要点一站对比。",
       "lineup": {
         "subtitle": "从轻到重。全系 r 系列协作臂——规格并排，一目了然。"
       },
@@ -266,7 +270,7 @@
       "metaDescription": "人形 Cobot 路线图：具身智能、触觉交互与下一代协作机械臂研究合作方向展望。"
     },
     "r_core": {
-      "metaTitleFocus": "r-Core 产线主力协作机械臂",
+      "metaTitleFocus": "r-Core 产线 Pick-and-Place 协作机械臂",
       "metaDescription": "r 系列 r-Core Cobot 协作机械臂（Line-ready robotic arm）：5 kg 级负载、922 mm 臂展、±0.02 mm 重复定位——面向产线与实验室的装配、检测、上下料。",
       "hero": {
         "title": "r-Core",
@@ -357,7 +361,7 @@
     },
     "selector_comparison": {
       "metaTitleFocus": "r 系列协作臂横向对比",
-      "metaDescription": "并排对比任意三款 r 系列 Cobot（r-Lite、r-Core、r-Reach、r-Max、r-Ultra）：负载、工作半径、重复精度、关节轴、控制箱与功率，一张可分享的对比表。",
+      "metaDescription": "并排对比任意三款 r 系列 Cobot（3kg、5kg、10kg、16kg、20kg、30kg 级；含 r-Lite、r-Core、r-Reach、r-Max、r-Ultra）：负载、工作半径、重复精度、关节轴、控制箱与功率，一张可分享的对比表。",
       "headlineLines": ["对比全系 r 家族", "看清差距在哪里。"],
       "footer": {
         "title": "需要帮你缩小范围？",
@@ -370,8 +374,24 @@
       }
     },
     "selector_advisor": {
-      "metaTitleFocus": "智能选型向导（r-Lite / r-Core）",
-      "metaDescription": "按负载、工作半径与环境匹配 r-Lite、r-Core 等 r 系列 Cobot；交互式协作机械臂选型。"
+      "metaTitleFocus": "协作机器人选型向导 — 按负载、臂展与应用匹配",
+      "metaDescription": "按负载、工作半径与环境匹配 r-Lite、r-Core、r-Reach、r-Max、r-Ultra 等 r 系列 Cobot；交互式协作机械臂选型。"
+    },
+    "applications_manufacturing": {
+      "metaTitleFocus": "智能制造协作机械臂 — CNC 上下料 · 装配 · 检测",
+      "metaDescription": "智能制造 Cobot：CNC 上下料、AOI、涂胶与线平衡等可编程协作机械臂产线应用。"
+    },
+    "applications_medical_lab": {
+      "metaTitleFocus": "实验室自动化协作机器人 — 医疗与台面机械臂",
+      "metaDescription": "医疗与实验室自动化 Cobot：无菌上下料、可重复移液机器人、台面协作机械臂与 ISO 就绪流程。"
+    },
+    "applications_education": {
+      "metaTitleFocus": "教育协作机器人项目 — 机械臂课程与实训",
+      "metaDescription": "高校与科研 Cobot 实验室：课程包、LMS 集成、协作机械臂教学大纲与具身智能演示。"
+    },
+    "applications_retail_service": {
+      "metaTitleFocus": "零售与服务协作机器人 — 紧凑机械臂",
+      "metaDescription": "零售与前台服务 Cobot：紧凑协作机械臂，适用于迎宾、出料配液、自助终端与可靠服务自动化。"
     },
     "privacy": {
       "metaTitleFocus": "隐私政策与 Cookie",
@@ -429,6 +449,8 @@
       ]
     },
     "contact": {
+      "metaTitleFocus": "联系协作机器人销售与 OEM 集成",
+      "metaDescription": "联系 Roooll 协作机器人 OEM 销售、机械臂集成、报价、演示与 PoC——全球团队响应。",
       "logoAlt": "Roooll 品牌标识，联系我们页面。",
       "heroTitle": "联系 Roooll",
       "heroBody": "销售、集成与渠道合作——介绍您的项目，或直接通过邮件与我们沟通。",
@@ -660,8 +682,8 @@
         }
       },
       "controllersPage": {
-        "metaTitleFocus": "协作机器人外置控制箱",
-        "metaDescription": "Roooll 外置控制柜型号、功率、通信接口与适用机型一览；匹配 r-Core / r-Max 协作机械臂产线集成与询价。",
+        "metaTitleFocus": "协作机器人外置控制箱 — r-Core / r-Max / r-Ultra",
+        "metaDescription": "Roooll 外置控制柜型号、功率、通信接口与适用机型一览；匹配 r-Core、r-Max、r-Ultra 协作机械臂产线集成与询价。",
         "eyebrow": "配件 · 控制箱",
         "title": "外置控制箱",
         "intro": "横向浏览外置控制柜型号：功率、通信接口、尺寸与适用 r 系列机型配对；规格来自产品手册，支持一键咨询。"
@@ -716,7 +738,7 @@
     },
     "r_lite": {
       "metaTitleFocus": "r-Lite 一体化协作机械臂",
-      "metaDescription": "r 系列 r-Lite 协作机器人平台：额定 3kg（瞬时 5kg）负载、622mm 工作半径、±0.05mm 重复定位精度，底座一体式控制箱，适配产线与实验室紧凑部署。",
+      "metaDescription": "r 系列 r-Lite 紧凑一体式控制箱协作机器人平台：额定 3kg（瞬时 5kg）负载、622mm 工作半径、±0.05mm 重复定位精度，底座集成控制，适配产线与实验室紧凑部署。",
       "immersive_glb_alt": "Roooll r-Lite 一体化协作机器人 Cobot 沉浸页主视觉：六轴协作机械臂与一体式控制，适配产线与精密装配场景。",
       "inquiry": "咨询",
       "scenario_subnav": {
@@ -885,8 +907,8 @@
       }
     },
     "r_ultra": {
-      "metaTitleFocus": "r-Ultra 旗舰重载协作机械臂",
-      "metaDescription": "r-Ultra 系列旗舰 Cobot：30kg 额定大负载协作机械臂，1402mm 工作半径，适配搬运、码垛与重载协作产线。",
+      "metaTitleFocus": "r-Ultra / r-Max 重载协作机械臂 — 码垛与搬运",
+      "metaDescription": "r-Ultra 30kg 旗舰与 r-Max 16–20kg 长臂协作机器人（臂展至 1854mm）——面向码垛、搬运、上下料与产线末端；全系列规格一站对比。",
       "immersive_glb_alt": "Roooll r-Ultra 协作机器人：30kg 额定负载（最大 35kg）、1402mm 工作半径、±0.1mm 重复定位精度，适配重载搬运与码垛。",
       "inquiry": "咨询",
       "scenario_subnav": {

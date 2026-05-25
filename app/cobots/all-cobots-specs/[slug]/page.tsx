@@ -9,7 +9,7 @@ import { getSiteLang } from '@/lib/get-site-lang';
 import { getRequestSiteOrigin } from '@/lib/site-origin';
 import { pageMetadata } from '@/lib/site-seo';
 import {
-  robotVariantSchemaDescription,
+  robotVariantMetaDescription,
   robotVariantSchemaProductName,
   rooollVariantShortLabel,
 } from '@/lib/roooll-product-schema';
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const siteOrigin = await getRequestSiteOrigin();
   const pathname = variantDetailPathname(slug);
   const titleFocus = robotVariantSchemaProductName(variantId, lang);
-  const description = robotVariantSchemaDescription(variantId, lang);
+  const description = robotVariantMetaDescription(variantId, lang);
 
   return pageMetadata(titleFocus, description, pathname, lang, siteOrigin);
 }

@@ -2,15 +2,17 @@ import type { Metadata } from 'next';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_APPLICATIONS } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
+import { getMessages } from '@/lib/messages';
 import { getRequestSiteOrigin } from '@/lib/site-origin';
 import { pageMetadata } from '@/lib/site-seo';
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
   const siteOrigin = await getRequestSiteOrigin();
+  const page = getMessages(lang).pages.applications_retail_service;
   return pageMetadata(
-    'Retail & Service Cobot Applications',
-    'Retail and front‑house Cobots: compact robotic arms for greetings, dispensing, tending kiosks, and reliable service chores.',
+    page.metaTitleFocus,
+    page.metaDescription,
     '/applications/retail-service',
     lang,
     siteOrigin,

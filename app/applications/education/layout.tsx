@@ -2,15 +2,17 @@ import type { Metadata } from 'next';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_APPLICATIONS } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
+import { getMessages } from '@/lib/messages';
 import { getRequestSiteOrigin } from '@/lib/site-origin';
 import { pageMetadata } from '@/lib/site-seo';
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
   const siteOrigin = await getRequestSiteOrigin();
+  const page = getMessages(lang).pages.applications_education;
   return pageMetadata(
-    'Education Cobot Programs',
-    'University and research Cobot labs deploy curriculum bundles, LMS integration, robotics arm curriculum, embodied AI demos.',
+    page.metaTitleFocus,
+    page.metaDescription,
     '/applications/education',
     lang,
     siteOrigin,
