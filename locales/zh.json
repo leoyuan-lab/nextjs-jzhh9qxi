@@ -6,6 +6,7 @@
       "all_specs": "r 系列型号与规格",
       "humanoid": "人形机器人（具身智能）",
       "r_lite_suffix": "（控制箱一体）",
+      "r_core_suffix": "（产线主力）",
       "r_ultra_suffix": "（强力负载型）"
     },
     "r_ecosystem_section": "R 生态",
@@ -103,6 +104,10 @@
     "ctaLearn": "进一步了解",
     "ctaLearnRliteAria": "进一步了解 r-Lite 协作机器人",
     "ctaLearnRultraAria": "进一步了解 r-Ultra 协作机器人",
+    "ctaViewRcore": "了解 r-Core",
+    "ctaViewRcoreAria": "了解 r-Core 产线主力协作机器人",
+    "ctaSpecsAll": "全系规格",
+    "ctaSpecsAllAria": "浏览 r 系列协作机器人全系规格",
     "ctaInquiry": "咨询",
     "loadingSloganBefore": "让我们大",
     "loadingSloganMark": "干",
@@ -259,6 +264,96 @@
     "humanoid": {
       "metaTitleFocus": "人形具身智能协作机器人愿景",
       "metaDescription": "人形 Cobot 路线图：具身智能、触觉交互与下一代协作机械臂研究合作方向展望。"
+    },
+    "r_core": {
+      "metaTitleFocus": "r-Core 产线主力协作机械臂",
+      "metaDescription": "r 系列 r-Core Cobot 协作机械臂（Line-ready robotic arm）：5 kg 级负载、922 mm 臂展、±0.02 mm 重复定位——面向产线与实验室的装配、检测、上下料。",
+      "hero": {
+        "title": "r-Core",
+        "subtitle": "产线主力 · 多数项目从这里开始"
+      },
+      "inquiry": "咨询",
+      "scenario_subnav": {
+        "brand_top_aria": "r-Core 产品页咨询导航"
+      },
+      "advantages": {
+        "kicker": "为何选 r-Core",
+        "items": [
+          {
+            "title": "产线级默认答案",
+            "body": "5 kg 级负载与 922 mm 臂展覆盖装配、检测与线边物流——多数工位最终都会落到这一档。"
+          },
+          {
+            "title": "一体式或控制柜式",
+            "body": "紧凑单元可选底座集成 -C；需要完整现场总线与功率余量时选经典外置控制柜布局。"
+          },
+          {
+            "title": "快速跑通首条轨迹",
+            "body": "拖拽示教、Web App 调校与 Modbus 就绪 I/O，熟练团队通常数小时即可跑通第一条 pick-and-place。"
+          }
+        ]
+      },
+      "features": {
+        "kicker": "上线第一天就用到",
+        "title": "四项关键能力",
+        "items": [
+          { "title": "±0.02 mm 级重复定位", "body": "额定负载下保持位姿精度，适配质检与精密装配。" },
+          { "title": "IP54 基线防护", "body": "工业级 ingress 防护基线，恶劣工位可选 IP65。" },
+          { "title": "ISO 9409-1 法兰", "body": "标准工具接口，兼容夹爪、真空与快换 EOAT。" },
+          { "title": "现场就绪 I/O", "body": "数字/模拟 I/O 与 Modbus TCP/RTU，便于 PLC 与 MES 对接。" }
+        ]
+      },
+      "specs": {
+        "kicker": "规格参数",
+        "title": "核心参数一览",
+        "variantTabsAria": "r-Core 型号切换",
+        "variants": {
+          "fr5-std": "标准型",
+          "fr5-c": "一体式 -C",
+          "fr5-wml": "移动 WML"
+        },
+        "wheelAria": "逐条浏览 r-Core 关键规格",
+        "spotlightAria": "滚动浏览 r-Core 关键规格，居中项高亮",
+        "specPrev": "向上浏览规格",
+        "specNext": "向下浏览规格",
+        "specProgress": "{{current}} / {{total}}",
+        "specProgressAria": "第 {{current}} 项，共 {{total}} 项：{{label}}",
+        "specDotsLabel": "规格分页",
+        "fullTableTitle": "完整规格表",
+        "fullTableToggleExpand": "展开完整规格表",
+        "fullTableToggleCollapse": "收起完整规格表",
+        "viewAllModels": "浏览全系 r 系列机型",
+        "viewVariantDetail": "打开该型号详细规格",
+        "rows": {
+          "payload": "额定负载",
+          "reach": "臂展",
+          "repeatability": "重复定位",
+          "weight": "本体重量",
+          "ipRating": "防护等级",
+          "tcpSpeed": "TCP 速度",
+          "dof": "自由度",
+          "controller": "控制箱布局"
+        },
+        "controllerIntegrated": "底座一体式（-C）",
+        "controllerExternal": "外置控制柜"
+      },
+      "blueprint": {
+        "kicker": "工程图纸",
+        "title": "蓝图与工作包络",
+        "body": "工作半径、占地与关节包络，便于机械布局——可与集成商共享，或从资源中心获取下载。"
+      },
+      "cta": {
+        "title": "准备定规格？",
+        "body": "告诉我们负载、臂展与现场环境——我们将推荐 r-Core 具体型号或升级路径。",
+        "inquiry": "预约询价",
+        "allModels": "全部 r 系列机型"
+      },
+      "footer": {
+        "title": "继续看全系与选型",
+        "summary": "横向对比负载与臂展，或一次性浏览全部目录机型。",
+        "allModels": "浏览全系 r 系列机型",
+        "compareMatch": "对比并找到合适型号"
+      }
     },
     "selector_comparison": {
       "metaTitleFocus": "r 系列协作臂横向对比",
@@ -889,6 +984,7 @@
       "r_ultra_fr30_std": "Roooll r-Ultra 协作机器人（旗舰型）- 旗舰重载与安全协作并行，30kg 额定负载（最大 35kg）、1402mm 工作半径、±0.1mm 重复定位精度，工业级品质，面向工业现场，适配高负载转运场景。"
     },
     "hero_rlite": "Roooll r-Lite 协作机器人（一体式控制）- 控制箱一体紧凑部署，额定 3kg（瞬时 5kg）负载、622mm 工作半径、±0.05mm 重复定位精度，工业级品质，面向工业现场，适配产线与精密装配。",
+    "hero_rcore": "Roooll r-Core 协作机器人（标准型）- 5kg 额定负载（最大 7kg）、922mm 工作半径、±0.02mm 重复定位精度，产线主力装配、检测与上下料。",
     "hero_rultra": "Roooll r-Ultra 协作机器人 - 协作之巅的重载方案，30kg 额定负载（最大 35kg）、1402mm 工作半径、±0.1mm 重复定位精度，工业级品质，面向工业现场，适配重载搬运与码垛。",
     "r_lite_detail_flange": "Roooll r-Lite 协作机器人（一体式控制）- 纯黑背景下白色末端法兰与上臂大特写，额定 3kg（瞬时 5kg）负载、622mm 工作半径、±0.05mm 重复定位精度；突出工业机械臂安装面与工具快换在精密装配场景下的稳定对接。",
     "r_lite_detail": "Roooll r-Lite 协作机器人（一体式控制）结构细节展示 - 额定 3kg（瞬时 5kg）负载、622mm 工作半径、±0.05mm 重复定位精度，底座一体式控制与工业级品质。",

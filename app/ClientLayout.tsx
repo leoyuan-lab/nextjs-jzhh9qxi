@@ -129,6 +129,7 @@ function buildNav(messages: MessagesFile): NavSection[] {
         { label: n.cobots.all_specs, url: '/cobots/all-cobots-specs' },
         { label: `${navFamilyName('r-lite')}${n.cobots.r_lite_suffix}`, url: '/cobots/r-lite' },
         { label: `${navFamilyName('r-ultra')}${n.cobots.r_ultra_suffix}`, url: '/cobots/r-ultra' },
+        { label: `${navFamilyName('r-core')}${n.cobots.r_core_suffix}`, url: '/cobots/r-core' },
         { label: n.cobots.humanoid, url: '/cobots/humanoid' },
       ],
     },
@@ -213,6 +214,7 @@ export default function ClientLayout({
   const isArm = ARM_NAV_PATHS.has(logicalPathname);
   const isSelector = SELECTOR_NAV_PATHS.has(logicalPathname);
   const isOurStory = logicalPathname === '/about/story';
+  const isRCoreLite = logicalPathname === '/cobots/r-core';
   const isAdvisorHeroPeek = logicalPathname === ADVISOR_HERO_PEEK_PATH;
   const [lang, setLang] = useState<'zh' | 'en'>(initialLang);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -278,8 +280,8 @@ export default function ClientLayout({
     document.body.style.margin = '0';
     document.documentElement.style.width = '100%';
     document.body.style.width = '100%';
-    syncRouteDocumentChrome({ isArm, isHome, isStickyScroll: isOurStory });
-  }, [isArm, isHome, isOurStory, pathname]);
+    syncRouteDocumentChrome({ isArm, isHome, isStickyScroll: isOurStory, isRCoreLite });
+  }, [isArm, isHome, isOurStory, isRCoreLite, pathname]);
 
   useEffect(() => {
     document.documentElement.setAttribute('lang', resolvedLang);
@@ -519,7 +521,7 @@ export default function ClientLayout({
   useEffect(() => {
     if (mobileMenuVisible || isMobileMenuOpen) return;
     if (!isArm) return;
-    syncRouteDocumentChrome({ isArm, isHome });
+    syncRouteDocumentChrome({ isArm, isHome, isRCoreLite });
     requestAnimationFrame(() => {
       window.dispatchEvent(new Event('resize'));
     });

@@ -457,7 +457,7 @@ export function computeAdvisorResult(answers: AdvisorAnswers): AdvisorComputedRe
     detailZh:
       '下面是我们为您推荐的最适合您愿景的机型，并已经为您把结果保存起来了，您可以点击下方“查看结果”查看，也可以顺手加上两句您最关心的问题或者您的现场照片，我们再为您提供更详尽的服务',
     detailEn:
-      'Below are the models we recommend according to your anwsers, and we have already saved your results for you. You can click "View result" below to review them, or add a couple of your most concerned questions or on-site photos, and we will provide you with more detailed service.',
+      'Below are the models we recommend according to your answers, and we have already saved your results for you. You can click "View result" below to review them, or add a couple of your most concerned questions or on-site photos, and we will provide you with more detailed service.',
     geoSummaryZh: clipGraphemes(geoZhRaw, 150),
     geoSummaryEn: clipAscii(geoEnRaw, 150),
     geoNarrativeZh: bandGraphemes(geoZhLongRaw, 150, 200),
@@ -519,6 +519,6 @@ export function buildAdvisorInquiryDraft(
     '',
     geo,
     '',
-    'Generate the email as-is, or add a few questions that you cerconed about,  and site photos below.',
+    'Generate the email as-is, or add a few questions that you are concerned about, and site photos below.',
   ].join('\n');
 }

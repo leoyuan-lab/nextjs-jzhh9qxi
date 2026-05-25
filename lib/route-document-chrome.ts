@@ -5,12 +5,15 @@ export type RouteDocumentChromeOptions = {
   isHome: boolean;
   /** Our Story curtain-pull: sticky pin requires visible overflow on html/body. */
   isStickyScroll?: boolean;
+  /** r-Core lite: transparent html/body so mobile home-indicator band shows scroll layer. */
+  isRCoreLite?: boolean;
 };
 
 export function syncRouteDocumentChrome({
   isArm,
   isHome,
   isStickyScroll = false,
+  isRCoreLite = false,
 }: RouteDocumentChromeOptions): void {
   if (typeof document === 'undefined') return;
 
@@ -21,8 +24,11 @@ export function syncRouteDocumentChrome({
   document.body.classList.toggle('is-arm-immersive-route', isArm);
   document.documentElement.classList.toggle('is-sticky-scroll-route', isStickyScroll);
   document.body.classList.toggle('is-sticky-scroll-route', isStickyScroll);
-  document.body.style.backgroundColor =
-    isHome || isStickyScroll ? 'transparent' : isArm ? '#000' : '#fff';
+  document.documentElement.classList.toggle('is-rcore-lite-route', isRCoreLite);
+  document.body.classList.toggle('is-rcore-lite-route', isRCoreLite);
+  const transparentBody = isHome || isStickyScroll || isRCoreLite;
+  document.documentElement.style.backgroundColor = transparentBody ? 'transparent' : '';
+  document.body.style.backgroundColor = transparentBody ? 'transparent' : isArm ? '#000' : '#fff';
 }
 
 /**

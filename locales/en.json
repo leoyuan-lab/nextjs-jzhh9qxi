@@ -6,6 +6,7 @@
       "all_specs": "r-series cobots & Specs",
       "humanoid": "Humanoid (Embodied AI)",
       "r_lite_suffix": " (Integrated Controller)",
+      "r_core_suffix": " (Line-ready)",
       "r_ultra_suffix": " (High Payload)"
     },
     "r_ecosystem_section": "R-ecosystem",
@@ -103,6 +104,10 @@
     "ctaLearn": "Learn more",
     "ctaLearnRliteAria": "Learn more about r-Lite collaborative cobot",
     "ctaLearnRultraAria": "Learn more about r-Ultra collaborative cobot",
+    "ctaViewRcore": "View r-Core",
+    "ctaViewRcoreAria": "View r-Core line-ready collaborative cobot overview",
+    "ctaSpecsAll": "Specs",
+    "ctaSpecsAllAria": "Browse full r-Series collaborative cobot specifications",
     "ctaInquiry": "Inquiry",
     "loadingSloganBefore": "Let's get r",
     "loadingSloganMark": "o",
@@ -259,6 +264,96 @@
     "humanoid": {
       "metaTitleFocus": "Humanoid Embodied-AI Cobot vision",
       "metaDescription": "Humanoid Cobot roadmap: embodied AI, tactile interaction, and next‑gen collaborative robotic arm research partnerships."
+    },
+    "r_core": {
+      "metaTitleFocus": "r-Core Line-ready Cobot Robotic Arm",
+      "metaDescription": "r-Series r-Core line-ready cobot robotic arm: 5 kg class payload, 922 mm reach, ±0.02 mm repeatability—pick, place, inspect, and handling for production and lab cells.",
+      "hero": {
+        "title": "r-Core",
+        "subtitle": "Line-ready. Where most deployments start."
+      },
+      "inquiry": "Inquiry",
+      "scenario_subnav": {
+        "brand_top_aria": "r-Core product consultation bar"
+      },
+      "advantages": {
+        "kicker": "Why r-Core",
+        "items": [
+          {
+            "title": "Production-grade default",
+            "body": "5 kg class payload and 922 mm reach cover assembly, inspection, and line-side handling—the workload most cells standardize on."
+          },
+          {
+            "title": "Integrated or cabinet-ready",
+            "body": "Choose base-integrated -C for compact cells or classic cabinet layouts for full fieldbus and power headroom."
+          },
+          {
+            "title": "Deploy without friction",
+            "body": "Hand-guided teach paths, Web App tuning, and Modbus-ready I/O get the first trajectory running in hours—not weeks."
+          }
+        ]
+      },
+      "features": {
+        "kicker": "Built for the floor",
+        "title": "Four capabilities that matter on day one",
+        "items": [
+          { "title": "±0.02 mm class repeatability", "body": "Hold pose accuracy under rated load for QC and precision assembly." },
+          { "title": "IP54 baseline", "body": "Industrial ingress protection with optional IP65 for harsher cells." },
+          { "title": "ISO 9409-1 flange", "body": "Standard tooling interface for grippers, vacuum, and quick-change EOAT." },
+          { "title": "Field-ready I/O", "body": "Digital and analog I/O plus Modbus TCP/RTU for PLC and MES tie-in." }
+        ]
+      },
+      "specs": {
+        "kicker": "Specifications",
+        "title": "Core parameters at a glance",
+        "variantTabsAria": "r-Core model variants",
+        "variants": {
+          "fr5-std": "Standard",
+          "fr5-c": "Integrated -C",
+          "fr5-wml": "Mobile WML"
+        },
+        "wheelAria": "Browse key r-Core specifications one at a time",
+        "spotlightAria": "Scroll to browse key r-Core specifications with center focus",
+        "specPrev": "Scroll specifications up",
+        "specNext": "Scroll specifications down",
+        "specProgress": "{{current}} / {{total}}",
+        "specProgressAria": "Specification {{current}} of {{total}}: {{label}}",
+        "specDotsLabel": "Specification pages",
+        "fullTableTitle": "Complete specification table",
+        "fullTableToggleExpand": "Show full specification table",
+        "fullTableToggleCollapse": "Hide full specification table",
+        "viewAllModels": "Browse all r-Series models",
+        "viewVariantDetail": "Open detailed variant sheet",
+        "rows": {
+          "payload": "Rated payload",
+          "reach": "Reach",
+          "repeatability": "Repeatability",
+          "weight": "Arm weight",
+          "ipRating": "IP rating",
+          "tcpSpeed": "TCP speed",
+          "dof": "Degrees of freedom",
+          "controller": "Controller layout"
+        },
+        "controllerIntegrated": "Base-integrated (-C)",
+        "controllerExternal": "External control cabinet"
+      },
+      "blueprint": {
+        "kicker": "Engineering drawing",
+        "title": "Blueprint & envelope",
+        "body": "Working radius, footprint, and joint envelope for mechanical layout—share with your integrator or download from the resource center."
+      },
+      "cta": {
+        "title": "Ready to spec your cell?",
+        "body": "Tell us about load, reach, and environment—we will recommend an r-Core variant or a step-up path.",
+        "inquiry": "Request a quote",
+        "allModels": "All r-Series models"
+      },
+      "footer": {
+        "title": "Explore the full r-Series lineup",
+        "summary": "Compare payload and reach across families—or browse every catalog model in one place.",
+        "allModels": "Browse all r-Series models",
+        "compareMatch": "Compare & find your match"
+      }
     },
     "selector_comparison": {
       "metaTitleFocus": "Side-by-side r-Series Cobot comparison",
@@ -889,6 +984,7 @@
       "r_ultra_fr30_std": "Roooll r-Ultra collaborative robot (flagship), 30kg payload, ±0.1mm repeatability, 1402mm reach; high-load transfer."
     },
     "hero_rlite": "Roooll r-Lite collaborative robot (integrated controller), 3kg payload (5kg instant), ±0.05mm repeatability, 622mm reach; precision assembly and lab automation.",
+    "hero_rcore": "Roooll r-Core collaborative robot (standard), 5kg payload, ±0.02mm repeatability, 922mm reach; line-ready assembly, inspection, and handling.",
     "hero_rultra": "Roooll r-Ultra collaborative robot, 30kg payload, ±0.1mm repeatability, 1402mm reach; heavy handling and palletizing.",
     "r_lite_detail_flange": "Roooll r-Lite collaborative robot (integrated controller)—close-up of white end flange and upper arm on black background; 3kg payload, 622mm reach, ±0.05mm repeatability.",
     "r_lite_detail": "Roooll r-Lite collaborative robot (integrated controller) structural detail—3kg payload, 622mm reach, ±0.05mm repeatability, integrated base control.",

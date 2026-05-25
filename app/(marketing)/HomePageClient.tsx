@@ -7,6 +7,7 @@ import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
 import { trackCtaClick } from '@/lib/analytics';
 import { openInquiry } from '@/lib/open-inquiry';
+import { R_CORE_LITE_HERO_HD_PATH } from '@/lib/rcore-lite-page-config';
 
 function familyTitle(familyId: string) {
   return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
@@ -38,6 +39,7 @@ export default function HomePageClient() {
   const loadingUnmountTimerRef = useRef<number | null>(null);
   const heroRotateReadyRef = useRef(false);
   const home = getMessages(lang).homepage;
+  const rCorePage = getMessages(lang).pages.r_core;
   const alt = getMessages(lang).alt;
   const ctaLearn = home.ctaLearn;
   const ctaInquiry = home.ctaInquiry;
@@ -53,6 +55,10 @@ export default function HomePageClient() {
   const altHeroRultraGlb = useMemo(
     () => alt.hero_rultra ?? robotVariantImageAlt('fr30-std', lang),
     [alt.hero_rultra, lang],
+  );
+  const altHeroRcore = useMemo(
+    () => alt.hero_rcore ?? alt.variant_images.r_core_fr5_std,
+    [alt.hero_rcore, alt.variant_images.r_core_fr5_std, lang],
   );
 
   useEffect(() => {
@@ -494,7 +500,46 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* 屏3+4: 双子星 5:5 占位图（非首屏 LCP：不抢 priority，减轻与 hero GLB 带宽竞争） */}
+      {/* 屏3: r-Core（HD 静图 → 轻量落地页） */}
+      <section className="screen-outer screen-outer--hero-core" style={{ backgroundColor: '#ffffff', color: '#1d1d1f' }}>
+        <div className={`hero-image-wrap ${isLoaded ? 'r-core-cobot-fr5-entry-animation' : 'hidden-init'}`}>
+          <Image
+            src={R_CORE_LITE_HERO_HD_PATH}
+            alt={altHeroRcore}
+            fill
+            loading="lazy"
+            quality={95}
+            sizes="100vw"
+            className="hero-image-fill hero-image-fill--rcore"
+          />
+        </div>
+        <div className="content-limit">
+          <div className="text-box">
+            <h2 className="title">{rCorePage.hero.title}</h2>
+            <p className="subtitle">{rCorePage.hero.subtitle}</p>
+            <div className="cta-row">
+              <a
+                href={path('/cobots/r-core')}
+                className="cta-link"
+                aria-label={home.ctaViewRcoreAria}
+                onClick={() => trackCtaClick('home_hero3_view_rcore')}
+              >
+                {home.ctaViewRcore}
+              </a>
+              <a
+                href={path('/cobots/all-cobots-specs')}
+                className="cta-link"
+                aria-label={home.ctaSpecsAllAria}
+                onClick={() => trackCtaClick('home_hero3_specs_all')}
+              >
+                {home.ctaSpecsAll}
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 屏4+5: 双子星 5:5 占位图（非首屏 LCP：不抢 priority，减轻与 hero GLB 带宽竞争） */}
       <section className="twin-hero-section">
         <article className="twin-hero-panel">
           <Image

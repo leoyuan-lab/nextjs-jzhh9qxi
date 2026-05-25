@@ -5,14 +5,22 @@ import { openInquiry } from '@/lib/open-inquiry';
 import type { AppLocale } from '@/lib/messages';
 import type { ImmersiveMessagesPageKey } from '@/lib/immersive-series-messages';
 
+type SubnavMessagesPageKey = ImmersiveMessagesPageKey | 'r_core';
+
 type Props = {
   lang: AppLocale;
   productLineLabel: string;
-  messagesPageKey?: ImmersiveMessagesPageKey;
+  messagesPageKey?: SubnavMessagesPageKey;
+  inquirySource?: string;
 };
 
 /** Application 段起：顶部宽胶囊二级导航（Apple 式两侧 ~20vh 留白，与 Cookie 同款毛玻璃） */
-export function RCoreAppStickySubnav({ lang, productLineLabel, messagesPageKey = 'r_lite' }: Props) {
+export function RCoreAppStickySubnav({
+  lang,
+  productLineLabel,
+  messagesPageKey = 'r_lite',
+  inquirySource = 'immersive_subnav',
+}: Props) {
   const msgs = getMessages(lang);
   const page = msgs.pages[messagesPageKey];
   const copy = page.scenario_subnav;
@@ -24,7 +32,7 @@ export function RCoreAppStickySubnav({ lang, productLineLabel, messagesPageKey =
         <button
           type="button"
           className="cookie-consent__btn cookie-consent__btn--primary"
-          onClick={() => openInquiry({ source: 'immersive_subnav' })}
+          onClick={() => openInquiry({ source: inquirySource })}
         >
           {page.inquiry}
         </button>
