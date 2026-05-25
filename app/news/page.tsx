@@ -1,20 +1,7 @@
-import { SeoBriefLanding } from '@/components/SeoBriefLanding';
+import { NewsroomPageClient } from '@/components/news/NewsroomPageClient';
+import { getSiteLang } from '@/lib/get-site-lang';
 
-export default function NewsPage() {
-  return (
-    <SeoBriefLanding
-      copy={{
-        zh: {
-          title: '新闻资讯',
-          body: '新品发布、展会活动与工程博客将在此汇总，欢迎订阅以保持同步。',
-          ctaHome: '返回首页',
-        },
-        en: {
-          title: 'Newsroom',
-          body: 'Launches, trade shows, and engineering stories—subscribe as we fill the feed.',
-          ctaHome: 'Back to Home',
-        },
-      }}
-    />
-  );
+export default async function NewsPage() {
+  const lang = await getSiteLang();
+  return <NewsroomPageClient initialLang={lang} />;
 }

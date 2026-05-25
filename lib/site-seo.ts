@@ -1,6 +1,12 @@
 import type { Metadata, Viewport } from 'next';
 
-import { getSiteOrigin } from '@/lib/site-origin';
+import {
+  SITE_BRAND_ORBIT_LOGO_PATH,
+  SITE_BRAND_TOUCH_ICON_PATH,
+} from '@/lib/site-brand-paths';
+import { getSiteOrigin } from '@/lib/site-origin-fallback';
+
+export { SITE_BRAND_ORBIT_LOGO_PATH, SITE_BRAND_TOUCH_ICON_PATH };
 
 /** Single source for `viewport` export — keep `viewport-fit: cover` so safe-area insets land
  *  under the mobile hamburger overlay (else iOS / Android leave a strip at the status bar). */
@@ -9,12 +15,6 @@ export const rootViewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
 };
-
-/** Public URL path — Roooll orbit mark: OG/Twitter + Organization `logo` (see `OrganizationJsonLd`). */
-export const SITE_BRAND_ORBIT_LOGO_PATH = '/images/brand/roooll-orbit-logo.webp';
-
-/** iOS / PWA “add to home screen” tile — Roooll-named asset. `rel` must stay `apple-touch-icon` for Safari (platform string, not our brand). */
-export const SITE_BRAND_TOUCH_ICON_PATH = '/images/brand/roooll-touch-icon.webp';
 
 const ROOT_TITLE_FOCUS = 'Collaborative Cobot Lineup';
 const ROOT_DESCRIPTION_BODY =

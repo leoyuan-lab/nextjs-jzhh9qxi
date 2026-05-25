@@ -453,6 +453,34 @@
       "footnote": "授权经销商可通过渠道伙伴页面获取价格包与联合营销素材。",
       "footnoteLink": "渠道伙伴"
     },
+    "newsroom": {
+      "metaTitleFocus": "协作机器人新闻与产品发布",
+      "metaDescription": "Roooll Cobot 与协作机械臂资讯：r 系列产品发布、工程判断与公司动态。",
+      "heroTitle": "新闻资讯",
+      "heroSubtitle": "产品发布、工程评估与 r 系列里程碑。",
+      "markAria": "Roooll 轨道品牌标识",
+      "latestTitle": "最新报道",
+      "readArticle": "阅读全文",
+      "subnavTitle": "新闻资讯",
+      "subnavAria": "新闻资讯栏目导航",
+      "shareLinkAria": "复制本文链接",
+      "shareEmailAria": "通过邮件分享本文",
+      "shareCopied": "链接已复制",
+      "moreNewsTitle": "更多 Roooll 新闻",
+      "ctaTitle": "新闻资讯",
+      "ctaSubtitle": "Roooll 全部新闻与动态。",
+      "ctaButton": "了解更多",
+      "backToNewsroom": "新闻资讯",
+      "nextStepsTitle": "下一步",
+      "nextRcore": "了解 r-Core",
+      "nextSpecs": "全系规格",
+      "nextAdvisor": "选型向导",
+      "nextInquiry": "项目咨询",
+      "categories": {
+        "product": "更新",
+        "company": "更新"
+      }
+    },
     "story": {
       "metaTitle": "品牌故事",
       "metaDescription": "探索 Roooll 的品牌使命、机械工程原则、透明路线图，以及创始人对协作机器人未来的坚守。",
@@ -986,6 +1014,7 @@
     "hero_rlite": "Roooll r-Lite 协作机器人（一体式控制）- 控制箱一体紧凑部署，额定 3kg（瞬时 5kg）负载、622mm 工作半径、±0.05mm 重复定位精度，工业级品质，面向工业现场，适配产线与精密装配。",
     "hero_rcore": "Roooll r-Core 协作机器人（标准型）- 5kg 额定负载（最大 7kg）、922mm 工作半径、±0.02mm 重复定位精度，产线主力装配、检测与上下料。",
     "hero_rultra": "Roooll r-Ultra 协作机器人 - 协作之巅的重载方案，30kg 额定负载（最大 35kg）、1402mm 工作半径、±0.1mm 重复定位精度，工业级品质，面向工业现场，适配重载搬运与码垛。",
+    "hero_site": "Roooll 轨道品牌标识（Roooll 协作机器人新网站上线与新闻资讯）",
     "r_lite_detail_flange": "Roooll r-Lite 协作机器人（一体式控制）- 纯黑背景下白色末端法兰与上臂大特写，额定 3kg（瞬时 5kg）负载、622mm 工作半径、±0.05mm 重复定位精度；突出工业机械臂安装面与工具快换在精密装配场景下的稳定对接。",
     "r_lite_detail": "Roooll r-Lite 协作机器人（一体式控制）结构细节展示 - 额定 3kg（瞬时 5kg）负载、622mm 工作半径、±0.05mm 重复定位精度，底座一体式控制与工业级品质。",
     "r_lite_detail_base": "Roooll r-Lite 协作机器人（一体式控制）底座结构细节 - 一体式控制箱集成，兼顾紧凑部署与稳定运行。",

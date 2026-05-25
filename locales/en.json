@@ -453,6 +453,34 @@
       "footnote": "Authorized distributors can use the channel partner page for pricing packs and co-marketing assets.",
       "footnoteLink": "Channel partners"
     },
+    "newsroom": {
+      "metaTitleFocus": "Cobot Newsroom & Product Launches",
+      "metaDescription": "Roooll cobot and robotic arm news: product launches, engineering notes, and company updates from the r-Series lineup.",
+      "heroTitle": "Newsroom",
+      "heroSubtitle": "Product launches, engineering judgment, and milestones from the r-Series.",
+      "markAria": "Roooll orbit brand mark",
+      "latestTitle": "Latest stories",
+      "readArticle": "Read story",
+      "subnavTitle": "Newsroom",
+      "subnavAria": "Newsroom section navigation",
+      "shareLinkAria": "Copy link to this story",
+      "shareEmailAria": "Share this story by email",
+      "shareCopied": "Link copied",
+      "moreNewsTitle": "More from Roooll Newsroom",
+      "ctaTitle": "Newsroom",
+      "ctaSubtitle": "All news and updates from Roooll.",
+      "ctaButton": "Read more",
+      "backToNewsroom": "Newsroom",
+      "nextStepsTitle": "Next steps",
+      "nextRcore": "View r-Core",
+      "nextSpecs": "All r-Series specs",
+      "nextAdvisor": "Product advisor",
+      "nextInquiry": "Project inquiry",
+      "categories": {
+        "product": "Updates",
+        "company": "Updates"
+      }
+    },
     "story": {
       "metaTitle": "Our Story",
       "metaDescription": "Mission, engineering principles, transparency, and cobot stewardship from the founders of Roooll.",
@@ -986,6 +1014,7 @@
     "hero_rlite": "Roooll r-Lite collaborative robot (integrated controller), 3kg payload (5kg instant), ±0.05mm repeatability, 622mm reach; precision assembly and lab automation.",
     "hero_rcore": "Roooll r-Core collaborative robot (standard), 5kg payload, ±0.02mm repeatability, 922mm reach; line-ready assembly, inspection, and handling.",
     "hero_rultra": "Roooll r-Ultra collaborative robot, 30kg payload, ±0.1mm repeatability, 1402mm reach; heavy handling and palletizing.",
+    "hero_site": "Roooll orbit brand mark for the Roooll collaborative robots website launch and Newsroom.",
     "r_lite_detail_flange": "Roooll r-Lite collaborative robot (integrated controller)—close-up of white end flange and upper arm on black background; 3kg payload, 622mm reach, ±0.05mm repeatability.",
     "r_lite_detail": "Roooll r-Lite collaborative robot (integrated controller) structural detail—3kg payload, 622mm reach, ±0.05mm repeatability, integrated base control.",
     "r_lite_detail_base": "Roooll r-Lite collaborative robot (integrated controller) base detail—integrated control box for compact deployment.",
