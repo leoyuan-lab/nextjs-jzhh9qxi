@@ -2,7 +2,7 @@ import {
   descriptionSnippet,
   robotFamilyForVariant,
   robotVariantById,
-  robotVariantWebpFilename,
+  robotVariantWebpHdFilename,
   rSeriesData,
   type RobotFamily,
   type RobotVariant,
@@ -86,7 +86,7 @@ export function buildVariantProductLd(
   const v = robotVariantById[variantId];
   const fam = robotFamilyForVariant(variantId);
   const base = origin.replace(/\/$/, '');
-  const imagePath = `/images/robots/${robotVariantWebpFilename(variantId)}`;
+  const imagePath = `/images/robots/${robotVariantWebpHdFilename(variantId)}`;
   const imageUrl = new URL(imagePath, `${base}/`).href;
 
   return {

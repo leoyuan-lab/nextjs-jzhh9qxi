@@ -18,7 +18,7 @@ import { getMessages } from '@/lib/messages';
 import { openInquiry } from '@/lib/open-inquiry';
 import { useSiteLang } from '@/lib/site-lang-context';
 
-const SERVICE_HERO_IMAGE = '/images/robots/r-core-cobot-fr5-std.webp';
+const SERVICE_HERO_IMAGE = '/images/robots/r-core-cobot-fr5-std-hd.webp';
 
 type ServiceCardProps = {
   className?: string;

@@ -2,7 +2,13 @@
 import React, { useState, useEffect, useRef, useMemo, type CSSProperties } from 'react';
 import Image from 'next/image';
 import { LoadingBrandLogo } from '@/components/LoadingBrandLogo';
-import { cobotGlbModels, rSeriesData, robotVariantImageAlt } from '@/data/products';
+import {
+  ROBOT_IMG_BASE,
+  cobotGlbModels,
+  rSeriesData,
+  robotVariantImageAlt,
+  robotVariantWebpHdFilename,
+} from '@/data/products';
 import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
 import { trackCtaClick } from '@/lib/analytics';
@@ -15,8 +21,8 @@ function familyTitle(familyId: string) {
 
 /** 屏3 详情卡背景（旧 `/images/detail1.jpg`、`detail2.jpg` 已移除；与 `public/images/robots` 资产一致） */
 const HOME_DETAIL_CARD_IMAGES = {
-  preciseTouch: '/images/robots/r-lite-cobot-fr3-std.webp',
-  smartCore: '/images/robots/r-ultra-cobot-fr30-std.webp',
+  preciseTouch: `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename('fr3-std')}`,
+  smartCore: `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename('fr30-std')}`,
 } as const;
 
 function detectIosQuickLookDevice() {
@@ -657,7 +663,7 @@ export default function HomePageClient() {
             alt={altHeroRcore}
             fill
             loading="lazy"
-            quality={95}
+            unoptimized
             sizes="100vw"
             className="hero-image-fill hero-image-fill--rcore"
           />

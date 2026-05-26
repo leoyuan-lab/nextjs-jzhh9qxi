@@ -1137,11 +1137,11 @@ export function robotVariantImageAlt(variantId: string, lang: 'zh' | 'en'): stri
   return `${line} Collaborative Robot Arm for ${purpose}`;
 }
 
-/** 与 `robotVariantById` 的 id 一一对应；WebP 由 `scripts/robot_pdf_pipeline.py` 从样册生成 */
+/** 与 `robotVariantById` 的 id 一一对应；站点 UI 统一使用营销高清 `-hd.webp` */
 export const robotVariantImageUrl: Record<string, string> = Object.fromEntries(
   Object.keys(robotVariantById).map((id) => [
     id,
-    `${ROBOT_IMG_BASE}/${robotVariantWebpFilename(id)}`,
+    `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename(id)}`,
   ]),
 ) as Record<string, string>;
 

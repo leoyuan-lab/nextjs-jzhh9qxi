@@ -274,6 +274,7 @@ function NewsroomCard({
             src={article.imagePath}
             alt={alt}
             fill
+            unoptimized
             sizes="(min-width: 735px) 280px, 38vw"
             className="newsroom-card__img"
           />

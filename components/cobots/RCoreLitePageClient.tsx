@@ -305,7 +305,7 @@ function RCoreLiteDesktopLayout({
             alt={heroAlt}
             fill
             priority
-            quality={95}
+            unoptimized
             sizes="(min-width: 735px) 100vw, 100vw"
             className="rcore-lite-pin__img"
           />
@@ -490,7 +490,7 @@ function RCoreLiteMobileLayout({
                 alt={heroAlt}
                 fill
                 priority
-                quality={95}
+                unoptimized
                 sizes="100vw"
                 className="rcore-lite-pin__img"
               />

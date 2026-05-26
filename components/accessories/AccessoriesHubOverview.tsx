@@ -13,9 +13,9 @@ import { controllerSpecs } from '@/data/products';
 import { useSiteLang } from '@/lib/site-lang-context';
 
 const CATEGORY_IMAGES: Record<AccessoryLaneId, string> = {
-  controllers: '/images/robots/r-ultra-cobot-fr30-std.webp',
-  grippers: '/images/robots/r-core-cobot-fr5-std.webp',
-  fixtures: '/images/robots/r-max-cobot-fr16-std.webp',
+  controllers: '/images/robots/r-ultra-cobot-fr30-std-hd.webp',
+  grippers: '/images/robots/r-core-cobot-fr5-std-hd.webp',
+  fixtures: '/images/robots/r-max-cobot-fr16-std-hd.webp',
 };
 
 type CategoryCardCopy = {

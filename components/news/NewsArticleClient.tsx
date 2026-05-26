@@ -84,6 +84,7 @@ export function NewsArticleClient({ initialLang, article, shareUrl }: NewsArticl
             width={2722}
             height={1536}
             priority
+            unoptimized
             sizes="(min-width: 735px) 980px, 100vw"
             className="newsroom-article-figure__img"
           />
@@ -113,6 +114,7 @@ export function NewsArticleClient({ initialLang, article, shareUrl }: NewsArticl
                         src={item.imagePath}
                         alt={newsImageAlt(item, lang)}
                         fill
+                        unoptimized
                         sizes="120px"
                         className="newsroom-article-more__img"
                       />

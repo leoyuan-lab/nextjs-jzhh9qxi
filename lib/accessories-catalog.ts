@@ -57,8 +57,8 @@ export interface AccessoryCatalogItem {
   schemaDescription: MultiLang;
 }
 
-const PLACEHOLDER_IMAGE = '/images/robots/r-lite-cobot-fr3-std.webp';
-const CONTROLLER_IMAGE = '/images/robots/r-ultra-cobot-fr30-std.webp';
+const PLACEHOLDER_IMAGE = '/images/robots/r-lite-cobot-fr3-std-hd.webp';
+const CONTROLLER_IMAGE = '/images/robots/r-ultra-cobot-fr30-std-hd.webp';
 
 function ml(v: MultiLang, lang: 'zh' | 'en'): string {
   return lang === 'zh' ? v.zh : v.en;
@@ -137,7 +137,7 @@ const GRIPPER_PLACEHOLDERS: Omit<AccessoryCatalogItem, 'lane' | 'specRows'>[] = 
       zh: '轻量搬运与面板吸附，含快换接口（占位）。',
       en: 'Light handling and panel picking with quick-change interface (placeholder).',
     },
-    image: '/images/robots/r-core-cobot-fr5-std.webp',
+    image: '/images/robots/r-core-cobot-fr5-std-hd.webp',
     alt: {
       zh: 'Roooll 协作机器人真空吸盘配件占位图',
       en: 'Roooll collaborative robot vacuum gripper accessory placeholder',
@@ -158,7 +158,7 @@ const FIXTURE_PLACEHOLDERS: Omit<AccessoryCatalogItem, 'lane' | 'specRows'>[] = 
       zh: '末端快换与工装定位基准，缩短换线时间（占位）。',
       en: 'Tool-side quick change and locating plate for faster line changeover (placeholder).',
     },
-    image: '/images/robots/r-max-cobot-fr16-std.webp',
+    image: '/images/robots/r-max-cobot-fr16-std-hd.webp',
     alt: {
       zh: 'Roooll 协作机器人快换夹具配件占位图',
       en: 'Roooll collaborative robot quick-change fixture placeholder',
