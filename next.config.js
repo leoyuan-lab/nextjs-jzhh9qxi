@@ -3,6 +3,10 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: '/models/:path*.usdz',
+        headers: [{ key: 'Content-Type', value: 'model/vnd.usdz+zip' }],
+      },
+      {
         source: '/(.*)',
         headers: [
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
@@ -10,7 +14,7 @@ const nextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
+            value: 'camera=(self), microphone=(), geolocation=()',
           },
           {
             key: 'Strict-Transport-Security',

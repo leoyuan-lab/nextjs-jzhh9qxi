@@ -24,6 +24,11 @@ declare global {
         exposure?: string;
         'shadow-intensity'?: string;
         'shadow-softness'?: string;
+        ar?: boolean | '';
+        'ar-modes'?: string;
+        'ar-scale'?: string;
+        'ar-placement'?: string;
+        'ios-src'?: string;
       };
     }
   }

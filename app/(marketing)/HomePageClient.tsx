@@ -19,6 +19,51 @@ const HOME_DETAIL_CARD_IMAGES = {
   smartCore: '/images/robots/r-ultra-cobot-fr30-std.webp',
 } as const;
 
+function detectIosQuickLookDevice() {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent;
+  return (
+    /iPhone|iPad|iPod/i.test(ua) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  );
+}
+
+function HeroArSpaceIcon() {
+  /* Matches Apple Quick Look “View in your space” AR glyph (cube + corner brackets). */
+  return (
+    <svg
+      className="hero-ar-space-icon"
+      width="26"
+      height="20"
+      viewBox="0 0 26 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M13 2.75 19.25 6.25v7L13 16.75 6.75 13.25v-7L13 2.75Z"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M13 2.75v14M13 10.25 19.25 6.25M13 10.25 6.75 6.25M13 10.25v6.5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+      <path d="M1.25 1.25h2.35M1.25 1.25v2.35" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M1.25 1.25 2.85 2.85" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M24.75 1.25h-2.35M24.75 1.25v2.35" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M24.75 1.25 23.15 2.85" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M1.25 18.75h2.35M1.25 18.75v-2.35" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M1.25 18.75 2.85 17.15" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M24.75 18.75h-2.35M24.75 18.75v-2.35" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M24.75 18.75 23.15 17.15" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export default function HomePageClient() {
   const lang = useSiteLang();
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -27,8 +72,10 @@ export default function HomePageClient() {
   const [showDragHint, setShowDragHint] = useState(false);
   const [isRliteHeroGlbLoaded, setIsRliteHeroGlbLoaded] = useState(false);
   const [enableRultraModel, setEnableRultraModel] = useState(false);
+  const [rliteArLoading, setRliteArLoading] = useState(false);
   const viewerRef5 = useRef<any>(null);
   const viewerRef20 = useRef<any>(null);
+  const rliteArViewerRef = useRef<any>(null);
   /** Joint spin loop id (`requestAnimationFrame`); cleared with `cancelAnimationFrame`. */
   const flangeSpinTimerRef = useRef<number | null>(null);
   const jointSpinActiveRef = useRef(false);
@@ -65,6 +112,77 @@ export default function HomePageClient() {
     if (!isRliteHeroGlbLoaded) return;
     setEnableRultraModel(true);
   }, [isRliteHeroGlbLoaded]);
+
+  const startRliteAr = () => {
+    trackCtaClick('home_hero1_ar');
+    setRliteArLoading(true);
+
+    const activateArViewer = () => {
+      const viewer = rliteArViewerRef.current;
+      if (!viewer) {
+        setRliteArLoading(false);
+        return;
+      }
+
+      const isIos = detectIosQuickLookDevice();
+
+      if (!viewer.getAttribute('ios-src')) {
+        viewer.setAttribute('ios-src', cobotGlbModels.rLiteFr3CArUsdz);
+      }
+      if (!viewer.getAttribute('src')) {
+        viewer.setAttribute('src', cobotGlbModels.rLiteFr3CArGlb);
+      }
+
+      const launchAr = () => {
+        setRliteArLoading(false);
+        try {
+          viewer.activateAR?.();
+        } catch {
+          /* Quick Look / Scene Viewer may reject if user gesture chain breaks */
+        }
+      };
+
+      // iOS Quick Look uses USDZ — do not wait for the AR GLB to finish downloading.
+      if (isIos) {
+        launchAr();
+        return;
+      }
+
+      const fail = () => {
+        setRliteArLoading(false);
+      };
+
+      const loadTimeout = window.setTimeout(fail, 20000);
+
+      const onReady = () => {
+        window.clearTimeout(loadTimeout);
+        launchAr();
+      };
+
+      if (viewer.model) {
+        onReady();
+        return;
+      }
+
+      viewer.addEventListener('load', onReady, { once: true });
+      viewer.addEventListener(
+        'error',
+        () => {
+          window.clearTimeout(loadTimeout);
+          fail();
+        },
+        { once: true },
+      );
+    };
+
+    if (rliteArViewerRef.current) {
+      activateArViewer();
+    } else {
+      requestAnimationFrame(activateArViewer);
+    }
+  };
+
+  const rliteArLabel = rliteArLoading ? home.heroArLoading : home.heroArView;
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -423,6 +541,23 @@ export default function HomePageClient() {
               } as any
             }
           />
+          {isLoaded ? (
+            <model-viewer
+              ref={rliteArViewerRef}
+              className="hero-ar-viewer"
+              alt={altHeroRliteGlb}
+              ar
+              ar-modes="webxr scene-viewer quick-look"
+              ar-scale="fixed"
+              ar-placement="floor"
+              loading="lazy"
+              reveal="auto"
+              camera-controls
+              environment-image="neutral"
+              shadow-intensity="0.9"
+              interaction-prompt="none"
+            />
+          ) : null}
         </div>
         <div className={`drag-hint ${showDragHint ? 'show' : ''}`}>{home.dragHint}</div>
         <div className="content-limit">
@@ -449,6 +584,20 @@ export default function HomePageClient() {
                 {ctaInquiry}
               </button>
             </div>
+            {isLoaded ? (
+              <div className="hero-ar-entry-wrap">
+                <button
+                  type="button"
+                  className="hero-ar-entry"
+                  aria-label={home.heroArAria}
+                  disabled={rliteArLoading}
+                  onClick={startRliteAr}
+                >
+                  <span className="hero-ar-entry__label">{rliteArLabel}</span>
+                  <HeroArSpaceIcon />
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       </section>

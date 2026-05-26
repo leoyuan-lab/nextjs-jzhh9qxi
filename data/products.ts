@@ -866,6 +866,10 @@ export const ROBOT_VECTOR_BASE = '/images/robots/_vectors';
 export const cobotGlbModels = {
   /** r-Lite 线（FR3-C）首页 / `/cobots/r-lite` / 选型向导 hero */
   rLiteFr3C: '/models/r-lite-cobot-fr3-c.glb',
+  /** r-Lite FR3-C 首页 AR（1:1 米制；点击 AR 后懒加载，不参与首屏 preload） */
+  rLiteFr3CArGlb: '/models/r-lite-cobot-fr3-c-ar.glb',
+  /** r-Lite FR3-C iOS Quick Look AR */
+  rLiteFr3CArUsdz: '/models/r-lite-cobot-fr3-c.usdz',
   /** r-Ultra 线（FR30）首页 / `/cobots/r-ultra` hero */
   rUltraFr30: '/models/r-ultra-cobot-fr30.glb',
 } as const;
