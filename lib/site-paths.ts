@@ -22,7 +22,6 @@ export const SITEMAP_PATHS: readonly string[] = [
   '/legal/privacy',
   '/accessories',
   '/accessories/controllers',
-  '/cobots/humanoid',
   '/cobots/r-core',
   '/cobots/r-lite',
   '/cobots/r-ultra',

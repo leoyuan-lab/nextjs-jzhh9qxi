@@ -23,6 +23,7 @@ import {
   filmAdv3RollOutMetrics,
   filmAdv3RollOutOffsetPx,
   isFilmAdv3RollOutActive,
+  rcoreViewerLightingAttrs,
 } from '@/lib/rcore-scroll-cameras';
 import { getMessages } from '@/lib/messages';
 import type { AppLocale } from '@/lib/messages';
@@ -66,6 +67,8 @@ export function CobotImmersivePageClient({
   const productLineLabel = immersiveProductId === 'r-ultra' ? R_ULTRA_LINE : R_LITE_LINE;
   const glbSrc =
     immersiveProductId === 'r-ultra' ? cobotGlbModels.rUltraFr30 : cobotGlbModels.rLiteFr3C;
+  const viewerLightingPreset = immersiveProductId === 'r-lite' ? 'rLiteImmersive' : 'default';
+  const viewerLighting = rcoreViewerLightingAttrs(viewerLightingPreset);
   const [lang, setLang] = useState<AppLocale>(initialLang);
   const [scrollVal, setScrollVal] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -194,7 +197,7 @@ export function CobotImmersivePageClient({
 
       if ((filmVisible && film && filmSlice) || (film && filmSlice && adv3RollOut)) {
         setStageVisible(true, false);
-        applyRcoreViewerLighting(mv);
+        applyRcoreViewerLighting(mv, viewerLightingPreset);
 
         if (filmSlice.inView || adv3RollOut) {
           applyRcoreCamera(mv, cameraForFilmSlice(filmSlice.si), lastCamKeyRef);
@@ -324,20 +327,20 @@ export function CobotImmersivePageClient({
             camera-orbit="45deg 85deg 1900m"
             camera-target="auto 110% auto"
             field-of-view="15.5deg"
-            shadow-intensity="0.9"
-            shadow-softness="1.15"
+            shadow-intensity={viewerLighting.shadowIntensity}
+            shadow-softness={viewerLighting.shadowSoftness}
             environment-image="neutral"
-            environment-intensity="0.82"
-            exposure="0.98"
+            environment-intensity={viewerLighting.environmentIntensity}
+            exposure={viewerLighting.exposure}
             onLoad={(e) => {
               const el = e.target as HTMLElement;
-              applyRcoreViewerLighting(el);
+              applyRcoreViewerLighting(el, viewerLightingPreset);
               if (
                 immersiveProductId === 'r-lite' &&
                 !materialAppliedRef.current &&
                 (el as { model?: unknown }).model
               ) {
-                applyAdvisorFlangeMaterial((el as { model?: unknown }).model);
+                applyAdvisorFlangeMaterial((el as { model?: unknown }).model, 'rLiteImmersive');
                 materialAppliedRef.current = true;
               }
             }}

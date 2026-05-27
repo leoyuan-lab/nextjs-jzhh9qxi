@@ -131,7 +131,6 @@ function buildNav(messages: MessagesFile): NavSection[] {
         { label: `${navFamilyName('r-lite')}${n.cobots.r_lite_suffix}`, url: '/cobots/r-lite' },
         { label: `${navFamilyName('r-ultra')}${n.cobots.r_ultra_suffix}`, url: '/cobots/r-ultra' },
         { label: `${navFamilyName('r-core')}${n.cobots.r_core_suffix}`, url: '/cobots/r-core' },
-        { label: n.cobots.humanoid, url: '/cobots/humanoid' },
       ],
     },
     {

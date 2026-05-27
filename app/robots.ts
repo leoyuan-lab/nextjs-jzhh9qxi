@@ -11,7 +11,16 @@ export default function robots(): MetadataRoute.Robots {
       ? {
           userAgent: '*',
           allow: '/',
-          disallow: ['/zh/r-ecosystem', '/en/r-ecosystem', '/zh/r-ecosystem/', '/en/r-ecosystem/'],
+          disallow: [
+            '/zh/r-ecosystem',
+            '/en/r-ecosystem',
+            '/zh/r-ecosystem/',
+            '/en/r-ecosystem/',
+            '/zh/cobots/humanoid',
+            '/en/cobots/humanoid',
+            '/zh/cobots/humanoid/',
+            '/en/cobots/humanoid/',
+          ],
         }
       : { userAgent: '*', disallow: '/' },
     sitemap: indexable ? `${origin}/sitemap.xml` : undefined,

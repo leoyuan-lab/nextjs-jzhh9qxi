@@ -285,18 +285,80 @@ export function applyRcoreCamera(el: HTMLElement | null, cam: RcoreCameraPreset,
   el.setAttribute('field-of-view', cam.fov);
 }
 
+export type RcoreViewerLightingPreset = 'default' | 'rLiteImmersive';
+
+const RCORE_VIEWER_LIGHTING: Record<
+  RcoreViewerLightingPreset,
+  { environmentIntensity: string; exposure: string; shadowIntensity: string; shadowSoftness: string }
+> = {
+  default: {
+    environmentIntensity: '0.82',
+    exposure: '0.98',
+    shadowIntensity: '0.9',
+    shadowSoftness: '1.15',
+  },
+  /** r-lite 沉浸页黑底首屏：抬环境光与曝光，避免 FR3-C 整体偏暗 */
+  rLiteImmersive: {
+    environmentIntensity: '1.22',
+    exposure: '1.24',
+    shadowIntensity: '0.72',
+    shadowSoftness: '1.15',
+  },
+};
+
+export function rcoreViewerLightingAttrs(preset: RcoreViewerLightingPreset = 'default') {
+  return RCORE_VIEWER_LIGHTING[preset];
+}
+
 /** 与 Advisor 首屏 / 法兰段一致的 model-viewer 光照（首屏即应用，避免滚回后才变亮） */
-export function applyRcoreViewerLighting(el: HTMLElement | null): void {
+export function applyRcoreViewerLighting(
+  el: HTMLElement | null,
+  preset: RcoreViewerLightingPreset = 'default',
+): void {
   if (!el) return;
-  el.setAttribute('environment-intensity', '0.82');
-  el.setAttribute('exposure', '0.98');
-  el.setAttribute('shadow-intensity', '0.9');
-  el.setAttribute('shadow-softness', '1.15');
+  const lighting = RCORE_VIEWER_LIGHTING[preset];
+  el.setAttribute('environment-intensity', lighting.environmentIntensity);
+  el.setAttribute('exposure', lighting.exposure);
+  el.setAttribute('shadow-intensity', lighting.shadowIntensity);
+  el.setAttribute('shadow-softness', lighting.shadowSoftness);
+}
+
+export type AdvisorFlangeMaterialPreset = 'default' | 'rLiteImmersive';
+
+const ADVISOR_FLANGE_METAL: Record<
+  AdvisorFlangeMaterialPreset,
+  { baseColor: [number, number, number, number]; roughness: number }
+> = {
+  default: { baseColor: [0.8, 0.8, 0.8, 1], roughness: 0.2 },
+  /** r-lite FR3-C 黑底页：提亮不锈钢/法兰，略增 roughness 避免 pure mirror 发灰 */
+  rLiteImmersive: { baseColor: [0.97, 0.98, 1, 1], roughness: 0.35 },
+};
+
+function isAdvisorFlangeMetalPart(name: string, preset: AdvisorFlangeMaterialPreset): boolean {
+  const lowerName = name.toLowerCase();
+  if (
+    lowerName.includes('metal') ||
+    lowerName.includes('steel') ||
+    lowerName.includes('iron') ||
+    lowerName.includes('joint') ||
+    name === 'Material.001' ||
+    name === 'Material.003'
+  ) {
+    return true;
+  }
+  if (preset === 'rLiteImmersive') {
+    return name === 'Material.009' || name === '材质.011';
+  }
+  return false;
 }
 
 /** Advisor `AdvisorHeroGlb` 材质，全页 GLB 与 Advisor 视觉一致 */
-export function applyAdvisorFlangeMaterial(model: unknown): void {
+export function applyAdvisorFlangeMaterial(
+  model: unknown,
+  preset: AdvisorFlangeMaterialPreset = 'default',
+): void {
   if (!model || typeof model !== 'object' || !('materials' in model)) return;
+  const metal = ADVISOR_FLANGE_METAL[preset];
   const materials = (
     model as {
       materials: Array<{
@@ -311,18 +373,10 @@ export function applyAdvisorFlangeMaterial(model: unknown): void {
   ).materials;
   materials.forEach((material) => {
     const name = material.name ?? '';
-    const lowerName = name.toLowerCase();
-    const isMetalPart =
-      lowerName.includes('metal') ||
-      lowerName.includes('steel') ||
-      lowerName.includes('iron') ||
-      lowerName.includes('joint') ||
-      name === 'Material.001' ||
-      name === 'Material.003';
-    if (isMetalPart) {
+    if (isAdvisorFlangeMetalPart(name, preset)) {
       material.pbrMetallicRoughness.setMetallicFactor(1.0);
-      material.pbrMetallicRoughness.setRoughnessFactor(0.2);
-      material.pbrMetallicRoughness.setBaseColorFactor([0.8, 0.8, 0.8, 1]);
+      material.pbrMetallicRoughness.setRoughnessFactor(metal.roughness);
+      material.pbrMetallicRoughness.setBaseColorFactor([...metal.baseColor]);
     } else {
       material.pbrMetallicRoughness.setMetallicFactor(0.0);
       material.pbrMetallicRoughness.setRoughnessFactor(0.38);

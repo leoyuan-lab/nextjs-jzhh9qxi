@@ -48,3 +48,4 @@
 ## Not indexed (draft)
 
 - /r-ecosystem/* — software ecosystem hub; not launched publicly yet.
+- /cobots/humanoid — humanoid / embodied-AI roadmap; not launched publicly yet.
