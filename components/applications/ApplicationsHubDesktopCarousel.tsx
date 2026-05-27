@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   APPLICATION_HUB_CARDS,
   type ApplicationHubCard,
@@ -10,20 +10,6 @@ import {
 } from '@/data/application-hub';
 
 const DESKTOP_MQ = '(min-width: 769px)';
-
-function usePrefersReducedMotion(): boolean {
-  const [reduceMotion, setReduceMotion] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const sync = () => setReduceMotion(mq.matches);
-    sync();
-    mq.addEventListener('change', sync);
-    return () => mq.removeEventListener('change', sync);
-  }, []);
-
-  return reduceMotion;
-}
 const AUTO_ADVANCE_MS = 3500;
 const CARD_GAP_PX = 18;
 const CARD_COUNT = APPLICATION_HUB_CARDS.length;
@@ -31,6 +17,9 @@ const CLONE_SETS = 3;
 const DOM_COUNT = CARD_COUNT * CLONE_SETS;
 const MIDDLE_SET_START = CARD_COUNT;
 const MIDDLE_SET_END = CARD_COUNT * 2;
+/** Safari often skips `scrollend`; debounce scroll idle instead. */
+const SCROLL_IDLE_MS = 420;
+const ANIMATION_WATCHDOG_MS = 900;
 
 /** Title placement per card. */
 const HERO_TITLE_PLACE: readonly ('top-left' | 'center' | 'right' | 'top-right')[] = [
@@ -53,6 +42,20 @@ function loopedCards(): ApplicationHubCard[] {
   return Array.from({ length: CLONE_SETS }, () => APPLICATION_HUB_CARDS).flat();
 }
 
+function usePrefersReducedMotion(): boolean {
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setReduceMotion(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  return reduceMotion;
+}
+
 export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy }) {
   const reduceMotion = usePrefersReducedMotion();
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -67,9 +70,12 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
   const dragScrollLeftRef = useRef(0);
   const activeIndexRef = useRef(0);
   const syncTimerRef = useRef<number | null>(null);
+  const scrollIdleTimerRef = useRef<number | null>(null);
+  const animationWatchdogRef = useRef<number | null>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeDomIndex, setActiveDomIndex] = useState(MIDDLE_SET_START);
+  const [mounted, setMounted] = useState(false);
 
   const setCardRef = useCallback(
     (index: number) => (node: HTMLElement | null) => {
@@ -124,6 +130,13 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
     applyActiveDom(findClosestDom());
   }, [applyActiveDom, findClosestDom]);
 
+  const clearAnimationWatchdog = useCallback(() => {
+    if (animationWatchdogRef.current !== null) {
+      window.clearTimeout(animationWatchdogRef.current);
+      animationWatchdogRef.current = null;
+    }
+  }, []);
+
   const normalizeScrollInstant = useCallback(() => {
     if (normalizeLockRef.current) return;
 
@@ -158,6 +171,22 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
     });
   }, [applyActiveDom, findClosestDom, singleSetWidth]);
 
+  const finishScrollInteraction = useCallback(() => {
+    normalizeScrollInstant();
+    animatingRef.current = false;
+    clearAnimationWatchdog();
+  }, [clearAnimationWatchdog, normalizeScrollInstant]);
+
+  const scheduleScrollIdle = useCallback(() => {
+    if (scrollIdleTimerRef.current !== null) {
+      window.clearTimeout(scrollIdleTimerRef.current);
+    }
+    scrollIdleTimerRef.current = window.setTimeout(() => {
+      finishScrollInteraction();
+      scrollIdleTimerRef.current = null;
+    }, SCROLL_IDLE_MS);
+  }, [finishScrollInteraction]);
+
   const scheduleSync = useCallback(() => {
     if (syncTimerRef.current !== null) {
       window.clearTimeout(syncTimerRef.current);
@@ -168,21 +197,46 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
     }, reduceMotion ? 0 : 80);
   }, [reduceMotion, syncActiveIndex]);
 
+  const markAnimating = useCallback(() => {
+    animatingRef.current = true;
+    clearAnimationWatchdog();
+    animationWatchdogRef.current = window.setTimeout(() => {
+      animatingRef.current = false;
+      animationWatchdogRef.current = null;
+    }, ANIMATION_WATCHDOG_MS);
+  }, [clearAnimationWatchdog]);
+
   const scrollToDomIndex = useCallback(
     (domIndex: number, behavior: ScrollBehavior = 'smooth') => {
       const viewport = viewportRef.current;
       const left = scrollLeftForDom(domIndex);
       if (!viewport || left === null) return;
 
-      animatingRef.current = behavior === 'smooth';
+      if (behavior === 'smooth') {
+        markAnimating();
+        scheduleScrollIdle();
+      } else {
+        animatingRef.current = false;
+        clearAnimationWatchdog();
+      }
+
+      viewport.style.scrollBehavior = behavior;
       viewport.scrollTo({ left, behavior });
+      viewport.style.scrollBehavior = '';
       applyActiveDom(domIndex);
 
       if (behavior === 'auto') {
         requestAnimationFrame(() => normalizeScrollInstant());
       }
     },
-    [applyActiveDom, normalizeScrollInstant, scrollLeftForDom],
+    [
+      applyActiveDom,
+      clearAnimationWatchdog,
+      markAnimating,
+      normalizeScrollInstant,
+      scheduleScrollIdle,
+      scrollLeftForDom,
+    ],
   );
 
   const scrollToLogicalIndex = useCallback(
@@ -242,9 +296,9 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
     scrollToDomIndex,
   ]);
 
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => scrollToDomIndex(MIDDLE_SET_START, 'auto'));
-    return () => window.cancelAnimationFrame(frame);
+  useLayoutEffect(() => {
+    scrollToDomIndex(MIDDLE_SET_START, 'auto');
+    setMounted(true);
   }, [scrollToDomIndex]);
 
   useEffect(() => {
@@ -282,11 +336,15 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
 
     const onScroll = () => {
       scheduleSync();
+      scheduleScrollIdle();
     };
 
     const onScrollEnd = () => {
-      normalizeScrollInstant();
-      animatingRef.current = false;
+      if (scrollIdleTimerRef.current !== null) {
+        window.clearTimeout(scrollIdleTimerRef.current);
+        scrollIdleTimerRef.current = null;
+      }
+      finishScrollInteraction();
     };
 
     viewport.addEventListener('mouseenter', pause);
@@ -303,8 +361,12 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
       viewport.removeEventListener('focusout', resume);
       viewport.removeEventListener('scroll', onScroll);
       viewport.removeEventListener('scrollend', onScrollEnd);
+      if (scrollIdleTimerRef.current !== null) {
+        window.clearTimeout(scrollIdleTimerRef.current);
+      }
+      clearAnimationWatchdog();
     };
-  }, [normalizeScrollInstant, scheduleSync]);
+  }, [clearAnimationWatchdog, finishScrollInteraction, scheduleScrollIdle, scheduleSync]);
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!enabledRef.current) return;
@@ -313,6 +375,7 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
     draggingRef.current = true;
     pausedRef.current = true;
     animatingRef.current = false;
+    clearAnimationWatchdog();
     dragStartXRef.current = event.clientX;
     dragScrollLeftRef.current = viewport.scrollLeft;
     viewport.setPointerCapture(event.pointerId);
@@ -346,7 +409,10 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
   const cards = loopedCards();
 
   return (
-    <section className="app-hub-desktop-only app-hub-carousel-section" aria-label={copy.cardsAria}>
+    <section
+      className={`app-hub-desktop-only app-hub-carousel-section${mounted ? ' is-mounted' : ''}`}
+      aria-label={copy.cardsAria}
+    >
       <div
         ref={viewportRef}
         className="app-hub-carousel-viewport"
@@ -375,7 +441,8 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
                     fill
                     sizes="70vw"
                     className="app-hub-panel-img app-hub-panel-img--carousel object-cover"
-                    priority={index >= MIDDLE_SET_START && index < MIDDLE_SET_START + 2}
+                    priority={index === MIDDLE_SET_START}
+                    loading={index === MIDDLE_SET_START ? undefined : 'lazy'}
                     draggable={false}
                   />
                 </div>

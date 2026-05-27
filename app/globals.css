@@ -9327,8 +9327,7 @@ html[data-newsroom-subnav-pinned='true'] .newsroom-hero {
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
 }
 
 .app-hub-carousel-viewport::-webkit-scrollbar {
@@ -9360,7 +9359,6 @@ html[data-newsroom-subnav-pinned='true'] .newsroom-hero {
   background: #0a0a0a;
   user-select: none;
   scroll-snap-align: center;
-  scroll-snap-stop: always;
 }
 
 .app-hub-carousel-card-media {
@@ -9371,12 +9369,15 @@ html[data-newsroom-subnav-pinned='true'] .newsroom-hero {
 .app-hub-panel-img--carousel {
   opacity: 1;
   filter: none;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .app-hub-carousel-hero-title {
   position: absolute;
   z-index: 2;
-  max-width: min(92%, 36rem);
+  max-width: min(88%, 30rem);
   padding: 0 clamp(20px, 3vw, 36px);
   pointer-events: none;
 }
@@ -9418,6 +9419,9 @@ html[data-newsroom-subnav-pinned='true'] .newsroom-hero {
   letter-spacing: -0.044em;
   line-height: 0.95;
   text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55);
+}
+
+:lang(zh) .app-hub-carousel-card--medical_lab .app-hub-carousel-hero-heading {
   white-space: nowrap;
 }
 
@@ -9599,6 +9603,10 @@ html[data-newsroom-subnav-pinned='true'] .newsroom-hero {
 }
 
 @media (min-width: 769px) {
+  .app-hub-carousel-section:not(.is-mounted) {
+    visibility: hidden;
+  }
+
   .app-hub-desktop-only {
     display: block;
   }

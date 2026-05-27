@@ -2,35 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
+import { ApplicationsHubDesktopCarousel } from '@/components/applications/ApplicationsHubDesktopCarousel';
 import { APPLICATION_HUB_CARDS, type ApplicationHubCardId } from '@/data/application-hub';
 import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
-
-const DESKTOP_MQ = '(min-width: 769px)';
-
-const ApplicationsHubDesktopCarousel = dynamic(
-  () =>
-    import('@/components/applications/ApplicationsHubDesktopCarousel').then(
-      (m) => m.ApplicationsHubDesktopCarousel,
-    ),
-  { ssr: false },
-);
-
-function useDesktopViewport(): boolean {
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia(DESKTOP_MQ);
-    const sync = () => setIsDesktop(mq.matches);
-    sync();
-    mq.addEventListener('change', sync);
-    return () => mq.removeEventListener('change', sync);
-  }, []);
-
-  return isDesktop;
-}
 
 function hubCardAlt(lang: 'zh' | 'en', key: string): string {
   const alt = getMessages(lang).alt as Record<string, unknown>;
@@ -39,7 +14,6 @@ function hubCardAlt(lang: 'zh' | 'en', key: string): string {
 }
 
 export function ApplicationsHubClient() {
-  const isDesktop = useDesktopViewport();
   const lang = useSiteLang();
   const safeLang: 'zh' | 'en' = lang === 'en' ? 'en' : 'zh';
   const copy = getMessages(safeLang).pages.applications_hub;
@@ -73,13 +47,12 @@ export function ApplicationsHubClient() {
     <div className="app-hub-page">
       <h1 className="sr-only">{copy.title}</h1>
 
-      {isDesktop ? (
-        <ApplicationsHubDesktopCarousel copy={carouselCopy} />
-      ) : (
-        <section
-          className="app-hub-twin-section"
-          aria-labelledby="app-hub-mobile-cards"
-        >
+      <ApplicationsHubDesktopCarousel copy={carouselCopy} />
+
+      <section
+        className="app-hub-mobile-only app-hub-twin-section"
+        aria-labelledby="app-hub-mobile-cards"
+      >
         <h2 id="app-hub-mobile-cards" className="sr-only">
           {copy.cardsAria}
         </h2>
@@ -107,8 +80,7 @@ export function ApplicationsHubClient() {
             </article>
           ))}
         </div>
-        </section>
-      )}
+      </section>
     </div>
   );
 }
