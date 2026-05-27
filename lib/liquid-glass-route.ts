@@ -1,15 +1,11 @@
-const LOCALE_PREFIX_RE = /^\/(zh|en)(\/|$)/;
+import { isApplicationImmersivePath, stripLocalePrefix } from '@/lib/application-routes';
 
 const ARM_NAV_PATHS = new Set(['/cobots/r-lite', '/cobots/r-ultra']);
 
-export function stripLocalePrefix(pathname: string): string {
-  if (!pathname || pathname === '/') return '/';
-  if (!LOCALE_PREFIX_RE.test(pathname)) return pathname;
-  const next = pathname.replace(LOCALE_PREFIX_RE, '/');
-  return next || '/';
+/** Cookie + chrome: arm and application immersive pages use dark liquid glass. */
+export function liquidGlassToneForPath(pathname: string): 'light' | 'dark' {
+  const logical = stripLocalePrefix(pathname);
+  return ARM_NAV_PATHS.has(logical) || isApplicationImmersivePath(pathname) ? 'dark' : 'light';
 }
 
-/** Cookie + chrome: arm immersive pages use dark liquid glass. */
-export function liquidGlassToneForPath(pathname: string): 'light' | 'dark' {
-  return ARM_NAV_PATHS.has(stripLocalePrefix(pathname)) ? 'dark' : 'light';
-}
+export { stripLocalePrefix };

@@ -22,6 +22,7 @@
     },
     "applications_section": "Applications",
     "applications": {
+      "overview": "Overview",
       "retail_service": "Retail & Service",
       "manufacturing": "Smart Manufacturing",
       "medical_lab": "Medical & Lab",
@@ -383,9 +384,129 @@
       "metaTitleFocus": "Cobot Product Advisor — Match Payload, Reach & Application",
       "metaDescription": "Interactive advisor to match load, reach, and environment to r-Lite, r-Core, r-Reach, r-Max, r-Ultra, and other r‑Series Cobot lines."
     },
+    "applications_hub": {
+      "metaTitleFocus": "Cobot Industry Applications — Manufacturing, Lab & Retail",
+      "metaDescription": "Explore Roooll collaborative robotic arm applications for smart manufacturing, medical and lab automation, retail service, and education programs.",
+      "title": "Solutions.",
+      "cardsAria": "Application industry categories",
+      "learnMore": "Learn more",
+      "cards": {
+        "retail_service": {
+          "summary": "Front-house service, dispensing, and compact kiosk cells."
+        },
+        "manufacturing": {
+          "summary": "Tending, fastening, and transfer across high-mix factory lines."
+        },
+        "medical_lab": {
+          "summary": "Bench automation, repeatable handling, and ISO-ready workflows."
+        },
+        "education": {
+          "summary": "Curriculum-ready cobots for labs, research, and embodied AI demos."
+        }
+      }
+    },
     "applications_manufacturing": {
       "metaTitleFocus": "Manufacturing Cobot Robotic Arm — CNC Tending & Assembly",
-      "metaDescription": "Smart manufacturing Cobots: CNC tending, AOI, adhesives, and line-balancing with programmable collaborative robotic arms for factory cells."
+      "metaDescription": "Smart manufacturing Cobots: CNC tending, AOI, adhesives, and line-balancing with programmable collaborative robotic arms for factory cells.",
+      "pageAria": "Smart manufacturing application story for Roooll collaborative robotic arms",
+      "opener": {
+        "kicker": "Roooll Applications",
+        "title": "Smart Manufacturing.",
+        "subtitle": "High-mix lines need cobots that deploy fast and keep earning across shifts."
+      },
+      "ambient": {
+        "eyebrow": "Factory floors",
+        "title": "Relentless takt. Changing SKUs.",
+        "body": "Operators spread across tending, fastening, and transfer—while spindle time waits."
+      },
+      "painPoints": [
+        "Machine tending ties skilled workers to single stations for entire shifts.",
+        "High-mix routes mean constant retooling and lost spindle time.",
+        "Inspection, handling, and logistics cells compete for the same floor space."
+      ],
+      "compare": {
+        "title": "A clearer way to run the cell",
+        "beforeLabel": "Before",
+        "before": "Operators tethered to CNC doors, welding booths, and fastener tools.",
+        "afterLabel": "With Roooll cobots",
+        "after": "Repeatable tending, fastening, and transfer—while people focus on quality and changeovers."
+      },
+      "scenarios": {
+        "kicker": "On the floor",
+        "title": "Three cells. One playbook.",
+        "items": [
+          {
+            "title": "Welding assist",
+            "body": "Stable paths and repeatable seams alongside skilled welders."
+          },
+          {
+            "title": "Screw driving",
+            "body": "Consistent torque and cadence on assembly fixtures."
+          },
+          {
+            "title": "CNC tending",
+            "body": "Load and unload across shifts with compact collaborative arms."
+          }
+        ]
+      },
+      "stats": {
+        "title": "Numbers that matter on the line",
+        "items": [
+          {
+            "value": "24/7",
+            "label": "Tending that keeps machines earning across shifts."
+          },
+          {
+            "value": "Minutes",
+            "label": "Teach and redeploy without rebuilding the whole cell."
+          },
+          {
+            "value": "One cell",
+            "label": "Cobot, tooling, and control in a compact envelope."
+          }
+        ]
+      },
+      "advantages": {
+        "kicker": "Why Roooll",
+        "title": "Built for how lines actually change.",
+        "items": [
+          {
+            "title": "Fast deploy",
+            "body": "Roll in, teach waypoints, and run the same day."
+          },
+          {
+            "title": "Compact",
+            "body": "Fits beside operators and existing guarding."
+          },
+          {
+            "title": "Flexible",
+            "body": "Swap fixtures and programs when the SKU mix changes."
+          }
+        ]
+      },
+      "products": {
+        "kicker": "Pick your arm",
+        "title": "Match reach and payload to the cell.",
+        "items": [
+          {
+            "id": "r-lite",
+            "title": "r-Lite",
+            "body": "Compact CNC enclosures, fastening, and line-side transfer."
+          },
+          {
+            "id": "r-ultra",
+            "title": "r-Ultra",
+            "body": "Heavy tending, welding assist, and pallet-side handling."
+          }
+        ],
+        "cta": "Explore specs"
+      },
+      "closing": {
+        "title": "Plan your manufacturing cell.",
+        "body": "Share payload, reach, and cycle time—we'll match the right r-Series cobot.",
+        "ctaInquiry": "Start inquiry",
+        "ctaHome": "Back to Home"
+      }
     },
     "applications_medical_lab": {
       "metaTitleFocus": "Lab Automation Cobot — Medical & Bench Robotic Arms",
@@ -1055,6 +1176,12 @@
     "story_chapter_origin": "Roooll r-Core collaborative robot with mobile long arm, 5kg payload, and 1900mm reach—showcasing precision engineering.",
     "story_chapter_people": "Individuals gathered on vibrant green cliffs overlooking the ocean—representing Roooll's commitment to human dignity.",
     "story_chapter_planet": "A puppy in a sunlit green meadow—symbolizing environmental responsibility and sustainable engineering at Roooll.",
+    "application_mfg_video_welding": "Smart manufacturing scene: collaborative robotic arm welding assist in an industrial workcell.",
+    "application_mfg_video_screw_driving": "Smart manufacturing scene: collaborative robotic arm screw driving on an assembly fixture.",
+    "application_hub_retail_service": "Retail and service application: collaborative robotic arm in a front-house beverage service scene.",
+    "application_hub_manufacturing": "Smart manufacturing application: collaborative robotic arm welding assist in an industrial workcell.",
+    "application_hub_medical_lab": "Medical and laboratory application: collaborative robotic arm material handling in a lab automation scene.",
+    "application_hub_education": "Education and research application: collaborative robotic arm in a bench and teaching-lab setting.",
     "story_chapter_closing": "A vast desert landscape during golden hour—inviting viewers to explore the Roooll r-Series."
   }
 }

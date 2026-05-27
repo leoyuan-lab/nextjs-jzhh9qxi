@@ -24,6 +24,7 @@ import {
   applyMobileMenuScrollLock,
   syncRouteDocumentChrome,
 } from '@/lib/route-document-chrome';
+import { isApplicationImmersivePath } from '@/lib/application-routes';
 
 function navFamilyName(familyId: string) {
   return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
@@ -143,8 +144,9 @@ function buildNav(messages: MessagesFile): NavSection[] {
     },
     {
       label: n.applications_section,
-      url: '/',
+      url: '/applications',
       links: [
+        { label: n.applications.overview, url: '/applications' },
         { label: n.applications.retail_service, url: '/applications/retail-service' },
         { label: n.applications.manufacturing, url: '/applications/manufacturing' },
         { label: n.applications.medical_lab, url: '/applications/medical-lab' },
@@ -212,6 +214,8 @@ export default function ClientLayout({
   const logicalPathname = useMemo(() => stripLocalePrefix(pathname || '/'), [pathname]);
   const isHome = HOME_CHROME_PATHS.has(logicalPathname);
   const isArm = ARM_NAV_PATHS.has(logicalPathname);
+  const isApplicationImmersive = isApplicationImmersivePath(logicalPathname);
+  const isDarkImmersiveRoute = isArm || isApplicationImmersive;
   const isSelector = SELECTOR_NAV_PATHS.has(logicalPathname);
   const isOurStory = logicalPathname === '/about/story';
   const isRCoreLite = logicalPathname === '/cobots/r-core';
@@ -273,15 +277,21 @@ export default function ClientLayout({
     setNavToneOverride(null);
     setMainNavScrollProgress(0);
     setIsChildSubNavVisible(false);
-    setIsDark(isArm);
-  }, [logicalPathname, isArm]);
+    setIsDark(isDarkImmersiveRoute);
+  }, [logicalPathname, isDarkImmersiveRoute]);
 
   useLayoutEffect(() => {
     document.body.style.margin = '0';
     document.documentElement.style.width = '100%';
     document.body.style.width = '100%';
-    syncRouteDocumentChrome({ isArm, isHome, isStickyScroll: isOurStory, isRCoreLite });
-  }, [isArm, isHome, isOurStory, isRCoreLite, pathname]);
+    syncRouteDocumentChrome({
+      isArm,
+      isHome,
+      isStickyScroll: isOurStory,
+      isRCoreLite,
+      isApplicationImmersive,
+    });
+  }, [isArm, isHome, isOurStory, isRCoreLite, isApplicationImmersive, pathname]);
 
   useEffect(() => {
     document.documentElement.setAttribute('lang', resolvedLang);
@@ -369,10 +379,10 @@ export default function ClientLayout({
     };
     window.addEventListener('roooll-inquiry-open', handleInquirySignal as EventListener);
     const syncFooterDarkFromRoute = () => {
-      setIsDark(isArm);
+      setIsDark(isDarkImmersiveRoute);
     };
     syncFooterDarkFromRoute();
-    const themeTimer = isArm ? setInterval(syncFooterDarkFromRoute, 500) : undefined;
+    const themeTimer = isDarkImmersiveRoute ? setInterval(syncFooterDarkFromRoute, 500) : undefined;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setShowSearch(false);
@@ -426,7 +436,7 @@ export default function ClientLayout({
       window.removeEventListener('roooll-main-nav-progress', handleMainNavProgress as EventListener);
       if (themeTimer !== undefined) clearInterval(themeTimer);
     };
-  }, [logicalPathname, resolvedLang, isArm]);
+  }, [logicalPathname, resolvedLang, isDarkImmersiveRoute]);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -520,12 +530,12 @@ export default function ClientLayout({
   /* 菜单完全收起后再恢复 arm clip + 通知卷轴（避免关菜单瞬间页面卡住再弹出） */
   useEffect(() => {
     if (mobileMenuVisible || isMobileMenuOpen) return;
-    if (!isArm) return;
-    syncRouteDocumentChrome({ isArm, isHome, isRCoreLite });
+    if (!isArm && !isApplicationImmersive) return;
+    syncRouteDocumentChrome({ isArm, isHome, isRCoreLite, isApplicationImmersive });
     requestAnimationFrame(() => {
       window.dispatchEvent(new Event('resize'));
     });
-  }, [mobileMenuVisible, isMobileMenuOpen, isArm, isHome]);
+  }, [mobileMenuVisible, isMobileMenuOpen, isArm, isHome, isApplicationImmersive, isRCoreLite]);
 
   useEffect(() => {
     if (!HOME_CHROME_PATHS.has(logicalPathname)) {
@@ -613,7 +623,7 @@ export default function ClientLayout({
     ? subPageNavProgress >= 0.02 && navToneOverride === 'dark'
     : isHome
       ? (sampledNavDark ?? isDark)
-      : isArm
+      : isDarkImmersiveRoute
         ? navToneOverride === 'light'
           ? false
           : true
@@ -710,7 +720,7 @@ export default function ClientLayout({
           )}
 
           <nav
-            className={`roooll-nav roooll-liquid-glass ${navIsDark ? 'is-dark roooll-liquid-glass--dark' : 'roooll-liquid-glass--light'} ${isHome ? 'is-home' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homePinnedClear ? 'home-clear' : ''} ${isHome && !homePinnedClear && !showSearch ? 'home-ghost' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}${isArm && !showSearch ? (subPageNavProgress < 0.02 ? ' arm-nav-top-clear' : ' arm-nav-scroll-glass') : ''}${isSelector && !showSearch ? (subPageNavProgress < 0.02 ? ' selector-nav-top-clear' : ' selector-nav-scroll-glass') : ''}${isOurStory && !showSearch ? (subPageNavProgress < 0.02 ? ' story-nav-top-clear' : ' story-nav-scroll-glass') : ''}`}
+            className={`roooll-nav roooll-liquid-glass ${navIsDark ? 'is-dark roooll-liquid-glass--dark' : 'roooll-liquid-glass--light'} ${isHome ? 'is-home' : ''} ${showSearch ? 'search-mode' : ''} ${isHome && homePinnedClear ? 'home-clear' : ''} ${isHome && !homePinnedClear && !showSearch ? 'home-ghost' : ''} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}${isDarkImmersiveRoute && !showSearch ? (subPageNavProgress < 0.02 ? ' arm-nav-top-clear' : ' arm-nav-scroll-glass') : ''}${isSelector && !showSearch ? (subPageNavProgress < 0.02 ? ' selector-nav-top-clear' : ' selector-nav-scroll-glass') : ''}${isOurStory && !showSearch ? (subPageNavProgress < 0.02 ? ' story-nav-top-clear' : ' story-nav-scroll-glass') : ''}`}
             style={
               isHome
                 ? undefined
@@ -977,7 +987,7 @@ export default function ClientLayout({
               position: 'relative',
               zIndex: 1,
               /* r‑Core、Advisor 首屏：顶对齐，3D 可从固定导航下沿透出（透明顶栏下无空带） */
-              paddingTop: isHome || isArm || isAdvisorHeroPeek ? '0px' : '44px',
+              paddingTop: isHome || isDarkImmersiveRoute || isAdvisorHeroPeek ? '0px' : '44px',
               minHeight: '80vh',
             }}
           >

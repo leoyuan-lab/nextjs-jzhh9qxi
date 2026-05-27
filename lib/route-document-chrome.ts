@@ -7,6 +7,8 @@ export type RouteDocumentChromeOptions = {
   isStickyScroll?: boolean;
   /** r-Core lite: transparent html/body so mobile home-indicator band shows scroll layer. */
   isRCoreLite?: boolean;
+  /** Application Keynote pages: black body like arm immersive routes. */
+  isApplicationImmersive?: boolean;
 };
 
 export function syncRouteDocumentChrome({
@@ -14,21 +16,25 @@ export function syncRouteDocumentChrome({
   isHome,
   isStickyScroll = false,
   isRCoreLite = false,
+  isApplicationImmersive = false,
 }: RouteDocumentChromeOptions): void {
   if (typeof document === 'undefined') return;
 
-  const overflowX = isStickyScroll ? 'visible' : isArm ? 'clip' : 'hidden';
+  const darkImmersive = isArm || isApplicationImmersive;
+  const overflowX = isStickyScroll ? 'visible' : darkImmersive ? 'clip' : 'hidden';
   document.documentElement.style.overflowX = overflowX;
   document.body.style.overflowX = overflowX;
   document.documentElement.classList.toggle('is-arm-immersive-route', isArm);
   document.body.classList.toggle('is-arm-immersive-route', isArm);
+  document.documentElement.classList.toggle('is-application-immersive-route', isApplicationImmersive);
+  document.body.classList.toggle('is-application-immersive-route', isApplicationImmersive);
   document.documentElement.classList.toggle('is-sticky-scroll-route', isStickyScroll);
   document.body.classList.toggle('is-sticky-scroll-route', isStickyScroll);
   document.documentElement.classList.toggle('is-rcore-lite-route', isRCoreLite);
   document.body.classList.toggle('is-rcore-lite-route', isRCoreLite);
   const transparentBody = isHome || isStickyScroll || isRCoreLite;
   document.documentElement.style.backgroundColor = transparentBody ? 'transparent' : '';
-  document.body.style.backgroundColor = transparentBody ? 'transparent' : isArm ? '#000' : '#fff';
+  document.body.style.backgroundColor = transparentBody ? 'transparent' : darkImmersive ? '#000' : '#fff';
 }
 
 /**

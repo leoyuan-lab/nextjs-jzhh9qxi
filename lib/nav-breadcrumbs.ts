@@ -14,7 +14,7 @@ export const BC_NAV_SELECTOR = {
 } as const;
 
 export const BC_NAV_APPLICATIONS = {
-  href: '/applications/retail-service',
+  href: '/applications',
   zh: '行业方案',
   en: 'Applications',
 } as const;

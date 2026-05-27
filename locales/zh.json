@@ -22,6 +22,7 @@
     },
     "applications_section": "行业方案",
     "applications": {
+      "overview": "总览",
       "retail_service": "零售与服务",
       "manufacturing": "智能制造",
       "medical_lab": "医疗与实验室",
@@ -383,9 +384,129 @@
       "metaTitleFocus": "协作机器人选型向导 — 按负载、臂展与应用匹配",
       "metaDescription": "按负载、工作半径与环境匹配 r-Lite、r-Core、r-Reach、r-Max、r-Ultra 等 r 系列 Cobot；交互式协作机械臂选型。"
     },
+    "applications_hub": {
+      "metaTitleFocus": "协作机器人行业方案 — 制造 · 实验室 · 零售 · 教育",
+      "metaDescription": "探索 Roooll 协作机械臂在智能制造、医疗与实验室自动化、零售服务与教育科研等行业的应用方案。",
+      "title": "场景。",
+      "cardsAria": "行业方案分类",
+      "learnMore": "了解更多",
+      "cards": {
+        "retail_service": {
+          "summary": "前场服务、出料配液与紧凑 kiosk 工位。"
+        },
+        "manufacturing": {
+          "summary": "高节拍产线的上下料、锁付与转运。"
+        },
+        "medical_lab": {
+          "summary": "台面自动化、可重复上下料与 ISO 就绪流程。"
+        },
+        "education": {
+          "summary": "面向实验室、科研与具身智能演示的教学协作臂。"
+        }
+      }
+    },
     "applications_manufacturing": {
       "metaTitleFocus": "智能制造协作机械臂 — CNC 上下料 · 装配 · 检测",
-      "metaDescription": "智能制造 Cobot：CNC 上下料、AOI、涂胶与线平衡等可编程协作机械臂产线应用。"
+      "metaDescription": "智能制造 Cobot：CNC 上下料、AOI、涂胶与线平衡等可编程协作机械臂产线应用。",
+      "pageAria": "Roooll 协作机械臂智能制造行业方案叙事",
+      "opener": {
+        "kicker": "Roooll 行业方案",
+        "title": "智能制造。",
+        "subtitle": "高节拍、多品种产线，需要部署快、换型快的协作臂。"
+      },
+      "ambient": {
+        "eyebrow": "工厂现场",
+        "title": "节拍紧。SKU 常换。",
+        "body": "上下料、锁付、搬运都要人盯——机床空等时间却在累积。"
+      },
+      "painPoints": [
+        "机台看护把熟练工拴在单一工位，整班重复开门、取放。",
+        "多品种混线意味着频繁换工装，主轴有效切削时间被吃掉。",
+        "检测、搬运、线边物流争同一块地面，扩产只能加人。"
+      ],
+      "compare": {
+        "title": "工位可以更简单",
+        "beforeLabel": "以前",
+        "before": "人守在 CNC 门、焊位和锁付工位之间来回跑。",
+        "afterLabel": "用上 Roooll 协作臂",
+        "after": "上下料、锁付、转运可重复执行——人去做质检与换型。"
+      },
+      "scenarios": {
+        "kicker": "典型工位",
+        "title": "三个场景，同一套协作逻辑。",
+        "items": [
+          {
+            "title": "焊接辅助",
+            "body": "与焊工同场，路径稳定、焊缝可重复。"
+          },
+          {
+            "title": "螺丝锁付",
+            "body": "装配工位上扭矩与节拍一致，减少过拧与漏拧。"
+          },
+          {
+            "title": "CNC 上下料",
+            "body": "紧凑协作臂进机台，三班倒持续供料。"
+          }
+        ]
+      },
+      "stats": {
+        "title": "产线里真正关心的数字",
+        "items": [
+          {
+            "value": "24/7",
+            "label": "看护不停机，让机床在三班中持续产出。"
+          },
+          {
+            "value": "分钟级",
+            "label": "示教与 redeploy，不必整槽重建自动化。"
+          },
+          {
+            "value": "一体",
+            "label": "协作臂、工装与控制挤进紧凑工位。"
+          }
+        ]
+      },
+      "advantages": {
+        "kicker": "为什么选 Roooll",
+        "title": "为会变的产线而设计。",
+        "items": [
+          {
+            "title": "部署快",
+            "body": "推进入场，示教点位，当天可跑。"
+          },
+          {
+            "title": "占地小",
+            "body": "贴人工作，适配现有围栏与线体。"
+          },
+          {
+            "title": "柔性高",
+            "body": "SKU 切换时换程序、换夹具即可。"
+          }
+        ]
+      },
+      "products": {
+        "kicker": "选型",
+        "title": "按臂展与负载匹配工位。",
+        "items": [
+          {
+            "id": "r-lite",
+            "title": "r-Lite",
+            "body": "紧凑机台、锁付与线边转运。"
+          },
+          {
+            "id": "r-ultra",
+            "title": "r-Ultra",
+            "body": "重载上下料、焊接辅助与栈板侧搬运。"
+          }
+        ],
+        "cta": "查看规格"
+      },
+      "closing": {
+        "title": "规划你的制造工位。",
+        "body": "告诉我们负载、臂展与节拍——我们帮你匹配 r 系列协作臂。",
+        "ctaInquiry": "发起咨询",
+        "ctaHome": "返回首页"
+      }
     },
     "applications_medical_lab": {
       "metaTitleFocus": "实验室自动化协作机器人 — 医疗与台面机械臂",
@@ -1055,6 +1176,12 @@
     "story_chapter_origin": "Roooll r-Core 协作机器人（移动长臂版），具备 5kg 负载与 1900mm 臂展——彰显极致的精密工程。",
     "story_chapter_people": "绿色悬崖上的人群俯瞰壮阔海洋——象征 Roooll 对人权与安全协作的坚定承诺。",
     "story_chapter_planet": "自然光下绿色草地中的小狗——象征 Roooll 对生态环境的责任与可持续发展理念。",
+    "application_mfg_video_welding": "智能制造场景：协作机械臂在工业工位进行焊接辅助作业。",
+    "application_mfg_video_screw_driving": "智能制造场景：协作机械臂在装配工位进行螺丝锁付作业。",
+    "application_hub_retail_service": "零售与服务应用：协作机械臂在前场饮品服务场景中的部署画面。",
+    "application_hub_manufacturing": "智能制造应用：协作机械臂在工业工位进行焊接辅助作业的画面。",
+    "application_hub_medical_lab": "医疗与实验室应用：协作机械臂在实验室自动化上下料场景中的画面。",
+    "application_hub_education": "教育与科研应用：协作机械臂在教学与实验台场景中的部署画面。",
     "story_chapter_closing": "金色时刻下广阔沉静的沙漠景观——Roooll 品牌故事收尾，向您发出 r 系列探索邀请。"
   }
 }
