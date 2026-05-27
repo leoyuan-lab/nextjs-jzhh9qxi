@@ -14,6 +14,7 @@ import { useSiteLang } from '@/lib/site-lang-context';
 import { trackCtaClick } from '@/lib/analytics';
 import { openInquiry } from '@/lib/open-inquiry';
 import { R_CORE_LITE_HERO_HD_PATH } from '@/lib/rcore-lite-page-config';
+import { detectIosQuickLookDevice, isHomeHeroArCapable } from '@/lib/ar-device';
 
 function familyTitle(familyId: string) {
   return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
@@ -25,14 +26,9 @@ const HOME_DETAIL_CARD_IMAGES = {
   smartCore: `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename('fr30-std')}`,
 } as const;
 
-function detectIosQuickLookDevice() {
-  if (typeof navigator === 'undefined') return false;
-  const ua = navigator.userAgent;
-  return (
-    /iPhone|iPad|iPod/i.test(ua) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-  );
-}
+/** After load: loading exit (~1300ms) + short beat — then ephemeral 360 hint (desktop only). */
+const DRAG_HINT_SHOW_DELAY_MS = 1800;
+const DRAG_HINT_VISIBLE_MS = 2500;
 
 function HeroArSpaceIcon() {
   /* Matches Apple Quick Look “View in your space” AR glyph (cube + corner brackets). */
@@ -79,6 +75,7 @@ export default function HomePageClient() {
   const [isRliteHeroGlbLoaded, setIsRliteHeroGlbLoaded] = useState(false);
   const [enableRultraModel, setEnableRultraModel] = useState(false);
   const [rliteArLoading, setRliteArLoading] = useState(false);
+  const [showHeroArEntry, setShowHeroArEntry] = useState(false);
   const viewerRef5 = useRef<any>(null);
   const viewerRef20 = useRef<any>(null);
   const rliteArViewerRef = useRef<any>(null);
@@ -87,11 +84,13 @@ export default function HomePageClient() {
   const jointSpinActiveRef = useRef(false);
   const heroRotateDelayRef = useRef<number | null>(null);
   const hintHideTimerRef = useRef<number | null>(null);
+  const dragHintShowTimerRef = useRef<number | null>(null);
   const hideTimerRef = useRef<number | null>(null);
   const forceHideTimerRef = useRef<number | null>(null);
   const loadingUnmountTimerRef = useRef<number | null>(null);
   const heroRotateReadyRef = useRef(false);
   const home = getMessages(lang).homepage;
+  const homePageMeta = getMessages(lang).pages.home;
   const rCorePage = getMessages(lang).pages.r_core;
   const alt = getMessages(lang).alt;
   const ctaLearn = home.ctaLearn;
@@ -118,6 +117,13 @@ export default function HomePageClient() {
     if (!isRliteHeroGlbLoaded) return;
     setEnableRultraModel(true);
   }, [isRliteHeroGlbLoaded]);
+
+  useEffect(() => {
+    const syncHeroArEntry = () => setShowHeroArEntry(isHomeHeroArCapable());
+    syncHeroArEntry();
+    window.addEventListener('resize', syncHeroArEntry);
+    return () => window.removeEventListener('resize', syncHeroArEntry);
+  }, []);
 
   const startRliteAr = () => {
     trackCtaClick('home_hero1_ar');
@@ -318,6 +324,18 @@ export default function HomePageClient() {
       flangeSpinTimerRef.current = window.requestAnimationFrame(tick);
     };
 
+    const scheduleDragHint = () => {
+      if (isHomeHeroArCapable()) return;
+      if (dragHintShowTimerRef.current) window.clearTimeout(dragHintShowTimerRef.current);
+      if (hintHideTimerRef.current) window.clearTimeout(hintHideTimerRef.current);
+      setShowDragHint(false);
+      dragHintShowTimerRef.current = window.setTimeout(() => {
+        dragHintShowTimerRef.current = null;
+        setShowDragHint(true);
+        hintHideTimerRef.current = window.setTimeout(() => setShowDragHint(false), DRAG_HINT_VISIBLE_MS);
+      }, DRAG_HINT_SHOW_DELAY_MS);
+    };
+
     const startSimpleHeroSequence = (viewer: any) => {
       if (!viewer) return;
 
@@ -340,10 +358,9 @@ export default function HomePageClient() {
         heroRotateReadyRef.current = true;
         viewer.setAttribute('rotation-per-second', '-100%');
         viewer.setAttribute('auto-rotate', '');
-        setShowDragHint(true);
-        if (hintHideTimerRef.current) window.clearTimeout(hintHideTimerRef.current);
-        hintHideTimerRef.current = window.setTimeout(() => setShowDragHint(false), 4200);
       }, 1000);
+
+      scheduleDragHint();
     };
 
     const onLoad5 = () => {
@@ -457,6 +474,7 @@ export default function HomePageClient() {
       if (v20) v20.removeEventListener('load', onLoad20);
       stopJointSpin();
       if (heroRotateDelayRef.current) window.clearTimeout(heroRotateDelayRef.current);
+      if (dragHintShowTimerRef.current) window.clearTimeout(dragHintShowTimerRef.current);
       if (hintHideTimerRef.current) window.clearTimeout(hintHideTimerRef.current);
       if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
       if (forceHideTimerRef.current) window.clearTimeout(forceHideTimerRef.current);
@@ -466,6 +484,7 @@ export default function HomePageClient() {
 
   return (
     <main className="roooll-home-wrapper">
+      <h1 className="home-page-h1">{homePageMeta.metaTitleFocus}</h1>
       {/* Loading Screen */}
       {showLoadingScreen && (
         <div
@@ -490,19 +509,20 @@ export default function HomePageClient() {
                 aria-label={home.loadingProgressAria.replace(/\{\{percent\}\}/g, String(loadingProgress))}
                 style={{ ['--loading-p' as string]: String(loadingProgress) } as CSSProperties}
               >
-                <h1 className="loading-slogan-main">
+                <div className="loading-slogan-main" aria-hidden="true">
                   {home.loadingSloganBefore}
                   <span className="loading-slogan-mark">
                     <span className="loading-slogan-logo-over-mark">
                       <LoadingBrandLogo
                         logoAlt={home.loadingLogoAlt}
                         frameClassName="loading-brand-plain-frame--over-letter"
+                        decorative
                       />
                     </span>
                     {home.loadingSloganMark}
                   </span>
                   {home.loadingSloganAfter}
-                </h1>
+                </div>
                 <p className="loading-subline">{home.loadingSubline1}</p>
                 <p className="loading-subline">{home.loadingSubline2}</p>
                 <div className="loading-hero-progress-slot" aria-hidden="true">
@@ -570,40 +590,43 @@ export default function HomePageClient() {
           <div className="text-box">
             <h2 className="title">{titleRlite}</h2>
             <p className="subtitle">{home.heroRliteSubtitle}</p>
-            <div className="cta-row">
-              <a
-                href={path('/cobots/r-lite')}
-                className="cta-link"
-                aria-label={home.ctaLearnRliteAria}
-                onClick={() => trackCtaClick('home_hero1_learn_rlite')}
-              >
-                {ctaLearn}
-              </a>
-              <button
-                type="button"
-                className="cta-link cta-btn"
-                onClick={() => {
-                  trackCtaClick('home_hero1_inquiry');
-                  openHomeInquiry();
-                }}
-              >
-                {ctaInquiry}
-              </button>
-            </div>
-            {isLoaded ? (
-              <div className="hero-ar-entry-wrap">
+            <p className="hero-fact">{home.heroRliteFact}</p>
+            <div className="hero-actions">
+              <div className="cta-row">
+                <a
+                  href={path('/cobots/r-lite')}
+                  className="cta-link"
+                  aria-label={home.ctaLearnRliteAria}
+                  onClick={() => trackCtaClick('home_hero1_learn_rlite')}
+                >
+                  {ctaLearn}
+                </a>
                 <button
                   type="button"
-                  className="hero-ar-entry"
-                  aria-label={home.heroArAria}
-                  disabled={rliteArLoading}
-                  onClick={startRliteAr}
+                  className="cta-link cta-btn"
+                  onClick={() => {
+                    trackCtaClick('home_hero1_inquiry');
+                    openHomeInquiry();
+                  }}
                 >
-                  <span className="hero-ar-entry__label">{rliteArLabel}</span>
-                  <HeroArSpaceIcon />
+                  {ctaInquiry}
                 </button>
               </div>
-            ) : null}
+              {isLoaded && showHeroArEntry ? (
+                <div className="hero-ar-entry-wrap">
+                  <button
+                    type="button"
+                    className="hero-ar-entry"
+                    aria-label={home.heroArAria}
+                    disabled={rliteArLoading}
+                    onClick={startRliteAr}
+                  >
+                    <span className="hero-ar-entry__label">{rliteArLabel}</span>
+                    <HeroArSpaceIcon />
+                  </button>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </section>
@@ -643,13 +666,16 @@ export default function HomePageClient() {
           <div className="text-box">
             <h2 className="title">{titleRultra}</h2>
             <p className="subtitle">{home.heroRultraSubtitle}</p>
-            <div className="cta-row">
-              <a href={path('/cobots/r-ultra')} className="cta-link" aria-label={home.ctaLearnRultraAria}>
-                {ctaLearn}
-              </a>
-              <button type="button" className="cta-link cta-btn" onClick={openHomeInquiry}>
-                {ctaInquiry}
-              </button>
+            <p className="hero-fact">{home.heroRultraFact}</p>
+            <div className="hero-actions">
+              <div className="cta-row">
+                <a href={path('/cobots/r-ultra')} className="cta-link" aria-label={home.ctaLearnRultraAria}>
+                  {ctaLearn}
+                </a>
+                <button type="button" className="cta-link cta-btn" onClick={openHomeInquiry}>
+                  {ctaInquiry}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -672,23 +698,26 @@ export default function HomePageClient() {
           <div className="text-box">
             <h2 className="title">{rCorePage.hero.title}</h2>
             <p className="subtitle">{rCorePage.hero.subtitle}</p>
-            <div className="cta-row">
-              <a
-                href={path('/cobots/r-core')}
-                className="cta-link"
-                aria-label={home.ctaViewRcoreAria}
-                onClick={() => trackCtaClick('home_hero3_view_rcore')}
-              >
-                {home.ctaViewRcore}
-              </a>
-              <a
-                href={path('/cobots/all-cobots-specs')}
-                className="cta-link"
-                aria-label={home.ctaSpecsAllAria}
-                onClick={() => trackCtaClick('home_hero3_specs_all')}
-              >
-                {home.ctaSpecsAll}
-              </a>
+            <p className="hero-fact">{home.heroRcoreFact}</p>
+            <div className="hero-actions">
+              <div className="cta-row">
+                <a
+                  href={path('/cobots/r-core')}
+                  className="cta-link"
+                  aria-label={home.ctaViewRcoreAria}
+                  onClick={() => trackCtaClick('home_hero3_view_rcore')}
+                >
+                  {home.ctaViewRcore}
+                </a>
+                <a
+                  href={path('/cobots/all-cobots-specs')}
+                  className="cta-link"
+                  aria-label={home.ctaSpecsAllAria}
+                  onClick={() => trackCtaClick('home_hero3_specs_all')}
+                >
+                  {home.ctaSpecsAll}
+                </a>
+              </div>
             </div>
           </div>
         </div>

@@ -47,8 +47,11 @@ type RowVisualStyle = {
   filter: string;
 };
 
-function rowFocusStyle(offsetPx: number, rowHeight: number, reduceMotion: boolean): RowVisualStyle {
-  const step = Math.max(rowHeight * 0.82, 44);
+/** Must match `.rcore-lite-spec-focus__row { height }` in globals.css */
+const SPEC_FOCUS_ROW_HEIGHT_PX = 60;
+
+function rowFocusStyle(offsetPx: number, reduceMotion: boolean): RowVisualStyle {
+  const step = Math.max(SPEC_FOCUS_ROW_HEIGHT_PX * 0.82, 44);
   const dist = Math.abs(offsetPx) / step;
   const t = Math.min(dist, 3.6) / 3.6;
   const opacity = Math.max(0.16, 1 - t * 0.8);
@@ -70,23 +73,6 @@ function scrollFocusRowToCenter(
   scroller.scrollTo({ top: target, behavior: 'smooth' });
 }
 
-function SpecFocusChevron({ direction }: { direction: 'up' | 'down' }) {
-  return (
-    <svg
-      className="rcore-lite-spec-focus__chevron"
-      viewBox="0 0 24 24"
-      aria-hidden
-      focusable="false"
-    >
-      {direction === 'up' ? (
-        <path d="M7.5 14.5 12 10l4.5 4.5" />
-      ) : (
-        <path d="M7.5 9.5 12 14l4.5-4.5" />
-      )}
-    </svg>
-  );
-}
-
 function RCoreSpecFocusList({
   copy,
   variantId,
@@ -100,6 +86,7 @@ function RCoreSpecFocusList({
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const syncRafRef = useRef<number | null>(null);
   const [rowStyles, setRowStyles] = useState<RowVisualStyle[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -121,17 +108,25 @@ function RCoreSpecFocusList({
     const nextStyles = rows.map((_, i) => {
       const el = rowRefs.current[i];
       if (!el) return { opacity: 0.35, transform: 'scale(0.92)', filter: 'none' };
-      const offset = el.offsetTop + el.offsetHeight / 2 - centerY;
+      const offset = el.offsetTop + SPEC_FOCUS_ROW_HEIGHT_PX / 2 - centerY;
       const dist = Math.abs(offset);
       if (dist < closestDist) {
         closestDist = dist;
         closest = i;
       }
-      return rowFocusStyle(offset, el.offsetHeight || 48, reduceMotion);
+      return rowFocusStyle(offset, reduceMotion);
     });
     setRowStyles(nextStyles);
     setActiveIndex((prev) => (prev === closest ? prev : closest));
   }, [rows, reduceMotion]);
+
+  const scheduleSyncFocus = useCallback(() => {
+    if (syncRafRef.current != null) return;
+    syncRafRef.current = requestAnimationFrame(() => {
+      syncRafRef.current = null;
+      syncFocus();
+    });
+  }, [syncFocus]);
 
   useEffect(() => {
     syncFocus();
@@ -147,27 +142,26 @@ function RCoreSpecFocusList({
   useEffect(() => {
     const scroller = scrollerRef.current;
     if (!scroller) return undefined;
-    const onScroll = () => syncFocus();
+    const onScroll = () => scheduleSyncFocus();
     scroller.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     return () => {
       scroller.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
+      if (syncRafRef.current != null) {
+        cancelAnimationFrame(syncRafRef.current);
+        syncRafRef.current = null;
+      }
     };
-  }, [syncFocus]);
-
-  const scrollStep = useCallback(() => {
-    const first = rowRefs.current.find(Boolean);
-    return first?.offsetHeight ?? 52;
-  }, []);
+  }, [scheduleSyncFocus]);
 
   const scrollByRow = useCallback(
     (direction: -1 | 1) => {
       const scroller = scrollerRef.current;
       if (!scroller) return;
-      scroller.scrollBy({ top: direction * scrollStep(), behavior: 'smooth' });
+      scroller.scrollBy({ top: direction * SPEC_FOCUS_ROW_HEIGHT_PX, behavior: 'smooth' });
     },
-    [scrollStep],
+    [],
   );
 
   return (
@@ -207,27 +201,6 @@ function RCoreSpecFocusList({
               </div>
             ))}
             <div className="rcore-lite-spec-focus__pad" aria-hidden />
-          </div>
-
-          <div className="rcore-lite-spec-focus__arrows">
-            <button
-              type="button"
-              className="rcore-lite-spec-focus__arrow roooll-liquid-glass roooll-liquid-glass--light"
-              aria-label={copy.specPrev}
-              disabled={activeIndex <= 0}
-              onClick={() => scrollByRow(-1)}
-            >
-              <SpecFocusChevron direction="up" />
-            </button>
-            <button
-              type="button"
-              className="rcore-lite-spec-focus__arrow roooll-liquid-glass roooll-liquid-glass--light"
-              aria-label={copy.specNext}
-              disabled={activeIndex >= rows.length - 1}
-              onClick={() => scrollByRow(1)}
-            >
-              <SpecFocusChevron direction="down" />
-            </button>
           </div>
         </div>
 
