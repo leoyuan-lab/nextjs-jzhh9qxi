@@ -143,9 +143,8 @@ function buildNav(messages: MessagesFile): NavSection[] {
     },
     {
       label: n.applications_section,
-      url: '/applications',
+      url: '/',
       links: [
-        { label: n.applications.overview, url: '/applications' },
         { label: n.applications.retail_service, url: '/applications/retail-service' },
         { label: n.applications.manufacturing, url: '/applications/manufacturing' },
         { label: n.applications.medical_lab, url: '/applications/medical-lab' },
@@ -545,7 +544,6 @@ export default function ClientLayout({
     const isMobileViewport = window.matchMedia('(max-width: 734px)').matches;
     const HOME_NAV_TONE_SAMPLE_MIN_INTERVAL = isMobileViewport ? 240 : 120;
     const HOME_NAV_TONE_SAMPLE_MIN_SCROLL_DELTA = isMobileViewport ? 42 : 24;
-    const HOME_NAV_TONE_ACTIVE_VIEWPORTS = isMobileViewport ? 2.7 : 2.35;
     let rafId: number | null = null;
     let lastToneSampleAt = 0;
     let lastToneSampleY = -1;
@@ -555,12 +553,6 @@ export default function ClientLayout({
         rafId = null;
         const y = window.scrollY;
         setHomePinnedClear(y < 2);
-        const toneActiveMaxY = window.innerHeight * HOME_NAV_TONE_ACTIVE_VIEWPORTS;
-        // Past hero zones, keep a stable light nav and stop expensive top hit-testing.
-        if (y > toneActiveMaxY) {
-          setSampledNavDark(false);
-          return;
-        }
         const now = performance.now();
         const shouldSampleByTime = now - lastToneSampleAt >= HOME_NAV_TONE_SAMPLE_MIN_INTERVAL;
         const shouldSampleByDistance = lastToneSampleY < 0 || Math.abs(y - lastToneSampleY) >= HOME_NAV_TONE_SAMPLE_MIN_SCROLL_DELTA;

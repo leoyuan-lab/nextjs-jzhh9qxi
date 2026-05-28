@@ -126,12 +126,13 @@
     "heroRultraSubtitle": "超强负载，工业核心",
     "heroRultraFact": "30 kg 级 · 1402 mm 工作半径 · 重载协作臂",
     "heroRcoreFact": "5 kg 级 · 922 mm 工作半径 · 产线主力协作臂",
-    "cardPreciseTitle": "极致触觉",
-    "cardPreciseBody": "毫秒级碰撞响应",
-    "cardPreciseCta": "了解 r-Lite 协作臂",
-    "cardSmartTitle": "智慧核心",
-    "cardSmartBody": "自研轨迹规划",
-    "cardSmartCta": "了解 r-Ultra 重载臂"
+    "applicationsTitle": "行业方案",
+    "twinSupportTitle": "全球服务，内置其中。",
+    "twinSupportBody": "跨时区工程响应、OEM/ODM 项目与现场支持——从部署到稳定运行，同一团队对接。",
+    "twinSupportCta": "技术支持与服务",
+    "twinStoryTitle": "我们的故事",
+    "twinStoryBody": "我们为何做协作机器人——以及 Roooll 如何面向操作者、集成商与合作伙伴。",
+    "twinStoryCta": "了解 Roooll"
   },
   "FAQ": {
     "title": "有问题？有答案",
@@ -231,7 +232,7 @@
   "pages": {
     "home": {
       "metaTitleFocus": "协作机器人与协作机械臂全系 — r-Lite 至 r-Ultra",
-      "metaDescription": "浏览 Roooll r-Lite、r-Core、r-Reach、r-Max、r-Ultra 协作机器人与机械臂展示入口，覆盖 3kg 至 30kg 负载区间。"
+      "metaDescription": "浏览 Roooll r-Lite、r-Core、r-Reach、r-Max、r-Ultra 协作机器人与机械臂展示，覆盖 3kg 至 30kg 负载。首页含行业方案（智能制造、医疗与实验室、零售服务、教育科研）、全球技术支持与服务及品牌故事。"
     },
     "all_cobots_specs": {
       "metaTitleFocus": "全系列 r 系列协作机器人规格 — 3kg 至 30kg",
@@ -386,7 +387,7 @@
     },
     "applications_hub": {
       "metaTitleFocus": "协作机器人行业方案 — 制造 · 实验室 · 零售 · 教育",
-      "metaDescription": "探索 Roooll 协作机械臂在智能制造、医疗与实验室自动化、零售服务与教育科研等行业的应用方案。",
+      "metaDescription": "探索 Roooll 协作机械臂在智能制造、医疗与实验室自动化、零售服务与教育科研等行业的应用方案。行业方案轮播位于首页 /#applications；/applications 跳转至该锚点。",
       "title": "场景。",
       "cardsAria": "行业方案分类",
       "learnMore": "了解更多",

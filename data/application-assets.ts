@@ -3,7 +3,7 @@
  *
  *   masters/  — original .mov (archival; not referenced in UI)
  *   video/    — web .mp4 exports
- *   cards/    — static hub poster frames (from video extracts)
+ *   cards/    — static hub poster frames (from video extracts; .webp + archival .jpg)
  */
 export const APPLICATION_ASSET_ROOT = '/applications';
 
@@ -25,12 +25,12 @@ export const APPLICATION_VIDEOS = {
   hospitalRecover: applicationVideoPath('hospital-recover.mp4'),
 } as const;
 
-/** Hub card poster frames (extracted from `masters/` at mid-timeline). */
+/** Hub card poster frames (extracted from `masters/` at mid-timeline). Prefer WebP in UI. */
 export const APPLICATION_HUB_CARD_IMAGES = {
-  retailService: applicationCardPath('retail-service.jpg'),
-  manufacturing: applicationCardPath('manufacturing.jpg'),
-  medicalLab: applicationCardPath('medical-lab.jpg'),
-  education: applicationCardPath('education.jpg'),
+  retailService: applicationCardPath('retail-service.webp'),
+  manufacturing: applicationCardPath('manufacturing.webp'),
+  medicalLab: applicationCardPath('medical-lab.webp'),
+  education: applicationCardPath('education.webp'),
 } as const;
 
 /** Master → card frame mapping (for re-export). */

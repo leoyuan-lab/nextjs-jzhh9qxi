@@ -5,17 +5,22 @@ import { buildApplicationsHubCarouselCopy } from '@/lib/applications-hub-carouse
 import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
 
-/** Legacy shell — prefer `HomeApplicationsSection` on `/`. */
-export function ApplicationsHubClient() {
+export function HomeApplicationsSection() {
   const lang = useSiteLang();
   const safeLang: 'zh' | 'en' = lang === 'en' ? 'en' : 'zh';
-  const copy = getMessages(safeLang).pages.applications_hub;
+  const home = getMessages(safeLang).homepage;
   const carouselCopy = buildApplicationsHubCarouselCopy(safeLang);
 
   return (
-    <div className="app-hub-page">
-      <h1 className="sr-only">{copy.title}</h1>
+    <section
+      id="applications"
+      className="home-applications-screen"
+      aria-labelledby="home-applications-title"
+    >
+      <h2 id="home-applications-title" className="home-applications-screen__title">
+        {home.applicationsTitle}
+      </h2>
       <ApplicationsHubDesktopCarousel copy={carouselCopy} />
-    </div>
+    </section>
   );
 }

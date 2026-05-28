@@ -13,7 +13,6 @@ export const ALL_COBOTS_VARIANT_DETAIL_PATHS: readonly string[] = ALL_VARIANT_PU
 export const SITEMAP_PATHS: readonly string[] = [
   '/',
   '/about/story',
-  '/applications',
   '/applications/education',
   '/applications/manufacturing',
   '/applications/medical-lab',

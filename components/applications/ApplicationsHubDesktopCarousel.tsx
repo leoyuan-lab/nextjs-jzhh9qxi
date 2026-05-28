@@ -6,10 +6,9 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import {
   APPLICATION_HUB_CARDS,
   type ApplicationHubCard,
-  type ApplicationHubCardId,
 } from '@/data/application-hub';
+import type { ApplicationsHubCarouselCopy } from '@/lib/applications-hub-carousel-copy';
 
-const DESKTOP_MQ = '(min-width: 769px)';
 const AUTO_ADVANCE_MS = 3500;
 const CARD_GAP_PX = 18;
 const CARD_COUNT = APPLICATION_HUB_CARDS.length;
@@ -29,15 +28,6 @@ const HERO_TITLE_PLACE: readonly ('top-left' | 'center' | 'right' | 'top-right')
   'top-right',
 ];
 
-type CarouselCopy = {
-  cardsAria: string;
-  learnMore: string;
-  cardTitle: (id: ApplicationHubCardId) => string;
-  cardSummary: (id: ApplicationHubCardId) => string;
-  cardAlt: (key: string) => string;
-  langPrefix: string;
-};
-
 function loopedCards(): ApplicationHubCard[] {
   return Array.from({ length: CLONE_SETS }, () => APPLICATION_HUB_CARDS).flat();
 }
@@ -56,7 +46,7 @@ function usePrefersReducedMotion(): boolean {
   return reduceMotion;
 }
 
-export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy }) {
+export function ApplicationsHubDesktopCarousel({ copy }: { copy: ApplicationsHubCarouselCopy }) {
   const reduceMotion = usePrefersReducedMotion();
   const viewportRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
@@ -87,8 +77,12 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
   const singleSetWidth = useCallback(() => {
     if (CARD_COUNT === 0) return 0;
     const first = cardRefs.current[0];
-    if (!first) return 0;
-    return CARD_COUNT * (first.offsetWidth + CARD_GAP_PX);
+    const track = viewportRef.current?.querySelector('.app-hub-carousel-track') as HTMLElement | null;
+    if (!first || !track) return 0;
+    const gap =
+      Number.parseFloat(window.getComputedStyle(track).columnGap || window.getComputedStyle(track).gap) ||
+      CARD_GAP_PX;
+    return CARD_COUNT * (first.offsetWidth + gap);
   }, []);
 
   const scrollLeftForDom = useCallback((domIndex: number): number | null => {
@@ -297,8 +291,47 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
   ]);
 
   useLayoutEffect(() => {
-    scrollToDomIndex(MIDDLE_SET_START, 'auto');
-    setMounted(true);
+    let cancelled = false;
+    const viewport = viewportRef.current;
+    if (!viewport) {
+      setMounted(true);
+      return;
+    }
+
+    const initToMiddle = (): boolean => {
+      if (cancelled) return true;
+      const card = cardRefs.current[MIDDLE_SET_START];
+      if (!card || card.offsetWidth <= 0) return false;
+      scrollToDomIndex(MIDDLE_SET_START, 'auto');
+      setMounted(true);
+      return true;
+    };
+
+    if (initToMiddle()) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const ro = new ResizeObserver(() => {
+      initToMiddle();
+    });
+    ro.observe(viewport);
+    for (const card of cardRefs.current) {
+      if (card) ro.observe(card);
+    }
+
+    const raf = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        if (!initToMiddle()) setMounted(true);
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
   }, [scrollToDomIndex]);
 
   useEffect(() => {
@@ -308,13 +341,7 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
   }, [scrollToLogicalIndex]);
 
   useEffect(() => {
-    const mq = window.matchMedia(DESKTOP_MQ);
-    const sync = () => {
-      enabledRef.current = mq.matches;
-    };
-    sync();
-    mq.addEventListener('change', sync);
-    return () => mq.removeEventListener('change', sync);
+    enabledRef.current = true;
   }, []);
 
   useEffect(() => {
@@ -410,7 +437,7 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
 
   return (
     <section
-      className={`app-hub-desktop-only app-hub-carousel-section${mounted ? ' is-mounted' : ''}`}
+      className={`app-hub-carousel-section${mounted ? ' is-mounted' : ''}`}
       aria-label={copy.cardsAria}
     >
       <div
@@ -439,7 +466,8 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: CarouselCopy })
                     src={card.image}
                     alt={copy.cardAlt(card.altKey)}
                     fill
-                    sizes="70vw"
+                    sizes="(max-width: 734px) 85vw, 70vw"
+                    quality={92}
                     className="app-hub-panel-img app-hub-panel-img--carousel object-cover"
                     priority={index === MIDDLE_SET_START}
                     loading={index === MIDDLE_SET_START ? undefined : 'lazy'}

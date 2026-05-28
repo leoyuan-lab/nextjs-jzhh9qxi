@@ -15,24 +15,40 @@
 ## Authoritative pages (English)
 
 - Home: https://roooll.com/en/
+- Home — Applications hub (manufacturing, medical lab, retail, education): https://roooll.com/en/#applications
 - Full lineup & specs: https://roooll.com/en/cobots/all-cobots-specs
 - Side-by-side comparison (pick any 3 models; shareable URL): https://roooll.com/en/selector/comparison
 - Product Advisor (5-question matcher + inquiry draft): https://roooll.com/en/selector/advisor
 - r-Lite detail: https://roooll.com/en/cobots/r-lite
 - r-Ultra detail: https://roooll.com/en/cobots/r-ultra
+- r-Core detail: https://roooll.com/en/cobots/r-core
 - Accessories hub: https://roooll.com/en/accessories
 - Control cabinets lane: https://roooll.com/en/accessories/controllers
+- Smart Manufacturing application: https://roooll.com/en/applications/manufacturing
+- Medical & Lab application: https://roooll.com/en/applications/medical-lab
+- Retail & Service application: https://roooll.com/en/applications/retail-service
+- Education & Research application: https://roooll.com/en/applications/education
+- Global Support & service: https://roooll.com/en/support/service
+- Our Story: https://roooll.com/en/about/story
 - Contact: https://roooll.com/en/contact
 
 ## Authoritative pages (Chinese)
 
 - 首页: https://roooll.com/zh/
+- 首页 — 行业方案（制造、医疗实验室、零售、教育）: https://roooll.com/zh/#applications
 - 全系规格: https://roooll.com/zh/cobots/all-cobots-specs
 - 横向对比: https://roooll.com/zh/selector/comparison
 - 智能选型向导: https://roooll.com/zh/selector/advisor
 - r-Lite 详情: https://roooll.com/zh/cobots/r-lite
 - r-Ultra 详情: https://roooll.com/zh/cobots/r-ultra
+- r-Core 详情: https://roooll.com/zh/cobots/r-core
 - 配件: https://roooll.com/zh/accessories
+- 智能制造行业方案: https://roooll.com/zh/applications/manufacturing
+- 医疗与实验室行业方案: https://roooll.com/zh/applications/medical-lab
+- 零售与服务行业方案: https://roooll.com/zh/applications/retail-service
+- 教育与科研行业方案: https://roooll.com/zh/applications/education
+- 全球技术支持与服务: https://roooll.com/zh/support/service
+- 品牌故事: https://roooll.com/zh/about/story
 
 ## Selector tools (for citation)
 

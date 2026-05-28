@@ -126,12 +126,13 @@
     "heroRultraSubtitle": "Born for heavy duty.",
     "heroRultraFact": "30 kg class · 1402 mm reach · heavy-duty cobot",
     "heroRcoreFact": "5 kg class · 922 mm reach · line-ready cobot",
-    "cardPreciseTitle": "Precise Touch",
-    "cardPreciseBody": "Millisecond response.",
-    "cardPreciseCta": "Explore r-Lite cobot",
-    "cardSmartTitle": "Smart Core",
-    "cardSmartBody": "Smart path planning.",
-    "cardSmartCta": "Explore r-Ultra cobot"
+    "applicationsTitle": "Applications",
+    "twinSupportTitle": "Global service. Built in.",
+    "twinSupportBody": "Expert guidance across time zones, OEM programs, and field support—from deployment to uptime.",
+    "twinSupportCta": "Support & service",
+    "twinStoryTitle": "Our Story",
+    "twinStoryBody": "Why we build collaborative robots—and how Roooll shows up for operators, integrators, and partners.",
+    "twinStoryCta": "Read our story"
   },
   "FAQ": {
     "title": "Questions? Answers.",
@@ -231,7 +232,7 @@
   "pages": {
     "home": {
       "metaTitleFocus": "Collaborative Cobot & Robotic Arm Lineup — r-Lite to r-Ultra",
-      "metaDescription": "Explore Roooll Cobots across r-Lite, r-Core, r-Reach, r-Max, and r-Ultra—interactive collaborative robotic arm showcases and lineup entry points from 3kg to 30kg."
+      "metaDescription": "Explore Roooll Cobots across r-Lite, r-Core, r-Reach, r-Max, and r-Ultra—interactive collaborative robotic arm showcases from 3kg to 30kg. The homepage includes industry Applications (manufacturing, medical lab, retail, education), global Support & service, and Our Story."
     },
     "all_cobots_specs": {
       "metaTitleFocus": "Full r-Series Cobot Specs — 3kg to 30kg Robotic Arms",
@@ -386,7 +387,7 @@
     },
     "applications_hub": {
       "metaTitleFocus": "Cobot Industry Applications — Manufacturing, Lab & Retail",
-      "metaDescription": "Explore Roooll collaborative robotic arm applications for smart manufacturing, medical and lab automation, retail service, and education programs.",
+      "metaDescription": "Explore Roooll collaborative robotic arm applications for smart manufacturing, medical and lab automation, retail service, and education programs. Embedded on the homepage at /#applications; /applications redirects there.",
       "title": "Solutions.",
       "cardsAria": "Application industry categories",
       "learnMore": "Learn more",
@@ -395,6 +396,7 @@
           "summary": "Front-house service, dispensing, and compact kiosk cells."
         },
         "manufacturing": {
+          "title": "Smart Manufacture",
           "summary": "Tending, fastening, and transfer across high-mix factory lines."
         },
         "medical_lab": {

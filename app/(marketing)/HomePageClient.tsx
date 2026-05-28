@@ -3,11 +3,9 @@ import React, { useState, useEffect, useRef, useMemo, type CSSProperties } from 
 import Image from 'next/image';
 import { LoadingBrandLogo } from '@/components/LoadingBrandLogo';
 import {
-  ROBOT_IMG_BASE,
   cobotGlbModels,
   rSeriesData,
   robotVariantImageAlt,
-  robotVariantWebpHdFilename,
 } from '@/data/products';
 import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
@@ -15,16 +13,17 @@ import { trackCtaClick } from '@/lib/analytics';
 import { openInquiry } from '@/lib/open-inquiry';
 import { R_CORE_LITE_HERO_HD_PATH } from '@/lib/rcore-lite-page-config';
 import { detectIosQuickLookDevice, isHomeHeroArCapable } from '@/lib/ar-device';
+import { HomeApplicationsSection } from '@/components/home/HomeApplicationsSection';
+import { STORY_CHAPTER_IMAGES } from '@/lib/story-chapter-images';
 
 function familyTitle(familyId: string) {
   return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
 }
 
-/** 屏3 详情卡背景（旧 `/images/detail1.jpg`、`detail2.jpg` 已移除；与 `public/images/robots` 资产一致） */
-const HOME_DETAIL_CARD_IMAGES = {
-  preciseTouch: `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename('fr3-std')}`,
-  smartCore: `${ROBOT_IMG_BASE}/${robotVariantWebpHdFilename('fr30-std')}`,
-} as const;
+/** Support twin panel — matches service page hero asset. */
+const HOME_SUPPORT_TWIN_IMAGE = '/images/robots/r-core-cobot-fr5-std-hd.webp';
+/** Story twin panel — brand narrative visual from Our Story. */
+const HOME_STORY_TWIN_IMAGE = STORY_CHAPTER_IMAGES.people;
 
 /** After load: loading exit (~1300ms) + short beat — then ephemeral 360 hint (desktop only). */
 const DRAG_HINT_SHOW_DELAY_MS = 1800;
@@ -723,48 +722,44 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* 屏4+5: 双子星 5:5 占位图（非首屏 LCP：不抢 priority，减轻与 hero GLB 带宽竞争） */}
+      <HomeApplicationsSection />
+
+      {/* 屏5+6: Support (primary) + Our Story — 6.5 : 3.5 */}
       <section className="twin-hero-section">
-        <article className="twin-hero-panel">
+        <article className="twin-hero-panel twin-hero-panel--support">
           <Image
-            src={HOME_DETAIL_CARD_IMAGES.preciseTouch}
-            alt={alt.hero_rlite}
+            src={HOME_SUPPORT_TWIN_IMAGE}
+            alt={alt.support_service_hero}
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            sizes="(max-width: 768px) 100vw, 65vw"
             className="twin-hero-image"
           />
           <div className="twin-hero-overlay">
-            <h3>{home.cardPreciseTitle}</h3>
-            <p>{home.cardPreciseBody}</p>
+            <h3>{home.twinSupportTitle}</h3>
+            <p>{home.twinSupportBody}</p>
             <div className="cta-row card-cta">
-              <a href={path('/cobots/r-lite')} className="cta-link">
-                {home.cardPreciseCta}
+              <a href={path('/support/service')} className="cta-link">
+                {home.twinSupportCta}
               </a>
-              <button type="button" className="cta-link cta-btn" onClick={openHomeInquiry}>
-                {ctaInquiry}
-              </button>
             </div>
           </div>
         </article>
 
-        <article className="twin-hero-panel">
+        <article className="twin-hero-panel twin-hero-panel--story">
           <Image
-            src={HOME_DETAIL_CARD_IMAGES.smartCore}
-            alt={alt.hero_rultra}
+            src={HOME_STORY_TWIN_IMAGE}
+            alt={alt.story_chapter_people}
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            sizes="(max-width: 768px) 100vw, 35vw"
             className="twin-hero-image"
           />
           <div className="twin-hero-overlay">
-            <h3>{home.cardSmartTitle}</h3>
-            <p>{home.cardSmartBody}</p>
+            <h3>{home.twinStoryTitle}</h3>
+            <p>{home.twinStoryBody}</p>
             <div className="cta-row card-cta">
-              <a href={path('/cobots/r-ultra')} className="cta-link">
-                {home.cardSmartCta}
+              <a href={path('/about/story')} className="cta-link">
+                {home.twinStoryCta}
               </a>
-              <button type="button" className="cta-link cta-btn" onClick={openHomeInquiry}>
-                {ctaInquiry}
-              </button>
             </div>
           </div>
         </article>
