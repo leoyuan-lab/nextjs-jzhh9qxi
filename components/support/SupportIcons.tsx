@@ -98,6 +98,26 @@ export function SupportIconSpareParts(props: IconProps) {
   );
 }
 
+export function SupportIconPreventive(props: IconProps) {
+  return (
+    <SvgRoot {...props}>
+      <rect x="4" y="5" width="16" height="15" rx="2" />
+      <path d="M8 3v4M16 3v4M4 10h16" />
+      <path d="M9 14l2 2 4-4" />
+    </SvgRoot>
+  );
+}
+
+export function SupportIconLifetime(props: IconProps) {
+  return (
+    <SvgRoot {...props}>
+      <path d="M12 5c4 0 7 2.5 7 6s-3 6-7 6-7-2.5-7-6 3-6 7-6z" />
+      <path d="M5 11v2c0 3.5 3.1 6 7 6s7-2.5 7-6v-2" />
+      <path d="M12 17v4M9 21h6" />
+    </SvgRoot>
+  );
+}
+
 export function SupportIconPartner(props: IconProps) {
   return (
     <SvgRoot {...props}>

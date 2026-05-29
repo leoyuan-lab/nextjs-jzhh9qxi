@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { SupportCardIcon } from '@/components/support/SupportCardIcon';
 import { SupportGoldCard } from '@/components/support/SupportGoldCard';
 import {
@@ -22,6 +23,7 @@ const PERK_ICONS = {
 export function SupportDistributorsClient() {
   const lang = useSiteLang();
   const copy = getMessages(lang).pages.support.distributors;
+  const loginHref = `/${lang}/support/distributors/login`;
   const perkOrder = ['pricing', 'launch', 'training'] as const;
 
   const openChannelInquiry = () =>
@@ -60,13 +62,9 @@ export function SupportDistributorsClient() {
           </SupportCardIcon>
           <h2>{copy.cards.access.title}</h2>
           <p>{copy.cards.access.body}</p>
-          <button
-            type="button"
-            className="support-card-cta support-card-cta--button"
-            onClick={openChannelInquiry}
-          >
+          <Link href={loginHref} className="support-card-cta support-card-cta--button">
             {copy.cards.access.cta} ›
-          </button>
+          </Link>
         </SupportGoldCard>
 
         <SupportGoldCard badge={copy.badge}>

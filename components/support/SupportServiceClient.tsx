@@ -8,7 +8,9 @@ import {
   SupportIconBespoke,
   SupportIconDeployment,
   SupportIconGlobal,
+  SupportIconLifetime,
   SupportIconManual,
+  SupportIconPreventive,
   SupportIconSoftware,
   SupportIconSpareParts,
   SupportIconWarranty,
@@ -133,6 +135,18 @@ export function SupportServiceClient() {
             icon={<SupportIconWarranty />}
             title={cards.warranty.title}
             body={cards.warranty.body}
+          />
+          <ServiceCard
+            className="support-bento-preventive"
+            icon={<SupportIconPreventive />}
+            title={cards.preventive.title}
+            body={cards.preventive.body}
+          />
+          <ServiceCard
+            className="support-bento-lifetime"
+            icon={<SupportIconLifetime />}
+            title={cards.lifetime.title}
+            body={cards.lifetime.body}
           />
           <ServiceCard
             className="support-bento-software"

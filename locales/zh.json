@@ -606,8 +606,9 @@
       "metaDescription": "联系 Roooll 协作机器人 OEM 销售、机械臂集成、报价、演示与 PoC——全球团队响应。",
       "logoAlt": "Roooll 品牌标识，联系我们页面。",
       "heroTitle": "联系 Roooll",
-      "heroBody": "销售、集成与渠道合作——介绍您的项目，或直接通过邮件与我们沟通。",
+      "heroBody": "销售、集成与渠道合作——介绍您的项目，或直接与我们联系。",
       "emailCta": "info@roooll.com",
+      "address": "上海市嘉定工业区叶城路925号B区4栋J",
       "cards": {
         "inquiry": {
           "title": "项目咨询",
@@ -625,8 +626,12 @@
           "cta": "获取支持"
         }
       },
-      "footnote": "授权经销商可通过渠道伙伴页面获取价格包与联合营销素材。",
-      "footnoteLink": "渠道伙伴"
+      "channelCard": {
+        "badge": "Authorized partners",
+        "title": "渠道伙伴",
+        "body": "授权经销商可通过渠道伙伴页面获取价格包与联合营销素材。",
+        "cta": "进入渠道专区"
+      }
     },
     "newsroom": {
       "metaTitleFocus": "协作机器人新闻与产品发布",
@@ -735,6 +740,14 @@
             "title": "两年质保，全无后顾之忧。",
             "body": "电机、减速机及控制架构等所有核心部件，均享有一流的两年有限质保。依托全球响应网络，全力保障你的产线平稳运行。"
           },
+          "preventive": {
+            "title": "防患未然，稳产先行。",
+            "body": "按节奏的健康检查与维护指引，在磨损演变成停线之前介入。远程诊断可与现场点检配合——让意外停机尽量远离产线。"
+          },
+          "lifetime": {
+            "title": "为长年运行而设计。",
+            "body": "部署不会因质保到期而画上句号。区域备件通路、返修支持与工程团队持续对接——让投产多年的 r 系列与新建单元一样，继续获得可预期的保障。"
+          },
           "software": {
             "title": "常用常新，自动进化。",
             "body": "让硬件资产始终走在时代前沿。持续的固件更新、系统优化以及完全开放的 SDK 升级，让机器人在未来的使用中不断解锁全新技能。"
@@ -783,6 +796,19 @@
             "body": "Roooll 正在拓展全球经销网络。告诉我们您的区域、客户基础与应用方向——我们将在 12 小时内回复。",
             "cta": "申请渠道合作"
           }
+        },
+        "login": {
+          "metaTitleFocus": "渠道伙伴登录",
+          "metaDescription": "Roooll 授权经销商登录入口，用于获取渠道价格包与联合营销素材。",
+          "heroTitle": "渠道伙伴登录",
+          "emailLabel": "邮箱",
+          "emailPlaceholder": "you@company.com",
+          "passwordLabel": "密码",
+          "passwordPlaceholder": "密码",
+          "submit": "登录",
+          "errorInvalid": "邮箱或密码不正确。如需开通权限，请联系您的渠道经理。",
+          "note": "伙伴账号在授权后开通。尚未成为经销商？请返回经销商页面提交合作申请。",
+          "back": "返回经销商页面"
         }
       }
     },

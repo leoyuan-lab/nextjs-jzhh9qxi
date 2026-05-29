@@ -2,32 +2,38 @@ import type { Metadata } from 'next';
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd';
 import { BC_HOME, BC_NAV_SUPPORT } from '@/lib/nav-breadcrumbs';
 import { getSiteLang } from '@/lib/get-site-lang';
+import { getMessages } from '@/lib/messages';
 import { getRequestSiteOrigin } from '@/lib/site-origin';
-import { pageMetadata } from '@/lib/site-seo';
+import { draftRouteRobots, pageMetadata } from '@/lib/site-seo';
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getSiteLang();
   const siteOrigin = await getRequestSiteOrigin();
-  return pageMetadata(
-    'Global Cobot Service',
-    'Global service for Roooll cobots: cross-time-zone engineering, preventive maintenance, long-term spare and repair support, warranty, firmware updates, and self-service resources.',
-    '/support/service',
-    lang,
-    siteOrigin,
-  );
+  const copy = getMessages(lang).pages.support.distributors.login;
+  return {
+    ...pageMetadata(
+      copy.metaTitleFocus,
+      copy.metaDescription,
+      '/support/distributors/login',
+      lang,
+      siteOrigin,
+    ),
+    robots: draftRouteRobots(),
+  };
 }
 
-export default async function SupportServiceLayout({ children }: { children: React.ReactNode }) {
+export default async function DistributorLoginLayout({ children }: { children: React.ReactNode }) {
   const lang = await getSiteLang();
   return (
     <>
       <BreadcrumbJsonLd
         lang={lang}
-        id="jsonld-bc-support-service"
+        id="jsonld-bc-distributor-login"
         items={[
           { href: BC_HOME.href, en: BC_HOME.en },
           { href: BC_NAV_SUPPORT.href, en: BC_NAV_SUPPORT.en },
-          { href: '/support/service', en: 'Global Service Support' },
+          { href: '/support/distributors', en: 'Authorized Distributors' },
+          { href: '/support/distributors/login', en: 'Channel partner sign in' },
         ]}
       />
       {children}

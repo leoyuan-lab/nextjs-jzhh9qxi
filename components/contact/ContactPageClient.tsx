@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { SupportCardIcon } from '@/components/support/SupportCardIcon';
+import { SupportGoldCardLink } from '@/components/support/SupportGoldCard';
+import { SupportIconDistributor } from '@/components/support/SupportIcons';
 import { SupportPageShell } from '@/components/support/SupportPageShell';
 import {
   ContactIconInquiry,
@@ -10,9 +12,12 @@ import {
 } from '@/components/contact/ContactIcons';
 import { getMessages } from '@/lib/messages';
 import { openInquiry } from '@/lib/open-inquiry';
+import {
+  ROOOLl_CONTACT_PHONE_DISPLAY,
+  ROOOLl_CONTACT_PHONE_TEL,
+  ROOOLl_INQUIRY_EMAIL,
+} from '@/lib/site-contact';
 import { useSiteLang } from '@/lib/site-lang-context';
-
-const CONTACT_EMAIL = 'info@roooll.com';
 
 type ContactCardProps = {
   icon: React.ReactNode;
@@ -72,25 +77,37 @@ export function ContactPageClient() {
         <header className="support-hero support-hero--center support-hero--contact">
           <h1 className="roooll-page-hero-title">{copy.heroTitle}</h1>
           <p>{copy.heroBody}</p>
-          <a className="contact-hero-email" href={`mailto:${CONTACT_EMAIL}`}>
-            {copy.emailCta}
-          </a>
+          <div className="contact-hero-direct">
+            <a className="contact-hero-email" href={`mailto:${ROOOLl_INQUIRY_EMAIL}`}>
+              {copy.emailCta}
+            </a>
+            <a className="contact-hero-phone" href={`tel:${ROOOLl_CONTACT_PHONE_TEL}`}>
+              {ROOOLl_CONTACT_PHONE_DISPLAY}
+            </a>
+            <p className="contact-hero-address">{copy.address}</p>
+          </div>
         </header>
 
-        <div className="contact-card-grid">
-          <ContactCard
-            icon={<ContactIconInquiry />}
-            title={copy.cards.inquiry.title}
-            body={copy.cards.inquiry.body}
-            cta={copy.cards.inquiry.cta}
-            onClick={openContactInquiry}
-          />
+        <button
+          type="button"
+          className="support-card support-card--tile support-card--link contact-inquiry-card"
+          onClick={openContactInquiry}
+        >
+          <SupportCardIcon size="large">
+            <ContactIconInquiry />
+          </SupportCardIcon>
+          <h2>{copy.cards.inquiry.title}</h2>
+          <p>{copy.cards.inquiry.body}</p>
+          <span className="support-card-cta">{copy.cards.inquiry.cta} ›</span>
+        </button>
+
+        <div className="contact-card-grid contact-card-grid--duo">
           <ContactCard
             icon={<ContactIconMail />}
             title={copy.cards.email.title}
             body={copy.cards.email.body}
             cta={copy.cards.email.cta}
-            href={`mailto:${CONTACT_EMAIL}`}
+            href={`mailto:${ROOOLl_INQUIRY_EMAIL}`}
           />
           <ContactCard
             icon={<ContactIconSupport />}
@@ -101,12 +118,25 @@ export function ContactPageClient() {
           />
         </div>
 
-        <p className="contact-footnote">
-          {copy.footnote}{' '}
-          <Link href={channelHref} className="contact-footnote-link">
-            {copy.footnoteLink}
-          </Link>
-        </p>
+        <div className="support-card-stack contact-channel-stack">
+          <SupportGoldCardLink
+            href={channelHref}
+            className="support-card--link"
+            badge={copy.channelCard.badge}
+            aria-label={messages.alt.support_distributor}
+          >
+            <div className="support-card-header">
+              <SupportCardIcon size="large">
+                <SupportIconDistributor />
+              </SupportCardIcon>
+              <div className="support-card-copy">
+                <h2>{copy.channelCard.title}</h2>
+                <p>{copy.channelCard.body}</p>
+                <span className="support-card-cta">{copy.channelCard.cta} ›</span>
+              </div>
+            </div>
+          </SupportGoldCardLink>
+        </div>
       </div>
     </SupportPageShell>
   );

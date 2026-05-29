@@ -607,8 +607,9 @@
       "metaDescription": "Contact Roooll Cobot OEM sales, robot integration, quoting, demos, and collaborative robotic arm PoCs via worldwide teams.",
       "logoAlt": "Roooll brand mark on the contact page.",
       "heroTitle": "Contacting Roooll",
-      "heroBody": "Sales, integrations, and partnerships—tell us about your project or reach us directly by email.",
+      "heroBody": "Sales, integrations, and partnerships—tell us about your project or reach us directly.",
       "emailCta": "info@roooll.com",
+      "address": "No. 4 Building Room J, B area, No. 925 Yecheng Rd, Jiading District Shanghai P.R. China 201821",
       "cards": {
         "inquiry": {
           "title": "Project inquiry",
@@ -626,8 +627,12 @@
           "cta": "Get support"
         }
       },
-      "footnote": "Authorized distributors can use the channel partner page for pricing packs and co-marketing assets.",
-      "footnoteLink": "Channel partners"
+      "channelCard": {
+        "badge": "Authorized partners",
+        "title": "Channel partners",
+        "body": "Authorized distributors can use the channel partner page for pricing packs and co-marketing assets.",
+        "cta": "Channel partners"
+      }
     },
     "newsroom": {
       "metaTitleFocus": "Cobot Newsroom & Product Launches",
@@ -736,6 +741,14 @@
             "title": "Two years. Zero guesswork.",
             "body": "Every core component—motors, reducers, and control architecture—is covered by an industry-leading two-year warranty. Backed by a responsive global network dedicated to keeping your line running."
           },
+          "preventive": {
+            "title": "Stay ahead of downtime.",
+            "body": "Planned health checks and guided maintenance catch wear before it stops your line. Remote diagnostics pair with on-site inspections when your program needs them—so surprises stay rare."
+          },
+          "lifetime": {
+            "title": "Built for years, not quarters.",
+            "body": "Your deployment does not end when warranty paperwork does. Regional spare paths, repair programs, and engineering support stay available as your cell matures—keeping earlier r-Series arms productive alongside new installs."
+          },
           "software": {
             "title": "Evolution, automatically.",
             "body": "Your hardware stays ahead of the curve. Benefit from continuous firmware updates, OS optimizations, and open-access SDK enhancements that unlock new capabilities over time."
@@ -784,6 +797,19 @@
             "body": "Roooll is expanding its global distributor network. Tell us about your territory, installed base, and application focus—we will respond within 12 hours.",
             "cta": "Apply for partnership"
           }
+        },
+        "login": {
+          "metaTitleFocus": "Channel Partner Sign In",
+          "metaDescription": "Authorized Roooll distributor sign-in for channel pricing packs and co-marketing resources.",
+          "heroTitle": "Channel partner sign in",
+          "emailLabel": "Email",
+          "emailPlaceholder": "you@company.com",
+          "passwordLabel": "Password",
+          "passwordPlaceholder": "Password",
+          "submit": "Sign in",
+          "errorInvalid": "The email or password you entered is incorrect. Contact your channel manager if you need access.",
+          "note": "Partner accounts are issued after authorization. Not a distributor yet? Apply below on the distributors page.",
+          "back": "Back to distributors"
         }
       }
     },
