@@ -285,7 +285,7 @@ export default function ClientLayout({
     syncRouteDocumentChrome({
       isArm,
       isHome,
-      isStickyScroll: isOurStory,
+      isStickyScroll: isOurStory || isApplicationImmersive,
       isRCoreLite,
       isApplicationImmersive,
     });

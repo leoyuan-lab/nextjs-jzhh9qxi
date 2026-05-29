@@ -414,18 +414,57 @@
       "opener": {
         "kicker": "Roooll Applications",
         "title": "Smart Manufacturing.",
-        "subtitle": "High-mix lines need cobots that deploy fast and keep earning across shifts."
+        "subtitle": "Put repeat, low-value tasks on cobots—so your team owns quality, changeovers, and craft."
       },
-      "ambient": {
-        "eyebrow": "Factory floors",
-        "title": "Relentless takt. Changing SKUs.",
-        "body": "Operators spread across tending, fastening, and transfer—while spindle time waits."
+      "story": {
+        "ariaLabel": "Smart manufacturing collaborative robotic arm value story",
+        "step1": {
+          "kicker": "On the floor",
+          "title": "Keep lines earning—not operators waiting.",
+          "body": "Roooll collaborative arms take on tending, fastening, and transfer—the repeatable beats that drain shifts. Compact cells, fast teach, redeploy when SKUs change. One playbook for CNC doors, assembly fixtures, and welding bays—machines stay productive, people stay in control."
+        },
+        "step2": {
+          "title": "What cobots change on your floor.",
+          "intro": "High mix, tight takt, limited floor space—cells need speed, repeatability, and flexibility—not more fencing and months of integration.",
+          "items": [
+            {
+              "icon": "deploy",
+              "title": "Live the same day",
+              "body": "Roll in, teach waypoints, validate cycle time—without rebuilding the cell for every SKU."
+            },
+            {
+              "icon": "repeat",
+              "title": "Repeatable cadence",
+              "body": "Torque, paths, and pick-place stay consistent—less variation, fewer escapes."
+            },
+            {
+              "icon": "compact",
+              "title": "Compact flexibility",
+              "body": "Fit beside guarding; swap programs and fixtures when the mix changes—not headcount."
+            }
+          ]
+        },
+        "step3": {
+          "title": "More cells. One cobot playbook.",
+          "items": [
+            {
+              "eyebrow": "Skilled welders · Consistent seams",
+              "title": "Welding assist: stable paths, skilled judgment",
+              "body": "Heavy automation for every part isn't practical. Cobots hold repeatable paths while welders own quality, changeovers, and exceptions."
+            },
+            {
+              "eyebrow": "Assembly takt · Torque you can trust",
+              "title": "Screw driving: consistent torque, steady cadence",
+              "body": "Manual fastening drifts with fatigue. Cobots run the program—change SKU, change the recipe, not the line."
+            },
+            {
+              "eyebrow": "Machine tending · Spindle time waiting",
+              "title": "CNC tending: compact load/unload across shifts",
+              "body": "Skilled operators shouldn't spend shifts at the door. Compact arms tend inside the cell—people focus on QC and changeovers."
+            }
+          ]
+        }
       },
-      "painPoints": [
-        "Machine tending ties skilled workers to single stations for entire shifts.",
-        "High-mix routes mean constant retooling and lost spindle time.",
-        "Inspection, handling, and logistics cells compete for the same floor space."
-      ],
       "compare": {
         "title": "A clearer way to run the cell",
         "beforeLabel": "Before",
@@ -433,75 +472,61 @@
         "afterLabel": "With Roooll cobots",
         "after": "Repeatable tending, fastening, and transfer—while people focus on quality and changeovers."
       },
-      "scenarios": {
-        "kicker": "On the floor",
-        "title": "Three cells. One playbook.",
-        "items": [
-          {
-            "title": "Welding assist",
-            "body": "Stable paths and repeatable seams alongside skilled welders."
-          },
-          {
-            "title": "Screw driving",
-            "body": "Consistent torque and cadence on assembly fixtures."
-          },
-          {
-            "title": "CNC tending",
-            "body": "Load and unload across shifts with compact collaborative arms."
-          }
-        ]
-      },
       "stats": {
-        "title": "Numbers that matter on the line",
+        "title": "Commitments you can plan around",
         "items": [
           {
-            "value": "24/7",
-            "label": "Tending that keeps machines earning across shifts."
+            "value": "12h",
+            "label": "Global technical response—clear direction when a line is down."
           },
           {
-            "value": "Minutes",
-            "label": "Teach and redeploy without rebuilding the whole cell."
+            "value": "2-yr",
+            "label": "Limited warranty on core drives—motors, reducers, and control architecture."
           },
           {
-            "value": "One cell",
-            "label": "Cobot, tooling, and control in a compact envelope."
+            "value": "3–5 days",
+            "label": "Standard-config shipment after payment confirmation—pilots don't wait a quarter."
           }
         ]
       },
       "advantages": {
-        "kicker": "Why Roooll",
-        "title": "Built for how lines actually change.",
+        "kicker": "Beyond the cell",
+        "title": "Choose Roooll—not just an arm.",
         "items": [
           {
-            "title": "Fast deploy",
-            "body": "Roll in, teach waypoints, and run the same day."
+            "title": "One r-Series playbook, many cells",
+            "body": "From r-Lite to r-Ultra—same teach flows, flange, and ecosystem. Pilot one cell, scale without a new stack."
           },
           {
-            "title": "Compact",
-            "body": "Fits beside operators and existing guarding."
+            "title": "Integrate what you already run",
+            "body": "TCP/IP, I/O, Modbus for PLC/MES handshakes; Roooll and qualified third-party EOAT paired to your cycle."
           },
           {
-            "title": "Flexible",
-            "body": "Swap fixtures and programs when the SKU mix changes."
+            "title": "Global support, line stays up",
+            "body": "Cross-time-zone engineering with a clear response within 12 hours; spares and a 2-year warranty on core components."
           }
         ]
       },
-      "products": {
+      "specSheet": {
         "kicker": "Pick your arm",
         "title": "Match reach and payload to the cell.",
-        "items": [
-          {
-            "id": "r-lite",
-            "title": "r-Lite",
-            "body": "Compact CNC enclosures, fastening, and line-side transfer."
-          },
-          {
-            "id": "r-ultra",
-            "title": "r-Ultra",
-            "body": "Heavy tending, welding assist, and pallet-side handling."
-          }
+        "columns": {
+          "rLite": "r-Lite",
+          "rUltra": "r-Ultra"
+        },
+        "rows": [
+          { "label": "Rated payload", "rLite": "3 kg (5 kg instant)", "rUltra": "30 kg (35 kg max)" },
+          { "label": "Reach", "rLite": "622 mm", "rUltra": "1402 mm" },
+          { "label": "Repeatability", "rLite": "±0.05 mm", "rUltra": "±0.1 mm" },
+          { "label": "Arm weight", "rLite": "≈12 kg", "rUltra": "≈85 kg" },
+          { "label": "Footprint", "rLite": "φ125 mm base", "rUltra": "240×240 mm" },
+          { "label": "Controller", "rLite": "Base-integrated", "rUltra": "External cabinet" },
+          { "label": "IP rating", "rLite": "IP54", "rUltra": "IP54 (IP65 optional)" },
+          { "label": "Teach", "rLite": "Web App / pendant", "rUltra": "Pendant / mobile terminal" },
+          { "label": "Typical cells", "rLite": "CNC, fastening, line-side transfer", "rUltra": "Heavy tending, welding assist, pallet side" }
         ],
-        "cta": "Explore specs"
+        "ctaLite": "Inquire",
+        "ctaUltra": "Inquire"
       },
       "closing": {
         "title": "Plan your manufacturing cell.",

@@ -9,7 +9,7 @@ function clampProgress(value: number): number {
   return Math.max(0, Math.min(1, value));
 }
 
-function measureProgress(el: HTMLElement, mode: StoryTrackScrollOffset): number {
+export function measureStoryTrackProgress(el: HTMLElement, mode: StoryTrackScrollOffset): number {
   const viewport = window.visualViewport?.height ?? window.innerHeight;
 
   if (mode === 'pin') {
@@ -38,7 +38,7 @@ export function useStoryTrackScrollProgress(
     const update = () => {
       const el = trackRef.current;
       if (!el) return;
-      progress.set(measureProgress(el, mode));
+      progress.set(measureStoryTrackProgress(el, mode));
     };
 
     update();

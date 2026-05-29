@@ -1,9 +1,10 @@
-import { APPLICATION_VIDEOS } from '@/data/application-assets';
+import { APPLICATION_HUB_CARD_IMAGES, APPLICATION_VIDEOS } from '@/data/application-assets';
 
 /** Application page media paths — see `data/application-assets.ts` + `public/applications/`. */
 export const APPLICATION_MANUFACTURING_MEDIA = {
   heroVideo: APPLICATION_VIDEOS.welding,
-  heroPoster: '/images/robots/r-ultra-cobot-fr30-std-hd.webp',
+  /** Mid-timeline frame from welding master — not a product thumbnail. */
+  heroPoster: APPLICATION_HUB_CARD_IMAGES.manufacturing,
   scenarios: [
     {
       id: 'welding',
