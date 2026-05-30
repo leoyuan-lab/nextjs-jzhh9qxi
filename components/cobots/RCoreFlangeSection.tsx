@@ -12,8 +12,11 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
+import { launchArFromUserTap } from '@/lib/ar-preview-launch';
+import { ArSlotAbsorb } from '@/components/cobots/ArSlotAbsorb';
 import { RCoreFlangeHeroStill } from '@/components/cobots/RCoreFlangeHeroStill';
 import { HeroArSpaceIcon } from '@/components/cobots/HeroArSpaceIcon';
+import { detectIosQuickLookDevice } from '@/lib/ar-device';
 import { cobotGlbModels } from '@/data/products';
 import { trackCtaClick } from '@/lib/analytics';
 import {
@@ -21,7 +24,6 @@ import {
   resolveFlangeLayoutMode,
   type FlangeLayoutMode,
 } from '@/lib/ar-device';
-import { launchArPreview } from '@/lib/ar-preview-launch';
 import { getMessages } from '@/lib/messages';
 import type { AppLocale } from '@/lib/messages';
 import { useStoryTrackScrollProgress } from '@/lib/story-scroll-progress';
@@ -156,7 +158,7 @@ function DesktopArHeroOverlay({ title, subtitle }: { title: string; subtitle: st
   );
 }
 
-const AR_VIEWER_HOST_STYLE = {
+const MV_PROGRESS_HIDE = {
   ['--progress-bar-height' as string]: '0px',
   ['--progress-bar-color' as string]: 'transparent',
   ['--ar-button-display' as string]: 'none',
@@ -167,33 +169,53 @@ function FlangeArCurtainTop({
   title,
   subtitle,
   showPill,
-  arLoading,
-  onStartAr,
-  viewerRef,
+  messagesPageKey,
 }: {
   lang: AppLocale;
   title: string;
   subtitle: string;
   showPill: boolean;
-  arLoading: boolean;
-  onStartAr: () => void;
-  viewerRef: RefObject<HTMLElement | null>;
+  messagesPageKey: ImmersiveMessagesPageKey;
 }) {
   const home = getMessages(lang).homepage;
+  const arViewerRef = useRef<HTMLElement | null>(null);
+  const [isIos, setIsIos] = useState(false);
+
+  useEffect(() => {
+    setIsIos(detectIosQuickLookDevice());
+  }, []);
+
+  const onPillClick = () => {
+    trackCtaClick(messagesPageKey === 'r_ultra' ? 'r_ultra_flange_ar' : 'r_lite_flange_ar');
+    launchArFromUserTap(arViewerRef.current, {
+      glb: cobotGlbModels.rLiteFr3CArGlb,
+      usdz: cobotGlbModels.rLiteFr3CArUsdz,
+    });
+  };
 
   return (
     <div className="rcore-ln-flange-curtain-top">
       <div className="rcore-ln-flange-ar-curtain-copy">
         {showPill ? (
-          <div className="rcore-ln-flange-ar-preview" aria-hidden>
+          <div className="rcore-ln-flange-ar-preview">
             <model-viewer
-              ref={viewerRef as MutableRefObject<HTMLElement | null>}
+              ref={arViewerRef as MutableRefObject<HTMLElement | null>}
               className="rcore-ln-flange-ar-preview__viewer"
               src={cobotGlbModels.rLiteFr3CArGlb}
-              ios-src={cobotGlbModels.rLiteFr3CArUsdz}
-              ar
-              ar-modes="webxr scene-viewer quick-look"
-              ar-scale="fixed"
+              {...(isIos
+                ? {
+                    ar: true,
+                    'ios-src': cobotGlbModels.rLiteFr3CArUsdz,
+                    'ar-modes': 'quick-look webxr scene-viewer',
+                    'ar-scale': 'fixed',
+                    'ar-placement': 'floor',
+                  }
+                : {
+                    ar: true,
+                    'ar-modes': 'scene-viewer',
+                    'ar-scale': 'fixed',
+                    'ar-placement': 'floor',
+                  })}
               camera-controls={false}
               auto-rotate
               interaction-prompt="none"
@@ -202,8 +224,10 @@ function FlangeArCurtainTop({
               environment-image="neutral"
               camera-orbit="45deg 78deg 1.15m"
               field-of-view="32deg"
-              style={AR_VIEWER_HOST_STYLE}
-            />
+              style={MV_PROGRESS_HIDE}
+            >
+              {isIos ? <ArSlotAbsorb /> : null}
+            </model-viewer>
           </div>
         ) : null}
         <h2 className="rcore-ln-flange-heading rcore-ln-flange-ar-curtain-title">{title}</h2>
@@ -213,12 +237,9 @@ function FlangeArCurtainTop({
             type="button"
             className="rcore-ln-flange-ar-pill"
             aria-label={home.heroArAria}
-            disabled={arLoading}
-            onClick={onStartAr}
+            onClick={onPillClick}
           >
-            <span className="rcore-ln-flange-ar-pill__label">
-              {arLoading ? home.heroArLoading : home.heroArView}
-            </span>
+            <span className="rcore-ln-flange-ar-pill__label">{home.heroArView}</span>
             <HeroArSpaceIcon />
           </button>
         ) : null}
@@ -295,8 +316,6 @@ export function RCoreFlangeSection({
   sectionAria,
 }: Props) {
   const [layoutMode, setLayoutMode] = useState<FlangeLayoutMode>('no-ar');
-  const [arLoading, setArLoading] = useState(false);
-  const arViewerRef = useRef<HTMLElement | null>(null);
   const reduceMotion = useReducedMotion() === true;
 
   const showArPill =
@@ -308,15 +327,6 @@ export function RCoreFlangeSection({
     window.addEventListener('resize', sync);
     return () => window.removeEventListener('resize', sync);
   }, []);
-
-  const onStartAr = () => {
-    trackCtaClick(messagesPageKey === 'r_ultra' ? 'r_ultra_flange_ar' : 'r_lite_flange_ar');
-    setArLoading(true);
-    launchArPreview(arViewerRef.current, {
-      glb: cobotGlbModels.rLiteFr3CArGlb,
-      usdz: cobotGlbModels.rLiteFr3CArUsdz,
-    }, setArLoading);
-  };
 
   const pullBottomFull = (
     <div className="rcore-ln-flange-curtain-layer rcore-ln-flange-curtain-layer--bottom">
@@ -342,12 +352,10 @@ export function RCoreFlangeSection({
     <div className="rcore-ln-flange-curtain-layer rcore-ln-flange-curtain-layer--top">
       <FlangeArCurtainTop
         lang={lang}
+        messagesPageKey={messagesPageKey}
         title={arCopy.curtain_title}
         subtitle={arCopy.curtain_subtitle}
         showPill={showArPill}
-        arLoading={arLoading}
-        onStartAr={onStartAr}
-        viewerRef={arViewerRef}
       />
     </div>
   );
@@ -365,12 +373,10 @@ export function RCoreFlangeSection({
           <div className="rcore-ln-flange-ar-stack-top">
             <FlangeArCurtainTop
               lang={lang}
+              messagesPageKey={messagesPageKey}
               title={arCopy.curtain_title}
               subtitle={arCopy.curtain_subtitle}
               showPill={showArPill}
-              arLoading={arLoading}
-              onStartAr={onStartAr}
-              viewerRef={arViewerRef}
             />
           </div>
           <div className="rcore-ln-flange-curtain-inner rcore-ln-flange-curtain-inner--pull-full rcore-ln-copy-front">

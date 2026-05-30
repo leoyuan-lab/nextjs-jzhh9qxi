@@ -1,3 +1,9 @@
+/** Android phone or tablet (any browser). */
+export function detectAndroidDevice(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return /Android/i.test(navigator.userAgent);
+}
+
 /** iPhone / iPad / iPod, including iPadOS desktop UA (MacIntel + touch). */
 export function detectIosQuickLookDevice(): boolean {
   if (typeof navigator === 'undefined') return false;

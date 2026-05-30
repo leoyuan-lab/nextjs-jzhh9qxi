@@ -1,4 +1,5 @@
-import { detectIosQuickLookDevice } from '@/lib/ar-device';
+import { detectAndroidDevice, detectIosQuickLookDevice } from '@/lib/ar-device';
+import { openSceneViewerForModel } from '@/lib/scene-viewer-intent';
 
 export type ArPreviewModelSources = {
   glb: string;
@@ -7,72 +8,53 @@ export type ArPreviewModelSources = {
 
 type ModelViewerEl = HTMLElement & {
   activateAR?: () => void;
-  model?: unknown;
-  getAttribute: (name: string) => string | null;
   setAttribute: (name: string, value: string) => void;
-  addEventListener: (
-    type: string,
-    listener: () => void,
-    options?: boolean | AddEventListenerOptions,
-  ) => void;
 };
 
-/**
- * Launch AR from a hidden `<model-viewer>` (user-gesture chain must call this synchronously).
- */
-export function launchArPreview(
-  viewer: ModelViewerEl | null | undefined,
-  sources: ArPreviewModelSources,
-  onLoadingChange: (loading: boolean) => void,
-): void {
-  if (!viewer) {
-    onLoadingChange(false);
-    return;
-  }
-
-  const isIos = detectIosQuickLookDevice();
-
+function ensureModelSources(viewer: ModelViewerEl, sources: ArPreviewModelSources): void {
   if (!viewer.getAttribute('ios-src')) {
     viewer.setAttribute('ios-src', sources.usdz);
   }
   if (!viewer.getAttribute('src')) {
     viewer.setAttribute('src', sources.glb);
   }
+}
 
-  const launch = () => {
-    onLoadingChange(false);
+/**
+ * Preview `<model-viewer>` + external pill.
+ * iOS: `activateAR()` on the preview viewer (real tap).
+ * Android: native Scene Viewer (`ar_only` → `com.google.ar.core`), or `activateAR()` on preview.
+ */
+export function launchArFromUserTap(
+  viewer: ModelViewerEl | null | undefined,
+  sources: ArPreviewModelSources,
+): void {
+  if (detectIosQuickLookDevice()) {
+    if (!viewer) return;
+    ensureModelSources(viewer, sources);
+    viewer.setAttribute('ar-modes', 'quick-look webxr scene-viewer');
     try {
       viewer.activateAR?.();
     } catch {
-      /* Quick Look / Scene Viewer may reject if user gesture chain breaks */
+      /* Quick Look may reject if gesture chain breaks */
     }
-  };
-
-  if (isIos) {
-    launch();
     return;
   }
 
-  const fail = () => onLoadingChange(false);
-  const loadTimeout = window.setTimeout(fail, 20000);
-
-  const onReady = () => {
-    window.clearTimeout(loadTimeout);
-    launch();
-  };
-
-  if (viewer.model) {
-    onReady();
-    return;
+  if (detectAndroidDevice()) {
+    if (viewer) {
+      ensureModelSources(viewer, sources);
+      viewer.setAttribute('ar', '');
+      viewer.setAttribute('ar-modes', 'scene-viewer');
+      viewer.setAttribute('ar-scale', 'fixed');
+      viewer.setAttribute('ar-placement', 'floor');
+      try {
+        viewer.activateAR?.();
+        return;
+      } catch {
+        /* gesture / MV failure → explicit intent */
+      }
+    }
+    openSceneViewerForModel(sources.glb);
   }
-
-  viewer.addEventListener('load', onReady, { once: true });
-  viewer.addEventListener(
-    'error',
-    () => {
-      window.clearTimeout(loadTimeout);
-      fail();
-    },
-    { once: true },
-  );
 }

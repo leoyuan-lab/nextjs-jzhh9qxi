@@ -638,14 +638,49 @@ body.is-sticky-scroll-route {
   height: 100%;
 }
 
-.roooll-home-wrapper .hero-ar-viewer {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 2;
+/* iOS only: AR Quick Look engine — off-screen, must not affect hero layout or show a second model. */
+.roooll-ar-engine-host {
+  position: fixed !important;
+  left: -10000px !important;
+  top: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  max-width: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  border: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: -1 !important;
+  --progress-bar-height: 0px;
+  --progress-bar-color: transparent;
+  --ar-button-display: none;
+}
+
+/* Occupies `slot="ar-button"` so the default AR FAB never paints (ghost icon). */
+.roooll-ar-slot-absorb {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.arm-page-root .rcore-ln-flange-ar-preview__viewer::part(default-ar-button) {
+  display: none !important;
 }
 
 .roooll-home-wrapper .hero-ar-entry-wrap {

@@ -7,6 +7,10 @@ const nextConfig = {
         headers: [{ key: 'Content-Type', value: 'model/vnd.usdz+zip' }],
       },
       {
+        source: '/models/:path*.glb',
+        headers: [{ key: 'Content-Type', value: 'model/gltf-binary' }],
+      },
+      {
         source: '/(.*)',
         headers: [
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },

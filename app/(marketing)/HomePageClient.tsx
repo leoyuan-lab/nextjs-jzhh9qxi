@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useRef, useMemo, type CSSProperties } from 'react';
+import { useState, useEffect, useRef, useMemo, type CSSProperties } from 'react';
 import Image from 'next/image';
 import { LoadingBrandLogo } from '@/components/LoadingBrandLogo';
 import {
@@ -12,9 +12,10 @@ import { useSiteLang } from '@/lib/site-lang-context';
 import { trackCtaClick } from '@/lib/analytics';
 import { openInquiry } from '@/lib/open-inquiry';
 import { R_CORE_LITE_HERO_HD_PATH } from '@/lib/rcore-lite-page-config';
+import { ArSlotAbsorb } from '@/components/cobots/ArSlotAbsorb';
 import { HeroArSpaceIcon } from '@/components/cobots/HeroArSpaceIcon';
-import { isArPreviewCapable } from '@/lib/ar-device';
-import { launchArPreview } from '@/lib/ar-preview-launch';
+import { detectIosQuickLookDevice, isArPreviewCapable } from '@/lib/ar-device';
+import { launchArFromUserTap } from '@/lib/ar-preview-launch';
 import { HomeApplicationsSection } from '@/components/home/HomeApplicationsSection';
 import { HomeSupportTwinVisual } from '@/components/home/HomeSupportTwinVisual';
 import { STORY_CHAPTER_IMAGES } from '@/lib/story-chapter-images';
@@ -38,11 +39,11 @@ export default function HomePageClient() {
   const [showDragHint, setShowDragHint] = useState(false);
   const [isRliteHeroGlbLoaded, setIsRliteHeroGlbLoaded] = useState(false);
   const [enableRultraModel, setEnableRultraModel] = useState(false);
-  const [rliteArLoading, setRliteArLoading] = useState(false);
   const [showHeroArEntry, setShowHeroArEntry] = useState(false);
+  const [mountIosArEngine, setMountIosArEngine] = useState(false);
   const viewerRef5 = useRef<any>(null);
   const viewerRef20 = useRef<any>(null);
-  const rliteArViewerRef = useRef<any>(null);
+  const rliteArEngineRef = useRef<HTMLElement | null>(null);
   /** Joint spin loop id (`requestAnimationFrame`); cleared with `cancelAnimationFrame`. */
   const flangeSpinTimerRef = useRef<number | null>(null);
   const jointSpinActiveRef = useRef(false);
@@ -85,24 +86,10 @@ export default function HomePageClient() {
   useEffect(() => {
     const syncHeroArEntry = () => setShowHeroArEntry(isArPreviewCapable());
     syncHeroArEntry();
+    setMountIosArEngine(detectIosQuickLookDevice());
     window.addEventListener('resize', syncHeroArEntry);
     return () => window.removeEventListener('resize', syncHeroArEntry);
   }, []);
-
-  const startRliteAr = () => {
-    trackCtaClick('home_hero1_ar');
-    setRliteArLoading(true);
-    const run = () =>
-      launchArPreview(
-        rliteArViewerRef.current,
-        { glb: cobotGlbModels.rLiteFr3CArGlb, usdz: cobotGlbModels.rLiteFr3CArUsdz },
-        setRliteArLoading,
-      );
-    if (rliteArViewerRef.current) run();
-    else requestAnimationFrame(run);
-  };
-
-  const rliteArLabel = rliteArLoading ? home.heroArLoading : home.heroArView;
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -475,23 +462,6 @@ export default function HomePageClient() {
               } as any
             }
           />
-          {isLoaded ? (
-            <model-viewer
-              ref={rliteArViewerRef}
-              className="hero-ar-viewer"
-              alt={altHeroRliteGlb}
-              ar
-              ar-modes="webxr scene-viewer quick-look"
-              ar-scale="fixed"
-              ar-placement="floor"
-              loading="lazy"
-              reveal="auto"
-              camera-controls
-              environment-image="neutral"
-              shadow-intensity="0.9"
-              interaction-prompt="none"
-            />
-          ) : null}
         </div>
         <div className={`drag-hint ${showDragHint ? 'show' : ''}`}>{home.dragHint}</div>
         <div className="content-limit">
@@ -526,10 +496,15 @@ export default function HomePageClient() {
                     type="button"
                     className="hero-ar-entry"
                     aria-label={home.heroArAria}
-                    disabled={rliteArLoading}
-                    onClick={startRliteAr}
+                    onClick={() => {
+                      trackCtaClick('home_hero1_ar');
+                      launchArFromUserTap(rliteArEngineRef.current, {
+                        glb: cobotGlbModels.rLiteFr3CArGlb,
+                        usdz: cobotGlbModels.rLiteFr3CArUsdz,
+                      });
+                    }}
                   >
-                    <span className="hero-ar-entry__label">{rliteArLabel}</span>
+                    <span className="hero-ar-entry__label">{home.heroArView}</span>
                     <HeroArSpaceIcon />
                   </button>
                 </div>
@@ -537,6 +512,33 @@ export default function HomePageClient() {
             </div>
           </div>
         </div>
+        {isLoaded && showHeroArEntry && mountIosArEngine ? (
+          <model-viewer
+            ref={rliteArEngineRef}
+            className="roooll-ar-engine-host"
+            src={cobotGlbModels.rLiteFr3CArGlb}
+            ios-src={cobotGlbModels.rLiteFr3CArUsdz}
+            alt={altHeroRliteGlb}
+            ar
+            ar-modes="quick-look webxr scene-viewer"
+            ar-scale="fixed"
+            ar-placement="floor"
+            loading="eager"
+            interaction-prompt="none"
+            camera-controls={false}
+            environment-image="neutral"
+            shadow-intensity="0.9"
+            style={
+              {
+                ['--progress-bar-height' as string]: '0px',
+                ['--progress-bar-color' as string]: 'transparent',
+                ['--ar-button-display' as string]: 'none',
+              } as CSSProperties
+            }
+          >
+            <ArSlotAbsorb />
+          </model-viewer>
+        ) : null}
       </section>
 
       {/* 屏2: r-ultra（r-ultra-cobot-fr30.glb） */}
