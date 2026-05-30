@@ -1,9 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import { LoadingBrandLogo } from '@/components/LoadingBrandLogo';
 import { RooollBrandMark } from '@/components/RooollBrandMark';
-import { SUPPORT_SERVICE_ATMOSPHERE_FRAME } from '@/lib/support-service-media';
+import { SupportServiceAtmosphere } from '@/components/support/SupportServiceAtmosphere';
 import { getMessages } from '@/lib/messages';
 import { useSiteLang } from '@/lib/site-lang-context';
 
@@ -38,19 +37,7 @@ export function SupportPageShell({
     <div
       className={`support-page-root${isChannel ? ' support-page-root--channel' : ''}${isServiceAtmosphere ? ' support-page-root--service-atmosphere' : ''}${showLogo ? '' : ' support-page-root--no-logo'}`}
     >
-      {isServiceAtmosphere ? (
-        <div className="support-page-atmosphere" aria-hidden>
-          <Image
-            src={SUPPORT_SERVICE_ATMOSPHERE_FRAME}
-            alt={atmosphereAlt}
-            fill
-            sizes="100vw"
-            className="support-page-atmosphere__img"
-            priority
-          />
-          <div className="support-page-atmosphere__dim" />
-        </div>
-      ) : null}
+      {isServiceAtmosphere ? <SupportServiceAtmosphere alt={atmosphereAlt} /> : null}
       {isChannel ? <div className="support-channel-band" aria-hidden /> : null}
       {showLogo ? (
         <div

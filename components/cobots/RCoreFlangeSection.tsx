@@ -7,6 +7,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type CSSProperties,
   type MutableRefObject,
   type ReactNode,
   type RefObject,
@@ -155,6 +156,12 @@ function DesktopArHeroOverlay({ title, subtitle }: { title: string; subtitle: st
   );
 }
 
+const AR_VIEWER_HOST_STYLE = {
+  ['--progress-bar-height' as string]: '0px',
+  ['--progress-bar-color' as string]: 'transparent',
+  ['--ar-button-display' as string]: 'none',
+} as CSSProperties;
+
 function FlangeArCurtainTop({
   lang,
   title,
@@ -162,6 +169,7 @@ function FlangeArCurtainTop({
   showPill,
   arLoading,
   onStartAr,
+  viewerRef,
 }: {
   lang: AppLocale;
   title: string;
@@ -169,31 +177,52 @@ function FlangeArCurtainTop({
   showPill: boolean;
   arLoading: boolean;
   onStartAr: () => void;
+  viewerRef: RefObject<HTMLElement | null>;
 }) {
   const home = getMessages(lang).homepage;
 
   return (
     <div className="rcore-ln-flange-curtain-top">
       <div className="rcore-ln-flange-ar-curtain-copy">
+        {showPill ? (
+          <div className="rcore-ln-flange-ar-preview" aria-hidden>
+            <model-viewer
+              ref={viewerRef as MutableRefObject<HTMLElement | null>}
+              className="rcore-ln-flange-ar-preview__viewer"
+              src={cobotGlbModels.rLiteFr3CArGlb}
+              ios-src={cobotGlbModels.rLiteFr3CArUsdz}
+              ar
+              ar-modes="webxr scene-viewer quick-look"
+              ar-scale="fixed"
+              camera-controls={false}
+              auto-rotate
+              interaction-prompt="none"
+              shadow-intensity="0.85"
+              exposure="1"
+              environment-image="neutral"
+              camera-orbit="45deg 78deg 1.15m"
+              field-of-view="32deg"
+              style={AR_VIEWER_HOST_STYLE}
+            />
+          </div>
+        ) : null}
         <h2 className="rcore-ln-flange-heading rcore-ln-flange-ar-curtain-title">{title}</h2>
         <p className="rcore-ln-flange-ar-curtain-sub">{subtitle}</p>
+        {showPill ? (
+          <button
+            type="button"
+            className="rcore-ln-flange-ar-pill"
+            aria-label={home.heroArAria}
+            disabled={arLoading}
+            onClick={onStartAr}
+          >
+            <span className="rcore-ln-flange-ar-pill__label">
+              {arLoading ? home.heroArLoading : home.heroArView}
+            </span>
+            <HeroArSpaceIcon />
+          </button>
+        ) : null}
       </div>
-      {showPill ? (
-        <button
-          type="button"
-          className="rcore-ln-flange-ar-pill"
-          aria-label={home.heroArAria}
-          disabled={arLoading}
-          onClick={onStartAr}
-        >
-          <span className="rcore-ln-flange-ar-pill__label">
-            {arLoading ? home.heroArLoading : home.heroArView}
-          </span>
-          <HeroArSpaceIcon />
-        </button>
-      ) : (
-        <div className="rcore-ln-flange-ar-pill-spacer" aria-hidden />
-      )}
     </div>
   );
 }
@@ -307,6 +336,8 @@ export function RCoreFlangeSection({
     </div>
   );
 
+  const arScript = showArPill ? <ModelViewerScript /> : null;
+
   const arTop = (
     <div className="rcore-ln-flange-curtain-layer rcore-ln-flange-curtain-layer--top">
       <FlangeArCurtainTop
@@ -316,6 +347,7 @@ export function RCoreFlangeSection({
         showPill={showArPill}
         arLoading={arLoading}
         onStartAr={onStartAr}
+        viewerRef={arViewerRef}
       />
     </div>
   );
@@ -323,27 +355,7 @@ export function RCoreFlangeSection({
   if (layoutMode === 'ar-small') {
     return (
       <>
-        {showArPill ? (
-          <>
-            <ModelViewerScript />
-            <model-viewer
-              ref={(el) => {
-                arViewerRef.current = el;
-              }}
-              className="rcore-ln-flange-ar-viewer-host"
-              ar
-              ar-modes="webxr scene-viewer quick-look"
-              ar-scale="fixed"
-              camera-controls={false}
-              interaction-prompt="none"
-              shadow-intensity="0"
-              exposure="1"
-              environment-image="neutral"
-              tabIndex={-1}
-              aria-hidden
-            />
-          </>
-        ) : null}
+        {arScript}
         <section
           ref={(node) => assignSectionRef(sectionRef, node)}
           className="rcore-ln-section rcore-ln-section--flange rcore-ln-section--flange-ar-stack"
@@ -358,6 +370,7 @@ export function RCoreFlangeSection({
               showPill={showArPill}
               arLoading={arLoading}
               onStartAr={onStartAr}
+              viewerRef={arViewerRef}
             />
           </div>
           <div className="rcore-ln-flange-curtain-inner rcore-ln-flange-curtain-inner--pull-full rcore-ln-copy-front">
@@ -377,27 +390,7 @@ export function RCoreFlangeSection({
   if (layoutMode === 'ar-large') {
     return (
       <>
-        {showArPill ? (
-          <>
-            <ModelViewerScript />
-            <model-viewer
-              ref={(el) => {
-                arViewerRef.current = el;
-              }}
-              className="rcore-ln-flange-ar-viewer-host"
-              ar
-              ar-modes="webxr scene-viewer quick-look"
-              ar-scale="fixed"
-              camera-controls={false}
-              interaction-prompt="none"
-              shadow-intensity="0"
-              exposure="1"
-              environment-image="neutral"
-              tabIndex={-1}
-              aria-hidden
-            />
-          </>
-        ) : null}
+        {arScript}
         <FlangeCurtainPull
           ariaLabel={sectionAria}
           sectionRef={sectionRef}

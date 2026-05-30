@@ -2100,11 +2100,12 @@ body.is-sticky-scroll-route {
 }
 
 .arm-page-root .rcore-ln-flange-ar-curtain-copy {
+  --rcore-ln-ar-stack-gap: clamp(10px, 1.8vh, 16px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(10px, 1.8vh, 16px);
-  max-width: min(22ch, 92vw);
+  gap: var(--rcore-ln-ar-stack-gap);
+  max-width: min(38ch, 92vw);
 }
 
 .arm-page-root .rcore-ln-flange-ar-curtain-title.rcore-ln-flange-heading {
@@ -2128,8 +2129,20 @@ body.is-sticky-scroll-route {
   text-wrap: pretty;
 }
 
-.arm-page-root .rcore-ln-flange-ar-pill-spacer {
-  min-height: 44px;
+/* AR preview — intentional placement above “See how” title (same stack gap as title → subtitle). */
+.arm-page-root .rcore-ln-flange-ar-preview {
+  width: min(300px, 86vw);
+  height: clamp(168px, 30vh, 240px);
+  margin: 0;
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-ln-flange-ar-preview__viewer {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  --ar-button-display: none;
 }
 
 .arm-page-root .rcore-ln-flange-ar-pill {
@@ -2164,16 +2177,6 @@ body.is-sticky-scroll-route {
 
 .arm-page-root .rcore-ln-flange-ar-pill__label {
   line-height: 1.2;
-}
-
-.arm-page-root .rcore-ln-flange-ar-viewer-host {
-  position: fixed;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: -1;
 }
 
 .arm-page-root .rcore-ln-flange-curtain-static {
@@ -2273,6 +2276,36 @@ body.is-sticky-scroll-route {
   .arm-page-root .rcore-ln-section--flange-curtain:has(+ .rcore-ln-section--flange-features-tail) {
     padding-top: 0;
     padding-bottom: 0;
+  }
+
+  /* Mobile AR + Strength stack: pull block up, no divider before Strength */
+  .arm-page-root .rcore-ln-section--flange-ar-stack {
+    padding-top: 0;
+    margin-top: -5vh;
+  }
+
+  /* AR pill → Strength：与蓝图段底 ↔ Application 段顶同节奏（pad-after + pad-before） */
+  .arm-page-root .rcore-ln-flange-ar-stack-top {
+    padding: clamp(10px, 2.2vh, 24px) 0 0;
+    border-bottom: none;
+    margin-bottom: var(--rcore-ln-pad-after);
+  }
+
+  .arm-page-root .rcore-ln-section--flange-ar-stack .rcore-ln-flange-curtain-inner--pull-full {
+    padding-top: var(--rcore-ln-pad-before);
+    padding-left: clamp(4px, 1vw, 12px);
+    padding-right: clamp(4px, 1vw, 12px);
+    padding-bottom: clamp(24px, 4vh, 40px);
+  }
+
+  .arm-page-root .rcore-ln-section--flange-ar-stack .rcore-ln-flange-intro-head--pull {
+    margin-bottom: clamp(26px, 5.5vh, 44px);
+    text-align: center;
+    align-items: center;
+  }
+
+  .arm-page-root .rcore-ln-section--flange-ar-stack .rcore-ln-flange-curtain-inner--pull-full .rcore-ln-flange-strip {
+    padding-top: clamp(20px, 4vh, 36px);
   }
 
   .arm-page-root .rcore-ln-flange-features-act {
@@ -5032,7 +5065,7 @@ h1.roooll-page-hero-title {
   gap: 0;
 }
 
-/* Support /service — darkened sunrise frame, full-bleed; mobile safe-area stays clear. */
+/* Support /service — orbital sunrise video + static frame fallback; mobile safe-area stays clear. */
 .support-page-root--service-atmosphere {
   background: transparent;
 }
@@ -5049,11 +5082,23 @@ h1.roooll-page-hero-title {
   background: #030303;
 }
 
-.support-page-atmosphere .support-page-atmosphere__img {
+.support-page-atmosphere .support-page-atmosphere__img,
+.support-page-atmosphere__video {
   position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .support-page-atmosphere__img {
+  z-index: 0;
+  object-fit: cover;
+  object-position: center 58%;
+}
+
+.support-page-atmosphere__video {
+  z-index: 1;
+  display: block;
   object-fit: cover;
   object-position: center 58%;
 }
@@ -5061,6 +5106,7 @@ h1.roooll-page-hero-title {
 .support-page-atmosphere__dim {
   position: absolute;
   inset: 0;
+  z-index: 2;
   background: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0.35) 0%,

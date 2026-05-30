@@ -24,6 +24,7 @@ import {
   filmAdv3RollOutOffsetPx,
   isFilmAdv3RollOutActive,
   rcoreViewerLightingAttrs,
+  shouldShowScrollFilmGlb,
 } from '@/lib/rcore-scroll-cameras';
 import { getMessages } from '@/lib/messages';
 import type { AppLocale } from '@/lib/messages';
@@ -48,10 +49,6 @@ function clamp01(x: number): number {
 function smoothstep(edge0: number, edge1: number, x: number): number {
   const t = clamp01((x - edge0) / (edge1 - edge0));
   return t * t * (3 - 2 * t);
-}
-
-function intersectsViewport(rect: DOMRect, vh: number): boolean {
-  return rect.bottom > 0 && rect.top < vh;
 }
 
 export type CobotImmersivePageClientProps = {
@@ -174,14 +171,14 @@ export function CobotImmersivePageClient({
       const vh = window.innerHeight;
       const reduced = mq.matches;
 
-      const filmRect = film?.getBoundingClientRect();
       const appRect = app?.getBoundingClientRect();
       const rootRect = lnRoot?.getBoundingClientRect();
 
       const scrollY = window.scrollY;
-      const filmVisible = filmRect ? intersectsViewport(filmRect, vh) : false;
       const filmSlice = film ? computeFilmScrollSlice(film, reduced) : null;
-      const adv3RollOut = film ? isFilmAdv3RollOutActive(film, scrollY, reduced) : false;
+      const filmGlbActive = film ? shouldShowScrollFilmGlb(film, reduced, scrollY) : false;
+      const adv3RollOut =
+        filmGlbActive && film ? isFilmAdv3RollOutActive(film, scrollY, reduced) : false;
 
       const pastNarrative = rootRect ? rootRect.bottom < vh * 0.18 : false;
       const appEntered = appRect ? appRect.top < vh * 0.5 && appRect.bottom > 0 : false;
@@ -195,7 +192,7 @@ export function CobotImmersivePageClient({
         return;
       }
 
-      if ((filmVisible && film && filmSlice) || (film && filmSlice && adv3RollOut)) {
+      if (filmGlbActive && film && filmSlice) {
         setStageVisible(true, false);
         applyRcoreViewerLighting(mv, viewerLightingPreset);
 
