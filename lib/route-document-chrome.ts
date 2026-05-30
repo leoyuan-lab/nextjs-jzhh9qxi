@@ -3,7 +3,7 @@
 export type RouteDocumentChromeOptions = {
   isArm: boolean;
   isHome: boolean;
-  /** Our Story curtain-pull: sticky pin requires visible overflow on html/body. */
+  /** Our Story + arm immersive (scroll film / flange curtain): sticky pin needs visible overflow on html/body. */
   isStickyScroll?: boolean;
   /** r-Core lite: transparent html/body so mobile home-indicator band shows scroll layer. */
   isRCoreLite?: boolean;
@@ -21,7 +21,7 @@ export function syncRouteDocumentChrome({
   if (typeof document === 'undefined') return;
 
   const darkImmersive = isArm || isApplicationImmersive;
-  const overflowX = isStickyScroll ? 'visible' : darkImmersive ? 'clip' : 'hidden';
+  const overflowX = isStickyScroll || isArm ? 'visible' : darkImmersive ? 'clip' : 'hidden';
   document.documentElement.style.overflowX = overflowX;
   document.body.style.overflowX = overflowX;
   document.documentElement.classList.toggle('is-arm-immersive-route', isArm);
@@ -58,15 +58,14 @@ export function applyArmInquiryScrollLock(
     overscrollHtml: html.style.overscrollBehavior,
   };
 
-  html.style.overflow = 'hidden';
+  /* Lock vertical scroll only — `overflow: hidden` on html breaks sticky pin + arm film scroll. */
   html.style.overflowY = 'hidden';
-  body.style.overflow = 'hidden';
   body.style.overflowY = 'hidden';
   body.style.overscrollBehavior = 'none';
   html.style.overscrollBehavior = 'none';
 
   if (isArm) {
-    syncRouteDocumentChrome({ isArm: true, isHome });
+    syncRouteDocumentChrome({ isArm: true, isHome, isStickyScroll: true });
   }
 
   return {
@@ -78,7 +77,7 @@ export function applyArmInquiryScrollLock(
       body.style.overscrollBehavior = prev.overscrollBody;
       html.style.overscrollBehavior = prev.overscrollHtml;
       if (isArm) {
-        syncRouteDocumentChrome({ isArm: true, isHome });
+        syncRouteDocumentChrome({ isArm: true, isHome, isStickyScroll: true });
       }
     },
   };

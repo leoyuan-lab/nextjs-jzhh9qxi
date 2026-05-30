@@ -24,13 +24,39 @@ export function detectAndroidTabletDevice(): boolean {
   );
 }
 
+/** Shortest viewport edge under 600px — phone-class AR layout (two-act curtain). */
+export function isSmallArViewport(): boolean {
+  if (typeof window === 'undefined') return false;
+  return Math.min(window.innerWidth, window.innerHeight) < 600;
+}
+
 /**
- * Home hero AR entry: phones (Scene Viewer / Quick Look) and tablets above the 734px phone layout.
+ * Devices that can launch Quick Look / Scene Viewer AR (phones, tablets).
  * Desktop browsers without AR are excluded.
  */
-export function isHomeHeroArCapable(): boolean {
+export function isArPreviewCapable(): boolean {
   if (typeof window === 'undefined') return false;
   if (detectIosQuickLookDevice()) return true;
   if (detectAndroidTabletDevice()) return true;
   return window.matchMedia('(max-width: 734px)').matches;
+}
+
+/** @deprecated Use `isArPreviewCapable` */
+export function isHomeHeroArCapable(): boolean {
+  return isArPreviewCapable();
+}
+
+/** In-app browsers often block AR deep links. */
+export function detectInAppBrowser(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent;
+  return /MicroMessenger|WeChat|FBAN|FBAV|Instagram|Line\//i.test(ua);
+}
+
+export type FlangeLayoutMode = 'no-ar' | 'ar-large' | 'ar-small';
+
+export function resolveFlangeLayoutMode(): FlangeLayoutMode {
+  if (!isArPreviewCapable()) return 'no-ar';
+  if (isSmallArViewport()) return 'ar-small';
+  return 'ar-large';
 }

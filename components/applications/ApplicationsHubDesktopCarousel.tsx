@@ -476,7 +476,14 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: ApplicationsHub
                 </div>
                 <div className={`app-hub-carousel-hero-title app-hub-carousel-hero-title--${place}`}>
                   <h2 className="app-hub-carousel-hero-heading">{copy.cardTitle(card.id)}</h2>
-                  <p className="app-hub-carousel-summary">{copy.cardSummary(card.id)}</p>
+                  <div className="app-hub-carousel-summaries">
+                    <p className="app-hub-carousel-summary app-hub-carousel-summary--scenes">
+                      {copy.cardScenes(card.id)}
+                    </p>
+                    <p className="app-hub-carousel-summary app-hub-carousel-summary--capabilities">
+                      {copy.cardCapabilities(card.id)}
+                    </p>
+                  </div>
                 </div>
                 <div className="app-hub-carousel-foot">
                   <Link

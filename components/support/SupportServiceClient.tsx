@@ -90,7 +90,7 @@ export function SupportServiceClient() {
     });
 
   return (
-    <SupportPageShell>
+    <SupportPageShell atmosphere="service">
       <div className="support-service-page">
         <header className="support-hero support-hero--center support-hero--service">
           <h1>{copy.heroTitle}</h1>

@@ -113,12 +113,37 @@ export function filmAdv3RollOutOffsetPx(filmEl: HTMLElement, scrollY: number): n
   return -Math.min(dragged, maxDrag);
 }
 
+/** Scroll-film block mostly above the viewport — safe to hide the fixed hero GLB. */
+export function isScrollFilmPast(filmEl: HTMLElement | null, vh?: number): boolean {
+  if (!filmEl || typeof window === 'undefined') return false;
+  const h = vh ?? window.innerHeight;
+  return filmEl.getBoundingClientRect().bottom <= h * 0.1;
+}
+
+/** Fixed hero GLB only while scroll-film progress is still in the pinned narrative (not the flange gap). */
+export function shouldShowScrollFilmGlb(
+  filmEl: HTMLElement | null,
+  reducedMotion: boolean,
+  scrollY: number,
+): boolean {
+  if (!filmEl || isScrollFilmPast(filmEl)) return false;
+  if (reducedMotion) {
+    const { progress } = computeFilmScrollSlice(filmEl, reducedMotion);
+    return progress < 0.995;
+  }
+  const { progress } = computeFilmScrollSlice(filmEl, reducedMotion);
+  if (progress < 0.995) return true;
+  const { exitEndY } = filmAdv3RollOutMetrics(filmEl);
+  const { vh } = filmScrollMetrics(filmEl);
+  return scrollY <= exitEndY + vh * 0.5;
+}
+
 export function isFilmAdv3RollOutActive(
   filmEl: HTMLElement,
   scrollY: number,
   reducedMotion: boolean,
 ): boolean {
-  if (reducedMotion) return false;
+  if (reducedMotion || !shouldShowScrollFilmGlb(filmEl, reducedMotion, scrollY)) return false;
   const slice = computeFilmScrollSlice(filmEl, reducedMotion);
   if (slice.si !== 3) return false;
   const { exitStartY, exitEndY } = filmAdv3RollOutMetrics(filmEl);

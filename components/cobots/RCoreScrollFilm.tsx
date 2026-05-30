@@ -130,7 +130,10 @@ export function RCoreScrollFilm({
 
     const fixedStage = fixedStageRef.current;
     if (fixedStage) {
-      fixedStage.classList.toggle('is-interactive', si === 0 && !reduce);
+      /* Desktop: full-viewport model-viewer with pointer-events eats wheel — page never scrolls off hero. */
+      const coarsePointer =
+        typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+      fixedStage.classList.toggle('is-interactive', si === 0 && !reduce && coarsePointer);
     }
 
     const advIndex = si >= 1 && si <= advCount ? si - 1 : -1;

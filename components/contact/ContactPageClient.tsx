@@ -12,11 +12,7 @@ import {
 } from '@/components/contact/ContactIcons';
 import { getMessages } from '@/lib/messages';
 import { openInquiry } from '@/lib/open-inquiry';
-import {
-  ROOOLl_CONTACT_PHONE_DISPLAY,
-  ROOOLl_CONTACT_PHONE_TEL,
-  ROOOLl_INQUIRY_EMAIL,
-} from '@/lib/site-contact';
+import { ROOOLl_INQUIRY_EMAIL } from '@/lib/site-contact';
 import { useSiteLang } from '@/lib/site-lang-context';
 
 type ContactCardProps = {
@@ -80,9 +76,6 @@ export function ContactPageClient() {
           <div className="contact-hero-direct">
             <a className="contact-hero-email" href={`mailto:${ROOOLl_INQUIRY_EMAIL}`}>
               {copy.emailCta}
-            </a>
-            <a className="contact-hero-phone" href={`tel:${ROOOLl_CONTACT_PHONE_TEL}`}>
-              {ROOOLl_CONTACT_PHONE_DISPLAY}
             </a>
             <p className="contact-hero-address">{copy.address}</p>
           </div>

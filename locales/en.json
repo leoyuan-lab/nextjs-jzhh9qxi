@@ -393,17 +393,21 @@
       "learnMore": "Learn more",
       "cards": {
         "retail_service": {
-          "summary": "Front-house service, dispensing, and compact kiosk cells."
+          "scenes": "Dessert counters · Beverage stations · Smart dining · Front-of-house",
+          "capabilities": "Dispensing · Batch prep · Compact cells · Collaborative tending"
         },
         "manufacturing": {
           "title": "Smart Manufacture",
-          "summary": "Tending, fastening, and transfer across high-mix factory lines."
+          "scenes": "3C · Automotive · Semiconductor · Hardware & appliances · Machinery",
+          "capabilities": "Pick-and-place · Fastening · Transfer · Line balancing"
         },
         "medical_lab": {
-          "summary": "Bench automation, repeatable handling, and ISO-ready workflows."
+          "scenes": "Diagnostics · Sample handling · Life-science labs · MedTech",
+          "capabilities": "Bench automation · Repeatable loading · Clean workflows · ISO-ready"
         },
         "education": {
-          "summary": "Curriculum-ready cobots for labs, research, and embodied AI demos."
+          "scenes": "Research labs · Universities · Embodied AI · Skills competitions",
+          "capabilities": "Teach & program · Open SDK · Light deployment · Safe collaboration"
         }
       }
     },
@@ -1005,6 +1009,10 @@
         "scenario_image_alt": "r-Lite collaborative robot cobot product scene, showing integrated collaborative robotic arm form factor in a typical deployment.",
         "flange_section_kicker": "Built in, not bolted on",
         "flange_section_title": "Strength in every layer.",
+        "flange_ar_desktop_title": "Want to see it in your space?",
+        "flange_ar_desktop_subtitle": "Open this page on your phone or tablet to use our AR preview.",
+        "flange_ar_curtain_title": "See how it fits on your line.",
+        "flange_ar_curtain_subtitle": "See the real arm 1:1 on your production line—confirm fit, cycle time, and floor space before you commit.",
         "flange_strip": [
           {
             "title": "Advanced safety",
@@ -1139,6 +1147,10 @@
         "scenario_image_alt": "r-Ultra collaborative robot cobot product scene, showing high-payload collaborative robotic arm form factor in a typical deployment.",
         "flange_section_kicker": "Built in, not bolted on",
         "flange_section_title": "Strength at industrial scale.",
+        "flange_ar_desktop_title": "Want to see it in your space?",
+        "flange_ar_desktop_subtitle": "Open this page on your phone or tablet to use our AR preview.",
+        "flange_ar_curtain_title": "See how it fits on your line.",
+        "flange_ar_curtain_subtitle": "See the real arm 1:1 on your production line—confirm fit, cycle time, and floor space before you commit.",
         "flange_strip": [
           {
             "title": "ROS/ROS2 native",
@@ -1223,6 +1235,7 @@
     "r_lite_detail_elbow": "Roooll r-Lite collaborative robot (integrated controller) elbow joint detail—motion control and payload trajectory.",
     "r_lite_detail_wrist": "Roooll r-Lite collaborative robot (integrated controller) wrist joint detail—pose accuracy and safe collaboration.",
     "support_service_hero": "Roooll r-Core collaborative robot (standard), 5kg payload, 922mm reach—global service and field support for collaborative robotic arms.",
+    "support_service_atmosphere": "Orbital sunrise over Earth's horizon—atmospheric background for Roooll global service support.",
     "support_manual": "Manual and documentation download for Roooll r-Series collaborative robotic arms.",
     "support_distributor": "Authorized Roooll distributor and channel partner resources.",
     "story_chapter_opening": "The Roooll brand mark centered on a dark minimalist field—Our Story opening.",

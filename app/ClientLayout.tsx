@@ -285,7 +285,7 @@ export default function ClientLayout({
     syncRouteDocumentChrome({
       isArm,
       isHome,
-      isStickyScroll: isOurStory || isApplicationImmersive,
+      isStickyScroll: isOurStory || isApplicationImmersive || isArm,
       isRCoreLite,
       isApplicationImmersive,
     });
@@ -529,7 +529,13 @@ export default function ClientLayout({
   useEffect(() => {
     if (mobileMenuVisible || isMobileMenuOpen) return;
     if (!isArm && !isApplicationImmersive) return;
-    syncRouteDocumentChrome({ isArm, isHome, isRCoreLite, isApplicationImmersive });
+    syncRouteDocumentChrome({
+      isArm,
+      isHome,
+      isStickyScroll: isArm || isApplicationImmersive,
+      isRCoreLite,
+      isApplicationImmersive,
+    });
     requestAnimationFrame(() => {
       window.dispatchEvent(new Event('resize'));
     });
@@ -1130,7 +1136,9 @@ export default function ClientLayout({
             min-height: 100%;
           }
           body { margin: 0; overflow-x: hidden; }
-          html.is-arm-immersive-route, body.is-arm-immersive-route { overflow-x: clip; }
+          /* arm / sticky scroll: visible — clip breaks document scroll + sticky film (globals + route-document-chrome) */
+          html.is-arm-immersive-route, body.is-arm-immersive-route { overflow-x: visible; }
+          html.is-sticky-scroll-route, body.is-sticky-scroll-route { overflow-x: visible !important; }
           .nav-container { width: 100%; max-width: var(--roooll-w); margin: 0 auto; padding: 0 22px; display: flex; justify-content: space-between; align-items: center; height: 100%; box-sizing: border-box; }
           .roooll-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); z-index: var(--z-nav); transition: transform 0.78s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s ease, color 0.32s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
           .roooll-nav.slide-up { transform: translateY(-104%); opacity: 0; pointer-events: none; }

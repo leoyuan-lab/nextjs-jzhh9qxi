@@ -12,58 +12,23 @@ import { useSiteLang } from '@/lib/site-lang-context';
 import { trackCtaClick } from '@/lib/analytics';
 import { openInquiry } from '@/lib/open-inquiry';
 import { R_CORE_LITE_HERO_HD_PATH } from '@/lib/rcore-lite-page-config';
-import { detectIosQuickLookDevice, isHomeHeroArCapable } from '@/lib/ar-device';
+import { HeroArSpaceIcon } from '@/components/cobots/HeroArSpaceIcon';
+import { isArPreviewCapable } from '@/lib/ar-device';
+import { launchArPreview } from '@/lib/ar-preview-launch';
 import { HomeApplicationsSection } from '@/components/home/HomeApplicationsSection';
+import { HomeSupportTwinVisual } from '@/components/home/HomeSupportTwinVisual';
 import { STORY_CHAPTER_IMAGES } from '@/lib/story-chapter-images';
 
 function familyTitle(familyId: string) {
   return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
 }
 
-/** Support twin panel — matches service page hero asset. */
-const HOME_SUPPORT_TWIN_IMAGE = '/images/robots/r-core-cobot-fr5-std-hd.webp';
 /** Story twin panel — brand narrative visual from Our Story. */
 const HOME_STORY_TWIN_IMAGE = STORY_CHAPTER_IMAGES.people;
 
 /** After load: loading exit (~1300ms) + short beat — then ephemeral 360 hint (desktop only). */
 const DRAG_HINT_SHOW_DELAY_MS = 1800;
 const DRAG_HINT_VISIBLE_MS = 2500;
-
-function HeroArSpaceIcon() {
-  /* Matches Apple Quick Look “View in your space” AR glyph (cube + corner brackets). */
-  return (
-    <svg
-      className="hero-ar-space-icon"
-      width="26"
-      height="20"
-      viewBox="0 0 26 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M13 2.75 19.25 6.25v7L13 16.75 6.75 13.25v-7L13 2.75Z"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M13 2.75v14M13 10.25 19.25 6.25M13 10.25 6.75 6.25M13 10.25v6.5"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinejoin="round"
-      />
-      <path d="M1.25 1.25h2.35M1.25 1.25v2.35" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M1.25 1.25 2.85 2.85" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M24.75 1.25h-2.35M24.75 1.25v2.35" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M24.75 1.25 23.15 2.85" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M1.25 18.75h2.35M1.25 18.75v-2.35" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M1.25 18.75 2.85 17.15" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M24.75 18.75h-2.35M24.75 18.75v-2.35" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M24.75 18.75 23.15 17.15" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 export default function HomePageClient() {
   const lang = useSiteLang();
@@ -118,7 +83,7 @@ export default function HomePageClient() {
   }, [isRliteHeroGlbLoaded]);
 
   useEffect(() => {
-    const syncHeroArEntry = () => setShowHeroArEntry(isHomeHeroArCapable());
+    const syncHeroArEntry = () => setShowHeroArEntry(isArPreviewCapable());
     syncHeroArEntry();
     window.addEventListener('resize', syncHeroArEntry);
     return () => window.removeEventListener('resize', syncHeroArEntry);
@@ -127,70 +92,14 @@ export default function HomePageClient() {
   const startRliteAr = () => {
     trackCtaClick('home_hero1_ar');
     setRliteArLoading(true);
-
-    const activateArViewer = () => {
-      const viewer = rliteArViewerRef.current;
-      if (!viewer) {
-        setRliteArLoading(false);
-        return;
-      }
-
-      const isIos = detectIosQuickLookDevice();
-
-      if (!viewer.getAttribute('ios-src')) {
-        viewer.setAttribute('ios-src', cobotGlbModels.rLiteFr3CArUsdz);
-      }
-      if (!viewer.getAttribute('src')) {
-        viewer.setAttribute('src', cobotGlbModels.rLiteFr3CArGlb);
-      }
-
-      const launchAr = () => {
-        setRliteArLoading(false);
-        try {
-          viewer.activateAR?.();
-        } catch {
-          /* Quick Look / Scene Viewer may reject if user gesture chain breaks */
-        }
-      };
-
-      // iOS Quick Look uses USDZ — do not wait for the AR GLB to finish downloading.
-      if (isIos) {
-        launchAr();
-        return;
-      }
-
-      const fail = () => {
-        setRliteArLoading(false);
-      };
-
-      const loadTimeout = window.setTimeout(fail, 20000);
-
-      const onReady = () => {
-        window.clearTimeout(loadTimeout);
-        launchAr();
-      };
-
-      if (viewer.model) {
-        onReady();
-        return;
-      }
-
-      viewer.addEventListener('load', onReady, { once: true });
-      viewer.addEventListener(
-        'error',
-        () => {
-          window.clearTimeout(loadTimeout);
-          fail();
-        },
-        { once: true },
+    const run = () =>
+      launchArPreview(
+        rliteArViewerRef.current,
+        { glb: cobotGlbModels.rLiteFr3CArGlb, usdz: cobotGlbModels.rLiteFr3CArUsdz },
+        setRliteArLoading,
       );
-    };
-
-    if (rliteArViewerRef.current) {
-      activateArViewer();
-    } else {
-      requestAnimationFrame(activateArViewer);
-    }
+    if (rliteArViewerRef.current) run();
+    else requestAnimationFrame(run);
   };
 
   const rliteArLabel = rliteArLoading ? home.heroArLoading : home.heroArView;
@@ -324,7 +233,7 @@ export default function HomePageClient() {
     };
 
     const scheduleDragHint = () => {
-      if (isHomeHeroArCapable()) return;
+      if (isArPreviewCapable()) return;
       if (dragHintShowTimerRef.current) window.clearTimeout(dragHintShowTimerRef.current);
       if (hintHideTimerRef.current) window.clearTimeout(hintHideTimerRef.current);
       setShowDragHint(false);
@@ -727,13 +636,7 @@ export default function HomePageClient() {
       {/* 屏5+6: Support (primary) + Our Story — 6.5 : 3.5 */}
       <section className="twin-hero-section">
         <article className="twin-hero-panel twin-hero-panel--support">
-          <Image
-            src={HOME_SUPPORT_TWIN_IMAGE}
-            alt={alt.support_service_hero}
-            fill
-            sizes="(max-width: 768px) 100vw, 65vw"
-            className="twin-hero-image"
-          />
+          <HomeSupportTwinVisual />
           <div className="twin-hero-overlay">
             <h3>{home.twinSupportTitle}</h3>
             <p>{home.twinSupportBody}</p>

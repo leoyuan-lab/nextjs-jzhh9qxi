@@ -11,7 +11,8 @@ export type ApplicationsHubCarouselCopy = {
   cardsAria: string;
   learnMore: string;
   cardTitle: (id: ApplicationHubCardId) => string;
-  cardSummary: (id: ApplicationHubCardId) => string;
+  cardScenes: (id: ApplicationHubCardId) => string;
+  cardCapabilities: (id: ApplicationHubCardId) => string;
   cardAlt: (key: string) => string;
   langPrefix: string;
 };
@@ -21,7 +22,7 @@ export function buildApplicationsHubCarouselCopy(lang: 'zh' | 'en'): Application
   const nav = getMessages(lang).nav.applications;
 
   const cardTitle = (id: ApplicationHubCardId) => {
-    const card = copy.cards[id] as { title?: string; summary: string };
+    const card = copy.cards[id] as { title?: string; scenes: string; capabilities: string };
     if (card.title) return card.title;
     switch (id) {
       case 'retail_service':
@@ -39,7 +40,8 @@ export function buildApplicationsHubCarouselCopy(lang: 'zh' | 'en'): Application
     cardsAria: copy.cardsAria,
     learnMore: copy.learnMore,
     cardTitle,
-    cardSummary: (id) => copy.cards[id].summary,
+    cardScenes: (id) => copy.cards[id].scenes,
+    cardCapabilities: (id) => copy.cards[id].capabilities,
     cardAlt: (key) => hubCardAlt(lang, key),
     langPrefix: `/${lang}`,
   };

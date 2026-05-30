@@ -393,16 +393,20 @@
       "learnMore": "了解更多",
       "cards": {
         "retail_service": {
-          "summary": "前场服务、出料配液与紧凑 kiosk 工位。"
+          "scenes": "甜品站 · 饮料站 · 智能餐厅 · 前场服务",
+          "capabilities": "出料 · 配液 · 紧凑工位 · 人机协作"
         },
         "manufacturing": {
-          "summary": "高节拍产线的上下料、锁付与转运。"
+          "scenes": "3C · 汽车 · 半导体 · 五金家电 · 机械装备",
+          "capabilities": "上下料 · 锁付 · 转运 · 线平衡"
         },
         "medical_lab": {
-          "summary": "台面自动化、可重复上下料与 ISO 就绪流程。"
+          "scenes": "检验 · 样本处理 · 生物实验室 · 医疗装备",
+          "capabilities": "台面自动化 · 重复上下料 · 洁净流程 · ISO 就绪"
         },
         "education": {
-          "summary": "面向实验室、科研与具身智能演示的教学协作臂。"
+          "scenes": "科研教学 · 高等院校 · 具身智能 · 竞赛实训",
+          "capabilities": "示教编程 · 开放 SDK · 轻量部署 · 安全协作"
         }
       }
     },
@@ -1004,6 +1008,10 @@
         "scenario_image_alt": "r-Lite 协作机器人 Cobot 产品场景图，展示一体化协作机械臂外观与典型部署环境。",
         "flange_section_kicker": "内建底气",
         "flange_section_title": "每一层，都有实力",
+        "flange_ar_desktop_title": "想在您的空间里查看？",
+        "flange_ar_desktop_subtitle": "请使用手机或平板打开本页，使用增强现实预览。",
+        "flange_ar_curtain_title": "看看它如何融入您的产线。",
+        "flange_ar_curtain_subtitle": "1:1 在您的产线上查看真机，确认是否完美契合产线需求、节拍与部署空间。",
         "flange_strip": [
           {
             "title": "无障碍安全协作",
@@ -1138,6 +1146,10 @@
         "scenario_image_alt": "r-Ultra 协作机器人 Cobot 产品场景图，展示高负载协作机械臂外观与典型部署环境。",
         "flange_section_kicker": "内建底气",
         "flange_section_title": "工业现场，层层见真",
+        "flange_ar_desktop_title": "想在您的空间里查看？",
+        "flange_ar_desktop_subtitle": "请使用手机或平板打开本页，使用增强现实预览。",
+        "flange_ar_curtain_title": "看看它如何融入您的产线。",
+        "flange_ar_curtain_subtitle": "1:1 在您的产线上查看真机，确认是否完美契合产线需求、节拍与部署空间。",
         "flange_strip": [
           {
             "title": "ROS/ROS2",
@@ -1222,6 +1234,7 @@
     "r_lite_detail_elbow": "Roooll r-Lite 协作机器人（一体式控制）中段关节细节 - 突出负载轨迹与协同控制能力。",
     "r_lite_detail_wrist": "Roooll r-Lite 协作机器人（一体式控制）腕部关节细节 - 强调姿态精度与安全协作。",
     "support_service_hero": "Roooll r-Core 协作机器人（标准版），5kg 负载、922mm 臂展——面向 r 系列协作机械臂的全球服务与现场支持。",
+    "support_service_atmosphere": "地球晨昏线轨道日出景象——Roooll 全球服务支持页面氛围背景。",
     "support_manual": "Roooll r 系列协作机械臂产品手册与文档下载。",
     "support_distributor": "Roooll 授权经销商与渠道伙伴资源入口。",
     "story_chapter_opening": "深色极简背景中央的 Roooll 品牌标识——品牌故事开篇。",

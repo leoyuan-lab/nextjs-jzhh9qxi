@@ -175,9 +175,10 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* r-lite / r-ultra: clip (not hidden) so sticky film scroll is not broken — see ClientLayout + route-document-chrome */
+/* r-lite / r-ultra: visible overflow — clip/hidden breaks sticky film + flange curtain (see is-sticky-scroll-route) */
+html.is-arm-immersive-route,
 body.is-arm-immersive-route {
-  overflow-x: clip;
+  overflow-x: visible;
 }
 
 html.is-sticky-scroll-route,
@@ -252,6 +253,19 @@ body.is-sticky-scroll-route {
 .roooll-home-wrapper .twin-hero-image {
   object-fit: cover;
   opacity: 0.88;
+}
+
+/* Homepage Support twin — orbital sunrise video (full bleed). */
+.roooll-home-wrapper .home-support-twin-video {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 58%;
+  pointer-events: none;
 }
 
 .roooll-home-wrapper .twin-hero-panel::before {
@@ -945,7 +959,8 @@ body.is-sticky-scroll-route {
 .arm-route-shell {
   width: 100%;
   max-width: 100%;
-  overflow-x: clip;
+  /* clip on shell breaks sticky scroll film + flange curtain (same as html/body clip) */
+  overflow-x: visible;
 }
 
 .arm-page-root {
@@ -1572,8 +1587,9 @@ body.is-sticky-scroll-route {
 }
 
 .arm-page-root .rcore-scroll-slab-hero {
-  height: 100vh;
-  height: 100dvh;
+  /* Shorter lead-in so first scroll engages advantage copy (avoids empty scroll). */
+  height: 38vh;
+  height: 38dvh;
   width: 100%;
   pointer-events: none;
 }
@@ -1912,6 +1928,379 @@ body.is-sticky-scroll-route {
   font-size: clamp(12px, 1.1vw, 15px);
   line-height: 1.58;
   color: rgba(245, 245, 247, 0.62);
+}
+
+/* ── Flange curtain + AR (RCoreFlangeSection) ── */
+/* overflow:visible — parent `.rcore-ln-section--flange` used overflow-x:hidden which breaks sticky pin */
+.arm-page-root .rcore-ln-section--flange.rcore-ln-section--flange-curtain {
+  min-height: 0;
+  padding: var(--rcore-ln-pad-before) 0 var(--rcore-ln-pad-after);
+  overflow: visible;
+  background: #000;
+  color: #f5f5f7;
+  pointer-events: auto;
+}
+
+.arm-page-root .rcore-ln-section--flange-curtain:has(+ .rcore-ln-section--flange-features-tail) {
+  padding-bottom: 0;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-scroll {
+  position: relative;
+  width: 100%;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-sticky {
+  position: sticky;
+  top: 0;
+  height: calc(100svh - env(safe-area-inset-bottom, 0px));
+  overflow: hidden;
+  isolation: isolate;
+  background: #000;
+  pointer-events: auto;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-slot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-slot--bottom {
+  z-index: 1;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-slot--top {
+  z-index: 2;
+  will-change: transform;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-layer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: #000;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-layer--top {
+  justify-content: center;
+  padding: max(72px, calc(env(safe-area-inset-top, 0px) + 48px)) clamp(18px, 4vw, 28px)
+    calc(28px + env(safe-area-inset-bottom, 0px));
+}
+
+.arm-page-root .rcore-ln-flange-curtain-layer--desktop-hero {
+  overflow: hidden;
+  justify-content: stretch;
+  padding: 0;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-layer--bottom {
+  justify-content: flex-start;
+  align-items: stretch;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-slot--bottom > .rcore-ln-flange-curtain-layer--bottom {
+  min-height: 100%;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-inner {
+  width: min(1240px, 96vw);
+  margin: 0 auto;
+  padding: clamp(12px, 2vh, 24px) clamp(4px, 1vw, 12px) clamp(24px, 4vh, 40px);
+  box-sizing: border-box;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-inner--strength-only {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  text-align: center;
+}
+
+.arm-page-root .rcore-ln-flange-intro-head--pull {
+  margin-bottom: clamp(4px, 0.85vh, 10px);
+}
+
+.arm-page-root .rcore-ln-flange-curtain-inner--pull-full .rcore-ln-flange-strip {
+  padding-top: clamp(4px, 0.85vh, 10px);
+}
+
+.arm-page-root .rcore-ln-flange-curtain-inner--strength-only .rcore-ln-flange-heading {
+  max-width: 16ch;
+}
+
+.arm-page-root .rcore-ln-flange-hero-visual--desktop-ar {
+  position: relative;
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  align-self: stretch;
+}
+
+.arm-page-root .rcore-ln-flange-desktop-ar-copy {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2vh, 18px);
+  padding: clamp(16px, 4vw, 32px);
+  text-align: center;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.12) 0%,
+    rgba(0, 0, 0, 0.42) 45%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+  pointer-events: none;
+}
+
+.arm-page-root .rcore-ln-flange-desktop-ar-title {
+  margin: 0;
+  max-width: min(16ch, 94vw);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.arm-page-root .rcore-ln-flange-desktop-ar-title.rcore-ln-flange-heading {
+  font-size: clamp(42px, 6.1vw, 68px);
+}
+
+.arm-page-root .rcore-ln-flange-desktop-ar-sub {
+  margin: 0;
+  max-width: 28ch;
+  font-size: clamp(1rem, 2.4vw, 1.1875rem);
+  line-height: 1.45;
+  color: rgba(245, 245, 247, 0.88);
+}
+
+.arm-page-root .rcore-ln-flange-curtain-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 3.2vh, 32px);
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+.arm-page-root .rcore-ln-flange-ar-curtain-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 1.8vh, 16px);
+  max-width: min(22ch, 92vw);
+}
+
+.arm-page-root .rcore-ln-flange-ar-curtain-title.rcore-ln-flange-heading {
+  margin: 0;
+  text-align: center;
+  text-wrap: balance;
+  font-size: clamp(44px, 6.2vw, 72px);
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  max-width: min(16ch, 94vw);
+}
+
+.arm-page-root .rcore-ln-flange-ar-curtain-sub {
+  margin: 0;
+  max-width: min(38ch, 92vw);
+  font-size: clamp(17px, 2.1vw, 20px);
+  font-weight: 400;
+  line-height: 1.52;
+  letter-spacing: -0.01em;
+  color: rgba(245, 245, 247, 0.8);
+  text-wrap: pretty;
+}
+
+.arm-page-root .rcore-ln-flange-ar-pill-spacer {
+  min-height: 44px;
+}
+
+.arm-page-root .rcore-ln-flange-ar-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 980px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5f5f7;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.arm-page-root .rcore-ln-flange-ar-pill:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.arm-page-root .rcore-ln-flange-ar-pill:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.arm-page-root .rcore-ln-flange-ar-pill__label {
+  line-height: 1.2;
+}
+
+.arm-page-root .rcore-ln-flange-ar-viewer-host {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-static {
+  display: grid;
+  gap: 0;
+  background: #000;
+  pointer-events: auto;
+}
+
+.arm-page-root .rcore-ln-flange-curtain-static .rcore-ln-flange-curtain-layer {
+  position: relative;
+  min-height: auto;
+  height: auto;
+}
+
+.arm-page-root .rcore-ln-section--flange-features {
+  position: relative;
+  z-index: 4;
+  min-height: 0;
+  background: #000;
+  color: #f5f5f7;
+  overflow: visible;
+  pointer-events: auto;
+}
+
+/* Mobile AR act 2: no extra pad-before (follows curtain); pad-after matches other sections */
+.arm-page-root .rcore-ln-section--flange-features-tail {
+  padding: 0 clamp(18px, 4vw, 48px) var(--rcore-ln-pad-after);
+}
+
+.arm-page-root .rcore-ln-flange-features-act {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(20px, 4vh, 36px) 0;
+  box-sizing: border-box;
+  pointer-events: auto;
+}
+
+.arm-page-root .rcore-ln-flange-features-act .rcore-ln-flange-strip {
+  padding-top: 0;
+}
+
+/* Mobile AR (ar-small): static stacked layout — no sticky curtain pull, no empty gap, no floating top layer */
+.arm-page-root .rcore-ln-section--flange-ar-stack {
+  min-height: 0;
+  padding: var(--rcore-ln-pad-before) clamp(18px, 4vw, 28px) var(--rcore-ln-pad-after);
+  background: #000;
+  color: #f5f5f7;
+  overflow: visible;
+  pointer-events: auto;
+}
+
+.arm-page-root .rcore-ln-flange-ar-stack-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(24px, 6vh, 56px) 0 clamp(28px, 7vh, 64px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: clamp(24px, 6vh, 56px);
+}
+
+.arm-page-root .rcore-ln-flange-ar-stack .rcore-ln-flange-curtain-top {
+  height: auto;
+}
+
+@media (min-width: 735px) {
+  .arm-page-root .rcore-ln-flange-curtain-inner--pull-full {
+    align-items: center;
+  }
+
+  .arm-page-root .rcore-ln-flange-curtain-inner--pull-full .rcore-ln-flange-intro-head--pull {
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    padding-top: clamp(18vh, 24vh, 30vh);
+  }
+
+  .arm-page-root .rcore-ln-flange-curtain-inner--pull-full .rcore-ln-flange-heading {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    max-width: 18ch;
+  }
+
+  .arm-page-root .rcore-ln-flange-curtain-inner--pull-full .rcore-ln-flange-strip {
+    width: 100%;
+  }
+}
+
+@media (max-width: 734px) {
+  .arm-page-root .rcore-ln-root {
+    margin-top: calc(-32vh + var(--rcore-ln-pad-before) + var(--rcore-ln-pad-after));
+  }
+
+  .arm-page-root .rcore-ln-section--flange-curtain:has(+ .rcore-ln-section--flange-features-tail) {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .arm-page-root .rcore-ln-flange-features-act {
+    padding-top: clamp(20px, 3.5vh, 36px);
+  }
+
+  .arm-page-root .rcore-ln-flange-features-act .rcore-ln-flange-intro-head--pull {
+    margin-bottom: clamp(12px, 2.2vh, 20px);
+    text-align: center;
+    align-items: center;
+  }
+
+  .arm-page-root .rcore-ln-flange-features-act .rcore-ln-flange-heading {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* 蓝图（透明段）及以下整体上移，对齐 Application ↔ r-family 段间距 */
+.arm-page-root .rcore-ln-section--bp {
+  margin-top: calc(-1 * var(--rcore-ln-pad-after));
+}
+
+@media (min-width: 735px) {
+  .arm-page-root .rcore-ln-section--bp {
+    margin-top: calc(-1 * (var(--rcore-ln-pad-after) + clamp(6vh, 10vh, 14vh)));
+  }
 }
 
 /* 蓝图长叙事：居中标题 + 左文案 / 右下矢量（无 GLB 中缝） */
@@ -3338,6 +3727,8 @@ body.is-sticky-scroll-route {
  * 避免 ClientLayout styled-jsx 晚注入 → 首帧散版或菜单壳层缺失。
  */
 .roooll-footer-wrapper {
+  position: relative;
+  z-index: 2;
   background: var(--bg-grey);
   color: #6e6e73;
   padding: 40px 0;
@@ -4163,7 +4554,6 @@ button.selector-tap-clean {
 }
 
 .support-hero--center .contact-hero-direct .contact-hero-email,
-.support-hero--center .contact-hero-direct .contact-hero-phone,
 .support-hero--center .contact-hero-direct .contact-hero-address {
   display: block;
   width: 100%;
@@ -4177,14 +4567,12 @@ button.selector-tap-clean {
   text-align: center;
 }
 
-.support-hero--center .contact-hero-direct .contact-hero-email,
-.support-hero--center .contact-hero-direct .contact-hero-phone {
+.support-hero--center .contact-hero-direct .contact-hero-email {
   text-decoration: none;
 }
 
 @media (hover: hover) {
-  .support-hero--center .contact-hero-direct .contact-hero-email:hover,
-  .support-hero--center .contact-hero-direct .contact-hero-phone:hover {
+  .support-hero--center .contact-hero-direct .contact-hero-email:hover {
     color: #1d1d1f;
     opacity: 0.72;
   }
@@ -4516,6 +4904,12 @@ button.contact-card.support-card {
   height: clamp(88px, 20vw, 132px);
 }
 
+.support-page-logo--mark .support-page-logo-mark {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 @media (max-width: 767px) {
   .support-page-logo-slot {
     min-height: clamp(104px, 28vw, 140px);
@@ -4636,6 +5030,65 @@ h1.roooll-page-hero-title {
   display: flex;
   flex-direction: column;
   gap: 0;
+}
+
+/* Support /service — darkened sunrise frame, full-bleed; mobile safe-area stays clear. */
+.support-page-root--service-atmosphere {
+  background: transparent;
+}
+
+.support-page-atmosphere {
+  position: fixed;
+  top: var(--nav-h, 52px);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: #030303;
+}
+
+.support-page-atmosphere .support-page-atmosphere__img {
+  position: absolute;
+}
+
+.support-page-atmosphere__img {
+  object-fit: cover;
+  object-position: center 58%;
+}
+
+.support-page-atmosphere__dim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0.5) 45%,
+    rgba(0, 0, 0, 0.72) 100%
+  );
+}
+
+.support-page-root--service-atmosphere .support-page-logo-slot,
+.support-page-root--service-atmosphere .support-page-body {
+  position: relative;
+  z-index: 1;
+}
+
+.support-page-root--service-atmosphere .support-hero--service h1,
+.support-page-root--service-atmosphere .support-hero--service p {
+  color: #f5f5f7;
+  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.45);
+}
+
+.support-page-root--service-atmosphere .support-hero--service p {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+@media (max-width: 734px) {
+  .support-page-atmosphere {
+    bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
 /* Scheme C — bento grid; E2 — all white cards + shadow on #f5f5f7 page */
@@ -10129,8 +10582,12 @@ html[data-newsroom-subnav-pinned='true'] .newsroom-hero {
     text-align: center;
   }
 
-  :lang(en) .app-hub-carousel-card--manufacturing .app-hub-carousel-summary {
+  :lang(en) .app-hub-carousel-card--manufacturing .app-hub-carousel-summaries {
     margin-inline: auto;
+    text-align: center;
+  }
+
+  :lang(en) .app-hub-carousel-card--manufacturing .app-hub-carousel-summary--scenes {
     text-align: center;
   }
 
@@ -10158,13 +10615,31 @@ html[data-newsroom-subnav-pinned='true'] .newsroom-hero {
   }
 }
 
-.app-hub-carousel-summary {
+.app-hub-carousel-summaries {
   margin: clamp(10px, 1.4vh, 14px) 0 0;
   max-width: min(28rem, 100%);
+}
+
+.app-hub-carousel-summary {
+  margin: 0;
+  max-width: 100%;
   font-size: clamp(0.9375rem, 1.35vw, 1.0625rem);
   line-height: 1.45;
   color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 1px 18px rgba(0, 0, 0, 0.65);
+}
+
+.app-hub-carousel-summary--capabilities {
+  margin-top: clamp(6px, 0.9vh, 8px);
+  font-size: clamp(0.8125rem, 1.15vw, 0.9375rem);
+  line-height: 1.42;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+@media (max-width: 734px) {
+  .app-hub-carousel-summary--capabilities {
+    display: none;
+  }
 }
 
 .app-hub-carousel-foot {

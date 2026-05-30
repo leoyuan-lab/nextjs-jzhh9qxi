@@ -10,7 +10,7 @@ import { trackCtaClick } from '@/lib/analytics';
 import { motion, useReducedMotion } from 'framer-motion';
 import type { CSSProperties, RefObject, MutableRefObject } from 'react';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { RCoreFlangeHeroStill } from '@/components/cobots/RCoreFlangeHeroStill';
+import { RCoreFlangeSection } from '@/components/cobots/RCoreFlangeSection';
 import {
   HorizontalScrollDots,
   scrollHorizontalSnapItem,
@@ -19,7 +19,6 @@ import {
 import {
   ROBOT_IMG_BASE,
   ROBOT_VECTOR_BASE,
-  R_LITE_ADVISOR_FLANGE_HERO_DIM,
   robotVariantBlueprintAlt,
   robotVariantBlueprintDescription,
   robotVariantBlueprintSvgFilename,
@@ -80,6 +79,10 @@ type FilmCopy = {
   section_aria: string;
   flange_section_kicker: string;
   flange_section_title: string;
+  flange_ar_desktop_title: string;
+  flange_ar_desktop_subtitle: string;
+  flange_ar_curtain_title: string;
+  flange_ar_curtain_subtitle: string;
   flange_strip: { title: string; body: string; highlight: string }[];
   svg_kicker: string;
   svg_caption: string;
@@ -262,52 +265,23 @@ export function RCoreLongNarrative({
 
   return (
     <div ref={setRootNode} className="rcore-ln-root" aria-label={film.section_aria}>
-      <section
-        ref={setFlangeNode}
-        className="rcore-ln-section rcore-ln-section--flange"
-        data-rcore-ln-flange
-      >
-        <div className="rcore-ln-flange-chapter" data-rcore-flange-chapter>
-          <motion.div className="rcore-ln-flange-exit" data-rcore-flange-exit>
-            <motion.div className="rcore-ln-flange-intro rcore-ln-copy-front" {...fadeUp}>
-              <div className="rcore-ln-flange-intro-head">
-                <span className="rcore-ln-eyebrow rcore-ln-eyebrow--blue">{film.flange_section_kicker}</span>
-                <h2 className="rcore-ln-flange-heading">{film.flange_section_title}</h2>
-              </div>
-            </motion.div>
-            <div
-              className="rcore-ln-flange-hero-visual"
-              style={{
-                aspectRatio: `${R_LITE_ADVISOR_FLANGE_HERO_DIM.width} / ${R_LITE_ADVISOR_FLANGE_HERO_DIM.height}`,
-              }}
-            >
-              <RCoreFlangeHeroStill alt={flangeHeroAlt} />
-            </div>
-            <div className="rcore-ln-flange-strip rcore-ln-copy-front">
-              {film.flange_strip.map((col, i) => (
-                <motion.div
-                  key={i}
-                  className="rcore-ln-flange-col"
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: 22 }}
-                  whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.32 }}
-                  transition={{
-                    duration: 0.52,
-                    delay: prefersReducedMotion ? 0 : i * 0.14,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                >
-                  <div className="rcore-ln-flange-col__head">
-                    <h3 className="rcore-ln-flange-col__title">{col.title}</h3>
-                    <hr className="rcore-ln-flange-col__rule" />
-                  </div>
-                  <p className="rcore-ln-flange-col__body">{fillTemplate(col.body, heroVars)}</p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <RCoreFlangeSection
+        lang={lang}
+        messagesPageKey={messagesPageKey}
+        sectionRef={setFlangeNode}
+        kicker={film.flange_section_kicker}
+        title={film.flange_section_title}
+        strip={film.flange_strip}
+        heroVars={heroVars}
+        flangeHeroAlt={flangeHeroAlt}
+        arCopy={{
+          desktop_title: film.flange_ar_desktop_title,
+          desktop_subtitle: film.flange_ar_desktop_subtitle,
+          curtain_title: film.flange_ar_curtain_title,
+          curtain_subtitle: film.flange_ar_curtain_subtitle,
+        }}
+        sectionAria={film.section_aria}
+      />
 
       <section ref={setBpNode} className="rcore-ln-section rcore-ln-section--bp">
         <div className="rcore-ln-bp-shell">
