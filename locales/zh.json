@@ -128,7 +128,7 @@
     "heroRultraFact": "30 kg 级 · 1402 mm 工作半径 · 重载协作臂",
     "heroRcoreFact": "5 kg 级 · 922 mm 工作半径 · 产线主力协作臂",
     "applicationsTitle": "行业方案",
-    "twinSupportTitle": "全球服务，内置其中。",
+    "twinSupportTitle": "全球服务，内置其中",
     "twinSupportBody": "跨时区工程响应、OEM/ODM 项目与现场支持——从部署到稳定运行，同一团队对接。",
     "twinSupportCta": "技术支持与服务",
     "twinStoryTitle": "我们的故事",
@@ -242,8 +242,8 @@
         "subtitle": "从轻到重。全系 r 系列协作臂——规格并排，一目了然。"
       },
       "journey": {
-        "headlineLines": ["还没想好？", "帮你选得更笃定些。"],
-        "headline": "找到产线合适的那一臂。",
+        "headlineLines": ["还没想好？", "帮你选得更笃定些"],
+        "headline": "找到产线合适的那一臂",
         "kicker": "从容选型",
         "title": "还没想好？",
         "subtitle": "上方已浏览全系，也可以用下面两种方式快速缩小范围。",
@@ -371,7 +371,7 @@
     "selector_comparison": {
       "metaTitleFocus": "r 系列协作臂横向对比",
       "metaDescription": "并排对比任意三款 r 系列 Cobot（3kg、5kg、10kg、16kg、20kg、30kg 级；含 r-Lite、r-Core、r-Reach、r-Max、r-Ultra）：负载、工作半径、重复精度、关节轴、控制箱与功率，一张可分享的对比表。",
-      "headlineLines": ["对比全系 r 家族", "看清差距在哪里。"],
+      "headlineLines": ["对比全系 r 家族", "看清差距在哪里"],
       "footer": {
         "title": "需要帮你缩小范围？",
         "summary": "对比表看清了差距，选型顾问还能按负载、臂展和环境给出主推与升级方案。",
@@ -389,7 +389,7 @@
     "applications_hub": {
       "metaTitleFocus": "协作机器人行业方案 — 制造 · 实验室 · 零售 · 教育",
       "metaDescription": "探索 Roooll 协作机械臂在智能制造、医疗与实验室自动化、零售服务与教育科研等行业的应用方案。行业方案轮播位于首页 /#applications；/applications 跳转至该锚点。",
-      "title": "场景。",
+      "title": "场景",
       "cardsAria": "行业方案分类",
       "learnMore": "了解更多",
       "cards": {
@@ -417,18 +417,18 @@
       "pageAria": "Roooll 协作机械臂智能制造行业方案叙事",
       "opener": {
         "kicker": "Roooll 行业方案",
-        "title": "智能制造。",
+        "title": "智能制造",
         "subtitle": "把重复、低收益的工位交给协作臂——让人回到质检、换型与工艺判断。"
       },
       "story": {
         "ariaLabel": "智能制造协作机械臂价值叙事",
         "step1": {
           "kicker": "工厂现场",
-          "title": "让产线持续产出，而不是持续耗人。",
+          "title": "让产线持续产出，而不是持续耗人",
           "body": "Roooll 协作机械臂承担上下料、锁付与转运等可编程节拍任务，部署紧凑、示教快速、换型不必推倒重来。同一套协作逻辑，可以进机台、上装配线、守在焊位旁——让机床在三班中持续运转，让人力集中在更高价值的环节。"
         },
         "step2": {
-          "title": "协作臂为产线带来的，不只是自动化。",
+          "title": "协作臂为产线带来的，不只是自动化",
           "intro": "多品种、短节拍、地面有限——协作自动化要的是速度、重复性与柔性，而不是更大的围栏和更长的集成周期。",
           "items": [
             {
@@ -449,7 +449,7 @@
           ]
         },
         "step3": {
-          "title": "更多工位，同一套协作逻辑。",
+          "title": "更多工位，同一套协作逻辑",
           "items": [
             {
               "eyebrow": "焊工紧 · 焊缝要一致",
@@ -495,7 +495,7 @@
       },
       "advantages": {
         "kicker": "不止工位",
-        "title": "选 Roooll，不只是一台臂。",
+        "title": "选 Roooll，不只是一台臂",
         "items": [
           {
             "title": "一套 r 系列，覆盖多种工位",
@@ -513,7 +513,7 @@
       },
       "specSheet": {
         "kicker": "选型",
-        "title": "按臂展与负载匹配工位。",
+        "title": "按臂展与负载匹配工位",
         "columns": {
           "rLite": "r-Lite",
           "rUltra": "r-Ultra"
@@ -533,7 +533,7 @@
         "ctaUltra": "咨询 r-Ultra"
       },
       "closing": {
-        "title": "规划你的制造工位。",
+        "title": "规划你的制造工位",
         "body": "告诉我们负载、臂展与节拍——我们帮你匹配 r 系列协作臂。",
         "ctaInquiry": "发起咨询",
         "ctaHome": "返回首页"
@@ -670,34 +670,34 @@
       "metaTitle": "品牌故事",
       "metaDescription": "探索 Roooll 的品牌使命、机械工程原则、透明路线图，以及创始人对协作机器人未来的坚守。",
       "openingKicker": "品牌故事",
-      "openingTitle": "精密，为人所易。",
+      "openingTitle": "精密，为人所易",
       "openingBody": "Roooll 打造的协作机器人，让严谨的机械精度与人人皆可上手的软件交融。在产线，在实验室，在每一个推动工业前行的人身边，各履其责。",
       "originKicker": "起源",
-      "originTitle": "为何而来。",
+      "originTitle": "为何而来",
       "originBody": "我们始于对一个行业痛点的思考：产线与实验室需要绝对可重复的精准运动，而部署不该只是少数专家的特权。Roooll 为弥合这道缝隙而来——以足够承载真实工艺的精密，和触手可及的易用，让落地重归高效。",
       "philosophyKicker": "制造理念",
-      "philosophyTitle": "每一款 r 系列，皆承载三项承诺。",
+      "philosophyTitle": "每一款 r 系列，皆承载三项承诺",
       "philosophyPillars": {
         "modular": {
-          "title": "生而模块化。",
+          "title": "生而模块化",
           "body": "机型与工装共享同一套逻辑架构。一次集成，多工位无缝复用。"
         },
         "deploy": {
-          "title": "交付，快一步。",
+          "title": "交付，快一步",
           "body": "从台架测试到产线实战，清晰的接口与详尽的文档随手可得，让每一步都有据可依。"
         },
         "operate": {
-          "title": "操作，少门槛。",
+          "title": "操作，少门槛",
           "body": "浏览器原生控制与开放的 SDK。把操作权还给一线，而非留在少数人的壁垒里。"
         }
       },
       "peopleKicker": "员工与社会",
-      "peopleTitle": "链条之上，每一步皆是尊重。",
+      "peopleTitle": "链条之上，每一步皆是尊重",
       "peopleBody": "我们在供应链中恪守公平劳动原则，在真实工位上筑牢安全协作底线。我们始终相信，技术应当延伸人类的智慧，而非取代人的判断。人权绝非标语，它深植于我们选择伙伴与设计流程的每一步。",
       "planetKicker": "环境与可持续",
-      "planetTitle": "以长远目光，丈量设计。",
+      "planetTitle": "以长远目光，丈量设计",
       "planetBody": "采用符合 RoHS 标准的材料与审慎采购的部件，打造值得长期服役的机械结构，拒绝沦为电子垃圾。我们按项目提供真实的合规文档，让每一步规划都基于事实，而非口号。",
-      "closingTitle": "若这就是您认同的标准，欢迎同行。",
+      "closingTitle": "若这就是您认同的标准，欢迎同行",
       "closingBody": "进一步了解 r 系列全系产品，或告诉我们您正面临的工序挑战。",
       "closingExplore": "探索 r 系列",
       "closingContact": "联系 Roooll"
@@ -705,7 +705,7 @@
     "support": {
       "logoAlt": "Roooll 品牌标识，技术支持页面。",
       "resources": {
-        "heroTitle": "需要帮助？从这里开始。",
+        "heroTitle": "需要帮助？从这里开始",
         "manualCard": {
           "title": "手册下载",
           "body": "产品手册、快速入门与安全文档。留下邮箱，我们的团队将跟进并发送下载方式。",
@@ -726,43 +726,43 @@
         }
       },
       "service": {
-        "heroTitle": "全球服务，全线内置。",
+        "heroTitle": "全球服务，全线内置",
         "heroBody": "从初入产线的第一天，到长年累月的高效生产，我们的支持与每一台机器人如影随形。跨时区专家指导、定制化工程升级、持久稳健的运行表现，皆有可靠保障。",
         "cards": {
           "global": {
-            "title": "触手可及，无处不在。",
+            "title": "触手可及，无处不在",
             "body": "跨越时区，实时提供专业支持。从最初的部署上线到深度的故障排除，我们的工程师团队确保在 12 小时内给出明确的解决方案。"
           },
           "bespoke": {
-            "title": "你的设想，我们的工程实现。",
+            "title": "你的设想，我们的工程实现",
             "body": "不止于标准选型。我们与你深度协作，提供 OEM/ODM 开发、品牌定制集成，以及专为特定工作流打造的末端执行器。"
           },
           "deployment": {
-            "title": "随时待命，即刻启航。",
+            "title": "随时待命，即刻启航",
             "body": "高效现货，告别漫长等待。标准配置产品可在 3 至 5 个工作日内发货。面对大规模部署及定制化方案，交付周期自第一天起便公开透明，恪守承诺。"
           },
           "warranty": {
-            "title": "两年质保，全无后顾之忧。",
+            "title": "两年质保，全无后顾之忧",
             "body": "电机、减速机及控制架构等所有核心部件，均享有一流的两年有限质保。依托全球响应网络，全力保障你的产线平稳运行。"
           },
           "preventive": {
-            "title": "防患未然，稳产先行。",
+            "title": "防患未然，稳产先行",
             "body": "按节奏的健康检查与维护指引，在磨损演变成停线之前介入。远程诊断可与现场点检配合——让意外停机尽量远离产线。"
           },
           "lifetime": {
-            "title": "为长年运行而设计。",
+            "title": "为长年运行而设计",
             "body": "部署不会因质保到期而画上句号。区域备件通路、返修支持与工程团队持续对接——让投产多年的 r 系列与新建单元一样，继续获得可预期的保障。"
           },
           "software": {
-            "title": "常用常新，自动进化。",
+            "title": "常用常新，自动进化",
             "body": "让硬件资产始终走在时代前沿。持续的固件更新、系统优化以及完全开放的 SDK 升级，让机器人在未来的使用中不断解锁全新技能。"
           },
           "spareParts": {
-            "title": "减少停机时间，建立十足信任。",
+            "title": "减少停机时间，建立十足信任",
             "body": "核心部件无需漫长等待。我们在各区域建立了常备电机与关节模块备件库，确保全球快速调拨发货，让生产一刻不停。"
           },
           "resources": {
-            "title": "所需一切，即刻获取。",
+            "title": "所需一切，即刻获取",
             "body": "无需排队等待支持。一键访问我们的综合资源库，即刻下载可直接投入生产的 3D CAD 模型、仿真工具、编程指南及详尽的用户手册。"
           }
         },
@@ -772,7 +772,7 @@
       "distributors": {
         "metaTitle": "授权协作机器人经销商",
         "metaDescription": "面向 Roooll 渠道伙伴——通过渠道团队获取价格资料、上市素材、培训路径与联合营销支持。",
-        "heroTitle": "授权经销商专区。",
+        "heroTitle": "授权经销商专区",
         "heroBody": "面向 Roooll 渠道伙伴——通过渠道团队获取价格资料、上市素材、培训路径与联合营销支持。",
         "badge": "Authorized partners",
         "welcomeKicker": "Channel partner space",
@@ -1009,10 +1009,10 @@
         "scenario_image_alt": "r-Lite 协作机器人 Cobot 产品场景图，展示一体化协作机械臂外观与典型部署环境。",
         "flange_section_kicker": "内建底气",
         "flange_section_title": "每一层，都有实力",
-        "flange_ar_desktop_title": "想在您的空间里查看？",
-        "flange_ar_desktop_subtitle": "请使用手机或平板打开本页，使用增强现实预览。本功能仅调用手机摄像头进行本地空间计算，不上传任何您的车间/工位隐私数据，请放心体验。",
-        "flange_ar_curtain_title": "看看它如何融入您的产线。",
-        "flange_ar_curtain_subtitle": "1:1 在您的产线上查看真机，确认是否完美契合产线需求、节拍与部署空间。本功能仅调用手机摄像头进行本地空间计算，不上传任何您的车间/工位隐私数据，请放心体验。",
+        "flange_ar_desktop_title": "用手机打开，1:1 试放您的工位",
+        "flange_ar_desktop_subtitle": "请站在工位旁，用手机或平板打开本页即可预览。数据仅在您的设备上处理。",
+        "flange_ar_curtain_title": "先在你的工位上试放一次",
+        "flange_ar_curtain_subtitle": "按真实尺寸 1:1 预览占地与周边间隙，帮助你在约 demo 前先做一次空间预检。仅本机计算，不上传工位影像。",
         "flange_strip": [
           {
             "title": "无障碍安全协作",
@@ -1147,10 +1147,10 @@
         "scenario_image_alt": "r-Ultra 协作机器人 Cobot 产品场景图，展示高负载协作机械臂外观与典型部署环境。",
         "flange_section_kicker": "内建底气",
         "flange_section_title": "工业现场，层层见真",
-        "flange_ar_desktop_title": "想在您的空间里查看？",
-        "flange_ar_desktop_subtitle": "请使用手机或平板打开本页，使用增强现实预览。本功能仅调用手机摄像头进行本地空间计算，不上传任何您的车间/工位隐私数据，请放心体验。",
-        "flange_ar_curtain_title": "看看它如何融入您的产线。",
-        "flange_ar_curtain_subtitle": "1:1 在您的产线上查看真机，确认是否完美契合产线需求、节拍与部署空间。本功能仅调用手机摄像头进行本地空间计算，不上传任何您的车间/工位隐私数据，请放心体验。",
+        "flange_ar_desktop_title": "用手机打开，1:1 试放您的工位",
+        "flange_ar_desktop_subtitle": "请站在工位旁，用手机或平板打开本页即可预览。数据仅在您的设备上处理。",
+        "flange_ar_curtain_title": "先在你的工位上试放一次",
+        "flange_ar_curtain_subtitle": "按真实尺寸 1:1 预览占地与周边间隙，帮助你在约 demo 前先做一次空间预检。仅本机计算，不上传工位影像。",
         "flange_strip": [
           {
             "title": "ROS/ROS2",

@@ -1,0 +1,40 @@
+---
+description: Chinese major heading copy — no trailing full-width period (。)
+globs: locales/zh.json,components/**/*.tsx,lib/**/*.ts
+alwaysApply: false
+---
+
+# Chinese major headings: no trailing 。
+
+Roooll 中文 **大标题**（页面/区块级 H1–H2 展示标题）**句末不加全角句号 `。`**。英文标题可保留 `.`；本规则仅约束中文。
+
+## 适用范围（大标题）
+
+- `heroTitle`, `openingTitle`, `originTitle`, `philosophyTitle`, `peopleTitle`, `planetTitle`, `closingTitle`
+- `opener.title`, `headline`, `headlineLines[]`, `twinSupportTitle`
+- 叙事/行业页 **section 主标题**（如 `story.step*.title`、制造页对比/CTA 段 `title`）
+- 支持页 **Gold Card** 等区块主标题（`support.service.cards.*.title`）
+- 品牌故事 **philosophyPillars.*.title**
+- 组件内 **硬编码**、且渲染为 `<h1>` / `<h2>` / 同等视觉层级的 zh 文案
+
+## 不在此列（可保留句号）
+
+- `subtitle`, `body`, `intro`, FAQ 问答、meta description
+- `highlight` 金句、列表 `hint`、按钮/导航标签
+- 正文段落、aria、alt、表单提示
+
+## 示例
+
+```json
+// ❌
+"openingTitle": "精密，为人所易。"
+"headlineLines": ["对比全系 r 家族", "看清差距在哪里。"]
+
+// ✅
+"openingTitle": "精密，为人所易"
+"headlineLines": ["对比全系 r 家族", "看清差距在哪里"]
+```
+
+## 编辑后自检
+
+在 `locales/zh.json` 中搜索大标题 key，确认值不以 `。` 结尾；新增中文页开幕/hero 标题时默认无句号。

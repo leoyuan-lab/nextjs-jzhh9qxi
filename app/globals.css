@@ -2337,20 +2337,33 @@ body.is-sticky-scroll-route {
   }
 
   .arm-page-root .rcore-ln-section--flange-ar-stack .rcore-ln-flange-curtain-inner--pull-full {
+    /* Match AR stack-top: fill section content box (section already has horizontal pad). */
+    width: 100%;
+    max-width: 100%;
     padding-top: var(--rcore-ln-pad-before);
-    padding-left: clamp(4px, 1vw, 12px);
-    padding-right: clamp(4px, 1vw, 12px);
+    padding-left: 0;
+    padding-right: 0;
     padding-bottom: clamp(24px, 4vh, 40px);
   }
 
   .arm-page-root .rcore-ln-section--flange-ar-stack .rcore-ln-flange-intro-head--pull {
+    width: 100%;
     margin-bottom: clamp(26px, 5.5vh, 44px);
     text-align: center;
     align-items: center;
   }
 
+  .arm-page-root .rcore-ln-section--flange-ar-stack .rcore-ln-flange-curtain-inner--pull-full .rcore-ln-flange-heading {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .arm-page-root .rcore-ln-section--flange-ar-stack .rcore-ln-flange-curtain-inner--pull-full .rcore-ln-flange-strip {
     padding-top: clamp(20px, 4vh, 36px);
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 0;
   }
 
   .arm-page-root .rcore-ln-flange-features-act {

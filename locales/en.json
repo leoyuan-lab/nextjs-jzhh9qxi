@@ -1010,10 +1010,10 @@
         "scenario_image_alt": "r-Lite collaborative robot cobot product scene, showing integrated collaborative robotic arm form factor in a typical deployment.",
         "flange_section_kicker": "Built in, not bolted on",
         "flange_section_title": "Strength in every layer.",
-        "flange_ar_desktop_title": "Want to see it in your space?",
-        "flange_ar_desktop_subtitle": "Open this page on your phone or tablet to use our AR preview. This feature uses your device camera for on-device spatial mapping only—it never uploads workshop or station imagery. Experience with confidence.",
-        "flange_ar_curtain_title": "See how it fits on your line.",
-        "flange_ar_curtain_subtitle": "See the real arm 1:1 on your production line—confirm fit, cycle time, and floor space before you commit. This feature uses your device camera for on-device spatial mapping only—it never uploads workshop or station imagery. Experience with confidence.",
+        "flange_ar_desktop_title": "Open on your phone for a 1:1 fit check",
+        "flange_ar_desktop_subtitle": "Stand at your station and open this page on your phone or tablet. Processing stays on your device.",
+        "flange_ar_curtain_title": "Try it on your line first",
+        "flange_ar_curtain_subtitle": "Preview at true 1:1 scale—check footprint and clearance before you book a demo. On-device only; no station imagery uploaded.",
         "flange_strip": [
           {
             "title": "Advanced safety",
@@ -1148,10 +1148,10 @@
         "scenario_image_alt": "r-Ultra collaborative robot cobot product scene, showing high-payload collaborative robotic arm form factor in a typical deployment.",
         "flange_section_kicker": "Built in, not bolted on",
         "flange_section_title": "Strength at industrial scale.",
-        "flange_ar_desktop_title": "Want to see it in your space?",
-        "flange_ar_desktop_subtitle": "Open this page on your phone or tablet to use our AR preview. This feature uses your device camera for on-device spatial mapping only—it never uploads workshop or station imagery. Experience with confidence.",
-        "flange_ar_curtain_title": "See how it fits on your line.",
-        "flange_ar_curtain_subtitle": "See the real arm 1:1 on your production line—confirm fit, cycle time, and floor space before you commit. This feature uses your device camera for on-device spatial mapping only—it never uploads workshop or station imagery. Experience with confidence.",
+        "flange_ar_desktop_title": "Open on your phone for a 1:1 fit check",
+        "flange_ar_desktop_subtitle": "Stand at your station and open this page on your phone or tablet. Processing stays on your device.",
+        "flange_ar_curtain_title": "Try it on your line first",
+        "flange_ar_curtain_subtitle": "Preview at true 1:1 scale—check footprint and clearance before you book a demo. On-device only; no station imagery uploaded.",
         "flange_strip": [
           {
             "title": "ROS/ROS2 native",
