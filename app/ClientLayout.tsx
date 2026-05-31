@@ -25,6 +25,7 @@ import {
   syncRouteDocumentChrome,
 } from '@/lib/route-document-chrome';
 import { isApplicationImmersivePath } from '@/lib/application-routes';
+import { RooollBrandMark } from '@/components/RooollBrandMark';
 
 function navFamilyName(familyId: string) {
   return rSeriesData.find((f) => f.id === familyId)?.displayName ?? familyId;
@@ -760,12 +761,7 @@ export default function ClientLayout({
                 tabIndex={0}
                 role="link"
               >
-                {/* Geometry matches `app/icon.svg` (favicon); keep both in sync if the mark changes. */}
-                <svg width={26} height={26} viewBox="0 0 128 128" aria-label={config.brandLogoAria} role="img">
-                  <circle cx="64" cy="66" r="34" fill="currentColor" />
-                  <path d="M18 67C18 58 37 51 63 51C89 51 110 58 110 67C110 76 89 83 63 83C37 83 18 76 18 67Z" stroke="currentColor" strokeWidth="9" fill="none" strokeLinecap="round" />
-                  <path d="M32 74C52 80 82 78 98 71" stroke="var(--logo-cutout)" strokeWidth="9" strokeLinecap="round" />
-                </svg>
+                <RooollBrandMark width={40} title={config.brandLogoAria} />
               </div>
               <div className="desktop-links-group">
                 {config.nav.map((item) => (
@@ -1143,8 +1139,6 @@ export default function ClientLayout({
           .roooll-nav { position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-h); z-index: var(--z-nav); transition: transform 0.78s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s ease, color 0.32s ease; will-change: transform, opacity; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
           .roooll-nav.slide-up { transform: translateY(-104%); opacity: 0; pointer-events: none; }
           .roooll-nav.is-home:not(.search-mode) { box-shadow: none !important; }
-          .roooll-nav { --logo-cutout: #ffffff; }
-          .roooll-nav.is-dark { --logo-cutout: #161617; }
           /* Desktop-only (styled-jsx loads after globals.css; unscoped rules override max-width:734px) */
           @media (min-width: 735px) {
             .desktop-links-group { display: flex !important; flex: 1; justify-content: center; gap: 32px; font-size: 12px; align-items: center; z-index: var(--z-ui); min-width: 0; }

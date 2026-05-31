@@ -19,6 +19,15 @@ const MIDDLE_SET_END = CARD_COUNT * 2;
 /** Safari often skips `scrollend`; debounce scroll idle instead. */
 const SCROLL_IDLE_MS = 420;
 const ANIMATION_WATCHDOG_MS = 900;
+/** Ignore micro-movements so taps on pills / links still navigate. */
+const DRAG_THRESHOLD_PX = 8;
+
+const INTERACTIVE_DRAG_SKIP =
+  'a, button, input, textarea, select, label, [role="button"], [role="link"], .app-hub-carousel-dot';
+
+function isInteractiveDragTarget(target: EventTarget | null): boolean {
+  return target instanceof Element && Boolean(target.closest(INTERACTIVE_DRAG_SKIP));
+}
 
 /** Title placement per card. */
 const HERO_TITLE_PLACE: readonly ('top-left' | 'center' | 'right' | 'top-right')[] = [
@@ -58,6 +67,7 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: ApplicationsHub
   const draggingRef = useRef(false);
   const dragStartXRef = useRef(0);
   const dragScrollLeftRef = useRef(0);
+  const dragPointerIdRef = useRef<number | null>(null);
   const activeIndexRef = useRef(0);
   const syncTimerRef = useRef<number | null>(null);
   const scrollIdleTimerRef = useRef<number | null>(null);
@@ -398,33 +408,48 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: ApplicationsHub
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!enabledRef.current) return;
     const viewport = viewportRef.current;
-    if (!viewport || event.button !== 0) return;
-    draggingRef.current = true;
-    pausedRef.current = true;
-    animatingRef.current = false;
-    clearAnimationWatchdog();
+    if (!viewport || event.button !== 0 || isInteractiveDragTarget(event.target)) return;
+
+    draggingRef.current = false;
+    dragPointerIdRef.current = event.pointerId;
     dragStartXRef.current = event.clientX;
     dragScrollLeftRef.current = viewport.scrollLeft;
-    viewport.setPointerCapture(event.pointerId);
   };
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!draggingRef.current) return;
+    if (dragPointerIdRef.current !== event.pointerId) return;
     const viewport = viewportRef.current;
     if (!viewport) return;
-    viewport.scrollLeft = dragScrollLeftRef.current - (event.clientX - dragStartXRef.current);
+
+    const deltaX = event.clientX - dragStartXRef.current;
+    if (!draggingRef.current) {
+      if (Math.abs(deltaX) < DRAG_THRESHOLD_PX) return;
+
+      draggingRef.current = true;
+      pausedRef.current = true;
+      animatingRef.current = false;
+      clearAnimationWatchdog();
+      viewport.setPointerCapture(event.pointerId);
+    }
+
+    viewport.scrollLeft = dragScrollLeftRef.current - deltaX;
   };
 
   const endDrag = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!draggingRef.current) return;
+    if (dragPointerIdRef.current !== event.pointerId) return;
+
+    const viewport = viewportRef.current;
+    const didDrag = draggingRef.current;
+    dragPointerIdRef.current = null;
     draggingRef.current = false;
     pausedRef.current = false;
 
-    const viewport = viewportRef.current;
     if (!viewport) return;
     if (viewport.hasPointerCapture(event.pointerId)) {
       viewport.releasePointerCapture(event.pointerId);
     }
+
+    if (!didDrag) return;
 
     snapToNearestDom(reduceMotion ? 'auto' : 'smooth');
   };
@@ -490,6 +515,7 @@ export function ApplicationsHubDesktopCarousel({ copy }: { copy: ApplicationsHub
                     href={`${copy.langPrefix}${card.href}`}
                     className="app-hub-pill app-hub-carousel-foot-pill"
                     tabIndex={isClone ? -1 : undefined}
+                    onPointerDown={(event) => event.stopPropagation()}
                   >
                     {copy.learnMore}
                   </Link>
