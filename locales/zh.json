@@ -121,6 +121,7 @@
     "heroArView": "在您的空间查看",
     "heroArLoading": "正在加载 AR…",
     "heroArAria": "在您的空间以增强现实查看 r-Lite FR3-C 协作机器人",
+    "heroArRultraAria": "在您的空间以增强现实查看 r-Ultra FR30 协作机器人",
     "heroRliteSubtitle": "轻量一体，精密协作",
     "heroRliteFact": "3 kg 级 · 控制箱一体 · 622 mm 工作半径",
     "heroRultraSubtitle": "超强负载，工业核心",
@@ -1009,9 +1010,9 @@
         "flange_section_kicker": "内建底气",
         "flange_section_title": "每一层，都有实力",
         "flange_ar_desktop_title": "想在您的空间里查看？",
-        "flange_ar_desktop_subtitle": "请使用手机或平板打开本页，使用增强现实预览。",
+        "flange_ar_desktop_subtitle": "请使用手机或平板打开本页，使用增强现实预览。本功能仅调用手机摄像头进行本地空间计算，不上传任何您的车间/工位隐私数据，请放心体验。",
         "flange_ar_curtain_title": "看看它如何融入您的产线。",
-        "flange_ar_curtain_subtitle": "1:1 在您的产线上查看真机，确认是否完美契合产线需求、节拍与部署空间。",
+        "flange_ar_curtain_subtitle": "1:1 在您的产线上查看真机，确认是否完美契合产线需求、节拍与部署空间。本功能仅调用手机摄像头进行本地空间计算，不上传任何您的车间/工位隐私数据，请放心体验。",
         "flange_strip": [
           {
             "title": "无障碍安全协作",
@@ -1147,9 +1148,9 @@
         "flange_section_kicker": "内建底气",
         "flange_section_title": "工业现场，层层见真",
         "flange_ar_desktop_title": "想在您的空间里查看？",
-        "flange_ar_desktop_subtitle": "请使用手机或平板打开本页，使用增强现实预览。",
+        "flange_ar_desktop_subtitle": "请使用手机或平板打开本页，使用增强现实预览。本功能仅调用手机摄像头进行本地空间计算，不上传任何您的车间/工位隐私数据，请放心体验。",
         "flange_ar_curtain_title": "看看它如何融入您的产线。",
-        "flange_ar_curtain_subtitle": "1:1 在您的产线上查看真机，确认是否完美契合产线需求、节拍与部署空间。",
+        "flange_ar_curtain_subtitle": "1:1 在您的产线上查看真机，确认是否完美契合产线需求、节拍与部署空间。本功能仅调用手机摄像头进行本地空间计算，不上传任何您的车间/工位隐私数据，请放心体验。",
         "flange_strip": [
           {
             "title": "ROS/ROS2",

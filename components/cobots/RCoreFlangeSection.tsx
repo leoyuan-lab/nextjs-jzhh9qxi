@@ -12,12 +12,11 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
-import { launchArFromUserTap } from '@/lib/ar-preview-launch';
+import { launchArFromUserTap, arPreviewSourcesForImmersive } from '@/lib/ar-preview-launch';
 import { ArSlotAbsorb } from '@/components/cobots/ArSlotAbsorb';
 import { RCoreFlangeHeroStill } from '@/components/cobots/RCoreFlangeHeroStill';
 import { HeroArSpaceIcon } from '@/components/cobots/HeroArSpaceIcon';
 import { detectIosQuickLookDevice } from '@/lib/ar-device';
-import { cobotGlbModels } from '@/data/products';
 import { trackCtaClick } from '@/lib/analytics';
 import {
   detectInAppBrowser,
@@ -180,6 +179,12 @@ function FlangeArCurtainTop({
   const home = getMessages(lang).homepage;
   const arViewerRef = useRef<HTMLElement | null>(null);
   const [isIos, setIsIos] = useState(false);
+  const arSources = arPreviewSourcesForImmersive(messagesPageKey);
+  const arAriaLabel =
+    messagesPageKey === 'r_ultra' ? home.heroArRultraAria : home.heroArAria;
+  const arPreviewCameraOrbit =
+    messagesPageKey === 'r_ultra' ? '45deg 78deg 2.85m' : '45deg 78deg 1.15m';
+  const arPreviewFov = messagesPageKey === 'r_ultra' ? '38deg' : '32deg';
 
   useEffect(() => {
     setIsIos(detectIosQuickLookDevice());
@@ -187,10 +192,7 @@ function FlangeArCurtainTop({
 
   const onPillClick = () => {
     trackCtaClick(messagesPageKey === 'r_ultra' ? 'r_ultra_flange_ar' : 'r_lite_flange_ar');
-    launchArFromUserTap(arViewerRef.current, {
-      glb: cobotGlbModels.rLiteFr3CArGlb,
-      usdz: cobotGlbModels.rLiteFr3CArUsdz,
-    });
+    launchArFromUserTap(arViewerRef.current, arSources);
   };
 
   return (
@@ -201,11 +203,11 @@ function FlangeArCurtainTop({
             <model-viewer
               ref={arViewerRef as MutableRefObject<HTMLElement | null>}
               className="rcore-ln-flange-ar-preview__viewer"
-              src={cobotGlbModels.rLiteFr3CArGlb}
+              src={arSources.glb}
               {...(isIos
                 ? {
                     ar: true,
-                    'ios-src': cobotGlbModels.rLiteFr3CArUsdz,
+                    'ios-src': arSources.usdz,
                     'ar-modes': 'quick-look webxr scene-viewer',
                     'ar-scale': 'fixed',
                     'ar-placement': 'floor',
@@ -222,8 +224,8 @@ function FlangeArCurtainTop({
               shadow-intensity="0.85"
               exposure="1"
               environment-image="neutral"
-              camera-orbit="45deg 78deg 1.15m"
-              field-of-view="32deg"
+              camera-orbit={arPreviewCameraOrbit}
+              field-of-view={arPreviewFov}
               style={MV_PROGRESS_HIDE}
             >
               {isIos ? <ArSlotAbsorb /> : null}
@@ -236,7 +238,7 @@ function FlangeArCurtainTop({
           <button
             type="button"
             className="rcore-ln-flange-ar-pill"
-            aria-label={home.heroArAria}
+            aria-label={arAriaLabel}
             onClick={onPillClick}
           >
             <span className="rcore-ln-flange-ar-pill__label">{home.heroArView}</span>
@@ -319,7 +321,9 @@ export function RCoreFlangeSection({
   const reduceMotion = useReducedMotion() === true;
 
   const showArPill =
-    messagesPageKey === 'r_lite' && layoutMode !== 'no-ar' && !detectInAppBrowser();
+    (messagesPageKey === 'r_lite' || messagesPageKey === 'r_ultra') &&
+    layoutMode !== 'no-ar' &&
+    !detectInAppBrowser();
 
   useEffect(() => {
     const sync = () => setLayoutMode(resolveFlangeLayoutMode());

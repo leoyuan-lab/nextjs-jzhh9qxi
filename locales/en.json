@@ -121,6 +121,7 @@
     "heroArView": "View in your space",
     "heroArLoading": "Loading AR…",
     "heroArAria": "View r-Lite FR3-C collaborative cobot in augmented reality on your device",
+    "heroArRultraAria": "View r-Ultra FR30 collaborative cobot in augmented reality on your device",
     "heroRliteSubtitle": "Lightweight body, integrated control.",
     "heroRliteFact": "3 kg class · integrated controller · 622 mm reach",
     "heroRultraSubtitle": "Born for heavy duty.",
@@ -1010,9 +1011,9 @@
         "flange_section_kicker": "Built in, not bolted on",
         "flange_section_title": "Strength in every layer.",
         "flange_ar_desktop_title": "Want to see it in your space?",
-        "flange_ar_desktop_subtitle": "Open this page on your phone or tablet to use our AR preview.",
+        "flange_ar_desktop_subtitle": "Open this page on your phone or tablet to use our AR preview. This feature uses your device camera for on-device spatial mapping only—it never uploads workshop or station imagery. Experience with confidence.",
         "flange_ar_curtain_title": "See how it fits on your line.",
-        "flange_ar_curtain_subtitle": "See the real arm 1:1 on your production line—confirm fit, cycle time, and floor space before you commit.",
+        "flange_ar_curtain_subtitle": "See the real arm 1:1 on your production line—confirm fit, cycle time, and floor space before you commit. This feature uses your device camera for on-device spatial mapping only—it never uploads workshop or station imagery. Experience with confidence.",
         "flange_strip": [
           {
             "title": "Advanced safety",
@@ -1148,9 +1149,9 @@
         "flange_section_kicker": "Built in, not bolted on",
         "flange_section_title": "Strength at industrial scale.",
         "flange_ar_desktop_title": "Want to see it in your space?",
-        "flange_ar_desktop_subtitle": "Open this page on your phone or tablet to use our AR preview.",
+        "flange_ar_desktop_subtitle": "Open this page on your phone or tablet to use our AR preview. This feature uses your device camera for on-device spatial mapping only—it never uploads workshop or station imagery. Experience with confidence.",
         "flange_ar_curtain_title": "See how it fits on your line.",
-        "flange_ar_curtain_subtitle": "See the real arm 1:1 on your production line—confirm fit, cycle time, and floor space before you commit.",
+        "flange_ar_curtain_subtitle": "See the real arm 1:1 on your production line—confirm fit, cycle time, and floor space before you commit. This feature uses your device camera for on-device spatial mapping only—it never uploads workshop or station imagery. Experience with confidence.",
         "flange_strip": [
           {
             "title": "ROS/ROS2 native",

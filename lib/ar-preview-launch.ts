@@ -1,10 +1,28 @@
+import { cobotGlbModels } from '@/data/products';
 import { detectAndroidDevice, detectIosQuickLookDevice } from '@/lib/ar-device';
 import { openSceneViewerForModel } from '@/lib/scene-viewer-intent';
+import type { ImmersiveMessagesPageKey } from '@/lib/immersive-series-messages';
 
 export type ArPreviewModelSources = {
   glb: string;
   usdz: string;
 };
+
+/** r-Lite / r-Ultra AR asset pairs (GLB → Android Scene Viewer, USDZ → iOS Quick Look). */
+export function arPreviewSourcesForImmersive(
+  pageKey: ImmersiveMessagesPageKey,
+): ArPreviewModelSources {
+  if (pageKey === 'r_ultra') {
+    return {
+      glb: cobotGlbModels.rUltraFr30ArGlb,
+      usdz: cobotGlbModels.rUltraFr30ArUsdz,
+    };
+  }
+  return {
+    glb: cobotGlbModels.rLiteFr3CArGlb,
+    usdz: cobotGlbModels.rLiteFr3CArUsdz,
+  };
+}
 
 type ModelViewerEl = HTMLElement & {
   activateAR?: () => void;

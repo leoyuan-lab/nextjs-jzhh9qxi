@@ -44,6 +44,7 @@ export default function HomePageClient() {
   const viewerRef5 = useRef<any>(null);
   const viewerRef20 = useRef<any>(null);
   const rliteArEngineRef = useRef<HTMLElement | null>(null);
+  const rultraArEngineRef = useRef<HTMLElement | null>(null);
   /** Joint spin loop id (`requestAnimationFrame`); cleared with `cancelAnimationFrame`. */
   const flangeSpinTimerRef = useRef<number | null>(null);
   const jointSpinActiveRef = useRef(false);
@@ -586,9 +587,55 @@ export default function HomePageClient() {
                   {ctaInquiry}
                 </button>
               </div>
+              {isLoaded && showHeroArEntry ? (
+                <div className="hero-ar-entry-wrap">
+                  <button
+                    type="button"
+                    className="hero-ar-entry"
+                    aria-label={home.heroArRultraAria}
+                    onClick={() => {
+                      trackCtaClick('home_hero2_ar');
+                      launchArFromUserTap(rultraArEngineRef.current, {
+                        glb: cobotGlbModels.rUltraFr30ArGlb,
+                        usdz: cobotGlbModels.rUltraFr30ArUsdz,
+                      });
+                    }}
+                  >
+                    <span className="hero-ar-entry__label">{home.heroArView}</span>
+                    <HeroArSpaceIcon />
+                  </button>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
+        {isLoaded && showHeroArEntry && mountIosArEngine ? (
+          <model-viewer
+            ref={rultraArEngineRef}
+            className="roooll-ar-engine-host"
+            src={cobotGlbModels.rUltraFr30ArGlb}
+            ios-src={cobotGlbModels.rUltraFr30ArUsdz}
+            alt={altHeroRultraGlb}
+            ar
+            ar-modes="quick-look webxr scene-viewer"
+            ar-scale="fixed"
+            ar-placement="floor"
+            loading="lazy"
+            interaction-prompt="none"
+            camera-controls={false}
+            environment-image="neutral"
+            shadow-intensity="0.9"
+            style={
+              {
+                ['--progress-bar-height' as string]: '0px',
+                ['--progress-bar-color' as string]: 'transparent',
+                ['--ar-button-display' as string]: 'none',
+              } as CSSProperties
+            }
+          >
+            <ArSlotAbsorb />
+          </model-viewer>
+        ) : null}
       </section>
 
       {/* 屏3: r-Core（HD 静图 → 轻量落地页） */}

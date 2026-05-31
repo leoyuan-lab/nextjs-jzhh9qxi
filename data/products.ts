@@ -872,6 +872,10 @@ export const cobotGlbModels = {
   rLiteFr3CArUsdz: '/models/r-lite-cobot-fr3-c.usdz',
   /** r-Ultra 线（FR30）首页 / `/cobots/r-ultra` hero */
   rUltraFr30: '/models/r-ultra-cobot-fr30.glb',
+  /** r-Ultra FR30 首页 / 沉浸页 AR（Android Scene Viewer；1:1 米制） */
+  rUltraFr30ArGlb: '/models/r-ultra-cobot-fr30-ar.glb',
+  /** r-Ultra FR30 iOS Quick Look AR */
+  rUltraFr30ArUsdz: '/models/r-ultra-cobot-fr30.usdz',
 } as const;
 
 /** r-Lite 法兰三特征段静态主视觉（WebP，与 `public/images/robots/` 命名一致） */
