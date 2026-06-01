@@ -12,6 +12,12 @@ import { useSiteLang } from '@/lib/site-lang-context';
 import { trackCtaClick } from '@/lib/analytics';
 import { openInquiry } from '@/lib/open-inquiry';
 import { R_CORE_LITE_HERO_HD_PATH } from '@/lib/rcore-lite-page-config';
+import {
+  R_ULTRA_PAGE_HERO_CAMERA,
+  applyRcoreViewerLighting,
+  applyRUltraHeroFraming,
+  rcoreViewerLightingAttrs,
+} from '@/lib/rcore-scroll-cameras';
 import { ArSlotAbsorb } from '@/components/cobots/ArSlotAbsorb';
 import { HeroArSpaceIcon } from '@/components/cobots/HeroArSpaceIcon';
 import { detectIosQuickLookDevice, isArPreviewCapable } from '@/lib/ar-device';
@@ -31,12 +37,16 @@ const HOME_STORY_TWIN_IMAGE = STORY_CHAPTER_IMAGES.people;
 const DRAG_HINT_SHOW_DELAY_MS = 1800;
 const DRAG_HINT_VISIBLE_MS = 2500;
 
+/** 与 `/cobots/r-ultra` 沉浸首屏一致：`R_ULTRA_PAGE_HERO_CAMERA` + default 光照 */
+const R_ULTRA_HERO_LIGHTING = rcoreViewerLightingAttrs('default');
+
 export default function HomePageClient() {
   const lang = useSiteLang();
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [showDragHint, setShowDragHint] = useState(false);
+  const [showRultraDragHint, setShowRultraDragHint] = useState(false);
   const [isRliteHeroGlbLoaded, setIsRliteHeroGlbLoaded] = useState(false);
   const [enableRultraModel, setEnableRultraModel] = useState(false);
   const [showHeroArEntry, setShowHeroArEntry] = useState(false);
@@ -51,6 +61,9 @@ export default function HomePageClient() {
   const heroRotateDelayRef = useRef<number | null>(null);
   const hintHideTimerRef = useRef<number | null>(null);
   const dragHintShowTimerRef = useRef<number | null>(null);
+  const rultraDragHintShowTimerRef = useRef<number | null>(null);
+  const rultraHintHideTimerRef = useRef<number | null>(null);
+  const rultraHeroRotateDelayRef = useRef<number | null>(null);
   const hideTimerRef = useRef<number | null>(null);
   const forceHideTimerRef = useRef<number | null>(null);
   const loadingUnmountTimerRef = useRef<number | null>(null);
@@ -220,16 +233,28 @@ export default function HomePageClient() {
       flangeSpinTimerRef.current = window.requestAnimationFrame(tick);
     };
 
-    const scheduleDragHint = () => {
+    const scheduleDragHintFor = (
+      setVisible: (show: boolean) => void,
+      showTimerRef: { current: number | null },
+      hideTimerRef: { current: number | null },
+    ) => {
       if (isArPreviewCapable()) return;
-      if (dragHintShowTimerRef.current) window.clearTimeout(dragHintShowTimerRef.current);
-      if (hintHideTimerRef.current) window.clearTimeout(hintHideTimerRef.current);
-      setShowDragHint(false);
-      dragHintShowTimerRef.current = window.setTimeout(() => {
-        dragHintShowTimerRef.current = null;
-        setShowDragHint(true);
-        hintHideTimerRef.current = window.setTimeout(() => setShowDragHint(false), DRAG_HINT_VISIBLE_MS);
+      if (showTimerRef.current) window.clearTimeout(showTimerRef.current);
+      if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
+      setVisible(false);
+      showTimerRef.current = window.setTimeout(() => {
+        showTimerRef.current = null;
+        setVisible(true);
+        hideTimerRef.current = window.setTimeout(() => setVisible(false), DRAG_HINT_VISIBLE_MS);
       }, DRAG_HINT_SHOW_DELAY_MS);
+    };
+
+    const scheduleDragHint = () => {
+      scheduleDragHintFor(setShowDragHint, dragHintShowTimerRef, hintHideTimerRef);
+    };
+
+    const scheduleRultraDragHint = () => {
+      scheduleDragHintFor(setShowRultraDragHint, rultraDragHintShowTimerRef, rultraHintHideTimerRef);
     };
 
     const startSimpleHeroSequence = (viewer: any) => {
@@ -269,17 +294,35 @@ export default function HomePageClient() {
       finishLoading();
     };
 
+    const startRultraHeroSequence = (viewer: any) => {
+      if (!viewer) return;
+      viewer.removeAttribute('auto-rotate');
+      viewer.setAttribute('camera-controls', '');
+      if (rultraHeroRotateDelayRef.current) window.clearTimeout(rultraHeroRotateDelayRef.current);
+      rultraHeroRotateDelayRef.current = window.setTimeout(() => {
+        rultraHeroRotateDelayRef.current = null;
+        viewer.setAttribute('rotation-per-second', '-100%');
+        viewer.setAttribute('auto-rotate', '');
+      }, 1000);
+      scheduleRultraDragHint();
+    };
+
     const onLoad20 = () => {
       const v20 = viewerRef20.current;
+      if (!v20) return;
+      applyRcoreViewerLighting(v20, 'default');
+      applyRUltraHeroFraming(v20);
+      startRultraHeroSequence(v20);
+    };
+
+    const syncRultraHeroCamera = () => {
+      const v20 = viewerRef20.current;
       if (!v20?.model) return;
-      applyPerfectMaterial(v20.model);
-      const isMobile = window.innerWidth < 768;
-      v20.setAttribute('camera-target', isMobile ? 'auto 122% auto' : 'auto 110% auto');
-      v20.setAttribute('camera-orbit', `-45deg 80deg ${isMobile ? '1100m' : '2000m'}`);
-      v20.setAttribute('field-of-view', isMobile ? '25deg' : '15.5deg');
+      applyRUltraHeroFraming(v20);
     };
 
     const onHeroInteract = () => setShowDragHint(false);
+    const onRultraHeroInteract = () => setShowRultraDragHint(false);
 
     const attachHeroViewer = () => {
       const v5 = viewerRef5.current;
@@ -296,7 +339,11 @@ export default function HomePageClient() {
       v5.addEventListener('touchstart', onHeroInteract);
 
       const v20 = viewerRef20.current;
-      if (v20) v20.addEventListener('load', onLoad20);
+      if (v20) {
+        v20.addEventListener('load', onLoad20);
+        v20.addEventListener('pointerdown', onRultraHeroInteract);
+        v20.addEventListener('touchstart', onRultraHeroInteract);
+      }
     };
 
     const syncHeroMotionByScroll = () => {
@@ -351,6 +398,7 @@ export default function HomePageClient() {
     syncHeroMotionByScroll();
     window.addEventListener('scroll', syncHeroMotionByScroll, { passive: true });
     window.addEventListener('resize', syncHeroMotionByScroll);
+    window.addEventListener('resize', syncRultraHeroCamera);
     forceHideTimerRef.current = window.setTimeout(() => finishLoading(), 8000);
 
     return () => {
@@ -359,6 +407,7 @@ export default function HomePageClient() {
       if (rafId !== null) window.cancelAnimationFrame(rafId);
       window.removeEventListener('scroll', syncHeroMotionByScroll);
       window.removeEventListener('resize', syncHeroMotionByScroll);
+      window.removeEventListener('resize', syncRultraHeroCamera);
       const v5 = viewerRef5.current;
       const v20 = viewerRef20.current;
       if (v5) {
@@ -367,11 +416,18 @@ export default function HomePageClient() {
         v5.removeEventListener('pointerdown', onHeroInteract);
         v5.removeEventListener('touchstart', onHeroInteract);
       }
-      if (v20) v20.removeEventListener('load', onLoad20);
+      if (v20) {
+        v20.removeEventListener('load', onLoad20);
+        v20.removeEventListener('pointerdown', onRultraHeroInteract);
+        v20.removeEventListener('touchstart', onRultraHeroInteract);
+      }
       stopJointSpin();
       if (heroRotateDelayRef.current) window.clearTimeout(heroRotateDelayRef.current);
+      if (rultraHeroRotateDelayRef.current) window.clearTimeout(rultraHeroRotateDelayRef.current);
       if (dragHintShowTimerRef.current) window.clearTimeout(dragHintShowTimerRef.current);
       if (hintHideTimerRef.current) window.clearTimeout(hintHideTimerRef.current);
+      if (rultraDragHintShowTimerRef.current) window.clearTimeout(rultraDragHintShowTimerRef.current);
+      if (rultraHintHideTimerRef.current) window.clearTimeout(rultraHintHideTimerRef.current);
       if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
       if (forceHideTimerRef.current) window.clearTimeout(forceHideTimerRef.current);
       if (loadingUnmountTimerRef.current) window.clearTimeout(loadingUnmountTimerRef.current);
@@ -544,23 +600,32 @@ export default function HomePageClient() {
 
       {/* 屏2: r-ultra（r-ultra-cobot-fr30.glb） */}
       <section className="screen-outer screen-outer--hero-dark" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
-        <div className={`hero-3d-wrap hero-3d-wrap--dark ${isLoaded ? 'ready-visible' : 'hidden-init'}`}>
+        <div
+          className={`hero-3d-wrap hero-3d-wrap--dark hero-3d-wrap--r-ultra-fill ${isLoaded ? 'ready-visible' : 'hidden-init'}`}
+        >
           <model-viewer
             ref={viewerRef20}
             src={enableRultraModel ? cobotGlbModels.rUltraFr30 : undefined}
             alt={altHeroRultraGlb}
             loading="lazy"
+            camera-controls
             auto-rotate
             disable-zoom
-            camera-orbit="-45deg 80deg 2000m"
-            camera-target="auto 110% auto"
-            shadow-intensity="0.9"
-            shadow-softness="1.15"
-            environment-image="neutral"
-            environment-intensity="0.82"
-            exposure="1.02"
-            field-of-view="15.5deg"
             touch-action="pan-y"
+            interaction-prompt="none"
+            camera-orbit={R_ULTRA_PAGE_HERO_CAMERA.orbit}
+            camera-target={R_ULTRA_PAGE_HERO_CAMERA.target}
+            field-of-view={R_ULTRA_PAGE_HERO_CAMERA.fov}
+            shadow-intensity={R_ULTRA_HERO_LIGHTING.shadowIntensity}
+            shadow-softness={R_ULTRA_HERO_LIGHTING.shadowSoftness}
+            environment-image="neutral"
+            environment-intensity={R_ULTRA_HERO_LIGHTING.environmentIntensity}
+            exposure={R_ULTRA_HERO_LIGHTING.exposure}
+            onLoad={(e) => {
+              const el = e.target as HTMLElement;
+              applyRcoreViewerLighting(el, 'default');
+              applyRUltraHeroFraming(el);
+            }}
             style={
               {
                 width: '100%',
@@ -569,9 +634,12 @@ export default function HomePageClient() {
                 backgroundColor: '#000000',
                 ['--progress-bar-height' as string]: '0px',
                 ['--progress-bar-color' as string]: 'transparent',
-              } as any
+              } as CSSProperties
             }
           />
+        </div>
+        <div className={`drag-hint drag-hint--hero-dark ${showRultraDragHint ? 'show' : ''}`}>
+          {home.dragHint}
         </div>
         <div className="content-limit">
           <div className="text-box">

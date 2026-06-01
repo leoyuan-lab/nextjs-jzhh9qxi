@@ -759,6 +759,17 @@ body.is-sticky-scroll-route {
   background: #000000;
 }
 
+/* r-Ultra 首页：3D 层略向上下溢出，配合 `%` orbit 做顶天立地 */
+.roooll-home-wrapper .hero-3d-wrap--r-ultra-fill {
+  top: -5vh;
+  height: calc(100% + 10vh);
+}
+
+.arm-page-root--r-ultra .rcore-fixed-model-inner {
+  top: -4vh;
+  height: calc(100% + 8vh);
+}
+
 .roooll-home-wrapper .hero-image-wrap {
   position: absolute;
   inset: 0;
@@ -841,6 +852,10 @@ body.is-sticky-scroll-route {
 .roooll-home-wrapper .drag-hint.show {
   opacity: 1;
   transform: translate(-50%, 0);
+}
+
+.roooll-home-wrapper .drag-hint--hero-dark {
+  color: rgba(245, 245, 247, 0.52);
 }
 
 /* 文案/链接叠在 model-viewer 之上，减轻首击落在 3D 上需点两次 */

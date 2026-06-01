@@ -12,6 +12,54 @@ export const RCORE_PAGE_HERO_CAMERA: RcoreCameraPreset = {
   fov: '15.5deg',
 };
 
+/**
+ * r-Ultra（FR30）首屏：orbit 半径用 `%`（相对模型包围盒，100% = 刚好框住）。
+ * FR30 场景尺度比 r-Lite 大约 2×，固定 `1900m` 类机位在画面上会明显偏小。
+ */
+export const R_ULTRA_PAGE_HERO_CAMERA: RcoreCameraPreset = {
+  orbit: '45deg 85deg 58%',
+  target: 'auto 110% auto',
+  fov: '15.5deg',
+};
+
+export const R_ULTRA_PAGE_HERO_CAMERA_COARSE: RcoreCameraPreset = {
+  orbit: '45deg 85deg 72%',
+  target: 'auto 122% auto',
+  fov: '25deg',
+};
+
+export const R_ULTRA_FILM_ADV_CAMERAS: readonly RcoreCameraPreset[] = [
+  { orbit: '40deg 84deg 54%', target: 'auto 111% auto', fov: '14.2deg' },
+  { orbit: '52deg 81deg 50%', target: 'auto 107% auto', fov: '13.8deg' },
+  { orbit: '30deg 87deg 48%', target: 'auto 114% auto', fov: '14deg' },
+];
+
+type ModelViewerFrameEl = HTMLElement & {
+  jumpCameraToGoal?: () => void;
+};
+
+/** r-Ultra 首屏：写入机位并立即跳到目标（避免 lazy load 后仍停在默认远景） */
+export function applyRUltraHeroFraming(el: HTMLElement | null): void {
+  if (!el) return;
+  applyRcoreCamera(el, immersivePageHeroCamera('r-ultra'));
+  (el as ModelViewerFrameEl).jumpCameraToGoal?.();
+}
+
+export type ImmersiveHeroProduct = 'r-lite' | 'r-ultra';
+
+export function immersivePageHeroCamera(
+  product: ImmersiveHeroProduct,
+  coarse = detectRcoreCoarseViewport(),
+): RcoreCameraPreset {
+  if (product === 'r-ultra') {
+    return coarse ? R_ULTRA_PAGE_HERO_CAMERA_COARSE : R_ULTRA_PAGE_HERO_CAMERA;
+  }
+  if (coarse) {
+    return { orbit: '45deg 85deg 1000m', target: 'auto 122% auto', fov: '25deg' };
+  }
+  return RCORE_PAGE_HERO_CAMERA;
+}
+
 export const RCORE_BLUEPRINT_WIDE_CAMERA: RcoreCameraPreset = {
   orbit: '-22deg 84deg 2.28m',
   target: '0m 0.82m 0m',
@@ -219,9 +267,13 @@ export function armImmersiveSubnavOpacities(
   return { brand, consult, mainNavHide };
 }
 
-export function cameraForFilmSlice(si: number): RcoreCameraPreset {
-  if (si === 0) return RCORE_PAGE_HERO_CAMERA;
-  return RCORE_FILM_ADV_CAMERAS[si - 1] ?? RCORE_FILM_ADV_CAMERAS[RCORE_FILM_ADV_CAMERAS.length - 1];
+export function cameraForFilmSlice(
+  si: number,
+  product: ImmersiveHeroProduct = 'r-lite',
+): RcoreCameraPreset {
+  if (si === 0) return immersivePageHeroCamera(product);
+  const adv = product === 'r-ultra' ? R_ULTRA_FILM_ADV_CAMERAS : RCORE_FILM_ADV_CAMERAS;
+  return adv[si - 1] ?? adv[adv.length - 1];
 }
 
 export function detectRcoreCoarseViewport(): boolean {

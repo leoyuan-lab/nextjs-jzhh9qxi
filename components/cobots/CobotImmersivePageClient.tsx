@@ -18,6 +18,8 @@ import {
   armImmersiveSubnavOpacities,
   armMainNavProgressFromScrollY,
   cameraForFilmSlice,
+  immersivePageHeroCamera,
+  applyRUltraHeroFraming,
   clearViewerMotion,
   computeFilmScrollSlice,
   filmAdv3RollOutMetrics,
@@ -66,6 +68,7 @@ export function CobotImmersivePageClient({
     immersiveProductId === 'r-ultra' ? cobotGlbModels.rUltraFr30 : cobotGlbModels.rLiteFr3C;
   const viewerLightingPreset = immersiveProductId === 'r-lite' ? 'rLiteImmersive' : 'default';
   const viewerLighting = rcoreViewerLightingAttrs(viewerLightingPreset);
+  const [heroCamera, setHeroCamera] = useState(() => immersivePageHeroCamera(immersiveProductId));
   const [lang, setLang] = useState<AppLocale>(initialLang);
   const [scrollVal, setScrollVal] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -95,6 +98,18 @@ export function CobotImmersivePageClient({
       : immersiveProductId === 'r-ultra'
         ? msgs.alt.hero_rultra
         : msgs.alt.hero_rlite;
+
+  useLayoutEffect(() => {
+    const syncHeroCamera = () => {
+      setHeroCamera(immersivePageHeroCamera(immersiveProductId));
+      if (immersiveProductId === 'r-ultra' && mvRef.current) {
+        applyRUltraHeroFraming(mvRef.current);
+      }
+    };
+    syncHeroCamera();
+    window.addEventListener('resize', syncHeroCamera);
+    return () => window.removeEventListener('resize', syncHeroCamera);
+  }, [immersiveProductId]);
 
   useLayoutEffect(() => {
     if ('scrollRestoration' in window.history) {
@@ -197,7 +212,7 @@ export function CobotImmersivePageClient({
         applyRcoreViewerLighting(mv, viewerLightingPreset);
 
         if (filmSlice.inView || adv3RollOut) {
-          applyRcoreCamera(mv, cameraForFilmSlice(filmSlice.si), lastCamKeyRef);
+          applyRcoreCamera(mv, cameraForFilmSlice(filmSlice.si, immersiveProductId), lastCamKeyRef);
           setViewerMotionForFilm(filmSlice.si, reduced);
         }
 
@@ -309,7 +324,9 @@ export function CobotImmersivePageClient({
   }, []);
 
   return (
-    <div className="roooll-wrapper arm-page-root">
+    <div
+      className={`roooll-wrapper arm-page-root${immersiveProductId === 'r-ultra' ? ' arm-page-root--r-ultra' : ''}`}
+    >
       <div ref={fixedStageRef} className="rcore-fixed-model-stage">
         <div ref={modelInnerRef} className="rcore-fixed-model-inner">
           <model-viewer
@@ -321,9 +338,9 @@ export function CobotImmersivePageClient({
             disable-zoom
             touch-action="pan-y"
             interaction-prompt="none"
-            camera-orbit="45deg 85deg 1900m"
-            camera-target="auto 110% auto"
-            field-of-view="15.5deg"
+            camera-orbit={heroCamera.orbit}
+            camera-target={heroCamera.target}
+            field-of-view={heroCamera.fov}
             shadow-intensity={viewerLighting.shadowIntensity}
             shadow-softness={viewerLighting.shadowSoftness}
             environment-image="neutral"
@@ -332,6 +349,11 @@ export function CobotImmersivePageClient({
             onLoad={(e) => {
               const el = e.target as HTMLElement;
               applyRcoreViewerLighting(el, viewerLightingPreset);
+              if (immersiveProductId === 'r-ultra') {
+                applyRUltraHeroFraming(el);
+              } else {
+                applyRcoreCamera(el, immersivePageHeroCamera(immersiveProductId));
+              }
               if (
                 immersiveProductId === 'r-lite' &&
                 !materialAppliedRef.current &&
