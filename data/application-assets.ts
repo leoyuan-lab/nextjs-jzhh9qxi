@@ -33,6 +33,16 @@ export const APPLICATION_HUB_CARD_IMAGES = {
   education: applicationCardPath('education.webp'),
 } as const;
 
+/** Story act-three stills (extracted from domain masters). */
+export const APPLICATION_SCENARIO_IMAGES = {
+  medicalLabSample: applicationCardPath('medical-lab-scenario-sample.webp'),
+  medicalLabBench: applicationCardPath('medical-lab-scenario-bench.webp'),
+  retailDispense: applicationCardPath('retail-service-scenario-dispense.webp'),
+  retailService: applicationCardPath('retail-service-scenario-service.webp'),
+  educationLab: applicationCardPath('education-scenario-lab.webp'),
+  educationTeam: applicationCardPath('education-scenario-team.webp'),
+} as const;
+
 /** Master → card frame mapping (for re-export). */
 export const APPLICATION_HUB_CARD_SOURCES = {
   retailService: { master: 'milk-tea.mov', startSec: 2.8 },

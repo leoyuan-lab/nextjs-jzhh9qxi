@@ -9630,6 +9630,32 @@ html[data-newsroom-subnav-pinned='true'] .newsroom-hero {
   line-height: 1.02;
 }
 
+.app-mfg-opener-title-part,
+.app-mfg-opener-title-sep {
+  display: inline;
+}
+
+/* Zh opener: two phrases on one row at desktop (aligned across application pages). */
+@media (min-width: 735px) {
+  .app-mfg-page--zh .app-mfg-opener-inner {
+    max-width: min(96vw, 52rem);
+  }
+
+  .app-mfg-page--zh .app-mfg-opener-title {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: baseline;
+    width: 100%;
+    white-space: nowrap;
+  }
+
+  .app-mfg-page--zh .app-mfg-opener-title-part,
+  .app-mfg-page--zh .app-mfg-opener-title-sep {
+    flex: 0 0 auto;
+  }
+}
+
 .app-mfg-opener-sub {
   margin: 18px auto 0;
   max-width: 28rem;

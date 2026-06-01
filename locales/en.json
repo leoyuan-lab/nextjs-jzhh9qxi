@@ -242,7 +242,10 @@
         "subtitle": "Light to heavy. Every r‑Series collaborative robotic arm—specs, side by side."
       },
       "journey": {
-        "headlineLines": ["Not sure?", "Select with more confidence."],
+        "headlineLines": [
+          "Not sure?",
+          "Select with more confidence."
+        ],
         "headline": "The right arm for your line.",
         "kicker": "Choose with confidence",
         "title": "Not sure yet?",
@@ -310,10 +313,22 @@
         "kicker": "Built for the floor",
         "title": "Four capabilities that matter on day one",
         "items": [
-          { "title": "±0.02 mm class repeatability", "body": "Hold pose accuracy under rated load for QC and precision assembly." },
-          { "title": "IP54 baseline", "body": "Industrial ingress protection with optional IP65 for harsher cells." },
-          { "title": "ISO 9409-1 flange", "body": "Standard tooling interface for grippers, vacuum, and quick-change EOAT." },
-          { "title": "Field-ready I/O", "body": "Digital and analog I/O plus Modbus TCP/RTU for PLC and MES tie-in." }
+          {
+            "title": "±0.02 mm class repeatability",
+            "body": "Hold pose accuracy under rated load for QC and precision assembly."
+          },
+          {
+            "title": "IP54 baseline",
+            "body": "Industrial ingress protection with optional IP65 for harsher cells."
+          },
+          {
+            "title": "ISO 9409-1 flange",
+            "body": "Standard tooling interface for grippers, vacuum, and quick-change EOAT."
+          },
+          {
+            "title": "Field-ready I/O",
+            "body": "Digital and analog I/O plus Modbus TCP/RTU for PLC and MES tie-in."
+          }
         ]
       },
       "specs": {
@@ -371,7 +386,10 @@
     "selector_comparison": {
       "metaTitleFocus": "Side-by-side r-Series Cobot comparison",
       "metaDescription": "Compare any three r‑Series Cobots—3kg, 5kg, 10kg, 16kg, 20kg, and 30kg class arms across r-Lite, r-Core, r-Reach, r-Max, r-Ultra—with payload, reach, repeatability, joint axes, control cabinets, and power in one shareable table.",
-      "headlineLines": ["Compare all r family", "See what sets them apart."],
+      "headlineLines": [
+        "Compare all r family",
+        "See what sets them apart."
+      ],
       "footer": {
         "title": "Need help narrowing it down?",
         "summary": "You’ve seen the specs—answer five questions for a primary model and upgrade path.",
@@ -417,9 +435,13 @@
       "metaDescription": "Smart manufacturing Cobots: CNC tending, AOI, adhesives, and line-balancing with programmable collaborative robotic arms for factory cells.",
       "pageAria": "Smart manufacturing application story for Roooll collaborative robotic arms",
       "opener": {
-        "kicker": "Roooll Applications",
-        "title": "Smart Manufacturing.",
-        "subtitle": "Put repeat, low-value tasks on cobots—so your team owns quality, changeovers, and craft."
+        "kicker": "Roooll · Smart Manufacturing",
+        "title": "Repeatable cadence. Changeovers stay human.",
+        "subtitle": "Put repeat, low-value tasks on cobots—so your team owns quality, changeovers, and craft.",
+        "titleLines": [
+          "Repeatable cadence.",
+          "Changeovers stay human."
+        ]
       },
       "story": {
         "ariaLabel": "Smart manufacturing collaborative robotic arm value story",
@@ -520,15 +542,51 @@
           "rUltra": "r-Ultra"
         },
         "rows": [
-          { "label": "Rated payload", "rLite": "3 kg (5 kg instant)", "rUltra": "30 kg (35 kg max)" },
-          { "label": "Reach", "rLite": "622 mm", "rUltra": "1402 mm" },
-          { "label": "Repeatability", "rLite": "±0.05 mm", "rUltra": "±0.1 mm" },
-          { "label": "Arm weight", "rLite": "≈12 kg", "rUltra": "≈85 kg" },
-          { "label": "Footprint", "rLite": "φ125 mm base", "rUltra": "240×240 mm" },
-          { "label": "Controller", "rLite": "Base-integrated", "rUltra": "External cabinet" },
-          { "label": "IP rating", "rLite": "IP54", "rUltra": "IP54 (IP65 optional)" },
-          { "label": "Teach", "rLite": "Web App / pendant", "rUltra": "Pendant / mobile terminal" },
-          { "label": "Typical cells", "rLite": "CNC, fastening, line-side transfer", "rUltra": "Heavy tending, welding assist, pallet side" }
+          {
+            "label": "Rated payload",
+            "rLite": "3 kg (5 kg instant)",
+            "rUltra": "30 kg (35 kg max)"
+          },
+          {
+            "label": "Reach",
+            "rLite": "622 mm",
+            "rUltra": "1402 mm"
+          },
+          {
+            "label": "Repeatability",
+            "rLite": "±0.05 mm",
+            "rUltra": "±0.1 mm"
+          },
+          {
+            "label": "Arm weight",
+            "rLite": "≈12 kg",
+            "rUltra": "≈85 kg"
+          },
+          {
+            "label": "Footprint",
+            "rLite": "φ125 mm base",
+            "rUltra": "240×240 mm"
+          },
+          {
+            "label": "Controller",
+            "rLite": "Base-integrated",
+            "rUltra": "External cabinet"
+          },
+          {
+            "label": "IP rating",
+            "rLite": "IP54",
+            "rUltra": "IP54 (IP65 optional)"
+          },
+          {
+            "label": "Teach",
+            "rLite": "Web App / pendant",
+            "rUltra": "Pendant / mobile terminal"
+          },
+          {
+            "label": "Typical cells",
+            "rLite": "CNC, fastening, line-side transfer",
+            "rUltra": "Heavy tending, welding assist, pallet side"
+          }
         ],
         "ctaLite": "Inquire",
         "ctaUltra": "Inquire"
@@ -541,16 +599,508 @@
       }
     },
     "applications_medical_lab": {
-      "metaTitleFocus": "Lab Automation Cobot — Medical & Bench Robotic Arms",
-      "metaDescription": "Medical and lab automation Cobots: sterile tending, repeatable pipetting robotics, bench-top collaborative robotic arms, and ISO-ready workflows."
+      "metaTitleFocus": "Medical & Lab Cobot — Analyzer Loading, Sample Transfer & Bench SOPs",
+      "metaDescription": "Roooll collaborative robotic arms for clinical labs and life-science benches: analyzer tending, sample transfer, and repeatable SOP motion—with teachable paths and LIS/PLC-friendly integration.",
+      "pageAria": "Medical and laboratory application story for Roooll collaborative robotic arms",
+      "opener": {
+        "kicker": "Roooll · Medical & Lab",
+        "title": "Steady benches. Traceable runs.",
+        "subtitle": "Cobots tend slots and sample paths you can teach and log—while your team owns interpretation, releases, and exceptions.",
+        "titleLines": [
+          "Steady benches.",
+          "Traceable runs."
+        ]
+      },
+      "story": {
+        "ariaLabel": "Medical & lab: how collaborative arms fit clinical and R&D benches",
+        "step1": {
+          "kicker": "Clinical & R&D benches",
+          "title": "Instruments wait for samples—not your techs for whole shifts at the slot",
+          "body": "In busy runs, loading is where drift starts—a slightly off path, a short dwell, a messy batch change—and downstream cost is re-test and traceability. Roooll arms execute taught load, transfer, and place motions with a footprint that fits existing benches. Reteach when the study changes the same day, so analyzers keep feeding while people return to interpretation and exceptions."
+        },
+        "step2": {
+          "title": "Labs don't need bigger fences",
+          "intro": "What labs need is motion that replays tomorrow, batches that swap by program, and audit trails that answer who moved what, when. Cobots earn their place by cutting bench variation—not by fencing off another dedicated line.",
+          "items": [
+            {
+              "icon": "deploy",
+              "title": "Taught load paths",
+              "body": "Rack to slot with fixed trajectory and dwell; change batch, change parameters—not muscle memory."
+            },
+            {
+              "icon": "repeat",
+              "title": "Exceptions surface faster",
+              "body": "Consistent motion makes missed or extra steps visible in the workflow, not buried in individual habit."
+            },
+            {
+              "icon": "compact",
+              "title": "Still fits the bench",
+              "body": "Compact reach mounts beside BSCs, analyzers, and line-side tables—not only greenfield layouts."
+            }
+          ]
+        },
+        "step3": {
+          "title": "More benches. One teach playbook.",
+          "items": [
+            {
+              "eyebrow": "Analyzers · Sample slot",
+              "title": "Analyzer tending: batches keep moving, people read results",
+              "body": "Peak loading doesn't need another body at the machine. Cobots tend on program; techs spend time on review, re-runs, and exception reports."
+            },
+            {
+              "eyebrow": "Sample bench · Aliquot & transfer",
+              "title": "Sample handling: same path, batch-to-batch",
+              "body": "Aliquot, cap, and transfer chains drift when handed off manually. Arms run fixed paths—new study, new program, clearer trace."
+            },
+            {
+              "eyebrow": "Repeatable bench · SOP",
+              "title": "Bench repeatables: steady cadence, SOP you can replay",
+              "body": "Pipetting, decap, and fixed places fill shifts but resist standardization. Programmed cobots make same every time real; people own QC and process improvement."
+            }
+          ]
+        }
+      },
+      "compare": {
+        "title": "A clearer way to run the bench",
+        "beforeLabel": "Before",
+        "before": "Techs run between analyzers, benches, and cabinets—handoffs live in memory and sticky notes.",
+        "afterLabel": "With Roooll cobots",
+        "after": "Load, transfer, and repeat pick-place on program—people focus on interpretation, release, and process improvement."
+      },
+      "stats": {
+        "title": "Commitments you can plan around",
+        "items": [
+          {
+            "value": "12h",
+            "label": "Global technical response—clear direction when a critical workflow stalls."
+          },
+          {
+            "value": "2-yr",
+            "label": "Limited warranty on core drives—motors, reducers, and control architecture."
+          },
+          {
+            "value": "3–5 days",
+            "label": "Standard-config shipment after payment confirmation—pilots and terms don't wait a quarter."
+          }
+        ]
+      },
+      "advantages": {
+        "kicker": "Beyond the bench",
+        "title": "Choose Roooll—not just an arm",
+        "items": [
+          {
+            "title": "r-Lite to r-Core, one teach stack",
+            "body": "Pilot on r-Lite, scale tending and multi-station benches on r-Core—same teach logic and flange, documentation carries forward."
+          },
+          {
+            "title": "Speaks your LIS / PLC habits",
+            "body": "TCP/IP, I/O, Modbus, and qualified EOAT paired to your SOP—not a parallel black box."
+          },
+          {
+            "title": "Support when runs can't wait",
+            "body": "Cross-time-zone engineering with a clear response within 12 hours; spares and a 2-year warranty on core components."
+          }
+        ]
+      },
+      "specSheet": {
+        "kicker": "Pick your arm",
+        "title": "Match reach and payload to the bench",
+        "columns": {
+          "rLite": "r-Lite",
+          "rCore": "r-Core"
+        },
+        "rows": [
+          {
+            "label": "Rated payload",
+            "rLite": "3 kg (5 kg instant)",
+            "rCore": "5 kg (7 kg max)"
+          },
+          {
+            "label": "Reach",
+            "rLite": "622 mm",
+            "rCore": "922 mm"
+          },
+          {
+            "label": "Repeatability",
+            "rLite": "±0.05 mm",
+            "rCore": "±0.02 mm"
+          },
+          {
+            "label": "Arm weight",
+            "rLite": "≈12 kg",
+            "rCore": "≈22 kg"
+          },
+          {
+            "label": "Footprint",
+            "rLite": "φ125 mm base",
+            "rCore": "φ149 mm"
+          },
+          {
+            "label": "Controller",
+            "rLite": "Base-integrated",
+            "rCore": "External cabinet"
+          },
+          {
+            "label": "IP rating",
+            "rLite": "IP54",
+            "rCore": "IP54 (IP65 optional)"
+          },
+          {
+            "label": "Teach",
+            "rLite": "Web App / pendant",
+            "rCore": "Pendant / mobile terminal"
+          },
+          {
+            "label": "Typical use",
+            "rLite": "Sample bench, pipetting assist, compact tending",
+            "rCore": "Analyzer loading, multi-station benches, line-side logistics"
+          }
+        ],
+        "ctaLite": "Inquire",
+        "ctaCore": "Inquire"
+      },
+      "closing": {
+        "title": "Plan your lab cell",
+        "body": "Share payload, reach, and bench cadence—we'll match the right r-Series cobot and integration path.",
+        "ctaInquiry": "Start inquiry",
+        "ctaHome": "Back to Home"
+      }
     },
     "applications_education": {
-      "metaTitleFocus": "Education Cobot Programs — Robotic Arm Curriculum",
-      "metaDescription": "University and research Cobot labs: curriculum bundles, LMS integration, collaborative robotic arm curriculum, and embodied AI demos."
+      "metaTitleFocus": "University Cobot Labs — Course Demos, Research Rigs & Competition Deploy",
+      "metaDescription": "Roooll collaborative arms for universities and institutes: teachable class demos, API-friendly research pick-place, and fast roll-in for competition seasons.",
+      "pageAria": "Education and research application story for Roooll collaborative robotic arms",
+      "opener": {
+        "kicker": "Roooll · Education & Research",
+        "title": "Rigs that demo. Syllabi that change.",
+        "subtitle": "Cobots hold the repeatable trajectories and pick-place—so faculty and students spend lab hours on algorithms, experiment design, and judging—not on manually replaying the same motion.",
+        "titleLines": [
+          "Rigs that demo.",
+          "Syllabi that change."
+        ]
+      },
+      "story": {
+        "ariaLabel": "Education & research: cobots in courses, benches, and competition labs",
+        "step1": {
+          "kicker": "Labs & training rooms",
+          "title": "Students need reproducibility—not another manual replay from the TA",
+          "body": "In robotics, mechatronics, and embodied-AI courses, demos shouldn't travel with whoever's at the bench—smooth today, different next week with a new TA. Roooll arms store taught paths, repeat pick-place, and rig motion you can compare and iterate—fast roll-in, small footprint, new lab or new term as a program change—so the bench always runs the same story while minds stay on understanding and improvement."
+        },
+        "step2": {
+          "title": "Teaching gear can't be a closed black box",
+          "intro": "Labs need gear that teaches, retools, and talks to student code and sensors—not a closed box with one vendor motion per semester. Cobots are the programmable lead actor on the bench, not lobby furniture.",
+          "items": [
+            {
+              "icon": "deploy",
+              "title": "Demo-ready for class",
+              "body": "Taught paths run the same day—less pre-class manual alignment."
+            },
+            {
+              "icon": "repeat",
+              "title": "Runs you can compare",
+              "body": "Same program, many runs—easier logging, controls, and lab reports."
+            },
+            {
+              "icon": "compact",
+              "title": "APIs for the project",
+              "body": "Works with common industrial handshakes and open SDKs—courses can climb to algorithms and system integration."
+            }
+          ]
+        },
+        "step3": {
+          "title": "More lab modes. One cobot.",
+          "items": [
+            {
+              "eyebrow": "Classroom · Demo",
+              "title": "Curriculum demos: saved paths, repeatable lectures",
+              "body": "Instructors shouldn't manually replay the same motion every section. Arms demo from saved programs—students see input, path, and outcome clearly linked."
+            },
+            {
+              "eyebrow": "Research · Bench rig",
+              "title": "Research benches: programmable pick-place, data you can log",
+              "body": "Grad hours shouldn't vanish into run the rig again. Arms own repeat bench motion; people own algorithms, controls, and the variables in the paper."
+            },
+            {
+              "eyebrow": "Competition · Short season",
+              "title": "Competition labs: fast roll-in, portable programs",
+              "body": "Seasons are short and venues change. Compact arms deploy fast—programs and fixtures travel between teams and years, not a full re-integration every season."
+            }
+          ]
+        }
+      },
+      "compare": {
+        "title": "A clearer way to run the lab",
+        "beforeLabel": "Before",
+        "before": "Every section needs a manual replay; programs rarely survive the term; competition teams rebuild integration yearly.",
+        "afterLabel": "With Roooll cobots",
+        "after": "Demos and pick-place you can save and replay—faculty and students focus on algorithms, experiment design, and judging."
+      },
+      "stats": {
+        "title": "Commitments you can plan around",
+        "items": [
+          {
+            "value": "12h",
+            "label": "Global technical response—clear direction when a critical workflow stalls."
+          },
+          {
+            "value": "2-yr",
+            "label": "Limited warranty on core drives—motors, reducers, and control architecture."
+          },
+          {
+            "value": "3–5 days",
+            "label": "Standard-config shipment after payment confirmation—pilots and terms don't wait a quarter."
+          }
+        ]
+      },
+      "advantages": {
+        "kicker": "Beyond the rig",
+        "title": "Choose Roooll—not just an arm",
+        "items": [
+          {
+            "title": "Course, research, and competition on one stack",
+            "body": "r-Lite for intro benches, r-Core for multi-station and competition lead arms—same teach surface and interfaces, assets that carry across terms."
+          },
+          {
+            "title": "Open interfaces, projects that go deeper",
+            "body": "Industrial handshakes plus SDK headroom—from teach-in to perception and control projects."
+          },
+          {
+            "title": "Terms and seasons, support keeps pace",
+            "body": "Cross-time-zone engineering with a clear response within 12 hours; spares and warranty for teaching peaks and competition windows."
+          }
+        ]
+      },
+      "specSheet": {
+        "kicker": "Pick your arm",
+        "title": "Match reach and payload to the lab bench",
+        "columns": {
+          "rLite": "r-Lite",
+          "rCore": "r-Core"
+        },
+        "rows": [
+          {
+            "label": "Rated payload",
+            "rLite": "3 kg (5 kg instant)",
+            "rCore": "5 kg (7 kg max)"
+          },
+          {
+            "label": "Reach",
+            "rLite": "622 mm",
+            "rCore": "922 mm"
+          },
+          {
+            "label": "Repeatability",
+            "rLite": "±0.05 mm",
+            "rCore": "±0.02 mm"
+          },
+          {
+            "label": "Arm weight",
+            "rLite": "≈12 kg",
+            "rCore": "≈22 kg"
+          },
+          {
+            "label": "Footprint",
+            "rLite": "φ125 mm base",
+            "rCore": "φ149 mm"
+          },
+          {
+            "label": "Controller",
+            "rLite": "Base-integrated",
+            "rCore": "External cabinet"
+          },
+          {
+            "label": "IP rating",
+            "rLite": "IP54",
+            "rCore": "IP54 (IP65 optional)"
+          },
+          {
+            "label": "Teach",
+            "rLite": "Web App / pendant",
+            "rCore": "Pendant / mobile terminal"
+          },
+          {
+            "label": "Typical use",
+            "rLite": "Intro robotics, compact teaching benches",
+            "rCore": "Research rigs, multi-station demos, competition arms"
+          }
+        ],
+        "ctaLite": "Inquire",
+        "ctaCore": "Inquire"
+      },
+      "closing": {
+        "title": "Plan your teaching lab",
+        "body": "Share payload, reach, and lab cadence—we'll match the right r-Series cobot and bench deployment path.",
+        "ctaInquiry": "Start inquiry",
+        "ctaHome": "Back to Home"
+      }
     },
     "applications_retail_service": {
-      "metaTitleFocus": "Retail & Service Cobot — Compact Robotic Arms",
-      "metaDescription": "Retail and front-house Cobots: compact collaborative robotic arms for greetings, dispensing, kiosk tending, and reliable service automation."
+      "metaTitleFocus": "Retail & Service Cobot — Front-House Pouring, Mixing & Peak-Hour Stations",
+      "metaDescription": "Dessert counters, beverage bars, and smart-dining fronts: compact Roooll cobots hold pour and prep cadence through rush hour—fewer mispours, less staff trapped behind the machine.",
+      "pageAria": "Retail and service application story for Roooll collaborative robotic arms",
+      "opener": {
+        "kicker": "Roooll · Retail & Service",
+        "title": "Steady cups in rush hour. Staff with guests.",
+        "subtitle": "Let cobots run pours and prep to recipe—so your team stays on orders, recommendations, and the moments guests remember.",
+        "titleLines": [
+          "Steady cups in rush hour.",
+          "Staff with guests."
+        ]
+      },
+      "story": {
+        "ariaLabel": "Retail & service: cobots for steady front-house pours and prep",
+        "step1": {
+          "kicker": "Front of house",
+          "title": "The cost of one wrong cup shows up loudest at peak",
+          "body": "More SKUs and a rush hour kill steady hands first—recipes in memory, steps shouted across the counter, one person pouring and greeting at once. Roooll arms turn dispense, mix, and repeat pick-place into taught, swappable programs: counter-side footprint, live the same day, cups on recipe through peak while staff return to face-to-face service."
+        },
+        "step2": {
+          "title": "Front-house automation that doesn't eat the floor",
+          "intro": "Storefronts don't have line-floor space or line-floor integration calendars. Cobots earn their place when recipes execute the same, items swap by program, and rollout isn't measured in months—not when another fence pushes guests away.",
+          "items": [
+            {
+              "icon": "deploy",
+              "title": "Recipes live in the program",
+              "body": "Volume, sequence, dwell taught in—new item ships as a program change, not memorization."
+            },
+            {
+              "icon": "repeat",
+              "title": "Less peak drift",
+              "body": "Same cup, same motion—fewer remakes, easier to hold complaints and waste down."
+            },
+            {
+              "icon": "compact",
+              "title": "Mounts beside the counter",
+              "body": "Bars, dessert stations, smart-dining lines—compact reach that doesn't eat the aisle."
+            }
+          ]
+        },
+        "step3": {
+          "title": "More front stations. One teach method.",
+          "items": [
+            {
+              "eyebrow": "Beverage bar · Pour",
+              "title": "Beverage dispense: recipe locked in the program",
+              "body": "Rush hour doesn't need an extra pair of eyes on every cup. Cobots pour by step—change item, change program—flavor and sequence stay aligned."
+            },
+            {
+              "eyebrow": "Front line · Flow",
+              "title": "Front service: machine on repeat, people on hospitality",
+              "body": "When staff live behind the machine, upsell and recovery shrink. Arms take repeat motion; people stay in the flow where service actually happens."
+            },
+            {
+              "eyebrow": "Tight footprint · Changeover",
+              "title": "Compact station: small footprint, menu seasons included",
+              "body": "Dessert counters, pop-ups, and collab booths run tight. Compact arms mount at the counter—new scene, new program, not a rebuild for one season."
+            }
+          ]
+        }
+      },
+      "compare": {
+        "title": "A clearer way to run the counter",
+        "beforeLabel": "Before",
+        "before": "Peak hours need extra eyes on every cup; new items mean the manager shouting recipes across the bar.",
+        "afterLabel": "With Roooll cobots",
+        "after": "Pours and prep on program—staff return to orders, recommendations, and recovery."
+      },
+      "stats": {
+        "title": "Commitments you can plan around",
+        "items": [
+          {
+            "value": "12h",
+            "label": "Global technical response—clear direction when a critical workflow stalls."
+          },
+          {
+            "value": "2-yr",
+            "label": "Limited warranty on core drives—motors, reducers, and control architecture."
+          },
+          {
+            "value": "3–5 days",
+            "label": "Standard-config shipment after payment confirmation—pilots and terms don't wait a quarter."
+          }
+        ]
+      },
+      "advantages": {
+        "kicker": "Beyond the bar",
+        "title": "Choose Roooll—not just an arm",
+        "items": [
+          {
+            "title": "One teach stack from single station to multi-island",
+            "body": "r-Lite at one pour point, r-Core across multi-station fronts—programs and fixtures copy between stores."
+          },
+          {
+            "title": "Hooks into POS and store control",
+            "body": "Common I/O and network handshakes; start/finish signals shaped to your counter flow."
+          },
+          {
+            "title": "Launch and peak season, backed up",
+            "body": "Cross-time-zone support with a clear response within 12 hours; spares and warranty cut downtime in busy windows."
+          }
+        ]
+      },
+      "specSheet": {
+        "kicker": "Pick your arm",
+        "title": "Match reach and payload to the counter",
+        "columns": {
+          "rLite": "r-Lite",
+          "rCore": "r-Core"
+        },
+        "rows": [
+          {
+            "label": "Rated payload",
+            "rLite": "3 kg (5 kg instant)",
+            "rCore": "5 kg (7 kg max)"
+          },
+          {
+            "label": "Reach",
+            "rLite": "622 mm",
+            "rCore": "922 mm"
+          },
+          {
+            "label": "Repeatability",
+            "rLite": "±0.05 mm",
+            "rCore": "±0.02 mm"
+          },
+          {
+            "label": "Arm weight",
+            "rLite": "≈12 kg",
+            "rCore": "≈22 kg"
+          },
+          {
+            "label": "Footprint",
+            "rLite": "φ125 mm base",
+            "rCore": "φ149 mm"
+          },
+          {
+            "label": "Controller",
+            "rLite": "Base-integrated",
+            "rCore": "External cabinet"
+          },
+          {
+            "label": "IP rating",
+            "rLite": "IP54",
+            "rCore": "IP54 (IP65 optional)"
+          },
+          {
+            "label": "Teach",
+            "rLite": "Web App / pendant",
+            "rCore": "Pendant / mobile terminal"
+          },
+          {
+            "label": "Typical use",
+            "rLite": "Beverage bar, dessert counter, compact dispense",
+            "rCore": "Multi-station front house, larger service islands"
+          }
+        ],
+        "ctaLite": "Inquire",
+        "ctaCore": "Inquire"
+      },
+      "closing": {
+        "title": "Plan your front-house cell",
+        "body": "Share payload, reach, and service cadence—we'll match the right r-Series cobot and store integration path.",
+        "ctaInquiry": "Start inquiry",
+        "ctaHome": "Back to Home"
+      }
     },
     "privacy": {
       "metaTitleFocus": "Privacy Policy & Cookies",
@@ -1249,6 +1799,15 @@
     "application_hub_manufacturing": "Smart manufacturing application: collaborative robotic arm welding assist in an industrial workcell.",
     "application_hub_medical_lab": "Medical and laboratory application: collaborative robotic arm material handling in a lab automation scene.",
     "application_hub_education": "Education and research application: collaborative robotic arm in a bench and teaching-lab setting.",
-    "story_chapter_closing": "A vast desert landscape during golden hour—inviting viewers to explore the Roooll r-Series."
+    "story_chapter_closing": "A vast desert landscape during golden hour—inviting viewers to explore the Roooll r-Series.",
+    "application_medlab_video_loading": "Medical and lab scene: collaborative robotic arm loading an analyzer sample slot.",
+    "application_medlab_scenario_sample": "Medical and lab scene: collaborative robotic arm aliquoting and transferring samples on a bench.",
+    "application_medlab_scenario_bench": "Medical and lab scene: collaborative robotic arm executing repeatable SOP pick-place on a bench.",
+    "application_retail_video_milk_tea": "Retail and service scene: collaborative robotic arm dispensing beverages to recipe at a bar.",
+    "application_retail_scenario_dispense": "Retail and service scene: collaborative robotic arm pouring and prepping at a front-house station.",
+    "application_retail_scenario_service": "Retail and service scene: collaborative robotic arm in a compact front-house service workflow.",
+    "application_education_video_demo": "Education and research scene: collaborative robotic arm running a teachable demo on a lab bench.",
+    "application_education_scenario_lab": "Education and research scene: collaborative robotic arm on a research bench rig.",
+    "application_education_scenario_team": "Education and research scene: collaborative robotic arm deployed in a competition training lab."
   }
 }

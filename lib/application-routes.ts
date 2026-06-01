@@ -1,7 +1,12 @@
 const LOCALE_PREFIX_RE = /^\/(zh|en)(\/|$)/;
 
 /** Immersive dark application pages (Keynote-style, full-bleed media). */
-export const APPLICATION_IMMERSIVE_PATHS = new Set(['/applications/manufacturing']);
+export const APPLICATION_IMMERSIVE_PATHS = new Set([
+  '/applications/manufacturing',
+  '/applications/medical-lab',
+  '/applications/retail-service',
+  '/applications/education',
+]);
 
 export function stripLocalePrefix(pathname: string): string {
   if (!pathname || pathname === '/') return '/';
